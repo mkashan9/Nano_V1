@@ -1,13 +1,13 @@
-# MODULE_STATUS
+﻿# MODULE_STATUS
 
 Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 
 | ID | Name | Release | Status | Dependencies |
 |----|------|---------|--------|--------------|
-| AUD-01 | Repository and Security Audit | R0 | DONE | — |
+| AUD-01 | Repository and Security Audit | R0 | DONE | â€” |
 | FND-01 | Workspace, Configuration, and Environments | R0 | DONE | AUD-01 |
 | FND-02 | Shared Design System | R0 | DONE | FND-01 |
-| FND-03 | Junior and Senior Responsive Foundations | R0 | USER_TEST | FND-02 |
+| FND-03 | Junior and Senior Responsive Foundations | R0 | APPROVED | FND-02 |
 | FND-04 | Navigation and Role-Aware Application Shells | R0 | BACKLOG | FND-03 |
 | FND-05 | Error, Loading, Empty, Offline, and Maintenance States | R0 | BACKLOG | FND-04 |
 | FND-06 | Localization and English/Urdu Readiness | R0 | BACKLOG | FND-02 |
