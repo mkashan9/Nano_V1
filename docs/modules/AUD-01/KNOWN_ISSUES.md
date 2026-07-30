@@ -6,3 +6,5 @@
 4. **Product Flutter apps missing** — Expected; FND-01 will scaffold.
 5. **Branch protection** — Owner must enable settings in `docs/setup/GITHUB_REPOSITORY_SETTINGS.md`.
 6. **Key rotation** — Video/voice keys lived briefly in root `api_s.txt`; rotation recommended if the file was shared.
+
+7. **CI workflow not on default path yet** � Push blocked without PAT workflow scope; workflow saved as `docs/setup/ci.yml.pending` until owner widens token scopes.
