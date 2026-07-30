@@ -1,0 +1,11 @@
+﻿---
+description: Nano Supabase without Docker
+globs:
+alwaysApply: true
+---
+
+# No Docker
+
+- Never require Docker Desktop or `supabase start`.
+- Use remote-first development (ADR-0002) against the classified development project.
+- Prefer MCP migrations / SQL against development; never use Docker workarounds.

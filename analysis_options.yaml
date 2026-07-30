@@ -1,0 +1,12 @@
+﻿@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    unnecessary_library_name: ignore
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    avoid_print: true
+@
