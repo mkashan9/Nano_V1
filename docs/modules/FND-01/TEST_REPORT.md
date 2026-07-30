@@ -2,7 +2,7 @@
 
 | Check | Result | Notes |
 |-------|--------|-------|
-| melos bootstrap | PASS | 10 packages |
+| dart run melos bootstrap | PASS | 10 packages; docs updated to avoid global PATH |
 | dart/flutter analyze (all members) | PASS | |
 | nano_domain dart test | PASS | |
 | nano_design_system flutter test | PASS | |

@@ -1,5 +1,6 @@
-# One-command workspace verify (Windows)
+# One-command workspace verify (Windows) — no global melos PATH required
 $ErrorActionPreference = "Stop"
-dart pub global activate melos
-melos bootstrap
-melos run verify
+Set-Location $PSScriptRoot\..
+dart pub get
+dart run melos bootstrap
+dart run melos run verify

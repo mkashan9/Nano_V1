@@ -5,14 +5,20 @@
 - Flutter stable on PATH
 - Git on PATH
 - **No Docker required**
+- You do **not** need a global `melos` install on PATH
 
 ## Setup
 
 ```powershell
-cd d:\nano
-dart pub global activate melos
-# ensure Pub\Cache\bin is on PATH
-melos bootstrap
+cd D:\nano
+dart pub get
+dart run melos bootstrap
+```
+
+Or:
+
+```powershell
+.\scripts\bootstrap.ps1
 ```
 
 ## Run student app (Chrome)
@@ -24,11 +30,10 @@ flutter run -d chrome --dart-define=NANO_ENV=development
 
 ## Checklist
 
+- [ ] `dart run melos bootstrap` succeeds (no Docker)
 - [ ] App title shows **Nano**
 - [ ] AppBar shows **DEV** badge
 - [ ] **Open diagnostics** works and lists environment fields
-- [ ] Diagnostics does not appear when conceptually production (badge hidden for production enum)
-- [ ] `melos bootstrap` succeeds without Docker
 - [ ] Teacher app runs: `cd apps\teacher_app; flutter run -d chrome`
 - [ ] Admin web runs: `cd apps\admin_web; flutter run -d chrome`
 - [ ] `.env.example` has names only

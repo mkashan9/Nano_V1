@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-dart pub global activate melos
-melos bootstrap
-melos run verify
+cd "$(dirname "$0")/.."
+dart pub get
+dart run melos bootstrap
+dart run melos run verify
