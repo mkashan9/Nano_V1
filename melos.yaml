@@ -1,0 +1,23 @@
+name: nano
+repository: https://github.com/mkashan9/Nano_V1
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  analyze:
+    run: dart run melos exec -- flutter analyze
+    description: Analyze all packages and apps
+  test:
+    run: dart run melos exec --dir-exists=test -- flutter test
+    description: Run tests where present
+  format:
+    run: dart run melos exec -- dart format .
+    description: Format Dart sources
+  verify:
+    description: Format, analyze, and test
+    steps:
+      - melos run format
+      - melos run analyze
+      - melos run test

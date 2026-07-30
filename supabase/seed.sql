@@ -1,0 +1,3 @@
+-- Disposable development seed (no real private data).
+-- Applied only to development environments.
+-- SEC modules will expand schools/users fixtures.

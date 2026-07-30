@@ -1,0 +1,21 @@
+name: nano_workspace
+description: Nano monorepo workspace root
+publish_to: none
+
+environment:
+  sdk: ^3.12.2
+
+workspace:
+  - apps/student_app
+  - apps/teacher_app
+  - apps/admin_web
+  - packages/nano_design_system
+  - packages/nano_domain
+  - packages/nano_data
+  - packages/nano_auth
+  - packages/nano_media
+  - packages/nano_games
+  - packages/nano_testing
+
+dev_dependencies:
+  melos: ^7.0.0

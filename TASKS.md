@@ -2,16 +2,13 @@
 
 ## Active
 
-- [ ] AUD-01: Complete repository and security audit deliverables
-- [ ] AUD-01: Owner manual test / review
-- [ ] Await owner `NEXT` or `FIX:`
+- [ ] FND-01 owner manual test
+- [ ] Await NEXT or FIX:
+
+## Done
+
+- [x] AUD-01 Repository and Security Audit
 
 ## Up next
 
-- [ ] FND-01: Workspace, Configuration, and Environments
-
-## Standing rules
-
-- One ACTIVE module at a time
-- Stop at USER_TEST for owner validation
-- Never mark APPROVED without owner `NEXT`
+- [ ] FND-02 Shared Design System
