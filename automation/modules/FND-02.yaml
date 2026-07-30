@@ -1,7 +1,7 @@
 id: FND-02
 name: "Shared Design System"
 release: R0
-status: USER_TEST
+status: APPROVED
 dependencies:
   - FND-01
 applications:
