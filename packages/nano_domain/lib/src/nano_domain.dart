@@ -5,3 +5,8 @@ export 'environment/nano_environment.dart';
 export 'environment/service_endpoint.dart';
 export 'learning/learning_subject.dart';
 export 'learning/home_plan_item.dart';
+export 'navigation/app_role.dart';
+export 'navigation/nav_destination.dart';
+export 'navigation/session_principal.dart';
+export 'navigation/nav_catalog.dart';
+export 'navigation/deep_link_resolver.dart';

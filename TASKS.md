@@ -1,16 +1,16 @@
-# TASKS
+﻿# TASKS
 
 ## Active
 
-- [ ] FND-03 owner manual test
-- [ ] Await NEXT or FIX:
+- [ ] FND-04 owner manual test
 
-## Done
+## Completed
 
 - [x] AUD-01
 - [x] FND-01
 - [x] FND-02
+- [x] FND-03
 
-## Up next
+## Upcoming
 
-- [ ] FND-04 Navigation and Role-Aware Application Shells
+- [ ] FND-05 Error, Loading, Empty, Offline, and Maintenance States
