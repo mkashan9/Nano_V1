@@ -1,4 +1,4 @@
-/// Package placeholder for nano_testing.
+/// Package marker for nano_testing.
 class NanoTesting {
   const NanoTesting();
 }

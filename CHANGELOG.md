@@ -4,6 +4,11 @@
 
 ### Added
 
+- FND-03: Junior/Senior responsive home foundations, preview widths, shared fixtures
+
+
+### Added
+
 - FND-02: design tokens, Junior/Senior/Teacher/Admin themes, core components, goldens, gallery
 
 

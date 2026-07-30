@@ -3,12 +3,12 @@
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** FND-02 Shared Design System
+- **Current module:** FND-03 Junior and Senior Responsive Foundations
 - **Current status:** USER_TEST
-- **Current branch:** module/FND-02-shared-design-system
-- **Last completed module:** FND-01
+- **Current branch:** module/FND-03-junior-senior-responsive
+- **Last completed module:** FND-02
 - **Application name:** Nano
 
-## Next after FND-02 DONE
+## Next after FND-03 DONE
 
-FND-03 Junior and Senior Responsive Foundations
+FND-04 Navigation and Role-Aware Application Shells
