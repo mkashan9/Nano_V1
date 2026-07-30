@@ -1,9 +1,18 @@
 # FND-02 Manual Test Guide
 
+## Prerequisites
+
+- Flutter stable on PATH
+- **Git on PATH** (required by Flutter/`dart pub get` on Windows)
+- **No Docker required**
+
+If `git` is not recognized, install Git for Windows, then **close and reopen** the terminal (Git was added to your User PATH).
+
 ## Setup
 
 ```powershell
 cd D:\nano
+git --version
 dart pub get
 dart run melos bootstrap
 cd apps\student_app
