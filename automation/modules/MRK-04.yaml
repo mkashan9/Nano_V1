@@ -1,0 +1,45 @@
+id: MRK-04
+name: "Marks Publication and Correction"
+release: R7
+status: BACKLOG
+dependencies:
+  - MRK-02
+  - SEC-03
+applications:
+  - teacher_app
+  - packages
+  - docs
+  - automation
+allowed_paths:
+  - docs/
+  - automation/
+  - docs/modules/MRK-04/
+  - automation/modules/MRK-04.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - AGENTS.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MRK-04"
+ui_references: []
+database_scope: []
+server_functions: []
+acceptance:
+  - Module documentation complete
+  - Required tests listed and executed or marked NOT RUN with reason
+  - No secrets exposed
+  - Owner manual test steps provided
+required_tests:
+  - documentation_review
+security_checks:
+  - no_secrets_in_diff
+accessibility_checks: []
+manual_test_steps:
+  - Review module docs and status
+rollback_notes: "Revert module branch commits"
+requires_owner_test: true

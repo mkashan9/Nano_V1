@@ -1,0 +1,13 @@
+---
+description: Nano security and secrets
+globs:
+alwaysApply: true
+---
+
+# Security
+
+- No provider API keys in Flutter.
+- RLS on every exposed table.
+- school_id isolation enforced server-side.
+- Ignore: api_s.txt, github.txt, .env*.local, supabase/functions/.env*
+- Treat remote Supabase as production until classified.

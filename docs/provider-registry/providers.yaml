@@ -1,0 +1,18 @@
+# Provider registry — names and capabilities only (no credentials)
+providers:
+  - id: pollinations_image
+    category: image
+    env_keys: [IMAGE_PROVIDER_API_KEY]
+    notes: Primary image path when no privileged key; host image.pollinations.ai
+  - id: configured_video
+    category: video
+    env_keys: [VIDEO_PROVIDER_API_KEY]
+    notes: Adapter selected at MED-01; key in Edge Function env only
+  - id: configured_voice
+    category: voice
+    env_keys: [VOICE_PROVIDER_API_KEY]
+    notes: Learning Guide voice Aoede; key in Edge Function env only
+routing:
+  IMAGE_PROVIDER: pollinations
+  VIDEO_PROVIDER: configured
+  VOICE_PROVIDER: configured

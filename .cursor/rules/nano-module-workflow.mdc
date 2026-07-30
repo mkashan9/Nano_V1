@@ -1,0 +1,17 @@
+---
+description: Nano module automation workflow
+globs:
+alwaysApply: true
+---
+
+# Nano module workflow
+
+- Application name is Nano — do not rename.
+- Follow AGENTS.md and the active module YAML in automation/modules/.
+- Only one module may be ACTIVE.
+- Respect allowed_paths and forbidden_paths.
+- Stop at USER_TEST and wait for NEXT / FIX / STATUS / PAUSE / RESUME.
+- Never expose secrets from .env.local, api_s.txt, or github.txt.
+- Prefer reuse-first; record provenance.
+- UI-first: fake repositories before live data.
+- Server authority for privileged outcomes.

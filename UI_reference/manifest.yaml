@@ -1,0 +1,155 @@
+# Nano UI reference manifest — do not alter original images
+references:
+  - path: UI_reference/four_12/Communities.jpeg
+    experience: Senior
+    probable_screen: Communities
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "COM-01"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/four_12/games.jpeg
+    experience: Senior
+    probable_screen: Games
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "GME-01"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/four_12/home.jpeg
+    experience: Senior
+    probable_screen: Home
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "STU-03 / STU-04"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/four_12/Learning_stack.jpeg
+    experience: Senior
+    probable_screen: Learning Stack
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "LRN-01"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/four_12/profile.jpeg
+    experience: Senior
+    probable_screen: Profile
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "STU-05"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/kids/games.jpeg
+    experience: Junior
+    probable_screen: Games
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "GME-01"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/kids/home.jpeg
+    experience: Junior
+    probable_screen: Home
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "STU-03 / STU-04"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/kids/learning_stack.jpeg
+    experience: Junior
+    probable_screen: Learning Stack
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "LRN-01"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []
+  - path: UI_reference/kids/profile.jpeg
+    experience: Junior
+    probable_screen: Profile
+    width: 740
+    height: 1600
+    format: JPEG
+    aspect_ratio: 0.463
+    related_module_id: "STU-05"
+    main_layout_regions: [header, content, bottom_nav]
+    main_reusable_components: [nav_bar, cards, avatar_slot]
+    typography_clues: [large_titles_junior, denser_senior]
+    spacing_clues: [generous_junior, compact_senior]
+    navigation_type: bottom_tabs
+    card_types: [content_cards]
+    avatar_or_companion_placement: content_adjacent_or_header
+    missing_assets: []
+    unclear_elements: []

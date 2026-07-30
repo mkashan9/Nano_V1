@@ -1,0 +1,15 @@
+api_s.txt
+github.txt
+
+.env
+.env.local
+.env.*.local
+
+supabase/functions/.env
+supabase/functions/.env.local
+supabase/functions/.env.production
+
+supabase/.temp/
+supabase/.branches/
+
+docs/audits/private/

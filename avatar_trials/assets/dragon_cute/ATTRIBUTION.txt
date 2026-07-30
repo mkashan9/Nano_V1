@@ -1,0 +1,15 @@
+Cute Dragon by shakiller
+Source: https://sketchfab.com/3d-models/cute-dragon-df14ec74767c4598920132758dab8a49
+License: Creative Commons Attribution (CC Attribution)
+Requirements: Author must be credited. Commercial use is allowed.
+Audit:
+- animationCount=1
+- triangles˜27872 vertices˜14127
+- downloadType=free mayDownload(anonymous)=False
+- original ext=fbx archiveSize=7667412
+Downloaded metadata: 2026-07-30T12:01:25.6468018+05:00
+
+Optional local comparison (NOT the shakiller Sketchfab asset):
+Quaternius Dragon — https://poly.pizza/m/3rUm1cN3yp
+License: CC0
+File: quaternius_dragon_cc0.glb

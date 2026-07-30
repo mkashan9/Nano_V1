@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: NanoModuleSpec
+type: object
+required:
+  - id
+  - name
+  - release
+  - status
+  - dependencies
+  - applications
+  - allowed_paths
+  - forbidden_paths
+  - acceptance
+  - requires_owner_test
+properties:
+  id: { type: string }
+  name: { type: string }
+  release: { type: string }
+  status:
+    enum: [BACKLOG, READY, ACTIVE, AUTOMATED_REVIEW, USER_TEST, CHANGES_REQUESTED, APPROVED, DONE, BLOCKED]
+  requires_owner_test: { type: boolean }
