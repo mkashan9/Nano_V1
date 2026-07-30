@@ -1,0 +1,47 @@
+id: FND-07
+name: "Accessibility, Sound, Haptics, and Reduced Motion"
+release: R0
+status: BACKLOG
+dependencies:
+  - FND-02
+applications:
+  - student_app
+  - teacher_app
+  - admin_web
+  - packages
+  - supabase
+  - docs
+  - automation
+allowed_paths:
+  - docs/
+  - automation/
+  - docs/modules/FND-07/
+  - automation/modules/FND-07.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - AGENTS.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for FND-07"
+ui_references: []
+database_scope: []
+server_functions: []
+acceptance:
+  - Module documentation complete
+  - Required tests listed and executed or marked NOT RUN with reason
+  - No secrets exposed
+  - Owner manual test steps provided
+required_tests:
+  - documentation_review
+security_checks:
+  - no_secrets_in_diff
+accessibility_checks: []
+manual_test_steps:
+  - Review module docs and status
+rollback_notes: "Revert module branch commits"
+requires_owner_test: true

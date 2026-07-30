@@ -1,0 +1,45 @@
+id: SCH-07
+name: "School Reports"
+release: R6
+status: BACKLOG
+dependencies:
+  - SCH-05
+  - SCH-06
+applications:
+  - admin_web
+  - packages
+  - docs
+  - automation
+allowed_paths:
+  - docs/
+  - automation/
+  - docs/modules/SCH-07/
+  - automation/modules/SCH-07.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - AGENTS.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-07"
+ui_references: []
+database_scope: []
+server_functions: []
+acceptance:
+  - Module documentation complete
+  - Required tests listed and executed or marked NOT RUN with reason
+  - No secrets exposed
+  - Owner manual test steps provided
+required_tests:
+  - documentation_review
+security_checks:
+  - no_secrets_in_diff
+accessibility_checks: []
+manual_test_steps:
+  - Review module docs and status
+rollback_notes: "Revert module branch commits"
+requires_owner_test: true

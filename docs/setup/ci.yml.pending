@@ -1,0 +1,33 @@
+﻿name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  flutter-workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Melos bootstrap
+        run: |
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+          melos bootstrap
+      - name: Format, analyze, test
+        run: melos run verify
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Block committed secret filenames
+        run: |
+          if git ls-files | grep -E '(^|/)(api_s\.txt|github\.txt|\.env\.local)$'; then
+            echo "Secret filename tracked in git"
+            exit 1
+          fi
