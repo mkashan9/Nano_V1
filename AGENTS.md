@@ -40,3 +40,10 @@ Primary sources of truth (in order):
 - Never remote-deploy Supabase without owner approval
 - Only one module `ACTIVE`
 - Owner approval required for `APPROVED` / `DONE`
+
+## Supabase without Docker
+
+- Do **not** use Docker or \supabase start\.
+- Use remote-first development against a classified development project (see ADR-0002).
+- Migrations live in git; apply via approved remote workflow / MCP.
+

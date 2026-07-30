@@ -1,4 +1,0 @@
-﻿Null Painter - Cute Raccoon 2D Game Sprite and Animations
-Source: https://null-painter-error.itch.io/cute-raccoon-2d-game-sprite-and-animations
-License: CC BY 4.0 - commercial use and modification allowed with attribution to null painter.
-Integrated in avatar_trials as local offline GIF loops and editable source SVG/PNG.

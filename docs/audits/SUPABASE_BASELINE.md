@@ -44,3 +44,12 @@ Evidence: Automation forbids `db push`, linked reset, functions deploy, secrets 
 Risk: Human override.  
 Required action: Owner approval checklist before any remote change.  
 Blocking: NO
+
+
+### Finding: Docker prohibited by owner
+
+Status: PASS
+Evidence: Owner directive 2026-07-31 — no Docker; ADR-0002 remote-first.
+Risk: Shared remote development data must stay disposable.
+Required action: Use nano_v1 as development until staging/production projects exist.
+Blocking: NO

@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   pull_request:
@@ -6,34 +6,20 @@ on:
     branches: [main]
 
 jobs:
-  flutter-analyze-test:
+  flutter-workspace:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-      - name: Detect Flutter projects
-        id: projects
+      - name: Melos bootstrap
         run: |
-          if [ -f apps/student_app/pubspec.yaml ]; then echo "has_app=true" >> $GITHUB_OUTPUT; else echo "has_app=false" >> $GITHUB_OUTPUT; fi
-          if [ -f avatar_trials/pubspec.yaml ]; then echo "has_trials=true" >> $GITHUB_OUTPUT; else echo "has_trials=false" >> $GITHUB_OUTPUT; fi
-      - name: Analyze avatar_trials
-        if: steps.projects.outputs.has_trials == 'true'
-        working-directory: avatar_trials
-        run: |
-          flutter pub get
-          dart format --output=none --set-exit-if-changed .
-          flutter analyze
-          flutter test
-      - name: Analyze student_app
-        if: steps.projects.outputs.has_app == 'true'
-        working-directory: apps/student_app
-        run: |
-          flutter pub get
-          dart format --output=none --set-exit-if-changed .
-          flutter analyze
-          flutter test
+          dart pub global activate melos
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+          melos bootstrap
+      - name: Format, analyze, test
+        run: melos run verify
 
   secret-scan:
     runs-on: ubuntu-latest

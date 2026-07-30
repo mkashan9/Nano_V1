@@ -3,4 +3,6 @@
 | Asset path | Source | License | Module | Status |
 |------------|--------|---------|--------|--------|
 | UI_reference/** | Owner-provided mockups | Owner | design | REFERENCE ONLY |
-| avatar_trials/assets/** | Mixed trial packs | Per-pack — verify before ship | CMP-* | QUARANTINE |
+| assets/** | TBD in FND/CMP modules | TBD | various | Pending |
+
+avatar_trials assets were removed with the trial app (owner directive).

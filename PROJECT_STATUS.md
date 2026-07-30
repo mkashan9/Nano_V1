@@ -4,21 +4,20 @@
 
 - **Current release:** R0 Foundation
 - **Current module:** AUD-01 Repository and Security Audit
-- **Current status:** USER_TEST
-- **Current branch:** `module/AUD-01-repository-security-audit` (created during module start)
-- **Last completed module:** none
+- **Current status:** APPROVED (closing) → DONE after merge
+- **Current branch:** \module/AUD-01-repository-security-audit- **Last completed module:** (pending merge) AUD-01
 - **Application name:** Nano
 
-## Safe resume point
+## Owner directives applied
 
-AUD-01 complete pending owner NEXT.
+1. \vatar_trials\ removed completely.
+2. No Docker — remote-first Supabase (ADR-0002).
 
 ## Open blockers
 
-1. Docker Desktop not running — local `supabase start` unavailable (WARNING, not blocking AUD-01 docs).
-2. `gh auth login` requires `read:org` scope — API access works via Git Credential Manager + `GH_TOKEN` session when needed.
-3. Remote Supabase project `nano_v1` exists and is ACTIVE_HEALTHY with **zero tables** — treat as production-like until owner classifies; no remote schema writes without approval.
+1. GitHub PAT missing \workflow\ / ead:org\ scopes — CI file remains at \docs/setup/ci.yml.pending\.
+2. Classify ano_v1\ explicitly as development (assumed for remote-first until contradicted).
 
-## Next eligible after AUD-01 DONE
+## Next after AUD-01 DONE
 
 FND-01 Workspace, Configuration, and Environments

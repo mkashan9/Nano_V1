@@ -1,7 +1,7 @@
 id: AUD-01
 name: "Repository and Security Audit"
 release: R0
-status: USER_TEST
+status: APPROVED
 dependencies:
   []
 applications:

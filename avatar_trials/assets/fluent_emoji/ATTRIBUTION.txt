@@ -1,6 +1,0 @@
-Microsoft Fluent Emoji Animated
-License: MIT (see LICENSE_MICROSOFT.txt)
-Official repo: https://github.com/microsoft/fluentui-emoji-animated
-Sample APNGs sourced via community mirror of Fluent/Teams animated emoji
-for trial bundling:
-https://github.com/Tarikul-Islam-Anik/Microsoft-Teams-Animated-Emojis

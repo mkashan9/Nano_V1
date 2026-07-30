@@ -1,6 +1,0 @@
-Rabbit state-machine trial (local fallback)
-Visual source: Twemoji rabbit U+1F407
-URL: https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f407.svg
-License: CC-BY 4.0 (Twemoji)
-Note: Original LottieFiles rabbit is currently bot-protected from automated download.
-Downloaded: 2026-07-30T13:03:17.8478262+05:00
