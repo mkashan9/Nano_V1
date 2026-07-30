@@ -16,7 +16,7 @@ class NanoAdminApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '${config.appDisplayName} Admin',
-      theme: NanoTheme.light(),
+      theme: NanoTheme.schoolAdmin(),
       home: Scaffold(
         appBar: AppBar(
           title: Text('${config.appDisplayName} Admin'),

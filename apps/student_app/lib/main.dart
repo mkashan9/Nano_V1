@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/app/component_gallery_page.dart';
 import 'package:student_app/app/diagnostics_page.dart';
 import 'package:student_app/app/environment_badge.dart';
 
@@ -19,7 +20,7 @@ class NanoStudentApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: config.appDisplayName,
-      theme: NanoTheme.light(),
+      theme: NanoTheme.junior(),
       home: StudentHomePage(config: config),
     );
   }
@@ -32,7 +33,7 @@ class StudentHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NanoScaffold(
       appBar: AppBar(
         title: Text(config.appDisplayName),
         actions: [
@@ -46,22 +47,35 @@ class StudentHomePage extends StatelessWidget {
           children: [
             Text(
               'Welcome to ${config.appDisplayName}',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const SizedBox(height: 8),
-            Text('Student app foundation (${config.environment.name})'),
-            if (config.environment.showDebugTools &&
-                config.isFeatureEnabled('diagnostics')) ...[
-              const SizedBox(height: 24),
-              FilledButton(
+            const SizedBox(height: NanoSpacing.xs),
+            Text('Student app · ${config.environment.name}'),
+            const SizedBox(height: NanoSpacing.lg),
+            const CompanionSlot(size: 72),
+            if (config.environment.showDebugTools) ...[
+              const SizedBox(height: NanoSpacing.lg),
+              if (config.isFeatureEnabled('diagnostics'))
+                FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => DiagnosticsPage(config: config),
+                      ),
+                    );
+                  },
+                  child: const Text('Open diagnostics'),
+                ),
+              const SizedBox(height: NanoSpacing.sm),
+              OutlinedButton(
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => DiagnosticsPage(config: config),
+                      builder: (_) => const ComponentGalleryPage(),
                     ),
                   );
                 },
-                child: const Text('Open diagnostics'),
+                child: const Text('Component gallery'),
               ),
             ],
             if (kReleaseMode && config.environment.isProduction)

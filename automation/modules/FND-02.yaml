@@ -1,7 +1,7 @@
 id: FND-02
 name: "Shared Design System"
 release: R0
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - FND-01
 applications:
@@ -13,15 +13,21 @@ applications:
   - docs
   - automation
 allowed_paths:
+  - packages/nano_design_system/
+  - apps/student_app/
+  - apps/teacher_app/
+  - apps/admin_web/
   - docs/
   - automation/
   - docs/modules/FND-02/
   - automation/modules/FND-02.yaml
+  - automation/modules/FND-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - UI_reference/manifest.yaml
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt

@@ -2,13 +2,14 @@
 
 ## Active
 
-- [ ] FND-01 owner manual test
+- [ ] FND-02 owner manual test
 - [ ] Await NEXT or FIX:
 
 ## Done
 
-- [x] AUD-01 Repository and Security Audit
+- [x] AUD-01
+- [x] FND-01
 
 ## Up next
 
-- [ ] FND-02 Shared Design System
+- [ ] FND-03 Junior and Senior Responsive Foundations
