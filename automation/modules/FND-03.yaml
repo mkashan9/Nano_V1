@@ -1,7 +1,7 @@
 id: FND-03
 name: "Junior and Senior Responsive Foundations"
 release: R0
-status: BACKLOG
+status: APPROVED
 dependencies:
   - FND-02
 applications:
@@ -13,22 +13,32 @@ applications:
   - docs
   - automation
 allowed_paths:
+  - packages/nano_design_system/
+  - packages/nano_domain/
+  - packages/nano_testing/
+  - apps/student_app/
   - docs/
   - automation/
   - docs/modules/FND-03/
+  - automation/modules/FND-02.yaml
   - automation/modules/FND-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - UI_reference/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for FND-03"
-ui_references: []
+ui_references:
+  - UI_reference/kids/home.jpeg
+  - UI_reference/four_12/home.jpeg
+  - UI_reference/kids/learning_stack.jpeg
+  - UI_reference/four_12/Learning_stack.jpeg
 database_scope: []
 server_functions: []
 acceptance:
