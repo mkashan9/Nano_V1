@@ -4,6 +4,11 @@
 
 ### Added
 
+- FND-02: design tokens, Junior/Senior/Teacher/Admin themes, core components, goldens, gallery
+
+
+### Added
+
 - FND-01: Melos/Dart workspace, student/teacher/admin apps, shared packages, remote-first env docs
 - AUD-01 closeout: removed avatar_trials; ADR-0002 no Docker
 

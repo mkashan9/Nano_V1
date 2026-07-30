@@ -3,17 +3,12 @@
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** FND-01 Workspace, Configuration, and Environments
+- **Current module:** FND-02 Shared Design System
 - **Current status:** USER_TEST
-- **Current branch:** module/FND-01-workspace-configuration
-- **Last completed module:** AUD-01
+- **Current branch:** module/FND-02-shared-design-system
+- **Last completed module:** FND-01
 - **Application name:** Nano
 
-## Owner directives
+## Next after FND-02 DONE
 
-1. vatar_trials removed from git (disk leftover ignored if locked).
-2. No Docker — remote-first Supabase (ADR-0002).
-
-## Next after FND-01 DONE
-
-FND-02 Shared Design System
+FND-03 Junior and Senior Responsive Foundations

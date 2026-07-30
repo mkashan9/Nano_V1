@@ -16,7 +16,7 @@ class NanoTeacherApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '${config.appDisplayName} Teacher',
-      theme: NanoTheme.light(),
+      theme: NanoTheme.teacher(),
       home: Scaffold(
         appBar: AppBar(
           title: Text('${config.appDisplayName} Teacher'),

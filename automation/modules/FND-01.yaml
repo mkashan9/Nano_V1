@@ -1,7 +1,7 @@
 id: FND-01
 name: "Workspace, Configuration, and Environments"
 release: R0
-status: APPROVED
+status: DONE
 dependencies:
   - AUD-01
 applications:
