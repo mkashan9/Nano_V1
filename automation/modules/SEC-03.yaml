@@ -1,7 +1,7 @@
 id: SEC-03
 name: "Audit Logs, Sessions, Suspension, and Permission Guards"
 release: R0
-status: USER_TEST
+status: APPROVED
 dependencies:
   - SEC-02
 applications:
