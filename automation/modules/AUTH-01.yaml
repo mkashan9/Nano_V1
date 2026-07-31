@@ -1,7 +1,7 @@
 id: AUTH-01
 name: "Student Authentication"
 release: R1
-status: APPROVED
+status: DONE
 dependencies:
   - SEC-03
   - FND-04

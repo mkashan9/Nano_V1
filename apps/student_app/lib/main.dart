@@ -14,6 +14,11 @@ void main() {
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     authRepository = SupabaseAuthRepository(
       SupabaseClient(config.supabaseUrl, config.supabaseAnonKey),
+      allowedAccountKinds: const {
+        'school_student',
+        'independent_student',
+      },
+      appLabel: 'students',
     );
     requireAuth = true;
   }

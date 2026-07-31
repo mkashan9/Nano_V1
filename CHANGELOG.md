@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- AUTH-02: teacher sign-in, Ms Khan auth.users fixture, app-scoped account kinds
+
 - AUTH-01: student sign-in, Ali auth.users fixture, nano_auth session bootstrap
 
 - SYNC-01: local cache/queue substrate, conflict banner, Offline debug preview, ADR-0007

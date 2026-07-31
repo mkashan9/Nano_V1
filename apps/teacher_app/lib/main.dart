@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:supabase/supabase.dart';
 import 'package:teacher_app/app/teacher_router.dart';
 
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
-  runApp(NanoTeacherApp(config: config));
+  AuthRepository? authRepository;
+  var requireAuth = false;
+  if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
+    authRepository = SupabaseAuthRepository(
+      SupabaseClient(config.supabaseUrl, config.supabaseAnonKey),
+      allowedAccountKinds: const {'teacher'},
+      appLabel: 'teachers',
+    );
+    requireAuth = true;
+  }
+  runApp(
+    NanoTeacherApp(
+      config: config,
+      authRepository: authRepository,
+      requireAuth: requireAuth,
+    ),
+  );
 }
 
 class NanoTeacherApp extends StatefulWidget {
@@ -16,12 +35,16 @@ class NanoTeacherApp extends StatefulWidget {
     this.principal,
     this.initialLocation,
     this.initialLocale = NanoAppLocale.en,
+    this.authRepository,
+    this.requireAuth = false,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal? principal;
   final String? initialLocation;
   final NanoAppLocale initialLocale;
+  final AuthRepository? authRepository;
+  final bool requireAuth;
 
   @override
   State<NanoTeacherApp> createState() => _NanoTeacherAppState();
@@ -29,27 +52,101 @@ class NanoTeacherApp extends StatefulWidget {
 
 class _NanoTeacherAppState extends State<NanoTeacherApp> {
   late NanoAppLocale _locale;
+  late SessionPrincipal _principal;
+  late GoRouter _router;
+  AuthBootstrap? _authBootstrap;
+  var _restoring = false;
 
   @override
   void initState() {
     super.initState();
     _locale = widget.initialLocale;
+    _principal = widget.principal ??
+        (widget.requireAuth
+            ? const SessionPrincipal(
+                role: AppRole.teacher,
+                displayName: '',
+              )
+            : SessionPrincipal.teacher());
+    _router = _createRouter();
+    if (widget.requireAuth && widget.authRepository != null) {
+      _restore();
+    }
+  }
+
+  Future<void> _restore() async {
+    setState(() => _restoring = true);
+    try {
+      final restored = await widget.authRepository!.restoreSession();
+      if (!mounted || restored == null) return;
+      setState(() {
+        _authBootstrap = restored;
+        _principal = restored.principal;
+        _router = _createRouter();
+      });
+    } finally {
+      if (mounted) setState(() => _restoring = false);
+    }
+  }
+
+  GoRouter _createRouter() {
+    final copy = NanoCopy(_locale);
+    return createTeacherRouter(
+      config: widget.config,
+      principal: _principal,
+      copy: copy,
+      initialLocation: widget.initialLocation,
+      authRepository: widget.authRepository,
+      requireAuth: widget.requireAuth,
+      authBootstrap: _authBootstrap,
+      onAuthBootstrap: (bootstrap) {
+        setState(() {
+          _authBootstrap = bootstrap;
+          _principal = bootstrap.principal;
+          _router = _createRouter();
+        });
+      },
+      onPrincipalChanged: (next) {
+        setState(() {
+          _principal = next;
+          _router = _createRouter();
+        });
+      },
+      onSignedOut: _signOut,
+    );
+  }
+
+  Future<void> _signOut() async {
+    await widget.authRepository?.signOut();
+    if (!mounted) return;
+    setState(() {
+      _authBootstrap = null;
+      _principal = const SessionPrincipal(
+        role: AppRole.teacher,
+        displayName: '',
+      );
+      _router = _createRouter();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final session = widget.principal ?? SessionPrincipal.teacher();
     final copy = NanoCopy(_locale);
-    final router = createTeacherRouter(
-      config: widget.config,
-      principal: session,
-      initialLocation: widget.initialLocation,
-      copy: copy,
-    );
+    if (_restoring) {
+      return MaterialApp(
+        theme: NanoTheme.teacher(localeTag: _locale.tag),
+        home: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
     return NanoLocaleScope(
       locale: _locale,
       copy: copy,
       child: MaterialApp.router(
+        key: ValueKey(
+          '${_principal.isAuthenticated}-${_principal.userId}-$_locale',
+        ),
         title: '${copy.appName} Teacher',
         theme: NanoTheme.teacher(localeTag: _locale.tag),
         locale: Locale(_locale.languageCode),
@@ -59,7 +156,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        routerConfig: router,
+        routerConfig: _router,
       ),
     );
   }

@@ -1,11 +1,16 @@
 import 'package:nano_domain/nano_domain.dart';
 
-/// AUTH-01 student fixture credentials (development only).
+/// AUTH fixture credentials (development only).
 abstract final class AuthFixtures {
   static const aliEmail = 'ali@alpha.nano.dev';
   static const aliPassword = 'NanoAliDev1!';
   static const aliUserId = TenancyFixtures.aliAlphaId;
   static const aliSchoolId = TenancyFixtures.alphaSchoolId;
+
+  static const teacherEmail = 'teacher@alpha.nano.dev';
+  static const teacherPassword = 'NanoTeacherDev1!';
+  static const teacherUserId = TenancyFixtures.teacherId;
+  static const teacherSchoolId = TenancyFixtures.alphaSchoolId;
 }
 
 /// Result of resolving profile + membership after auth.users session exists.
