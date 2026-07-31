@@ -1,7 +1,7 @@
 id: LRN-02
 name: "Topic List, Ordering, and Prerequisites"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - LRN-01
 applications:
@@ -9,6 +9,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -19,26 +20,58 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LRN-02"
+  - "Learning Stack Catalog (LRN-01 scope: topic order, locked prerequisites, estimated time, objectives, supporting resources, progress, resume state)"
+  - "Prerequisites and eligibility on server reads"
+  - "Privileged mutations are server-authoritative, idempotent, and audited"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.topics
+  - public.topic_prerequisites
+  - public.learning_progress
+  - public.learning_catalog
+server_functions:
+  - nano_internal.topic_lock_titles
+  - nano_internal.assert_prerequisite_shape
+  - public.start_topic
+  - public.save_topic_progress
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Topic order is unique per subject and the client never reorders
+  - Prerequisites cannot form a cycle or cross subjects
+  - Locked topics reject start and progress writes on the server, not only on read
+  - Clients cannot write learning_progress directly; RPCs are the only write path
+  - Completion stays out of client reach; start/save never set completed
+  - Topic detail shows objectives, resources, time, progress, and the unlock reason
+  - Read lock state and write enforcement share one server helper
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/topic_action_test.dart
+  - packages/nano_data/test/learning_progress_repository_test.dart
+  - apps/student_app/test/topic_detail_page_test.dart
+  - supabase/tests/lrn02_topic_gates.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_direct_client_writes_to_learning_progress
+  - locked_topic_writes_rejected
+  - draft_topic_writes_rejected
+  - progress_writes_owner_only
+  - completion_not_client_settable
+accessibility_checks:
+  - locked_action_announces_unlock_reason
+  - action_button_labels_match_state
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open student app as Junior, open Math, tap Counting to 20, press Start, confirm it becomes Resume
+  - Go back to Math, open Adding small numbers, confirm it is locked and names Counting to 20
+  - Switch to Senior, open Science, confirm Plants and animals is locked behind Living things
+rollback_notes: "Revert module branch commits; restoring direct learning_progress write policies requires owner approval"
 requires_owner_test: true

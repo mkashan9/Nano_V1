@@ -54,6 +54,7 @@ class NanoStudentApp extends StatefulWidget {
     this.homeRepository,
     this.profileRepository,
     this.catalogRepository,
+    this.progressRepository,
     this.syncController,
     this.requireAuth = false,
   });
@@ -69,6 +70,7 @@ class NanoStudentApp extends StatefulWidget {
   final StudentHomeRepository? homeRepository;
   final StudentProfileRepository? profileRepository;
   final LearningCatalogRepository? catalogRepository;
+  final LearningProgressRepository? progressRepository;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -88,6 +90,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late final StudentHomeRepository _homeRepository;
   late final StudentProfileRepository _profileRepository;
   late LearningCatalogRepository _catalogRepository;
+  late final LearningProgressRepository _progressRepository;
   late final NanoSyncController _syncController;
   var _restoring = false;
 
@@ -127,6 +130,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         FakeLearningCatalogRepository(
           seniorEligible: !_principal.role.usesJuniorPresentation,
         );
+    _progressRepository =
+        widget.progressRepository ?? FakeLearningProgressRepository();
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
@@ -239,6 +244,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       homeRepository: _homeRepository,
       profileRepository: _profileRepository,
       catalogRepository: _catalogRepository,
+      progressRepository: _progressRepository,
       syncController: _syncController,
     );
   }

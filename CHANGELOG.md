@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- LRN-02: topic ordering invariants, prerequisite write gates, RPC-only progress, and topic detail with unlock reason
+
 - Fix: onboarding steps commit even when saving settings rebuilds the app, and a failed save now says so
 
 - LRN-01: learning catalog with publication model, eligibility, prerequisite locks, Junior worlds / Senior search, and shared version IDs
