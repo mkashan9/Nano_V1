@@ -1,14 +1,14 @@
-# PROJECT_STATUS
+﻿# PROJECT_STATUS
 
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** SEC-02 Multi-School Tenancy and RLS
+- **Current module:** SEC-03 Audit Logs, Sessions, Suspension, and Permission Guards
 - **Current status:** USER_TEST
-- **Current branch:** module/SEC-02-tenancy-rls
-- **Last completed module:** SEC-01
+- **Current branch:** module/SEC-03-audit-sessions-guards
+- **Last completed module:** SEC-02
 - **Application name:** Nano
 
-## Next after SEC-02 DONE
+## Next after SEC-03 DONE
 
-SEC-03 Audit Logs, Sessions, Suspension, and Permission Guards
+SYNC-01 Local Cache, Drafts, Queue, and Conflict States
