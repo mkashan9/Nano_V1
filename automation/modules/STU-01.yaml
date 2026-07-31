@@ -1,7 +1,7 @@
 id: STU-01
 name: "Student First-Run Onboarding"
 release: R1
-status: APPROVED
+status: DONE
 dependencies:
   - AUTH-01
   - FND-06

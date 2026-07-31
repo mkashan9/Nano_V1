@@ -16,6 +16,7 @@ export 'l10n/nano_copy.dart';
 export 'accessibility/accessibility_preferences.dart';
 export 'accessibility/nano_sound_cue.dart';
 export 'onboarding/onboarding_models.dart';
+export 'preferences/student_preferences.dart';
 export 'tenancy/tenancy_models.dart';
 export 'security/access_guard.dart';
 export 'sync/sync_models.dart';

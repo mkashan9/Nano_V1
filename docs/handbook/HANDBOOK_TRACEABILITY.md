@@ -34,7 +34,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook FND-04 Navigation deep links | FND-04,NOT-01 | apps | nav | N/A | nav tests | USER_TEST |
 | Handbook SEC-01 Tenancy RLS audit | SEC-01,SEC-02,SEC-03 | supabase | RLS/audit | policies | pgTAP | USER_TEST |
 | Handbook FND-05 Cache sync queue | SYNC-01 | packages | queue | local db | sync tests | BACKLOG |
-| Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | student_onboarding | widget | USER_TEST |
+| Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | student_onboarding,student_preferences | widget | USER_TEST |
 | Handbook STU-02 Student Home | STU-03,STU-04 | student_app | Home | progress | golden | BACKLOG |
 | Handbook PRF-01 Profiles settings | STU-05 | student_app | Profile | profiles | widget | BACKLOG |
 | Handbook LRN-01 Learning catalog | LRN-01,LRN-02 | student_app | Learning Stack | subjects,topics | repo tests | BACKLOG |

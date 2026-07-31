@@ -11,6 +11,8 @@ Widget _host({
   required SessionPrincipal principal,
   ValueChanged<ExperienceTrack>? onCompleted,
   String? schoolName,
+  StudentPreferencesRepository? preferencesRepository,
+  ValueChanged<StudentPreferences>? onPreferences,
 }) {
   return NanoLocaleScope(
     locale: NanoAppLocale.en,
@@ -21,6 +23,9 @@ Widget _host({
         progress: progress,
         principal: principal,
         schoolName: schoolName,
+        preferencesRepository: preferencesRepository,
+        preferences: StudentPreferences(userId: principal.userId ?? 'local'),
+        onPreferencesChanged: onPreferences,
         onProgressChanged: (_) {},
         onCompleted: (_, track) => onCompleted?.call(track),
       ),
@@ -32,11 +37,13 @@ void main() {
   testWidgets('school learner walks welcome to ready and completes',
       (tester) async {
     final repo = FakeOnboardingRepository();
+    final prefsRepo = FakeStudentPreferencesRepository();
     ExperienceTrack? completedTrack;
 
     await tester.pumpWidget(
       _host(
         repository: repo,
+        preferencesRepository: prefsRepo,
         progress: const OnboardingProgress(userId: 'u1'),
         principal: SessionPrincipal.junior(displayName: 'Ali')
             .copyWith(userId: 'u1', schoolId: 's1', isAuthenticated: true),
@@ -56,11 +63,16 @@ void main() {
 
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
+    expect(find.text('Name your learning guide'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'Tara');
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
     expect(find.textContaining('Alpha Academy'), findsOneWidget);
 
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
     expect(find.text('You are all set'), findsOneWidget);
+    expect(find.textContaining('Tara is ready'), findsOneWidget);
 
     await tester.tap(find.text('Start learning'));
     await tester.pumpAndSettle();
@@ -68,6 +80,49 @@ void main() {
     expect(completedTrack, ExperienceTrack.junior);
     expect(repo.writes.last.isComplete, isTrue);
     expect(repo.writes.last.experienceTrack, ExperienceTrack.junior);
+  });
+
+  testWidgets('preferences step rejects a blank companion name',
+      (tester) async {
+    await tester.pumpWidget(
+      _host(
+        repository: FakeOnboardingRepository(),
+        progress: const OnboardingProgress(
+          userId: 'u1',
+          currentStep: OnboardingStep.preferences,
+        ),
+        principal: SessionPrincipal.junior(displayName: 'Ali')
+            .copyWith(userId: 'u1', isAuthenticated: true),
+        preferencesRepository: FakeStudentPreferencesRepository(),
+      ),
+    );
+
+    await tester.enterText(find.byType(TextField), '   ');
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(find.text('Enter a name'), findsOneWidget);
+    expect(find.textContaining('learning on your own'), findsNothing);
+  });
+
+  testWidgets('preferences step applies locale immediately', (tester) async {
+    NanoAppLocale? applied;
+    await tester.pumpWidget(
+      _host(
+        repository: FakeOnboardingRepository(),
+        progress: const OnboardingProgress(
+          userId: 'u1',
+          currentStep: OnboardingStep.preferences,
+        ),
+        principal: SessionPrincipal.junior(displayName: 'Ali')
+            .copyWith(userId: 'u1', isAuthenticated: true),
+        preferencesRepository: FakeStudentPreferencesRepository(),
+        onPreferences: (prefs) => applied = prefs.locale,
+      ),
+    );
+
+    await tester.tap(find.text('Urdu'));
+    await tester.pumpAndSettle();
+    expect(applied, NanoAppLocale.ur);
   });
 
   testWidgets('interrupted learner resumes at the saved step', (tester) async {

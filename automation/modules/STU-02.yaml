@@ -1,12 +1,13 @@
 id: STU-02
 name: "Nori Naming, Language, Sound, and Accessibility Setup"
 release: R1
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-01
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
@@ -14,6 +15,10 @@ allowed_paths:
   - automation/
   - docs/modules/STU-02/
   - automation/modules/STU-02.yaml
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - supabase/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
@@ -24,21 +29,32 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for STU-02"
+  - "STU-01 Student Onboarding and Preferences (companion name, language, sound, accessibility)"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.student_preferences
+  - public.student_onboarding
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Companion name defaults to Nori and rejects blank or invalid names
+  - Language and accessibility apply live during setup
+  - Preferences sync to the server and restore on next launch
+  - Preference rows are owner-only; platform admins cannot read them
+  - Independent and school learners both complete the setup step
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/stu02_preferences_isolation.sql
+  - packages/nano_domain/test/student_preferences_test.dart
+  - packages/nano_data/test/student_preferences_repository_test.dart
+  - apps/student_app/test/onboarding_flow_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - owner_only_preferences
+  - blank_companion_name_rejected
+accessibility_checks:
+  - live_locale_rtl
+  - reduced_motion_toggle
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - See docs/modules/STU-02/MANUAL_TEST.md
+rollback_notes: "Drop public.student_preferences and restore the four-step onboarding check; revert module branch commits"
 requires_owner_test: true

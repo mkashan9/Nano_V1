@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- STU-02: companion naming, language, sound, and accessibility preferences with owner-only RLS
+
 - STU-01: student first-run onboarding with resumable server-side progress and grade-derived experience track
 
 - AUTH-04: independent student signup via auth.users trigger, password recovery, profiles↔auth.users cascade

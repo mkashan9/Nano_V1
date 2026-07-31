@@ -1,13 +1,14 @@
 import '../navigation/app_role.dart';
 
 /// Ordered first-run steps. Persisted as text, so the names are contract.
-enum OnboardingStep { welcome, experience, context, ready }
+enum OnboardingStep { welcome, experience, preferences, context, ready }
 
 extension OnboardingStepX on OnboardingStep {
   String get wireName => name;
 
   static OnboardingStep fromWire(String? raw) => switch (raw) {
         'experience' => OnboardingStep.experience,
+        'preferences' => OnboardingStep.preferences,
         'context' => OnboardingStep.context,
         'ready' => OnboardingStep.ready,
         _ => OnboardingStep.welcome,

@@ -30,6 +30,9 @@ GoRouter createStudentRouter({
   void Function(OnboardingProgress progress, ExperienceTrack track)?
       onOnboardingCompleted,
   String? schoolName,
+  StudentPreferencesRepository? preferencesRepository,
+  StudentPreferences? preferences,
+  ValueChanged<StudentPreferences>? onPreferencesChanged,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -152,6 +155,9 @@ GoRouter createStudentRouter({
                 OnboardingProgress(userId: principal.userId ?? 'local'),
             principal: principal,
             schoolName: schoolName,
+            preferencesRepository: preferencesRepository,
+            preferences: preferences,
+            onPreferencesChanged: onPreferencesChanged,
             onProgressChanged: (progress) =>
                 onOnboardingChanged?.call(progress),
             onCompleted: (progress, track) {
