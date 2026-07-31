@@ -41,6 +41,26 @@ void main() {
       expect(bootstrap.principal.role, AppRole.teacher);
       expect(bootstrap.principal.userId, AuthFixtures.teacherUserId);
     });
+
+    test('signs in school admin fixture', () async {
+      final repo = FakeAuthRepository.schoolAdmin();
+      final bootstrap = await repo.signInWithPassword(
+        email: AuthFixtures.schoolAdminEmail,
+        password: AuthFixtures.schoolAdminPassword,
+      );
+      expect(bootstrap.principal.role, AppRole.schoolAdmin);
+      expect(bootstrap.principal.userId, AuthFixtures.schoolAdminUserId);
+    });
+
+    test('signs in platform superadmin fixture', () async {
+      final repo = FakeAuthRepository.superadmin();
+      final bootstrap = await repo.signInWithPassword(
+        email: AuthFixtures.platformEmail,
+        password: AuthFixtures.platformPassword,
+      );
+      expect(bootstrap.principal.role, AppRole.superadmin);
+      expect(bootstrap.principal.userId, AuthFixtures.platformUserId);
+    });
   });
 
   group('AuthFixtures', () {

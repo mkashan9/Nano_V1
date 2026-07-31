@@ -11,6 +11,15 @@ abstract final class AuthFixtures {
   static const teacherPassword = 'NanoTeacherDev1!';
   static const teacherUserId = TenancyFixtures.teacherId;
   static const teacherSchoolId = TenancyFixtures.alphaSchoolId;
+
+  static const platformEmail = 'platform@nano.dev';
+  static const platformPassword = 'NanoPlatformDev1!';
+  static const platformUserId = TenancyFixtures.platformAdminId;
+
+  static const schoolAdminEmail = 'admin@alpha.nano.dev';
+  static const schoolAdminPassword = 'NanoSchoolAdminDev1!';
+  static const schoolAdminUserId = TenancyFixtures.schoolAdminId;
+  static const schoolAdminSchoolId = TenancyFixtures.alphaSchoolId;
 }
 
 /// Result of resolving profile + membership after auth.users session exists.

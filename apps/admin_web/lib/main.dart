@@ -1,13 +1,31 @@
+import 'package:admin_web/app/admin_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
-import 'package:admin_web/app/admin_router.dart';
+import 'package:supabase/supabase.dart';
 
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
-  runApp(NanoAdminApp(config: config));
+  AuthRepository? authRepository;
+  var requireAuth = false;
+  if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
+    authRepository = SupabaseAuthRepository(
+      SupabaseClient(config.supabaseUrl, config.supabaseAnonKey),
+      allowedAccountKinds: const {'school_staff', 'platform'},
+      appLabel: 'admins',
+    );
+    requireAuth = true;
+  }
+  runApp(
+    NanoAdminApp(
+      config: config,
+      authRepository: authRepository,
+      requireAuth: requireAuth,
+    ),
+  );
 }
 
 class NanoAdminApp extends StatefulWidget {
@@ -17,12 +35,16 @@ class NanoAdminApp extends StatefulWidget {
     this.initialPrincipal,
     this.initialLocation,
     this.initialLocale = NanoAppLocale.en,
+    this.authRepository,
+    this.requireAuth = false,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal? initialPrincipal;
   final String? initialLocation;
   final NanoAppLocale initialLocale;
+  final AuthRepository? authRepository;
+  final bool requireAuth;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -32,13 +54,36 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late SessionPrincipal _principal;
   late GoRouter _router;
   late NanoAppLocale _locale;
+  AuthBootstrap? _authBootstrap;
+  var _restoring = false;
 
   @override
   void initState() {
     super.initState();
-    _principal = widget.initialPrincipal ?? SessionPrincipal.schoolAdmin();
+    _principal = widget.initialPrincipal ??
+        (widget.requireAuth
+            ? SessionPrincipal.schoolAdmin(displayName: '')
+            : SessionPrincipal.schoolAdmin());
     _locale = widget.initialLocale;
     _router = _createRouter();
+    if (widget.requireAuth && widget.authRepository != null) {
+      _restore();
+    }
+  }
+
+  Future<void> _restore() async {
+    setState(() => _restoring = true);
+    try {
+      final restored = await widget.authRepository!.restoreSession();
+      if (!mounted || restored == null) return;
+      setState(() {
+        _authBootstrap = restored;
+        _principal = restored.principal;
+        _router = _createRouter();
+      });
+    } finally {
+      if (mounted) setState(() => _restoring = false);
+    }
   }
 
   GoRouter _createRouter() {
@@ -54,7 +99,28 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         });
       },
       initialLocation: widget.initialLocation,
+      authRepository: widget.authRepository,
+      requireAuth: widget.requireAuth,
+      authBootstrap: _authBootstrap,
+      onAuthBootstrap: (bootstrap) {
+        setState(() {
+          _authBootstrap = bootstrap;
+          _principal = bootstrap.principal;
+          _router = _createRouter();
+        });
+      },
+      onSignedOut: _signOut,
     );
+  }
+
+  Future<void> _signOut() async {
+    await widget.authRepository?.signOut();
+    if (!mounted) return;
+    setState(() {
+      _authBootstrap = null;
+      _principal = SessionPrincipal.schoolAdmin(displayName: '');
+      _router = _createRouter();
+    });
   }
 
   @override
@@ -63,11 +129,21 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
     final theme = _principal.role == AppRole.superadmin
         ? NanoTheme.superadmin(localeTag: _locale.tag)
         : NanoTheme.schoolAdmin(localeTag: _locale.tag);
+    if (_restoring) {
+      return MaterialApp(
+        theme: theme,
+        home: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
     return NanoLocaleScope(
       locale: _locale,
       copy: copy,
       child: MaterialApp.router(
-        key: ValueKey('${_principal.role}-${_locale.tag}'),
+        key: ValueKey(
+          '${_principal.role}-${_principal.isAuthenticated}-${_locale.tag}',
+        ),
         title: '${copy.appName} Admin',
         theme: theme,
         locale: Locale(_locale.languageCode),

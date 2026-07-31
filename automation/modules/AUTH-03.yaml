@@ -1,7 +1,7 @@
 id: AUTH-03
 name: "School Management and Superadmin Authentication"
 release: R1
-status: BACKLOG
+status: APPROVED
 dependencies:
   - SEC-03
   - FND-04
@@ -23,6 +23,10 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_auth/
+  - packages/nano_domain/
+  - apps/admin_web/
+  - supabase/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -30,15 +34,23 @@ forbidden_paths:
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for AUTH-03"
 ui_references: []
-database_scope: []
+database_scope:
+  - auth.users
+  - auth.identities
+  - public.profiles
+  - public.school_memberships
+  - public.platform_roles
+  - public.schools
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Platform and school admin auth.users fixtures exist
+  - admin_web sign-in lands in correct shell by role
+  - Sign out returns to sign-in
+  - Student/teacher accounts rejected by admin_web
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_auth/test/fake_auth_repository_test.dart
+  - apps/admin_web/test/admin_sign_in_page_test.dart
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []

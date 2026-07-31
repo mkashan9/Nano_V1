@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] AUTH-02 owner manual test
+- [ ] AUTH-03 owner manual test
 
 ## Completed
 
@@ -11,7 +11,8 @@
 - [x] SEC-01 through SEC-03
 - [x] SYNC-01
 - [x] AUTH-01
+- [x] AUTH-02
 
 ## Upcoming
 
-- [ ] AUTH-03 School Management and Superadmin Authentication
+- [ ] AUTH-04 Independent Student Signup and Recovery

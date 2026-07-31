@@ -11,6 +11,8 @@ class AdminShell extends StatelessWidget {
     required this.navigationShell,
     required this.onPrincipalChanged,
     required this.copy,
+    this.onSignOut,
+    this.liveAuth = false,
   });
 
   final EnvironmentConfig config;
@@ -18,6 +20,8 @@ class AdminShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   final ValueChanged<SessionPrincipal> onPrincipalChanged;
   final NanoCopy copy;
+  final VoidCallback? onSignOut;
+  final bool liveAuth;
 
   @override
   Widget build(BuildContext context) {
@@ -63,33 +67,42 @@ class AdminShell extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            Text(
-                              'Shell',
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            const SizedBox(width: NanoSpacing.sm),
-                            SegmentedButton<AppRole>(
-                              segments: const [
-                                ButtonSegment(
-                                  value: AppRole.schoolAdmin,
-                                  label: Text('School'),
-                                ),
-                                ButtonSegment(
-                                  value: AppRole.superadmin,
-                                  label: Text('Superadmin'),
-                                ),
-                              ],
-                              selected: {principal.role},
-                              onSelectionChanged: (roles) {
-                                final role = roles.first;
-                                onPrincipalChanged(
-                                  role == AppRole.superadmin
-                                      ? SessionPrincipal.superadmin()
-                                      : SessionPrincipal.schoolAdmin(),
-                                );
-                              },
-                            ),
-                            const SizedBox(width: NanoSpacing.md),
+                            if (!liveAuth) ...[
+                              Text(
+                                'Shell',
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              const SizedBox(width: NanoSpacing.sm),
+                              SegmentedButton<AppRole>(
+                                segments: const [
+                                  ButtonSegment(
+                                    value: AppRole.schoolAdmin,
+                                    label: Text('School'),
+                                  ),
+                                  ButtonSegment(
+                                    value: AppRole.superadmin,
+                                    label: Text('Superadmin'),
+                                  ),
+                                ],
+                                selected: {principal.role},
+                                onSelectionChanged: (roles) {
+                                  final role = roles.first;
+                                  onPrincipalChanged(
+                                    role == AppRole.superadmin
+                                        ? SessionPrincipal.superadmin()
+                                        : SessionPrincipal.schoolAdmin(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: NanoSpacing.md),
+                            ],
+                            if (liveAuth && onSignOut != null) ...[
+                              TextButton(
+                                onPressed: onSignOut,
+                                child: const Text('Sign out'),
+                              ),
+                              const SizedBox(width: NanoSpacing.md),
+                            ],
                             Chip(
                               label: Text(
                                 config.environment.name.toUpperCase(),
@@ -122,6 +135,9 @@ class AdminDestinationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authLine = principal.isAuthenticated
+        ? 'Signed in · ${principal.userId ?? '—'}'
+        : 'Preview persona';
     return NanoScaffold(
       padBody: true,
       body: Align(
@@ -139,6 +155,8 @@ class AdminDestinationPage extends StatelessWidget {
               Text(
                 '${principal.role.label} shell · path ${destination.path}',
               ),
+              const SizedBox(height: NanoSpacing.sm),
+              Text(authLine),
               const SizedBox(height: NanoSpacing.md),
               const Text(
                 'Permission-filtered foundation. Bulk workflows arrive in later modules.',

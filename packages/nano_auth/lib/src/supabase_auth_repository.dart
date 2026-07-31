@@ -84,15 +84,21 @@ class SupabaseAuthRepository implements AuthRepository {
     final profileStatus = _membershipStatus(profile['status'] as String?);
     final displayName = (profile['display_name'] as String?)?.trim();
     final name = (displayName == null || displayName.isEmpty)
-        ? (accountKind == 'teacher' ? 'Teacher' : 'Student')
+        ? _defaultName(accountKind)
         : displayName;
 
     String? schoolId;
     var schoolStatus = SchoolStatus.active;
     var membershipStatus = MembershipStatus.active;
 
-    if (accountKind == 'school_student' || accountKind == 'teacher') {
-      final role = accountKind == 'teacher' ? 'teacher' : 'student';
+    if (accountKind == 'school_student' ||
+        accountKind == 'teacher' ||
+        accountKind == 'school_staff') {
+      final role = switch (accountKind) {
+        'teacher' => 'teacher',
+        'school_staff' => 'school_admin',
+        _ => 'student',
+      };
       final membershipRows = await client
           .from('school_memberships')
           .select('school_id, status, role')
@@ -118,12 +124,34 @@ class SupabaseAuthRepository implements AuthRepository {
       }
     }
 
+    if (accountKind == 'platform') {
+      final roleRows = await client
+          .from('platform_roles')
+          .select('role, revoked_at')
+          .eq('user_id', userId)
+          .limit(8);
+      final active = roleRows.where((row) => row['revoked_at'] == null);
+      if (active.isEmpty) {
+        await client.auth.signOut();
+        throw AuthFailure('No active platform role found');
+      }
+    }
+
     final SessionPrincipal principal = switch (accountKind) {
       'independent_student' => SessionPrincipal.independent(displayName: name)
           .copyWith(userId: userId, isAuthenticated: true),
       'teacher' => SessionPrincipal.teacher(displayName: name).copyWith(
           userId: userId,
           schoolId: schoolId,
+          isAuthenticated: true,
+        ),
+      'school_staff' => SessionPrincipal.schoolAdmin(displayName: name).copyWith(
+          userId: userId,
+          schoolId: schoolId,
+          isAuthenticated: true,
+        ),
+      'platform' => SessionPrincipal.superadmin(displayName: name).copyWith(
+          userId: userId,
           isAuthenticated: true,
         ),
       _ => SessionPrincipal.junior(displayName: name).copyWith(
@@ -140,6 +168,13 @@ class SupabaseAuthRepository implements AuthRepository {
       membershipStatus: membershipStatus,
     );
   }
+
+  static String _defaultName(String accountKind) => switch (accountKind) {
+        'teacher' => 'Teacher',
+        'school_staff' => 'School Admin',
+        'platform' => 'Platform Admin',
+        _ => 'Student',
+      };
 
   static MembershipStatus _membershipStatus(String? raw) => switch (raw) {
         'suspended' => MembershipStatus.suspended,
