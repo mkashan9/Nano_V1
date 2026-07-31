@@ -2,13 +2,13 @@
 
 ## Current state
 
-- **Current release:** R0 Foundation
-- **Current module:** SYNC-01 Local Cache, Drafts, Queue, and Conflict States
+- **Current release:** R1 Identity
+- **Current module:** AUTH-01 Student Authentication
 - **Current status:** USER_TEST
-- **Current branch:** module/SYNC-01-local-cache-queue
-- **Last completed module:** SEC-03
+- **Current branch:** module/AUTH-01-student-authentication
+- **Last completed module:** SYNC-01
 - **Application name:** Nano
 
-## Next after SYNC-01 DONE
+## Next after AUTH-01 DONE
 
-AUTH-01 Student Authentication
+AUTH-02 Teacher Authentication

@@ -1,7 +1,7 @@
 id: AUTH-01
 name: "Student Authentication"
 release: R1
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-03
   - FND-04
@@ -23,6 +23,10 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_auth/
+  - packages/nano_domain/
+  - apps/student_app/
+  - supabase/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -30,15 +34,22 @@ forbidden_paths:
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for AUTH-01"
 ui_references: []
-database_scope: []
+database_scope:
+  - auth.users
+  - auth.identities
+  - public.profiles
+  - public.school_memberships
+  - public.schools
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Ali auth.users fixture bound to profile UUID
+  - Student sign-in lands in Junior shell when Supabase keys present
+  - Sign out returns to sign-in
+  - FakeAuthRepository unit/widget tests pass
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_auth/test/fake_auth_repository_test.dart
+  - apps/student_app/test/sign_in_page_test.dart
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []

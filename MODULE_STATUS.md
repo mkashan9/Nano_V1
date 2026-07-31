@@ -15,8 +15,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | SEC-01 | Supabase Baseline and Migration Workflow | R0 | DONE | FND-01 |
 | SEC-02 | Multi-School Tenancy and RLS | R0 | DONE | SEC-01 |
 | SEC-03 | Audit Logs, Sessions, Suspension, and Permission Guards | R0 | DONE | SEC-02 |
-| SYNC-01 | Local Cache, Drafts, Queue, and Conflict States | R0 | USER_TEST | FND-05, SEC-01 |
-| AUTH-01 | Student Authentication | R1 | BACKLOG | SEC-03, FND-04 |
+| SYNC-01 | Local Cache, Drafts, Queue, and Conflict States | R0 | DONE | FND-05, SEC-01 |
+| AUTH-01 | Student Authentication | R1 | USER_TEST | SEC-03, FND-04 |
 | AUTH-02 | Teacher Authentication | R1 | BACKLOG | SEC-03, FND-04 |
 | AUTH-03 | School Management and Superadmin Authentication | R1 | BACKLOG | SEC-03, FND-04 |
 | AUTH-04 | Independent Student Signup and Recovery | R1 | BACKLOG | AUTH-01 |

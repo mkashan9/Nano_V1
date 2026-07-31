@@ -9,6 +9,9 @@ class SessionPrincipal {
     this.permissions = const {},
     this.featureFlags = const {},
     this.flexEligible = false,
+    this.userId,
+    this.schoolId,
+    this.isAuthenticated = false,
   });
 
   final AppRole role;
@@ -16,12 +19,37 @@ class SessionPrincipal {
   final Set<String> permissions;
   final Map<String, bool> featureFlags;
   final bool flexEligible;
+  final String? userId;
+  final String? schoolId;
+  final bool isAuthenticated;
 
   bool hasPermission(String permission) => permissions.contains(permission);
 
   bool isFeatureEnabled(String flag) => featureFlags[flag] ?? false;
 
   String get homePath => '/';
+
+  SessionPrincipal copyWith({
+    AppRole? role,
+    String? displayName,
+    Set<String>? permissions,
+    Map<String, bool>? featureFlags,
+    bool? flexEligible,
+    String? userId,
+    String? schoolId,
+    bool? isAuthenticated,
+  }) {
+    return SessionPrincipal(
+      role: role ?? this.role,
+      displayName: displayName ?? this.displayName,
+      permissions: permissions ?? this.permissions,
+      featureFlags: featureFlags ?? this.featureFlags,
+      flexEligible: flexEligible ?? this.flexEligible,
+      userId: userId ?? this.userId,
+      schoolId: schoolId ?? this.schoolId,
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+    );
+  }
 
   factory SessionPrincipal.junior({String displayName = 'Ali'}) =>
       SessionPrincipal(

@@ -26,6 +26,8 @@ class StudentShell extends StatelessWidget {
     required this.onAccessibilityChanged,
     required this.locale,
     required this.accessibility,
+    this.onSignOut,
+    this.liveAuth = false,
   });
 
   final EnvironmentConfig config;
@@ -36,6 +38,8 @@ class StudentShell extends StatelessWidget {
   final ValueChanged<AccessibilityPreferences> onAccessibilityChanged;
   final NanoAppLocale locale;
   final AccessibilityPreferences accessibility;
+  final VoidCallback? onSignOut;
+  final bool liveAuth;
 
   @override
   Widget build(BuildContext context) {
@@ -95,37 +99,43 @@ class StudentShell extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: NanoSpacing.sm),
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<AppRole>(
-                        value: principal.role,
-                        items: const [
-                          DropdownMenuItem(
-                            value: AppRole.juniorStudent,
-                            child: Text('Junior'),
-                          ),
-                          DropdownMenuItem(
-                            value: AppRole.seniorStudent,
-                            child: Text('Senior'),
-                          ),
-                          DropdownMenuItem(
-                            value: AppRole.independentStudent,
-                            child: Text('Independent'),
-                          ),
-                        ],
-                        onChanged: (role) {
-                          if (role == null) return;
-                          final next = switch (role) {
-                            AppRole.juniorStudent => SessionPrincipal.junior(),
-                            AppRole.seniorStudent =>
-                              SessionPrincipal.seniorSchool(),
-                            AppRole.independentStudent =>
-                              SessionPrincipal.independent(),
-                            _ => principal,
-                          };
-                          onPrincipalChanged(next);
-                        },
+                    if (!liveAuth)
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton<AppRole>(
+                          value: principal.role,
+                          items: const [
+                            DropdownMenuItem(
+                              value: AppRole.juniorStudent,
+                              child: Text('Junior'),
+                            ),
+                            DropdownMenuItem(
+                              value: AppRole.seniorStudent,
+                              child: Text('Senior'),
+                            ),
+                            DropdownMenuItem(
+                              value: AppRole.independentStudent,
+                              child: Text('Independent'),
+                            ),
+                          ],
+                          onChanged: (role) {
+                            if (role == null) return;
+                            final next = switch (role) {
+                              AppRole.juniorStudent =>
+                                SessionPrincipal.junior(),
+                              AppRole.seniorStudent =>
+                                SessionPrincipal.seniorSchool(),
+                              AppRole.independentStudent =>
+                                SessionPrincipal.independent(),
+                              _ => principal,
+                            };
+                            onPrincipalChanged(next);
+                          },
+                        ),
                       ),
-                    ),
+                    if (liveAuth && onSignOut != null) ...[
+                      const SizedBox(width: NanoSpacing.sm),
+                      TextButton(onPressed: onSignOut, child: const Text('Sign out')),
+                    ],
                   ],
                 ),
               ),
@@ -312,9 +322,13 @@ class StudentProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authLine = principal.isAuthenticated
+        ? 'Signed in · ${principal.userId ?? '—'}'
+        : 'Preview persona';
     return NavPlaceholderPage(
       title: 'Profile',
-      subtitle: '${principal.displayName} · ${principal.role.label}',
+      subtitle:
+          '${principal.displayName} · ${principal.role.label}\n$authLine',
     );
   }
 }
