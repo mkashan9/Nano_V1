@@ -17,12 +17,14 @@ class NanoStudentApp extends StatefulWidget {
     this.initialPrincipal,
     this.initialLocation,
     this.initialLocale = NanoAppLocale.en,
+    this.initialAccessibility = AccessibilityPreferences.defaults,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal? initialPrincipal;
   final String? initialLocation;
   final NanoAppLocale initialLocale;
+  final AccessibilityPreferences initialAccessibility;
 
   @override
   State<NanoStudentApp> createState() => _NanoStudentAppState();
@@ -32,12 +34,16 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late SessionPrincipal _principal;
   late GoRouter _router;
   late NanoAppLocale _locale;
+  late AccessibilityPreferences _a11y;
+  late final NanoFeedback _feedback;
 
   @override
   void initState() {
     super.initState();
     _principal = widget.initialPrincipal ?? SessionPrincipal.junior();
     _locale = widget.initialLocale;
+    _a11y = widget.initialAccessibility;
+    _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
   }
 
@@ -46,9 +52,11 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       config: widget.config,
       principal: _principal,
       onPrincipalChanged: _setPrincipal,
-      initialLocation: widget.initialLocation,
       onLocaleChanged: _setLocale,
+      onAccessibilityChanged: _setA11y,
       locale: _locale,
+      accessibility: _a11y,
+      initialLocation: widget.initialLocation,
     );
   }
 
@@ -66,6 +74,13 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     });
   }
 
+  void _setA11y(AccessibilityPreferences next) {
+    setState(() {
+      _a11y = next;
+      _feedback.updatePreferences(next);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoCopy(_locale);
@@ -76,21 +91,40 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     return NanoLocaleScope(
       locale: _locale,
       copy: copy,
-      child: MaterialApp.router(
-        key: ValueKey('${_principal.role}-${_locale.tag}'),
-        title: copy.appName,
-        theme: theme,
-        locale: flutterLocale,
-        supportedLocales: const [
-          Locale('en'),
-          Locale('ur'),
-        ],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        routerConfig: _router,
+      child: NanoAccessibilityScope(
+        preferences: _a11y,
+        feedback: _feedback,
+        child: MaterialApp.router(
+          key: ValueKey(
+            '${_principal.role}-${_locale.tag}-${_a11y.reducedMotion}-'
+            '${_a11y.classroomMode}-${_a11y.textScale}',
+          ),
+          title: copy.appName,
+          theme: theme,
+          locale: flutterLocale,
+          supportedLocales: const [
+            Locale('en'),
+            Locale('ur'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          builder: (context, child) {
+            final mq = MediaQuery.of(context);
+            final scaled = mq.textScaler.scale(1) * _a11y.textScale;
+            return MediaQuery(
+              data: mq.copyWith(
+                textScaler: TextScaler.linear(scaled),
+                disableAnimations:
+                    mq.disableAnimations || _a11y.effectiveReducedMotion,
+              ),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
+          routerConfig: _router,
+        ),
       ),
     );
   }

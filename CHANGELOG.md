@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- FND-07: accessibility prefs, feedback gates, reduced motion, A11y settings
+
 - FND-06: English/Urdu NanoCopy, RTL locale wiring, locale preview
 
 - FND-05: shared NanoViewState, state host, maintenance/permission/sync chrome

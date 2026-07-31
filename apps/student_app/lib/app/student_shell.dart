@@ -5,6 +5,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/component_gallery_page.dart';
 import 'package:student_app/app/states_preview_page.dart';
 import 'package:student_app/app/locale_preview_page.dart';
+import 'package:student_app/app/accessibility_settings_page.dart';
 import 'package:student_app/app/diagnostics_page.dart';
 import 'package:student_app/app/environment_badge.dart';
 import 'package:student_app/app/nav_placeholder_page.dart';
@@ -20,7 +21,9 @@ class StudentShell extends StatelessWidget {
     required this.navigationShell,
     required this.onPrincipalChanged,
     required this.onLocaleChanged,
+    required this.onAccessibilityChanged,
     required this.locale,
+    required this.accessibility,
   });
 
   final EnvironmentConfig config;
@@ -28,7 +31,9 @@ class StudentShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   final ValueChanged<SessionPrincipal> onPrincipalChanged;
   final ValueChanged<NanoAppLocale> onLocaleChanged;
+  final ValueChanged<AccessibilityPreferences> onAccessibilityChanged;
   final NanoAppLocale locale;
+  final AccessibilityPreferences accessibility;
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +179,18 @@ class StudentShell extends StatelessWidget {
                         );
                       },
                       child: const Text('Locale'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => AccessibilitySettingsPage(
+                              onChanged: onAccessibilityChanged,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('A11y'),
                     ),
                     TextButton(
                       onPressed: () {

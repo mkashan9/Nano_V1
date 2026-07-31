@@ -13,3 +13,5 @@ export 'navigation/deep_link_resolver.dart';
 export 'ui_state/nano_view_state.dart';
 export 'l10n/nano_app_locale.dart';
 export 'l10n/nano_copy.dart';
+export 'accessibility/accessibility_preferences.dart';
+export 'accessibility/nano_sound_cue.dart';
