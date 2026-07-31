@@ -9,6 +9,7 @@
 | packages/nano_auth independent_signup_test | RUN | 14 tests pass |
 | apps/student_app sign_up_page_test | RUN | signup, weak password, recovery |
 | apps/student_app full suite | RUN | 15 tests pass |
+| PKCE asyncStorage assertion on signup | FIXED | NanoAuthClient uses AuthFlowType.implicit |
 | Supabase security advisors | RUN | only pre-existing leaked-password warning |
 | Live signup against nano_v1 | OWNER | MANUAL_TEST |
 | CI workflow | NOT RUN | PAT missing workflow scope |

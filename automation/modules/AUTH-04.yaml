@@ -16,7 +16,10 @@ allowed_paths:
   - docs/modules/AUTH-04/
   - automation/modules/AUTH-04.yaml
   - apps/student_app/
+  - apps/teacher_app/lib/main.dart
+  - apps/admin_web/lib/main.dart
   - packages/nano_auth/
+  - packages/nano_data/lib/src/supabase/
   - supabase/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
