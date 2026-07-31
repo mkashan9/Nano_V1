@@ -4,6 +4,7 @@ import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/component_gallery_page.dart';
 import 'package:student_app/app/states_preview_page.dart';
+import 'package:student_app/app/sync_preview_page.dart';
 import 'package:student_app/app/locale_preview_page.dart';
 import 'package:student_app/app/accessibility_settings_page.dart';
 import 'package:student_app/app/supabase_health_page.dart';
@@ -170,6 +171,16 @@ class StudentShell extends StatelessWidget {
                         );
                       },
                       child: const Text('UI states'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const SyncPreviewPage(),
+                          ),
+                        );
+                      },
+                      child: const Text('Offline'),
                     ),
                     TextButton(
                       onPressed: () {
