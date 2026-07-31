@@ -18,7 +18,10 @@ GoRouter createAdminRouter({
   ValueChanged<AuthBootstrap>? onAuthBootstrap,
   VoidCallback? onSignedOut,
 }) {
-  final destinations = NavCatalog.visibleFor(principal);
+  final visible = NavCatalog.visibleFor(principal);
+  final destinations = visible.isNotEmpty
+      ? visible
+      : NavCatalog.catalogFor(principal.role);
   final authenticated = !requireAuth || principal.isAuthenticated;
   final blocked = authBootstrap?.isBlocked ?? false;
   final resolvedInitial = !authenticated

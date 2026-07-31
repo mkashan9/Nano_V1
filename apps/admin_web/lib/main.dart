@@ -62,10 +62,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
     super.initState();
     _principal = widget.initialPrincipal ??
         (widget.requireAuth
-            ? const SessionPrincipal(
-                role: AppRole.schoolAdmin,
-                displayName: '',
-              )
+            ? SessionPrincipal.schoolAdmin(displayName: '')
             : SessionPrincipal.schoolAdmin());
     _locale = widget.initialLocale;
     _router = _createRouter();
@@ -121,10 +118,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
     if (!mounted) return;
     setState(() {
       _authBootstrap = null;
-      _principal = const SessionPrincipal(
-        role: AppRole.schoolAdmin,
-        displayName: '',
-      );
+      _principal = SessionPrincipal.schoolAdmin(displayName: '');
       _router = _createRouter();
     });
   }

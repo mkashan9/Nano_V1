@@ -63,10 +63,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
     _locale = widget.initialLocale;
     _principal = widget.principal ??
         (widget.requireAuth
-            ? const SessionPrincipal(
-                role: AppRole.teacher,
-                displayName: '',
-              )
+            ? SessionPrincipal.teacher(displayName: '')
             : SessionPrincipal.teacher());
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
@@ -121,10 +118,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
     if (!mounted) return;
     setState(() {
       _authBootstrap = null;
-      _principal = const SessionPrincipal(
-        role: AppRole.teacher,
-        displayName: '',
-      );
+      _principal = SessionPrincipal.teacher(displayName: '');
       _router = _createRouter();
     });
   }

@@ -69,10 +69,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     super.initState();
     _principal = widget.initialPrincipal ??
         (widget.requireAuth
-            ? const SessionPrincipal(
-                role: AppRole.juniorStudent,
-                displayName: '',
-              )
+            ? SessionPrincipal.junior(displayName: '')
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
@@ -127,10 +124,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     if (!mounted) return;
     setState(() {
       _authBootstrap = null;
-      _principal = const SessionPrincipal(
-        role: AppRole.juniorStudent,
-        displayName: '',
-      );
+      _principal = SessionPrincipal.junior(displayName: '');
       _router = _createRouter();
     });
   }
