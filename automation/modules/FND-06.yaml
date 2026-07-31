@@ -1,7 +1,7 @@
 id: FND-06
 name: "Localization and English/Urdu Readiness"
 release: R0
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - FND-02
 applications:
@@ -17,11 +17,17 @@ allowed_paths:
   - automation/
   - docs/modules/FND-06/
   - automation/modules/FND-06.yaml
+  - automation/scripts/scaffold_fnd06_localization.py
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - apps/teacher_app/
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_design_system/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -32,12 +38,15 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - English and Urdu foundation copy available
+  - Urdu uses RTL direction
+  - Theme localeTag selects Urdu typography fallbacks
+  - Student EN/UR switcher and locale preview work
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/nano_copy_test.dart
+  - apps/student_app/test/locale_preview_test.dart
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []

@@ -6,6 +6,7 @@ import 'package:admin_web/app/admin_shell.dart';
 GoRouter createAdminRouter({
   required EnvironmentConfig config,
   required SessionPrincipal principal,
+  required NanoCopy copy,
   required ValueChanged<SessionPrincipal> onPrincipalChanged,
   String? initialLocation,
 }) {
@@ -33,6 +34,7 @@ GoRouter createAdminRouter({
             principal: principal,
             navigationShell: navigationShell,
             onPrincipalChanged: onPrincipalChanged,
+            copy: copy,
           );
         },
         branches: [

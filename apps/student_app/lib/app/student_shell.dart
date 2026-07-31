@@ -4,6 +4,7 @@ import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/component_gallery_page.dart';
 import 'package:student_app/app/states_preview_page.dart';
+import 'package:student_app/app/locale_preview_page.dart';
 import 'package:student_app/app/diagnostics_page.dart';
 import 'package:student_app/app/environment_badge.dart';
 import 'package:student_app/app/nav_placeholder_page.dart';
@@ -18,21 +19,28 @@ class StudentShell extends StatelessWidget {
     required this.principal,
     required this.navigationShell,
     required this.onPrincipalChanged,
+    required this.onLocaleChanged,
+    required this.locale,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal principal;
   final StatefulNavigationShell navigationShell;
   final ValueChanged<SessionPrincipal> onPrincipalChanged;
+  final ValueChanged<NanoAppLocale> onLocaleChanged;
+  final NanoAppLocale locale;
 
   @override
   Widget build(BuildContext context) {
     final destinations = NavCatalog.visibleFor(principal);
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        NanoCopy(NanoAppLocale.en);
+    final junior = principal.role.usesJuniorPresentation;
     final items = [
       for (final d in destinations)
         NanoBottomNavItem(
           id: d.id,
-          label: d.label,
+          label: copy.studentNavLabel(d.id, junior: junior),
           icon: nanoNavIcon(d.iconName),
         ),
     ];
@@ -44,47 +52,77 @@ class StudentShell extends StatelessWidget {
       appBar: AppBar(
         title: Text(config.appDisplayName),
         actions: [
-          if (config.environment.showDebugTools) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<AppRole>(
-                  value: principal.role,
-                  items: const [
-                    DropdownMenuItem(
-                      value: AppRole.juniorStudent,
-                      child: Text('Junior'),
-                    ),
-                    DropdownMenuItem(
-                      value: AppRole.seniorStudent,
-                      child: Text('Senior'),
-                    ),
-                    DropdownMenuItem(
-                      value: AppRole.independentStudent,
-                      child: Text('Independent'),
-                    ),
-                  ],
-                  onChanged: (role) {
-                    if (role == null) return;
-                    final next = switch (role) {
-                      AppRole.juniorStudent => SessionPrincipal.junior(),
-                      AppRole.seniorStudent =>
-                        SessionPrincipal.seniorSchool(),
-                      AppRole.independentStudent =>
-                        SessionPrincipal.independent(),
-                      _ => principal,
-                    };
-                    onPrincipalChanged(next);
-                  },
-                ),
-              ),
-            ),
+          if (config.environment.showDebugTools)
             EnvironmentBadge(environment: config.environment),
-          ],
         ],
       ),
       body: Column(
         children: [
+          if (config.environment.showDebugTools)
+            Material(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: NanoSpacing.sm,
+                  vertical: NanoSpacing.xs,
+                ),
+                child: Row(
+                  children: [
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<NanoAppLocale>(
+                        value: locale,
+                        items: const [
+                          DropdownMenuItem(
+                            value: NanoAppLocale.en,
+                            child: Text('EN'),
+                          ),
+                          DropdownMenuItem(
+                            value: NanoAppLocale.ur,
+                            child: Text('UR'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) onLocaleChanged(value);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: NanoSpacing.sm),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<AppRole>(
+                        value: principal.role,
+                        items: const [
+                          DropdownMenuItem(
+                            value: AppRole.juniorStudent,
+                            child: Text('Junior'),
+                          ),
+                          DropdownMenuItem(
+                            value: AppRole.seniorStudent,
+                            child: Text('Senior'),
+                          ),
+                          DropdownMenuItem(
+                            value: AppRole.independentStudent,
+                            child: Text('Independent'),
+                          ),
+                        ],
+                        onChanged: (role) {
+                          if (role == null) return;
+                          final next = switch (role) {
+                            AppRole.juniorStudent => SessionPrincipal.junior(),
+                            AppRole.seniorStudent =>
+                              SessionPrincipal.seniorSchool(),
+                            AppRole.independentStudent =>
+                              SessionPrincipal.independent(),
+                            _ => principal,
+                          };
+                          onPrincipalChanged(next);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Expanded(child: navigationShell),
           if (config.environment.showDebugTools)
             SafeArea(
@@ -126,6 +164,16 @@ class StudentShell extends StatelessWidget {
                         );
                       },
                       child: const Text('UI states'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const LocalePreviewPage(),
+                          ),
+                        );
+                      },
+                      child: const Text('Locale'),
                     ),
                     TextButton(
                       onPressed: () {

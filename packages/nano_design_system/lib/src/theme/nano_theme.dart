@@ -7,8 +7,12 @@ import 'nano_theme_extension.dart';
 import 'school_branding.dart';
 
 abstract final class NanoTheme {
-  static ThemeData junior({SchoolBranding branding = const SchoolBranding()}) {
+  static ThemeData junior({
+    SchoolBranding branding = const SchoolBranding(),
+    String? localeTag,
+  }) {
     return _build(
+      localeTag: localeTag,
       experience: NanoExperience.junior,
       dense: false,
       cardRadius: NanoRadii.junior,
@@ -19,8 +23,12 @@ abstract final class NanoTheme {
     );
   }
 
-  static ThemeData senior({SchoolBranding branding = const SchoolBranding()}) {
+  static ThemeData senior({
+    SchoolBranding branding = const SchoolBranding(),
+    String? localeTag,
+  }) {
     return _build(
+      localeTag: localeTag,
       experience: NanoExperience.senior,
       dense: true,
       cardRadius: NanoRadii.senior,
@@ -31,8 +39,12 @@ abstract final class NanoTheme {
     );
   }
 
-  static ThemeData teacher({SchoolBranding branding = const SchoolBranding()}) {
+  static ThemeData teacher({
+    SchoolBranding branding = const SchoolBranding(),
+    String? localeTag,
+  }) {
     return _build(
+      localeTag: localeTag,
       experience: NanoExperience.teacher,
       dense: true,
       cardRadius: NanoRadii.admin,
@@ -46,8 +58,12 @@ abstract final class NanoTheme {
     );
   }
 
-  static ThemeData schoolAdmin({SchoolBranding branding = const SchoolBranding()}) {
+  static ThemeData schoolAdmin({
+    SchoolBranding branding = const SchoolBranding(),
+    String? localeTag,
+  }) {
     return _build(
+      localeTag: localeTag,
       experience: NanoExperience.schoolAdmin,
       dense: true,
       cardRadius: NanoRadii.admin,
@@ -61,8 +77,12 @@ abstract final class NanoTheme {
     );
   }
 
-  static ThemeData superadmin({SchoolBranding branding = const SchoolBranding()}) {
+  static ThemeData superadmin({
+    SchoolBranding branding = const SchoolBranding(),
+    String? localeTag,
+  }) {
     return _build(
+      localeTag: localeTag,
       experience: NanoExperience.superadmin,
       dense: true,
       cardRadius: NanoRadii.admin,
@@ -87,6 +107,7 @@ abstract final class NanoTheme {
     required double cardPadding,
     required double minTapTarget,
     required SchoolBranding branding,
+    String? localeTag,
     Color? accent,
     Color canvas = NanoColors.canvas,
     Color surface = NanoColors.surfaceCard,
@@ -108,13 +129,13 @@ abstract final class NanoTheme {
       brightness: Brightness.dark,
       colorScheme: scheme,
       scaffoldBackgroundColor: canvas,
-      textTheme: NanoTypography.textTheme(dense: dense),
+      textTheme: NanoTypography.textTheme(dense: dense, localeTag: localeTag),
       appBarTheme: AppBarTheme(
         backgroundColor: canvas,
         foregroundColor: NanoColors.textPrimary,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: NanoTypography.textTheme(dense: dense).titleLarge,
+        titleTextStyle: NanoTypography.textTheme(dense: dense, localeTag: localeTag).titleLarge,
       ),
       cardTheme: CardThemeData(
         color: surface,

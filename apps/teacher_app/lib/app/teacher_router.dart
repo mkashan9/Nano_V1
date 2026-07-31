@@ -5,6 +5,7 @@ import 'package:teacher_app/app/teacher_shell.dart';
 GoRouter createTeacherRouter({
   required EnvironmentConfig config,
   required SessionPrincipal principal,
+  required NanoCopy copy,
   String? initialLocation,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
@@ -30,6 +31,7 @@ GoRouter createTeacherRouter({
             config: config,
             principal: principal,
             navigationShell: navigationShell,
+            copy: copy,
           );
         },
         branches: [
