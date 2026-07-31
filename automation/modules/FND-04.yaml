@@ -1,7 +1,7 @@
 id: FND-04
 name: "Navigation and Role-Aware Application Shells"
 release: R0
-status: USER_TEST
+status: APPROVED
 dependencies:
   - FND-03
 applications:
