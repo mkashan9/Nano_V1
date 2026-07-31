@@ -21,6 +21,68 @@ class ContinueLearningItem {
 /// Non-blocking notices the home screen may show above content.
 enum HomeNoticeKind { none, maintenance, accessWarning }
 
+/// Independently loaded parts of the home, so one failure never blanks the
+/// whole screen (handbook STU-02: "Home renders with partial data when one
+/// source fails").
+enum HomeSection { continueLearning, missions, subjects, flex, updates }
+
+/// Display-only level derived from server-owned XP.
+///
+/// The server remains the authority for XP; this only decides how to draw it,
+/// so a client cannot award itself a level.
+class LevelProgress {
+  const LevelProgress({
+    required this.level,
+    required this.xpIntoLevel,
+    required this.xpPerLevel,
+  });
+
+  static const int defaultXpPerLevel = 250;
+
+  factory LevelProgress.fromXp(int xp, {int xpPerLevel = defaultXpPerLevel}) {
+    final safeXp = xp < 0 ? 0 : xp;
+    return LevelProgress(
+      level: safeXp ~/ xpPerLevel + 1,
+      xpIntoLevel: safeXp % xpPerLevel,
+      xpPerLevel: xpPerLevel,
+    );
+  }
+
+  final int level;
+  final int xpIntoLevel;
+  final int xpPerLevel;
+
+  int get xpToNextLevel => xpPerLevel - xpIntoLevel;
+
+  double get fraction => xpIntoLevel / xpPerLevel;
+}
+
+/// Flex snapshot for school-eligible seniors only.
+class FlexSummary {
+  const FlexSummary({
+    required this.openTasks,
+    this.nextDueLabel,
+  });
+
+  final int openTasks;
+  final String? nextDueLabel;
+
+  bool get hasWork => openTasks > 0;
+}
+
+/// The latest relevant update: teacher feedback, a school notice, a result.
+class HomeUpdate {
+  const HomeUpdate({
+    required this.title,
+    required this.body,
+    required this.at,
+  });
+
+  final String title;
+  final String body;
+  final DateTime at;
+}
+
 /// Everything the student home needs, aggregated in one read.
 ///
 /// Junior and senior presentations consume the same summary; only the
@@ -38,6 +100,9 @@ class StudentHomeSummary {
     this.unreadNotifications = 0,
     this.notice = HomeNoticeKind.none,
     this.fromCache = false,
+    this.flex,
+    this.latestUpdate,
+    this.failedSections = const {},
   });
 
   final String learnerName;
@@ -54,7 +119,32 @@ class StudentHomeSummary {
   /// True when served from cache, so the UI can show an offline timestamp.
   final bool fromCache;
 
-  bool get hasContent => continueItem != null || subjects.isNotEmpty;
+  /// Present only for school-eligible learners; independents never get one.
+  final FlexSummary? flex;
+
+  final HomeUpdate? latestUpdate;
+
+  /// Sections whose source failed. They render an inline notice instead of
+  /// taking down the rest of the home.
+  final Set<HomeSection> failedSections;
+
+  bool get hasContent =>
+      continueItem != null ||
+      subjects.isNotEmpty ||
+      missions.isNotEmpty ||
+      flex != null ||
+      latestUpdate != null;
+
+  bool failed(HomeSection section) => failedSections.contains(section);
+
+  bool get isPartial => failedSections.isNotEmpty;
+
+  LevelProgress get level => LevelProgress.fromXp(xp);
+
+  bool get showsFlex => flex != null && !failed(HomeSection.flex);
+
+  /// Senior plan shows the whole day, unlike the capped junior list.
+  List<HomePlanItem> get plan => missions;
 
   /// Junior missions stay short; a long list overwhelms young learners.
   List<HomePlanItem> get juniorMissions => missions.take(3).toList(growable: false);
@@ -82,6 +172,9 @@ class StudentHomeSummary {
     int? unreadNotifications,
     HomeNoticeKind? notice,
     bool? fromCache,
+    FlexSummary? flex,
+    HomeUpdate? latestUpdate,
+    Set<HomeSection>? failedSections,
   }) {
     return StudentHomeSummary(
       learnerName: learnerName ?? this.learnerName,
@@ -95,6 +188,9 @@ class StudentHomeSummary {
       unreadNotifications: unreadNotifications ?? this.unreadNotifications,
       notice: notice ?? this.notice,
       fromCache: fromCache ?? this.fromCache,
+      flex: flex ?? this.flex,
+      latestUpdate: latestUpdate ?? this.latestUpdate,
+      failedSections: failedSections ?? this.failedSections,
     );
   }
 }

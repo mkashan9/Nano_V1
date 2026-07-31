@@ -17,6 +17,7 @@ import 'package:student_app/features/home/presentation/junior_home_foundation.da
 import 'package:student_app/features/home/presentation/junior_home_page.dart';
 import 'package:student_app/features/home/presentation/responsive_preview_page.dart';
 import 'package:student_app/features/home/presentation/senior_home_foundation.dart';
+import 'package:student_app/features/home/presentation/senior_home_page.dart';
 
 class StudentShell extends StatelessWidget {
   const StudentShell({
@@ -280,18 +281,37 @@ class StudentLearningTab extends StatelessWidget {
     required this.principal,
     this.homeRepository,
     this.companionName,
+    this.onOpenFlex,
   });
 
   final SessionPrincipal principal;
   final StudentHomeRepository? homeRepository;
   final String? companionName;
+  final VoidCallback? onOpenFlex;
 
   @override
   Widget build(BuildContext context) {
-    if (!principal.role.usesJuniorPresentation) {
-      return const SeniorHomeFoundation();
-    }
     final repository = homeRepository;
+    if (!principal.role.usesJuniorPresentation) {
+      if (repository == null) {
+        return const SeniorHomeFoundation();
+      }
+      return SeniorHomePage(
+        repository: repository,
+        learnerName: principal.displayName.isEmpty
+            ? StudentHomeFixtures.studentName
+            : principal.displayName,
+        userId: principal.userId ?? 'local',
+        companionName: companionName ?? 'Nori',
+        flexEligible: NavCatalog.visibleFor(principal)
+            .any((dest) => dest.id == 'flex'),
+        onOpenFlex: onOpenFlex,
+        onSubjectTap: (_) {},
+        onContinue: (_) {},
+        onOpenUpdate: () {},
+        onNotifications: () {},
+      );
+    }
     if (repository == null) {
       // Static preview until a data source is supplied (FND-03 foundation).
       return const JuniorHomeFoundation();

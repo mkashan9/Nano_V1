@@ -194,6 +194,7 @@ GoRouter createStudentRouter({
                   path: dest.path == '/' ? '/' : dest.path,
                   name: dest.id,
                   builder: (context, state) => _pageFor(
+                    context,
                     dest.id,
                     principal,
                     homeRepository: homeRepository,
@@ -209,6 +210,7 @@ GoRouter createStudentRouter({
 }
 
 Widget _pageFor(
+  BuildContext context,
   String id,
   SessionPrincipal principal, {
   StudentHomeRepository? homeRepository,
@@ -219,6 +221,9 @@ Widget _pageFor(
         principal: principal,
         homeRepository: homeRepository,
         companionName: companionName,
+        // Home cards deep-link through the resolver, so an ineligible learner
+        // lands somewhere valid instead of on a dead route.
+        onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
       ),
     'game' || 'games' => const StudentGamesTab(),
     'flex' => const StudentFlexTab(),
@@ -226,4 +231,18 @@ Widget _pageFor(
     'profile' => StudentProfileTab(principal: principal),
     _ => Center(child: Text('Unknown tab: $id')),
   };
+}
+
+void _openDeepLink(
+  BuildContext context,
+  SessionPrincipal principal,
+  String location,
+) {
+  final resolved = DeepLinkResolver.resolve(principal, location);
+  context.go(resolved.location);
+  if (resolved.fellBack) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$location is unavailable — opened Home instead')),
+    );
+  }
 }

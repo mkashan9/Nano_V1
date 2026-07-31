@@ -1,7 +1,7 @@
 id: STU-04
 name: "Senior Home"
 release: R2
-status: BACKLOG
+status: APPROVED
 dependencies:
   - STU-02
   - FND-05
@@ -15,6 +15,9 @@ allowed_paths:
   - automation/
   - docs/modules/STU-04/
   - automation/modules/STU-04.yaml
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
@@ -25,21 +28,33 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for STU-04"
-ui_references: []
+  - "STU-02 Student Home — senior level, XP, streak, Flex summary when eligible, and Today's Plan"
+ui_references:
+  - UI_reference/four_12/home
 database_scope: []
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Senior home shows level, XP progress, streak, latest update, continue card, Today's Plan and subjects
+  - Home renders with partial data when one source fails; the failed section shows an inline notice with retry
+  - Flex summary appears only for school-eligible seniors and never for independent learners
+  - Senior cards deep-link through DeepLinkResolver so ineligible learners land on a valid route
+  - Level is derived from server-owned XP for display only; the client awards nothing
+  - Maintenance blocks, offline shows a timestamp, cached content still renders
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/student_home_summary_test.dart
+  - packages/nano_data/test/student_home_repository_test.dart
+  - apps/student_app/test/senior_home_page_test.dart
+  - apps/student_app/test/shell_navigation_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - flex_gated_by_server_entitlement
+  - no_client_side_xp_or_level_writes
+accessibility_checks:
+  - level_progress_semantics_label
+  - section_notice_live_region
+  - locale_copy_en_ur
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - See docs/modules/STU-04/MANUAL_TEST.md
+rollback_notes: "Revert module branch commits; StudentLearningTab falls back to SeniorHomeFoundation when no home repository is supplied"
 requires_owner_test: true

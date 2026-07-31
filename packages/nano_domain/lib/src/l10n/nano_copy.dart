@@ -99,6 +99,21 @@ class NanoCopy {
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>
       isUrdu ? '$percent% مکمل' : '$percent% done';
+  String levelLabel(int level) => isUrdu ? 'لیول $level' : 'Level $level';
+  String xpToNextLevel(int xp) =>
+      isUrdu ? 'اگلے لیول تک $xp XP' : '$xp XP to next level';
+  String get todaysPlan => isUrdu ? 'آج کا پلان' : "Today's Plan";
+  String get planEmpty =>
+      isUrdu ? 'آج کے لیے کچھ باقی نہیں۔' : 'Nothing planned for today.';
+  String get latestUpdate => isUrdu ? 'تازہ اپڈیٹ' : 'Latest update';
+  String get flexTitle => isUrdu ? 'فلیکس' : 'Flex';
+  String flexOpenTasks(int count) =>
+      isUrdu ? '$count کام باقی ہیں' : '$count tasks open';
+  String get continueBuilding => isUrdu ? 'بناتے رہیں' : 'Continue building';
+  String get sectionUnavailable =>
+      isUrdu ? 'یہ حصہ ابھی لوڈ نہیں ہوا۔' : "This part didn't load.";
+  String get retryLabel => isUrdu ? 'دوبارہ کوشش' : 'Try again';
+
   String get accessWarning => isUrdu
       ? 'آپ کی رسائی جلد ختم ہو رہی ہے۔ سیکھنا جاری رکھیں۔'
       : 'Your access is ending soon. You can keep learning for now.';

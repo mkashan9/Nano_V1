@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- STU-04: senior home with level and XP progress, Today's Plan, eligibility-gated Flex summary, and partial-data section notices
+
 - STU-03: junior home with aggregated home summary, repository-backed content, and full state coverage
 
 - STU-02: companion naming, language, sound, and accessibility preferences with owner-only RLS
