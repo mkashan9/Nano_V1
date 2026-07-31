@@ -98,15 +98,18 @@ begin
     raise exception 'FAIL: start_topic is not idempotent';
   end if;
 
-  v_row := public.save_topic_progress(
-    '40000000-0000-0000-0000-000000000001', 45, 0.35
+  -- LRN-03 replaced save_topic_progress with record_playback_heartbeat, so the
+  -- LRN-02 invariants are checked through the current write path: the resume
+  -- position is stored and the client still cannot mark a topic completed.
+  v_row := public.record_playback_heartbeat(
+    '40000000-0000-0000-0000-000000000001', 45
   );
-  if v_row.resume_seconds <> 45 or v_row.progress <> 0.350 then
-    raise exception 'FAIL: save_topic_progress did not store heartbeat';
+  if v_row.resume_seconds <> 45 then
+    raise exception 'FAIL: heartbeat did not store the resume position';
   end if;
 
-  v_row := public.save_topic_progress(
-    '40000000-0000-0000-0000-000000000001', 120, 1.0
+  v_row := public.record_playback_heartbeat(
+    '40000000-0000-0000-0000-000000000001', 120
   );
   if v_row.status <> 'in_progress' or v_row.completed_at is not null then
     raise exception 'FAIL: client was able to mark a topic completed';

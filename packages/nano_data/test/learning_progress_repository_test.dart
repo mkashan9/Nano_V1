@@ -35,34 +35,85 @@ void main() {
     }
   });
 
-  test('saveProgress clamps and never lowers progress', () async {
+  test('a heartbeat credits the time watched, not the time skipped', () async {
     final repo = FakeLearningProgressRepository();
     await repo.start('tv-counting-1');
-    final mid = await repo.saveProgress(
+    final walked = await repo.heartbeat(
       topicVersionId: 'tv-counting-1',
-      resumeSeconds: 45,
-      progress: 0.4,
+      positionSeconds: 15,
     );
-    final late = await repo.saveProgress(
+    final jumped = await repo.heartbeat(
       topicVersionId: 'tv-counting-1',
-      resumeSeconds: 10,
-      progress: 0.1,
+      positionSeconds: 120,
     );
-    expect(mid.progress, 0.4);
-    expect(late.progress, 0.4);
-    expect(late.resumeSeconds, 10);
+
+    expect(walked.watchedSeconds, 15);
+    // Fifteen seconds of clock cannot pay for 105 seconds of video.
+    expect(jumped.watchedSeconds, 33);
+    expect(jumped.resumeSeconds, 120, reason: 'resume follows the player head');
   });
 
-  test('saveProgress never marks a topic completed', () async {
+  test('a heartbeat never marks a topic completed', () async {
     final repo = FakeLearningProgressRepository();
-    final row = await repo.saveProgress(
+    await repo.start('tv-counting-1');
+    final row = await repo.heartbeat(
       topicVersionId: 'tv-counting-1',
-      resumeSeconds: 120,
-      progress: 1.5,
+      positionSeconds: 120,
     );
-    expect(row.progress, 1.0);
-    expect(row.status, TopicProgressStatus.inProgress);
     expect(row.isCompleted, isFalse);
+    expect(row.status, TopicProgressStatus.inProgress);
+  });
+
+  test('completion is refused until the threshold is credited', () async {
+    final repo = FakeLearningProgressRepository();
+    await repo.start('tv-counting-1');
+    repo.seedWatched('tv-counting-1', 107);
+    try {
+      await repo.complete('tv-counting-1');
+      fail('expected TopicGateException');
+    } on TopicGateException catch (error) {
+      expect(error.reason, TopicGateReason.notWatchedEnough);
+      expect(error.code, 'NL005');
+      expect(error.message, contains('Keep watching'));
+    }
+    expect(repo.completed, isEmpty);
+  });
+
+  test('completion happens once and stays put', () async {
+    final repo = FakeLearningProgressRepository();
+    await repo.start('tv-counting-1');
+    repo.seedWatched('tv-counting-1', 110);
+    final first = await repo.complete('tv-counting-1');
+    final second = await repo.complete('tv-counting-1');
+
+    expect(first.isCompleted, isTrue);
+    expect(second.completedAt, first.completedAt);
+    expect(repo.completed, ['tv-counting-1'], reason: 'no duplicate event');
+  });
+
+  test('a completed topic keeps its status through later heartbeats', () async {
+    final repo = FakeLearningProgressRepository();
+    await repo.start('tv-counting-1');
+    repo.seedWatched('tv-counting-1', 110);
+    await repo.complete('tv-counting-1');
+    final row = await repo.heartbeat(
+      topicVersionId: 'tv-counting-1',
+      positionSeconds: 20,
+    );
+    expect(row.status, TopicProgressStatus.completed);
+  });
+
+  test('locked topics refuse heartbeats too', () async {
+    final repo = FakeLearningProgressRepository();
+    try {
+      await repo.heartbeat(
+        topicVersionId: 'tv-addition-1',
+        positionSeconds: 5,
+      );
+      fail('expected TopicGateException');
+    } on TopicGateException catch (error) {
+      expect(error.reason, TopicGateReason.locked);
+    }
   });
 
   test('unlock removes the local gate for fixture flows', () async {

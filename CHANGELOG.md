@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- LRN-03: server-credited watch time, resume, captions, and audited one-time topic completion
+
 - LRN-02: topic ordering invariants, prerequisite write gates, RPC-only progress, and topic detail with unlock reason
 
 - Fix: onboarding steps commit even when saving settings rebuilds the app, and a failed save now says so

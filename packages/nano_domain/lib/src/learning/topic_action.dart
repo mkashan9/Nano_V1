@@ -6,12 +6,14 @@ enum TopicGateReason {
   locked,
   unavailable,
   notLearner,
+  notWatchedEnough,
   unknown;
 
   static TopicGateReason fromCode(String? code) => switch (code) {
         'NL001' => TopicGateReason.locked,
         'NL002' => TopicGateReason.unavailable,
         'NL003' => TopicGateReason.notLearner,
+        'NL005' => TopicGateReason.notWatchedEnough,
         _ => TopicGateReason.unknown,
       };
 }
@@ -47,7 +49,7 @@ extension TopicActionX on TopicAction {
   bool get isEnabled => this != TopicAction.locked;
 }
 
-/// Progress row returned by start/save RPCs.
+/// Progress row returned by start/heartbeat/complete RPCs.
 class TopicProgress {
   const TopicProgress({
     required this.userId,
@@ -55,6 +57,7 @@ class TopicProgress {
     required this.status,
     required this.progress,
     required this.resumeSeconds,
+    this.watchedSeconds = 0,
     this.completedAt,
   });
 
@@ -66,6 +69,7 @@ class TopicProgress {
       status: TopicProgressStatus.fromName(row['status'] as String?),
       progress: (row['progress'] as num?)?.toDouble() ?? 0,
       resumeSeconds: (row['resume_seconds'] as num?)?.toInt() ?? 0,
+      watchedSeconds: (row['watched_seconds'] as num?)?.toInt() ?? 0,
       completedAt:
           completedRaw == null ? null : DateTime.tryParse(completedRaw),
     );
@@ -76,6 +80,7 @@ class TopicProgress {
   final TopicProgressStatus status;
   final double progress;
   final int resumeSeconds;
+  final int watchedSeconds;
   final DateTime? completedAt;
 
   bool get isCompleted => status == TopicProgressStatus.completed;
@@ -101,6 +106,7 @@ abstract final class TopicActionPolicy {
       status: row.status,
       progress: row.progress,
       resumeSeconds: row.resumeSeconds,
+      watchedSeconds: row.watchedSeconds,
     );
   }
 }

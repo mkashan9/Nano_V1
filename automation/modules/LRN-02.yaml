@@ -1,7 +1,7 @@
 id: LRN-02
 name: "Topic List, Ordering, and Prerequisites"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - LRN-01
 applications:

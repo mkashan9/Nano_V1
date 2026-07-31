@@ -1,5 +1,6 @@
 import '../l10n/nano_app_locale.dart';
 import 'learning_subject.dart';
+import 'topic_playback.dart';
 
 /// Per-learner state for one published topic version.
 enum TopicProgressStatus {
@@ -32,6 +33,12 @@ class CatalogTopic {
     this.status = TopicProgressStatus.notStarted,
     this.progress = 0,
     this.resumeSeconds = 0,
+    this.watchedSeconds = 0,
+    this.durationSeconds = 300,
+    this.completionThreshold = 0.9,
+    this.videoProvider,
+    this.videoRef,
+    this.captions = const CaptionTrack([]),
     this.blockingTitles = const [],
   });
 
@@ -49,6 +56,13 @@ class CatalogTopic {
       status: TopicProgressStatus.fromName(row['progress_status'] as String?),
       progress: (row['progress'] as num?)?.toDouble() ?? 0,
       resumeSeconds: (row['resume_seconds'] as num?)?.toInt() ?? 0,
+      watchedSeconds: (row['watched_seconds'] as num?)?.toInt() ?? 0,
+      durationSeconds: (row['duration_seconds'] as num?)?.toInt() ?? 300,
+      completionThreshold:
+          (row['completion_threshold'] as num?)?.toDouble() ?? 0.9,
+      videoProvider: row['video_provider'] as String?,
+      videoRef: row['video_ref'] as String?,
+      captions: CaptionTrack.fromRows(row['captions']),
       blockingTitles: _stringList(row['blocking_titles']),
     );
   }
@@ -66,6 +80,15 @@ class CatalogTopic {
   final double progress;
   final int resumeSeconds;
 
+  /// Watch time the server has credited, which is what completion is measured
+  /// against. The client never adds to this on its own.
+  final int watchedSeconds;
+  final int durationSeconds;
+  final double completionThreshold;
+  final String? videoProvider;
+  final String? videoRef;
+  final CaptionTrack captions;
+
   /// Prerequisite topic titles still outstanding, as computed on the server.
   final List<String> blockingTitles;
 
@@ -74,6 +97,19 @@ class CatalogTopic {
   bool get canResume =>
       !isLocked && status == TopicProgressStatus.inProgress && resumeSeconds > 0;
   int get percentComplete => (progress.clamp(0, 1) * 100).round();
+  bool get hasVideo => (videoRef?.isNotEmpty ?? false);
+
+  bool get meetsCompletionThreshold => PlaybackPolicy.canComplete(
+        watchedSeconds: watchedSeconds,
+        durationSeconds: durationSeconds,
+        threshold: completionThreshold,
+      );
+
+  int get secondsLeftToComplete => PlaybackPolicy.remainingSeconds(
+        watchedSeconds: watchedSeconds,
+        durationSeconds: durationSeconds,
+        threshold: completionThreshold,
+      );
 
   String titleFor(NanoAppLocale locale) =>
       locale == NanoAppLocale.ur && (titleUr?.isNotEmpty ?? false)
@@ -84,6 +120,7 @@ class CatalogTopic {
     TopicProgressStatus? status,
     double? progress,
     int? resumeSeconds,
+    int? watchedSeconds,
     List<String>? blockingTitles,
   }) {
     return CatalogTopic(
@@ -99,6 +136,12 @@ class CatalogTopic {
       status: status ?? this.status,
       progress: progress ?? this.progress,
       resumeSeconds: resumeSeconds ?? this.resumeSeconds,
+      watchedSeconds: watchedSeconds ?? this.watchedSeconds,
+      durationSeconds: durationSeconds,
+      completionThreshold: completionThreshold,
+      videoProvider: videoProvider,
+      videoRef: videoRef,
+      captions: captions,
       blockingTitles: blockingTitles ?? this.blockingTitles,
     );
   }

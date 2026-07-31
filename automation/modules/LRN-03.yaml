@@ -1,7 +1,7 @@
 id: LRN-03
 name: "Video Player, Resume, Captions, and Completion"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - LRN-02
 applications:
@@ -9,6 +9,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -19,26 +20,60 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LRN-03"
+  - "LRN-02 Video Learning and Progress"
+  - "Resume works across app restarts"
+  - "Completion cannot be duplicated"
+  - "Completion event must be validated"
+  - "Progress heartbeats retry with idempotency"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.topic_versions
+  - public.learning_progress
+  - public.topic_completions
+  - public.learning_catalog
+server_functions:
+  - public.record_playback_heartbeat
+  - public.complete_topic
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Watched time is credited by the server from wall-clock elapsed, never claimed by the client
+  - Seeking forward does not earn credit
+  - Completion requires the version's threshold of credited watch time
+  - Completion is idempotent and cannot be duplicated
+  - Resume position survives app restart
+  - Captions render when available and follow the learner's captions preference
+  - Player exposes a companion slot without blocking playback
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/topic_playback_test.dart
+  - packages/nano_data/test/learning_progress_repository_test.dart
+  - apps/student_app/test/topic_player_page_test.dart
+  - supabase/tests/lrn03_playback_verification.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_client_claimed_progress
+  - completion_threshold_server_enforced
+  - completion_not_duplicable
+  - playback_writes_owner_only
+  - completion_audited
+accessibility_checks:
+  - captions_follow_preference
+  - playback_controls_labelled
+  - reduced_motion_respected
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Counting to 20 as Junior, press Play, watch the position advance and progress rise
+  - Drag the position to the end and confirm Mark complete stays disabled with time still required
+  - Let the credited time pass the threshold, press Mark complete, confirm the topic shows Completed
+  - Reopen the topic and confirm it resumes at the saved position
+rollback_notes: "Revert module branch commits; dropping topic_completions requires owner approval"
 requires_owner_test: true
