@@ -6,12 +6,17 @@ class NanoOfflineBanner extends StatelessWidget {
   const NanoOfflineBanner({
     super.key,
     this.message = 'You are offline. Changes will sync when you reconnect.',
+    this.lastUpdatedLabel,
   });
 
   final String message;
+  final String? lastUpdatedLabel;
 
   @override
   Widget build(BuildContext context) {
+    final body = lastUpdatedLabel == null
+        ? message
+        : '$message · Last updated $lastUpdatedLabel';
     return Material(
       color: NanoColors.offline.withValues(alpha: 0.2),
       child: Padding(
@@ -23,7 +28,7 @@ class NanoOfflineBanner extends StatelessWidget {
           children: [
             const Icon(Icons.wifi_off, color: NanoColors.offline),
             const SizedBox(width: NanoSpacing.sm),
-            Expanded(child: Text(message)),
+            Expanded(child: Text(body)),
           ],
         ),
       ),
