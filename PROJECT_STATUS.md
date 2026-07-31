@@ -3,12 +3,12 @@
 ## Current state
 
 - **Current release:** R1 Identity
-- **Current module:** AUTH-04 Independent Student Signup and Recovery
+- **Current module:** STU-01 Student First-Run Onboarding
 - **Current status:** USER_TEST
-- **Current branch:** module/AUTH-04-independent-signup
-- **Last completed module:** AUTH-03
+- **Current branch:** module/STU-01-first-run-onboarding
+- **Last completed module:** AUTH-04
 - **Application name:** Nano
 
-## Next after AUTH-04 DONE
+## Next after STU-01 DONE
 
-STU-01 Student First-Run Onboarding
+STU-02 Nori Naming, Language, Sound, and Accessibility Setup

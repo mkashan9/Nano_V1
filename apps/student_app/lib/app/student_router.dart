@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/student_shell.dart';
 import 'package:student_app/features/auth/presentation/recover_password_page.dart';
 import 'package:student_app/features/auth/presentation/sign_in_page.dart';
 import 'package:student_app/features/auth/presentation/sign_up_page.dart';
+import 'package:student_app/features/onboarding/presentation/onboarding_flow_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -22,18 +24,30 @@ GoRouter createStudentRouter({
   AuthBootstrap? authBootstrap,
   ValueChanged<AuthBootstrap>? onAuthBootstrap,
   VoidCallback? onSignedOut,
+  OnboardingRepository? onboardingRepository,
+  OnboardingProgress? onboardingProgress,
+  ValueChanged<OnboardingProgress>? onOnboardingChanged,
+  void Function(OnboardingProgress progress, ExperienceTrack track)?
+      onOnboardingCompleted,
+  String? schoolName,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
   final blocked = authBootstrap?.isBlocked ?? false;
+  final needsOnboarding = authenticated &&
+      !blocked &&
+      onboardingRepository != null &&
+      onboardingProgress?.isComplete != true;
   final resolvedInitial = !authenticated
       ? '/sign-in'
       : blocked
           ? '/blocked'
-          : DeepLinkResolver.resolve(
-              principal,
-              initialLocation ?? '/',
-            ).location;
+          : needsOnboarding
+              ? '/onboarding'
+              : DeepLinkResolver.resolve(
+                  principal,
+                  initialLocation ?? '/',
+                ).location;
 
   return GoRouter(
     initialLocation: resolvedInitial,
@@ -53,6 +67,12 @@ GoRouter createStudentRouter({
       if (requireAuth &&
           principal.isAuthenticated &&
           const {'/sign-in', '/sign-up', '/recover'}.contains(path)) {
+        return needsOnboarding ? '/onboarding' : '/';
+      }
+      if (needsOnboarding && path != '/onboarding') {
+        return '/onboarding';
+      }
+      if (!needsOnboarding && path == '/onboarding') {
         return '/';
       }
       if (!principal.isAuthenticated) return null;
@@ -114,6 +134,29 @@ GoRouter createStudentRouter({
           return RecoverPasswordPage(
             authRepository: repo,
             onBackToSignIn: () => context.go('/sign-in'),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) {
+          final repo = onboardingRepository;
+          if (repo == null) {
+            return const Scaffold(
+              body: Center(child: Text('Onboarding is unavailable')),
+            );
+          }
+          return OnboardingFlowPage(
+            repository: repo,
+            progress: onboardingProgress ??
+                OnboardingProgress(userId: principal.userId ?? 'local'),
+            principal: principal,
+            schoolName: schoolName,
+            onProgressChanged: (progress) =>
+                onOnboardingChanged?.call(progress),
+            onCompleted: (progress, track) {
+              onOnboardingCompleted?.call(progress, track);
+            },
           );
         },
       ),

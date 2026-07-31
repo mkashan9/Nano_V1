@@ -1,7 +1,7 @@
 id: STU-01
 name: "Student First-Run Onboarding"
 release: R1
-status: BACKLOG
+status: APPROVED
 dependencies:
   - AUTH-01
   - FND-06
@@ -9,6 +9,7 @@ dependencies:
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
@@ -16,6 +17,10 @@ allowed_paths:
   - automation/
   - docs/modules/STU-01/
   - automation/modules/STU-01.yaml
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - supabase/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
@@ -26,21 +31,34 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for STU-01"
+  - "STU-01 Student Onboarding and Preferences (first-run portion; preferences are STU-02)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.student_onboarding
+  - nano_internal.is_student
+server_functions:
+  - nano_internal.is_student
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Onboarding resumes at the saved step after interruption
+  - Experience track derives from grade policy with override support
+  - Independent onboarding never promises school-only features
+  - Onboarding progress is readable and writable only by its owner
+  - Non-student accounts cannot create onboarding rows
+  - Copy is available in English and Urdu
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/stu01_onboarding_isolation.sql
+  - packages/nano_domain/test/onboarding_models_test.dart
+  - packages/nano_data/test/onboarding_repository_test.dart
+  - apps/student_app/test/onboarding_flow_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - cross_user_onboarding_isolation
+  - students_only_write_guard
+accessibility_checks:
+  - step_progress_semantics
+  - urdu_rtl_copy
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - See docs/modules/STU-01/MANUAL_TEST.md
+rollback_notes: "Drop public.student_onboarding and nano_internal.is_student; revert module branch commits"
 requires_owner_test: true

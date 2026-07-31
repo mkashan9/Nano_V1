@@ -75,6 +75,31 @@ class NanoCopy {
       ? 'Nano عارضی طور پر دستیاب نہیں۔ جلد کوشش کریں۔'
       : 'Nano is temporarily unavailable while we finish updates. Try again soon.';
 
+  String get onboardingWelcomeTitle =>
+      isUrdu ? 'Nano میں خوش آمدید' : 'Welcome to Nano';
+  String welcomeLine(String name) => isUrdu
+      ? '$name، آئیے آپ کا سیکھنے کا سفر ترتیب دیں۔'
+      : "$name, let's set up your learning.";
+  String get onboardingExperienceTitle =>
+      isUrdu ? 'آپ کس جماعت میں ہیں؟' : 'Which grade are you in?';
+  String get onboardingExperienceHelp => isUrdu
+      ? 'اس سے ہم صفحات کو آپ کے مطابق بناتے ہیں۔ آپ کا اسکول اسے بعد میں درست کر سکتا ہے۔'
+      : 'This shapes how pages look. Your school can correct it later.';
+  String get onboardingJunior => isUrdu ? 'جونیئر' : 'Junior';
+  String get onboardingSenior => isUrdu ? 'سینئر' : 'Senior';
+  String onboardingSchoolIntro(String schoolName) => isUrdu
+      ? 'آپ $schoolName سے منسلک ہیں۔ حاضری اور نمبر Flex میں نظر آئیں گے۔'
+      : 'You are linked to $schoolName. Attendance and marks appear in Flex.';
+  String get onboardingIndependentIntro => isUrdu
+      ? 'آپ خود سیکھ رہے ہیں: اسباق، کوئز اور گیمز آپ کے لیے تیار ہیں۔'
+      : 'You are learning on your own: lessons, quizzes, and games are ready for you.';
+  String get onboardingReadyTitle => isUrdu ? 'سب تیار ہے' : 'You are all set';
+  String get onboardingResumed =>
+      isUrdu ? 'ہم نے آپ کی جگہ محفوظ رکھی' : 'We saved your place';
+  String get onboardingContinue => isUrdu ? 'آگے بڑھیں' : 'Continue';
+  String get onboardingBack => isUrdu ? 'واپس' : 'Back';
+  String get onboardingStart => isUrdu ? 'سیکھنا شروع کریں' : 'Start learning';
+
   String get localePreviewTitle =>
       isUrdu ? 'زبان کا پیش منظر' : 'Locale preview';
   String get localePreviewBody => isUrdu
