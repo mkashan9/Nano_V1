@@ -17,7 +17,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Flex'), findsOneWidget);
+    // Nav destination, plus the home flex summary once it scrolls into view.
+    expect(find.text('Flex'), findsWidgets);
   });
 
   testWidgets('deep link to flex redirects independent to home', (tester) async {
@@ -37,6 +38,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Flex'), findsNothing);
     expect(find.text('Learning'), findsWidgets);
-    expect(find.text("Today's Mission"), findsOneWidget);
+    // Independent learners use the senior presentation, which leads with level.
+    expect(find.textContaining('Level 3'), findsOneWidget);
   });
 }

@@ -9,6 +9,7 @@ abstract class StudentHomeRepository {
     required String userId,
     required String learnerName,
     String companionName,
+    bool flexEligible,
   });
 }
 
@@ -23,6 +24,8 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     this.cacheAge = const Duration(hours: 3),
     this.subjects = const [],
     this.missions = const [],
+    this.failSections = const {},
+    this.includeUpdate = true,
   });
 
   bool failOnce;
@@ -34,6 +37,10 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
   final List<LearningSubject> subjects;
   final List<HomePlanItem> missions;
 
+  /// Sections that fail while the rest of the home still loads.
+  final Set<HomeSection> failSections;
+  final bool includeUpdate;
+
   var loadCount = 0;
 
   @override
@@ -41,6 +48,7 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     required String userId,
     required String learnerName,
     String companionName = 'Nori',
+    bool flexEligible = false,
   }) async {
     loadCount++;
     if (delay > Duration.zero) {
@@ -54,6 +62,7 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
       throw StateError('Home unavailable');
     }
     final now = DateTime.now().toUtc();
+    final failed = failSections;
     return StudentHomeSummary(
       learnerName: learnerName,
       companionName: companionName,
@@ -63,14 +72,29 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
       streakDays: 7,
       unreadNotifications: 2,
       notice: notice,
-      continueItem: const ContinueLearningItem(
-        id: 'lesson-animals',
-        title: 'Animals Adventure',
-        subjectId: 'science',
-        progress: 0.42,
-      ),
-      missions: missions,
-      subjects: subjects,
+      failedSections: failed,
+      continueItem: failed.contains(HomeSection.continueLearning)
+          ? null
+          : const ContinueLearningItem(
+              id: 'lesson-animals',
+              title: 'Animals Adventure',
+              subjectId: 'science',
+              progress: 0.42,
+            ),
+      missions: failed.contains(HomeSection.missions) ? const [] : missions,
+      subjects: failed.contains(HomeSection.subjects) ? const [] : subjects,
+      // Flex is a server-side entitlement; the fake honours the caller's
+      // eligibility rather than letting the UI decide.
+      flex: !flexEligible || failed.contains(HomeSection.flex)
+          ? null
+          : const FlexSummary(openTasks: 3, nextDueLabel: 'Due Friday'),
+      latestUpdate: !includeUpdate || failed.contains(HomeSection.updates)
+          ? null
+          : HomeUpdate(
+              title: 'Ms Khan reviewed your quiz',
+              body: 'Great work on fractions — try the bonus set next.',
+              at: now.subtract(const Duration(hours: 2)),
+            ),
     );
   }
 }
