@@ -18,6 +18,7 @@ import 'package:student_app/features/home/presentation/junior_home_page.dart';
 import 'package:student_app/features/home/presentation/responsive_preview_page.dart';
 import 'package:student_app/features/home/presentation/senior_home_foundation.dart';
 import 'package:student_app/features/home/presentation/senior_home_page.dart';
+import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 
 class StudentShell extends StatelessWidget {
@@ -281,14 +282,30 @@ class StudentLearningTab extends StatelessWidget {
     super.key,
     required this.principal,
     this.homeRepository,
+    this.catalogRepository,
     this.companionName,
     this.onOpenFlex,
   });
 
   final SessionPrincipal principal;
   final StudentHomeRepository? homeRepository;
+  final LearningCatalogRepository? catalogRepository;
   final String? companionName;
   final VoidCallback? onOpenFlex;
+
+  void _openSubject(BuildContext context, LearningSubject subject) {
+    final catalog = catalogRepository;
+    if (catalog == null) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SubjectTopicsPage(
+          repository: catalog,
+          subjectId: subject.id,
+          junior: principal.role.usesJuniorPresentation,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +324,7 @@ class StudentLearningTab extends StatelessWidget {
         flexEligible: NavCatalog.visibleFor(principal)
             .any((dest) => dest.id == 'flex'),
         onOpenFlex: onOpenFlex,
-        onSubjectTap: (_) {},
+        onSubjectTap: (subject) => _openSubject(context, subject),
         onContinue: (_) {},
         onOpenUpdate: () {},
         onNotifications: () {},
@@ -324,7 +341,7 @@ class StudentLearningTab extends StatelessWidget {
           : principal.displayName,
       userId: principal.userId ?? 'local',
       companionName: companionName ?? 'Nori',
-      onSubjectTap: (_) {},
+      onSubjectTap: (subject) => _openSubject(context, subject),
       onContinue: (_) {},
       onNotifications: () {},
     );

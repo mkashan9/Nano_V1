@@ -1,4 +1,5 @@
 export 'home/student_home_repository.dart';
+export 'learning/learning_catalog_repository.dart';
 export 'onboarding/onboarding_repository.dart';
 export 'profile/student_profile_repository.dart';
 export 'preferences/student_preferences_repository.dart';

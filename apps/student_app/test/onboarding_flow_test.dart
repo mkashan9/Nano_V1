@@ -33,6 +33,80 @@ Widget _host({
   );
 }
 
+/// Rebuilds the page under a fresh key whenever settings change, the way the
+/// app rebuilds its router.
+class _RemountingHost extends StatefulWidget {
+  const _RemountingHost({
+    required this.repository,
+    required this.preferencesRepository,
+  });
+
+  final OnboardingRepository repository;
+  final StudentPreferencesRepository preferencesRepository;
+
+  @override
+  State<_RemountingHost> createState() => _RemountingHostState();
+}
+
+class _RemountingHostState extends State<_RemountingHost> {
+  var _generation = 0;
+  StudentPreferences _preferences = const StudentPreferences(userId: 'u1');
+  OnboardingProgress _progress = const OnboardingProgress(
+    userId: 'u1',
+    currentStep: OnboardingStep.preferences,
+    selfReportedGradeLevel: 3,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return NanoLocaleScope(
+      locale: NanoAppLocale.en,
+      copy: const NanoCopy(NanoAppLocale.en),
+      child: MaterialApp(
+        home: OnboardingFlowPage(
+          key: ValueKey(_generation),
+          repository: widget.repository,
+          progress: _progress,
+          principal: SessionPrincipal.junior(displayName: 'Ali')
+              .copyWith(userId: 'u1', isAuthenticated: true),
+          preferencesRepository: widget.preferencesRepository,
+          preferences: _preferences,
+          onPreferencesChanged: (prefs) => setState(() {
+            _preferences = prefs;
+            _generation++;
+          }),
+          onProgressChanged: (progress) => _progress = progress,
+          onCompleted: (_, _) {},
+        ),
+      ),
+    );
+  }
+}
+
+/// Settings repository that answers a frame later, like a network round trip.
+class _SlowPreferencesRepository implements StudentPreferencesRepository {
+  final _inner = FakeStudentPreferencesRepository();
+
+  @override
+  Future<StudentPreferences> load(String userId) => _inner.load(userId);
+
+  @override
+  Future<StudentPreferences> save(StudentPreferences preferences) async {
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    return _inner.save(preferences);
+  }
+}
+
+class _FailingOnboardingRepository implements OnboardingRepository {
+  @override
+  Future<OnboardingProgress> load(String userId) async =>
+      OnboardingProgress(userId: userId);
+
+  @override
+  Future<OnboardingProgress> save(OnboardingProgress progress) async =>
+      throw StateError('offline');
+}
+
 void main() {
   testWidgets('school learner walks welcome to ready and completes',
       (tester) async {
@@ -161,6 +235,57 @@ void main() {
 
     expect(find.textContaining('Flex'), findsNothing);
     expect(find.textContaining('Attendance'), findsNothing);
+  });
+
+  testWidgets('preferences step survives an app rebuild on settings change',
+      (tester) async {
+    // The real app recreates its router when settings change, which remounts
+    // this page. The step must still be saved.
+    final repo = FakeOnboardingRepository();
+    await tester.pumpWidget(
+      _RemountingHost(
+        repository: repo,
+        preferencesRepository: _SlowPreferencesRepository(),
+      ),
+    );
+
+    expect(find.text('Name your learning guide'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'Tara');
+    await tester.tap(find.text('Continue'));
+    await tester.pump();
+    await tester.pumpAndSettle(const Duration(milliseconds: 100));
+
+    expect(repo.writes.last.currentStep, OnboardingStep.context);
+    expect(find.text("Couldn't save. Check your connection and try again."),
+        findsNothing);
+  });
+
+  testWidgets('a failed save explains itself instead of doing nothing',
+      (tester) async {
+    await tester.pumpWidget(
+      _host(
+        repository: _FailingOnboardingRepository(),
+        progress: const OnboardingProgress(
+          userId: 'u1',
+          currentStep: OnboardingStep.preferences,
+        ),
+        principal: SessionPrincipal.junior(displayName: 'Ali')
+            .copyWith(userId: 'u1', isAuthenticated: true),
+        preferencesRepository: FakeStudentPreferencesRepository(),
+      ),
+    );
+
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text("Couldn't save. Check your connection and try again."),
+      findsOneWidget,
+    );
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      isNotNull,
+    );
   });
 
   testWidgets('grade step blocks continue until a grade is chosen',

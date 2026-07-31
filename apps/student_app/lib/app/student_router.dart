@@ -36,6 +36,7 @@ GoRouter createStudentRouter({
   ValueChanged<StudentPreferences>? onPreferencesChanged,
   StudentHomeRepository? homeRepository,
   StudentProfileRepository? profileRepository,
+  LearningCatalogRepository? catalogRepository,
   NanoSyncController? syncController,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
@@ -201,6 +202,7 @@ GoRouter createStudentRouter({
                     principal,
                     homeRepository: homeRepository,
                     companionName: preferences?.companionName,
+                    catalogRepository: catalogRepository,
                     profileRepository: profileRepository,
                     preferences: preferences,
                     onPreferencesChanged: onPreferencesChanged,
@@ -223,6 +225,7 @@ Widget _pageFor(
   SessionPrincipal principal, {
   StudentHomeRepository? homeRepository,
   String? companionName,
+  LearningCatalogRepository? catalogRepository,
   StudentProfileRepository? profileRepository,
   StudentPreferences? preferences,
   ValueChanged<StudentPreferences>? onPreferencesChanged,
@@ -234,6 +237,7 @@ Widget _pageFor(
     'home' || 'learning' => StudentLearningTab(
         principal: principal,
         homeRepository: homeRepository,
+        catalogRepository: catalogRepository,
         companionName: companionName,
         // Home cards deep-link through the resolver, so an ineligible learner
         // lands somewhere valid instead of on a dead route.

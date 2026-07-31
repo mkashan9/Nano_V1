@@ -53,6 +53,7 @@ class NanoStudentApp extends StatefulWidget {
     this.preferencesRepository,
     this.homeRepository,
     this.profileRepository,
+    this.catalogRepository,
     this.syncController,
     this.requireAuth = false,
   });
@@ -67,6 +68,7 @@ class NanoStudentApp extends StatefulWidget {
   final StudentPreferencesRepository? preferencesRepository;
   final StudentHomeRepository? homeRepository;
   final StudentProfileRepository? profileRepository;
+  final LearningCatalogRepository? catalogRepository;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -85,6 +87,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   StudentPreferences? _preferences;
   late final StudentHomeRepository _homeRepository;
   late final StudentProfileRepository _profileRepository;
+  late LearningCatalogRepository _catalogRepository;
   late final NanoSyncController _syncController;
   var _restoring = false;
 
@@ -97,7 +100,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
-    // Home and profile content stay on fixtures until LRN/XP modules land.
+    // Home content stays on fixtures until XP modules land; subjects share
+    // catalog IDs so a tap opens the LRN-01 topic list.
     _homeRepository = widget.homeRepository ??
         FakeStudentHomeRepository(
           subjects: StudentHomeFixtures.subjects,
@@ -118,6 +122,10 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
                   ),
             ),
           ],
+        );
+    _catalogRepository = widget.catalogRepository ??
+        FakeLearningCatalogRepository(
+          seniorEligible: !_principal.role.usesJuniorPresentation,
         );
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
@@ -230,6 +238,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       }),
       homeRepository: _homeRepository,
       profileRepository: _profileRepository,
+      catalogRepository: _catalogRepository,
       syncController: _syncController,
     );
   }
@@ -256,6 +265,11 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   void _setPrincipal(SessionPrincipal next) {
     setState(() {
       _principal = next;
+      if (widget.catalogRepository == null) {
+        _catalogRepository = FakeLearningCatalogRepository(
+          seniorEligible: !next.role.usesJuniorPresentation,
+        );
+      }
       _router = _createRouter();
     });
   }

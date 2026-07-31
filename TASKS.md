@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] STU-05 owner manual test
+- [ ] LRN-01 owner manual test
 
 ## Completed
 
@@ -18,7 +18,8 @@
 - [x] STU-02
 - [x] STU-03
 - [x] STU-04
+- [x] STU-05
 
 ## Upcoming
 
-- [ ] LRN-01 Learning Subject Catalog
+- [ ] LRN-02 Topic List, Ordering, and Prerequisites

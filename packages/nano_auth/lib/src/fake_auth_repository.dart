@@ -155,3 +155,28 @@ class AuthFailure implements Exception {
   @override
   String toString() => message;
 }
+
+/// Turns SDK / network exceptions into short copy for the sign-in surfaces.
+String describeAuthError(Object error) {
+  if (error is AuthFailure) return error.message;
+  final text = error.toString().toLowerCase();
+  if (text.contains('failed to fetch') ||
+      text.contains('authretryablefetchexception') ||
+      text.contains('clientexception') ||
+      text.contains('socketexception') ||
+      text.contains('network is unreachable') ||
+      text.contains('connection refused') ||
+      text.contains('timed out') ||
+      text.contains('timeout')) {
+    return 'Could not reach Nano servers. Check your connection and try again.';
+  }
+  if (text.contains('invalid login') ||
+      text.contains('invalid_credentials') ||
+      text.contains('invalid email or password')) {
+    return 'Email or password is incorrect.';
+  }
+  if (text.contains('email not confirmed')) {
+    return 'Confirm your email, then sign in again.';
+  }
+  return 'Something went wrong. Try again.';
+}
