@@ -60,6 +60,9 @@ class NanoCopy {
   String get errorMessage =>
       isUrdu ? 'براہِ کرم دوبارہ کوشش کریں۔' : 'Please try again.';
   String get tryAgain => isUrdu ? 'دوبارہ کوشش' : 'Try again';
+  String get saveFailed => isUrdu
+      ? 'محفوظ نہیں ہو سکا۔ اپنا انٹرنیٹ دیکھیں اور دوبارہ کوشش کریں۔'
+      : "Couldn't save. Check your connection and try again.";
   String get offlineBanner => isUrdu
       ? 'آپ آف لائن ہیں۔ دوبارہ جڑنے پر ہم وقت کریں گے۔'
       : 'You are offline. Changes will sync when you reconnect.';

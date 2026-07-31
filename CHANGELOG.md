@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix: onboarding steps commit even when saving settings rebuilds the app, and a failed save now says so
+
 - LRN-01: learning catalog with publication model, eligibility, prerequisite locks, Junior worlds / Senior search, and shared version IDs
 
 - STU-05: student profile with privacy settings, audited device revoke, and sign-out that clears private caches

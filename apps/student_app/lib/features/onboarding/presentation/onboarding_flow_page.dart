@@ -43,6 +43,7 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       TextEditingController(text: _preferences.companionName);
   var _busy = false;
   String? _nameError;
+  String? _saveError;
 
   @override
   void dispose() {
@@ -61,61 +62,102 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       );
 
   Future<void> _persist(OnboardingProgress next) async {
-    setState(() => _busy = true);
+    setState(() {
+      _busy = true;
+      _saveError = null;
+    });
     try {
       final saved = await widget.repository.save(next);
       if (!mounted) return;
       setState(() {
         _progress = saved;
         _step = saved.isComplete ? OnboardingStep.ready : saved.currentStep;
+        _busy = false;
       });
       widget.onProgressChanged(saved);
-    } finally {
-      if (mounted) setState(() => _busy = false);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _saveError = NanoLocaleScope.copyOf(context).saveFailed;
+      });
     }
   }
 
-  Future<void> _savePreferences(StudentPreferences next) async {
-    final repo = widget.preferencesRepository;
+  /// A setting the learner flipped on this step. Carries any name typed so far,
+  /// because telling the app about new settings can rebuild this page.
+  Future<void> _changeSetting(StudentPreferences next) async {
+    final typed = _companionName.text;
+    final withTypedName = CompanionNamePolicy.validate(typed) == null
+        ? next.copyWith(companionName: CompanionNamePolicy.normalize(typed))
+        : next;
     setState(() {
-      _preferences = next;
+      _preferences = withTypedName;
       _nameError = null;
+      _saveError = null;
     });
-    widget.onPreferencesChanged?.call(next);
-    if (repo == null) return;
-    await repo.save(next);
-  }
-
-  /// Returns false when the current step still needs a correction.
-  Future<bool> _commitStep() async {
-    if (_step != OnboardingStep.preferences) return true;
-    final error = CompanionNamePolicy.validate(_companionName.text);
-    if (error != null) {
-      setState(() => _nameError = error);
-      return false;
+    widget.onPreferencesChanged?.call(withTypedName);
+    try {
+      await widget.preferencesRepository?.save(withTypedName);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _saveError = NanoLocaleScope.copyOf(context).saveFailed);
     }
-    await _savePreferences(
-      _preferences.copyWith(
-        companionName: CompanionNamePolicy.normalize(_companionName.text),
-      ),
-    );
-    return true;
   }
 
   Future<void> _advance() async {
-    if (!await _commitStep()) return;
-    if (_step.isLast) {
-      final completed = _progress.copyWith(
-        currentStep: OnboardingStep.ready,
-        experienceTrack: _track,
-        completedAt: DateTime.now().toUtc(),
+    if (_busy) return;
+    StudentPreferences? committed;
+    if (_step == OnboardingStep.preferences) {
+      final error = CompanionNamePolicy.validate(_companionName.text);
+      if (error != null) {
+        setState(() => _nameError = error);
+        return;
+      }
+      committed = _preferences.copyWith(
+        companionName: CompanionNamePolicy.normalize(_companionName.text),
       );
-      await _persist(completed);
-      if (!mounted) return;
-      widget.onCompleted(completed, _track);
-      return;
     }
-    await _persist(_progress.copyWith(currentStep: _step.next));
+    final isLast = _step.isLast;
+    final next = isLast
+        ? _progress.copyWith(
+            currentStep: OnboardingStep.ready,
+            experienceTrack: _track,
+            completedAt: DateTime.now().toUtc(),
+          )
+        : _progress.copyWith(currentStep: _step.next);
+
+    setState(() {
+      _busy = true;
+      _nameError = null;
+      _saveError = null;
+    });
+    try {
+      if (committed != null) {
+        await widget.preferencesRepository?.save(committed);
+      }
+      final saved = await widget.repository.save(next);
+      if (!mounted) return;
+      setState(() {
+        if (committed != null) _preferences = committed;
+        _progress = saved;
+        _step = saved.isComplete ? OnboardingStep.ready : saved.currentStep;
+        _busy = false;
+      });
+      widget.onProgressChanged(saved);
+      // Settings reach the app only after the step is saved: this rebuilds the
+      // router, which remounts this page and would otherwise abandon the step.
+      if (committed != null) {
+        widget.onPreferencesChanged?.call(committed);
+      }
+      if (isLast) widget.onCompleted(saved, _track);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _saveError = NanoLocaleScope.copyOf(context).saveFailed;
+      });
+    }
   }
 
   Future<void> _back() async {
@@ -160,6 +202,19 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
                     _StepProgress(step: _step),
                     const SizedBox(height: NanoSpacing.lg),
                     ..._stepContent(copy, theme),
+                    if (_saveError != null) ...[
+                      const SizedBox(height: NanoSpacing.md),
+                      Semantics(
+                        liveRegion: true,
+                        child: Text(
+                          _saveError!,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.error,
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: NanoSpacing.lg),
                     FilledButton(
                       onPressed: _busy || !_canAdvance ? null : _advance,
@@ -280,7 +335,7 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
             onSelectionChanged: _busy
                 ? null
                 : (selection) =>
-                    _savePreferences(_preferences.copyWith(locale: selection.first)),
+                    _changeSetting(_preferences.copyWith(locale: selection.first)),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -288,7 +343,7 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
             value: a11y.soundEnabled,
             onChanged: _busy
                 ? null
-                : (value) => _savePreferences(
+                : (value) => _changeSetting(
                       _preferences.copyWith(
                         accessibility: a11y.copyWith(soundEnabled: value),
                       ),
@@ -300,7 +355,7 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
             value: a11y.captionsEnabled,
             onChanged: _busy
                 ? null
-                : (value) => _savePreferences(
+                : (value) => _changeSetting(
                       _preferences.copyWith(
                         accessibility: a11y.copyWith(captionsEnabled: value),
                       ),
@@ -312,7 +367,7 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
             value: a11y.reducedMotion,
             onChanged: _busy
                 ? null
-                : (value) => _savePreferences(
+                : (value) => _changeSetting(
                       _preferences.copyWith(
                         accessibility: a11y.copyWith(reducedMotion: value),
                       ),
