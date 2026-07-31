@@ -1,13 +1,11 @@
 id: AUTH-04
 name: "Independent Student Signup and Recovery"
 release: R1
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - AUTH-01
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
   - supabase
   - docs
@@ -17,6 +15,9 @@ allowed_paths:
   - automation/
   - docs/modules/AUTH-04/
   - automation/modules/AUTH-04.yaml
+  - apps/student_app/
+  - packages/nano_auth/
+  - supabase/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
@@ -27,21 +28,34 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for AUTH-04"
+  - "FND-03 Authentication, Sessions, and Role Resolution (independent signup and recovery)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - auth.users
+  - public.profiles
+  - public.login_events
+  - public.device_sessions
+  - nano_internal.handle_new_auth_user
+server_functions:
+  - nano_internal.handle_new_auth_user
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Independent signup creates exactly one independent_student profile, server-side
+  - Forged privileged account_kind metadata provisions nothing
+  - Independent accounts receive no school membership and no Flex navigation
+  - Recovery never discloses whether an email is registered
+  - Profiles cannot outlive their auth identity
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/auth04_independent_signup.sql
+  - packages/nano_auth/test/independent_signup_test.dart
+  - apps/student_app/test/sign_up_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_client_profile_insert
+  - privilege_escalation_via_signup_metadata
+accessibility_checks:
+  - form_labels_and_inline_errors
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - See docs/modules/AUTH-04/MANUAL_TEST.md
+rollback_notes: "Drop trigger on_auth_user_created and the AUTH-04 constraints; revert module branch commits"
 requires_owner_test: true

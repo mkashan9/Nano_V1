@@ -4,7 +4,9 @@ import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/student_shell.dart';
+import 'package:student_app/features/auth/presentation/recover_password_page.dart';
 import 'package:student_app/features/auth/presentation/sign_in_page.dart';
+import 'package:student_app/features/auth/presentation/sign_up_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -38,7 +40,9 @@ GoRouter createStudentRouter({
     redirect: (context, state) {
       final path = state.uri.path;
       if (requireAuth && !principal.isAuthenticated) {
-        return path == '/sign-in' ? null : '/sign-in';
+        return const {'/sign-in', '/sign-up', '/recover'}.contains(path)
+            ? null
+            : '/sign-in';
       }
       if (requireAuth &&
           principal.isAuthenticated &&
@@ -48,7 +52,7 @@ GoRouter createStudentRouter({
       }
       if (requireAuth &&
           principal.isAuthenticated &&
-          path == '/sign-in') {
+          const {'/sign-in', '/sign-up', '/recover'}.contains(path)) {
         return '/';
       }
       if (!principal.isAuthenticated) return null;
@@ -74,6 +78,42 @@ GoRouter createStudentRouter({
               onAuthBootstrap?.call(bootstrap);
               onPrincipalChanged(bootstrap.principal);
             },
+            onCreateAccount: () => context.go('/sign-up'),
+            onForgotPassword: () => context.go('/recover'),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/sign-up',
+        builder: (context, state) {
+          final repo = authRepository;
+          if (repo == null) {
+            return const Scaffold(
+              body: Center(child: Text('Signup is unavailable')),
+            );
+          }
+          return SignUpPage(
+            authRepository: repo,
+            onSignedUp: (bootstrap) {
+              onAuthBootstrap?.call(bootstrap);
+              onPrincipalChanged(bootstrap.principal);
+            },
+            onBackToSignIn: () => context.go('/sign-in'),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/recover',
+        builder: (context, state) {
+          final repo = authRepository;
+          if (repo == null) {
+            return const Scaffold(
+              body: Center(child: Text('Recovery is unavailable')),
+            );
+          }
+          return RecoverPasswordPage(
+            authRepository: repo,
+            onBackToSignIn: () => context.go('/sign-in'),
           );
         },
       ),

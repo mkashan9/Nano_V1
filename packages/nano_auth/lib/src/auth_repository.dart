@@ -20,6 +20,18 @@ abstract final class AuthFixtures {
   static const schoolAdminPassword = 'NanoSchoolAdminDev1!';
   static const schoolAdminUserId = TenancyFixtures.schoolAdminId;
   static const schoolAdminSchoolId = TenancyFixtures.alphaSchoolId;
+
+  static const indieEmail = 'indie@nano.dev';
+  static const indiePassword = 'NanoIndieDev1!';
+  static const indieUserId = TenancyFixtures.indieId;
+}
+
+/// Outcome of an independent signup attempt.
+class SignUpResult {
+  const SignUpResult({required this.bootstrap, required this.needsEmailConfirmation});
+
+  final AuthBootstrap? bootstrap;
+  final bool needsEmailConfirmation;
 }
 
 /// Result of resolving profile + membership after auth.users session exists.
@@ -57,4 +69,42 @@ abstract class AuthRepository {
   Future<void> signOut();
 
   Stream<bool> get authStateChanges;
+
+  /// Self-service independent student signup (AUTH-04).
+  Future<SignUpResult> signUpIndependent({
+    required String email,
+    required String password,
+    required String displayName,
+  });
+
+  /// Sends a password recovery email. Never reveals whether the account exists.
+  Future<void> requestPasswordRecovery(String email);
+}
+
+/// Client-side validation shared by signup forms.
+abstract final class SignUpValidator {
+  static const minPasswordLength = 8;
+
+  static String? emailError(String email) {
+    final value = email.trim();
+    if (value.isEmpty) return 'Enter an email address';
+    final ok = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
+    return ok ? null : 'Enter a valid email address';
+  }
+
+  static String? passwordError(String password) {
+    if (password.length < minPasswordLength) {
+      return 'Use at least $minPasswordLength characters';
+    }
+    final hasLetter = RegExp(r'[A-Za-z]').hasMatch(password);
+    final hasDigit = RegExp(r'\d').hasMatch(password);
+    if (!hasLetter || !hasDigit) {
+      return 'Use letters and numbers';
+    }
+    return null;
+  }
+
+  static String? displayNameError(String name) {
+    return name.trim().isEmpty ? 'Enter a name' : null;
+  }
 }

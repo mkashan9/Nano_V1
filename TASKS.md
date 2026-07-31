@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] AUTH-03 owner manual test
+- [ ] AUTH-04 owner manual test
 
 ## Completed
 
@@ -12,7 +12,8 @@
 - [x] SYNC-01
 - [x] AUTH-01
 - [x] AUTH-02
+- [x] AUTH-03
 
 ## Upcoming
 
-- [ ] AUTH-04 Independent Student Signup and Recovery
+- [ ] STU-01 Student First-Run Onboarding
