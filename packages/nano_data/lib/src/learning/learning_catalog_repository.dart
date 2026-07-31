@@ -76,10 +76,26 @@ class FakeLearningCatalogRepository implements LearningCatalogRepository {
       order: 1,
       estimatedMinutes: 12,
       objectives: const ['Count objects to 20', 'Recognise number order'],
+      durationSeconds: 120,
+      videoProvider: 'fixture',
+      videoRef: 'counting-to-20',
+      captions: const CaptionTrack([
+        CaptionCue(
+          atSeconds: 0,
+          text: 'Let us count to twenty.',
+          textUr: 'آئیے بیس تک گنتی کریں۔',
+        ),
+        CaptionCue(
+          atSeconds: 30,
+          text: 'Ten comes after nine.',
+          textUr: 'نو کے بعد دس آتا ہے۔',
+        ),
+      ]),
       status: countingCompleted
           ? TopicProgressStatus.completed
           : TopicProgressStatus.notStarted,
       progress: countingCompleted ? 1 : 0,
+      watchedSeconds: countingCompleted ? 120 : 0,
     );
     final addition = CatalogTopic(
       topicId: 'topic-addition',
@@ -90,11 +106,15 @@ class FakeLearningCatalogRepository implements LearningCatalogRepository {
       order: 2,
       estimatedMinutes: 15,
       objectives: const ['Add within 20', 'Use a number line'],
+      durationSeconds: 150,
+      videoProvider: 'fixture',
+      videoRef: 'adding-small-numbers',
       status: additionStarted
           ? TopicProgressStatus.inProgress
           : TopicProgressStatus.notStarted,
       progress: additionStarted ? 0.4 : 0,
       resumeSeconds: additionStarted ? 90 : 0,
+      watchedSeconds: additionStarted ? 60 : 0,
       // Locked until counting is finished, exactly as the server reports it.
       blockingTitles: countingCompleted ? const [] : const ['Counting to 20'],
     );
@@ -130,6 +150,16 @@ class FakeLearningCatalogRepository implements LearningCatalogRepository {
               order: 1,
               estimatedMinutes: 18,
               objectives: ['Sort living and non-living'],
+              durationSeconds: 180,
+              videoProvider: 'fixture',
+              videoRef: 'living-things',
+              captions: CaptionTrack([
+                CaptionCue(
+                  atSeconds: 0,
+                  text: 'Living things grow.',
+                  textUr: 'جاندار بڑھتے ہیں۔',
+                ),
+              ]),
             ),
             CatalogTopic(
               topicId: 'topic-plants',
@@ -143,6 +173,9 @@ class FakeLearningCatalogRepository implements LearningCatalogRepository {
                 'Compare plants and animals',
                 'Name what living things need',
               ],
+              durationSeconds: 160,
+              videoProvider: 'fixture',
+              videoRef: 'plants-and-animals',
               blockingTitles: ['Living things'],
             ),
           ],
@@ -159,7 +192,9 @@ class SupabaseLearningCatalogRepository implements LearningCatalogRepository {
       'subject_title, subject_title_ur, subject_summary, world_color_hex, '
       'topic_id, topic_slug, topic_order, topic_version_id, topic_title, '
       'topic_title_ur, objectives, estimated_minutes, resources, '
-      'progress_status, progress, resume_seconds, blocking_titles, is_locked';
+      'duration_seconds, completion_threshold, video_provider, video_ref, '
+      'captions, progress_status, progress, resume_seconds, watched_seconds, '
+      'blocking_titles, is_locked';
 
   final SupabaseClient _client;
 

@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] LRN-02 owner manual test
+- [ ] LRN-03 owner manual test
 
 ## Completed
 
@@ -20,7 +20,8 @@
 - [x] STU-04
 - [x] STU-05
 - [x] LRN-01
+- [x] LRN-02
 
 ## Upcoming
 
-- [ ] LRN-03 Video Player, Resume, Captions, and Completion
+- [ ] LRN-04 Long-Video Checkpoints and Refresh Interactions

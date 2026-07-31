@@ -3,20 +3,28 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+import 'topic_player_page.dart';
+
 /// LRN-02 topic detail: objectives, resources, time, progress, unlock reason,
-/// and a primary action that goes through the server write path.
+/// and a primary action that goes through the server write path. LRN-03 hands
+/// an opened topic to the player.
 class TopicDetailPage extends StatefulWidget {
   const TopicDetailPage({
     super.key,
     required this.topic,
     required this.progressRepository,
     this.junior = true,
+    this.openPlayer = true,
     this.onOpened,
   });
 
   final CatalogTopic topic;
   final LearningProgressRepository progressRepository;
   final bool junior;
+
+  /// Whether a successful start pushes the player. Off in tests that only
+  /// assert the detail surface.
+  final bool openPlayer;
 
   /// Fired after a successful start/resume so a parent list can refresh.
   final ValueChanged<CatalogTopic>? onOpened;
@@ -47,6 +55,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
         _busy = false;
       });
       widget.onOpened?.call(updated);
+      if (widget.openPlayer && updated.hasVideo) await _openPlayer(updated);
     } on TopicGateException catch (error) {
       if (!mounted) return;
       setState(() {
@@ -62,6 +71,23 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
         _error = copy.topicGateFailed;
       });
     }
+  }
+
+  Future<void> _openPlayer(CatalogTopic topic) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TopicPlayerPage(
+          topic: topic,
+          progressRepository: widget.progressRepository,
+          junior: widget.junior,
+          onProgress: (updated) {
+            if (!mounted) return;
+            setState(() => _topic = updated);
+            widget.onOpened?.call(updated);
+          },
+        ),
+      ),
+    );
   }
 
   @override
