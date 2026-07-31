@@ -7,6 +7,18 @@ class NanoSupabase {
 
   final SupabaseClient client;
 
+  /// Builds a client safe for email/password auth without PKCE storage.
+  ///
+  /// Prefer [NanoAuthClient.create] from `nano_auth` in app entry points.
+  /// This mirrors that configuration so health probes share the same auth flow.
+  static SupabaseClient createClient(String url, String anonKey) {
+    return SupabaseClient(
+      url,
+      anonKey,
+      authOptions: const AuthClientOptions(authFlowType: AuthFlowType.implicit),
+    );
+  }
+
   factory NanoSupabase.fromConfig(EnvironmentConfig config) {
     if (config.supabaseUrl.isEmpty || config.supabaseAnonKey.isEmpty) {
       throw StateError(
@@ -14,7 +26,7 @@ class NanoSupabase {
       );
     }
     return NanoSupabase(
-      SupabaseClient(config.supabaseUrl, config.supabaseAnonKey),
+      createClient(config.supabaseUrl, config.supabaseAnonKey),
     );
   }
 

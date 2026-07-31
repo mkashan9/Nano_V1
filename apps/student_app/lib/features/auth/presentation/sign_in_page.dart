@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_design_system/nano_design_system.dart';
-import 'package:nano_domain/nano_domain.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({
@@ -9,11 +8,15 @@ class SignInPage extends StatefulWidget {
     required this.authRepository,
     required this.onSignedIn,
     this.initialEmail = AuthFixtures.aliEmail,
+    this.onCreateAccount,
+    this.onForgotPassword,
   });
 
   final AuthRepository authRepository;
   final ValueChanged<AuthBootstrap> onSignedIn;
   final String initialEmail;
+  final VoidCallback? onCreateAccount;
+  final VoidCallback? onForgotPassword;
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -112,6 +115,16 @@ class _SignInPageState extends State<SignInPage> {
                   onPressed: _busy ? null : _submit,
                   child: Text(_busy ? 'Signing in…' : 'Sign in'),
                 ),
+                if (widget.onForgotPassword != null)
+                  TextButton(
+                    onPressed: _busy ? null : widget.onForgotPassword,
+                    child: const Text('Forgot password?'),
+                  ),
+                if (widget.onCreateAccount != null)
+                  TextButton(
+                    onPressed: _busy ? null : widget.onCreateAccount,
+                    child: const Text('Create an independent account'),
+                  ),
               ],
             ),
           ),

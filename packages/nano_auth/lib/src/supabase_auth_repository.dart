@@ -64,6 +64,50 @@ class SupabaseAuthRepository implements AuthRepository {
     await client.auth.signOut();
   }
 
+  @override
+  Future<SignUpResult> signUpIndependent({
+    required String email,
+    required String password,
+    required String displayName,
+  }) async {
+    final error = SignUpValidator.emailError(email) ??
+        SignUpValidator.passwordError(password) ??
+        SignUpValidator.displayNameError(displayName);
+    if (error != null) {
+      throw AuthFailure(error);
+    }
+    final response = await client.auth.signUp(
+      email: email.trim(),
+      password: password,
+      // The auth.users trigger provisions the profile; clients cannot insert it.
+      data: {
+        'account_kind': 'independent_student',
+        'display_name': displayName.trim(),
+      },
+    );
+    if (response.session == null) {
+      return const SignUpResult(bootstrap: null, needsEmailConfirmation: true);
+    }
+    final user = response.user;
+    if (user == null) {
+      throw AuthFailure('Signup failed');
+    }
+    return SignUpResult(
+      bootstrap: await _bootstrap(user.id),
+      needsEmailConfirmation: false,
+    );
+  }
+
+  @override
+  Future<void> requestPasswordRecovery(String email) async {
+    final error = SignUpValidator.emailError(email);
+    if (error != null) {
+      throw AuthFailure(error);
+    }
+    // Supabase does not disclose whether the address exists; keep it that way.
+    await client.auth.resetPasswordForEmail(email.trim());
+  }
+
   Future<AuthBootstrap> _bootstrap(String userId) async {
     final profileRows = await client
         .from('profiles')

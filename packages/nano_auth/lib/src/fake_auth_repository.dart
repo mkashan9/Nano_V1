@@ -10,7 +10,9 @@ class FakeAuthRepository implements AuthRepository {
     this.validEmail = AuthFixtures.aliEmail,
     this.validPassword = AuthFixtures.aliPassword,
     this.bootstrapBuilder,
-  });
+    this.requireEmailConfirmation = false,
+    Set<String>? registeredEmails,
+  }) : registeredEmails = registeredEmails ?? <String>{};
 
   factory FakeAuthRepository.teacher() => FakeAuthRepository(
         validEmail: AuthFixtures.teacherEmail,
@@ -63,6 +65,9 @@ class FakeAuthRepository implements AuthRepository {
   final String validEmail;
   final String validPassword;
   final AuthBootstrap Function()? bootstrapBuilder;
+  final bool requireEmailConfirmation;
+  final Set<String> registeredEmails;
+  final List<String> recoveryRequests = <String>[];
   final _controller = StreamController<bool>.broadcast();
   AuthBootstrap? _session;
 
@@ -100,6 +105,46 @@ class FakeAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     _session = null;
     _controller.add(false);
+  }
+
+  @override
+  Future<SignUpResult> signUpIndependent({
+    required String email,
+    required String password,
+    required String displayName,
+  }) async {
+    final normalized = email.trim().toLowerCase();
+    if (registeredEmails.contains(normalized)) {
+      throw AuthFailure('An account already exists for this email');
+    }
+    final error = SignUpValidator.emailError(email) ??
+        SignUpValidator.passwordError(password) ??
+        SignUpValidator.displayNameError(displayName);
+    if (error != null) {
+      throw AuthFailure(error);
+    }
+    registeredEmails.add(normalized);
+    if (requireEmailConfirmation) {
+      return const SignUpResult(bootstrap: null, needsEmailConfirmation: true);
+    }
+    _session = AuthBootstrap(
+      principal: SessionPrincipal.independent(displayName: displayName.trim())
+          .copyWith(userId: AuthFixtures.indieUserId, isAuthenticated: true),
+      schoolStatus: SchoolStatus.active,
+      profileStatus: MembershipStatus.active,
+      membershipStatus: MembershipStatus.active,
+    );
+    _controller.add(true);
+    return SignUpResult(bootstrap: _session, needsEmailConfirmation: false);
+  }
+
+  @override
+  Future<void> requestPasswordRecovery(String email) async {
+    final error = SignUpValidator.emailError(email);
+    if (error != null) {
+      throw AuthFailure(error);
+    }
+    recoveryRequests.add(email.trim().toLowerCase());
   }
 }
 

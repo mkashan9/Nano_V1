@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
-import 'package:supabase/supabase.dart';
 import 'package:teacher_app/app/teacher_router.dart';
 
 void main() {
@@ -13,7 +12,7 @@ void main() {
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     authRepository = SupabaseAuthRepository(
-      SupabaseClient(config.supabaseUrl, config.supabaseAnonKey),
+      NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey),
       allowedAccountKinds: const {'teacher'},
       appLabel: 'teachers',
     );
