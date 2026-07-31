@@ -171,6 +171,20 @@ class NanoCopy {
       ? 'مکمل کرنے کے لیے مزید $seconds سیکنڈ دیکھیں'
       : 'Watch $seconds more seconds to finish';
   String get watchedLabel => isUrdu ? 'دیکھا گیا' : 'Watched';
+  String get checkpointStretchTitle =>
+      isUrdu ? 'ذرا سستا لیں' : 'Quick break';
+  String get checkpointRecallTitle =>
+      isUrdu ? 'ایک لمحہ سوچیں' : 'Think back';
+  String get checkpointReadyTitle =>
+      isUrdu ? 'آگے بڑھیں؟' : 'Ready to continue?';
+  String get keepWatchingLabel => isUrdu ? 'دیکھنا جاری رکھیں' : 'Keep watching';
+  String get takeABreakLabel => isUrdu ? 'وقفہ لیں' : 'Take a break';
+  String get creditPausedNotice => isUrdu
+      ? 'یہاں سے پیش رفت رکی ہے۔ جواب دے کر آگے بڑھیں۔'
+      : 'Progress is paused here until you answer.';
+  String get noSkipAheadNotice => isUrdu
+      ? 'اس ویڈیو میں آگے نہیں چھوڑ سکتے۔'
+      : "You can't skip ahead in this video.";
   String get noCaptionsLabel =>
       isUrdu ? 'اس ویڈیو کے کیپشنز نہیں ہیں۔' : 'This video has no captions.';
   String get videoUnavailable => isUrdu

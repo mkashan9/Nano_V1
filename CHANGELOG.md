@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- LRN-04: long-video refresh checkpoints at safe chapter boundaries, a server-enforced required-checkpoint credit gate, and content-configured seeking
+
 - LRN-03: server-credited watch time, resume, captions, and audited one-time topic completion
 
 - LRN-02: topic ordering invariants, prerequisite write gates, RPC-only progress, and topic detail with unlock reason

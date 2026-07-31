@@ -1,7 +1,7 @@
 id: LRN-04
 name: "Long-Video Checkpoints and Refresh Interactions"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - LRN-03
 applications:
@@ -9,6 +9,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -19,26 +20,63 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LRN-04"
+  - "LRN-02 Video Learning and Progress: long-video refresh moments"
+  - "10.4 Long-video rule"
+  - "10.3 Reaction state machine: long video refresh"
+  - "Seeking policy is configurable by content"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.topic_versions
+  - public.refresh_checkpoints
+  - public.checkpoint_events
+  - public.learning_catalog
+server_functions:
+  - nano_internal.plan_refresh_checkpoints
+  - nano_internal.checkpoint_credit_gate
+  - public.rebuild_refresh_checkpoints
+  - public.acknowledge_checkpoint
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Checkpoints are only generated for videos longer than thirty minutes
+  - Generated checkpoints sit near ten-minute intervals but snap to chapter boundaries
+  - No checkpoint lands inside a protected chapter such as an assessment segment
+  - Curators can move or remove checkpoints, and invalid placements are refused
+  - Classroom Mode and the refresh-prompt preference suppress non-essential prompts
+  - An unacknowledged required checkpoint stops watch credit at that point, server-side
+  - Acknowledgement is idempotent and owner-only
+  - Content-configured seeking policy is enforced on the server, not only in the UI
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/refresh_checkpoint_test.dart
+  - packages/nano_data/test/checkpoint_repository_test.dart
+  - apps/student_app/test/topic_player_checkpoint_test.dart
+  - supabase/tests/lrn04_checkpoints.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - checkpoints_read_only_for_learners
+  - checkpoint_rebuild_admin_only
+  - acknowledgement_owner_only
+  - required_checkpoint_gate_server_enforced
+  - seek_policy_server_enforced
+accessibility_checks:
+  - classroom_mode_suppresses_non_essential_prompts
+  - checkpoint_prompt_is_a_live_region
+  - checkpoint_actions_labelled
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Science as a Senior learner and open the long Ecosystems topic
+  - Drag near the first checkpoint, press play, and confirm the prompt appears and playback pauses
+  - Choose Keep watching and confirm playback resumes and the prompt does not return
+  - Turn on Classroom Mode and confirm the optional stretch prompt no longer interrupts
+  - Confirm the required checkpoint still appears in Classroom Mode and that credit stops until it is answered
+rollback_notes: "Revert module branch commits; dropping refresh_checkpoints or checkpoint_events requires owner approval"
 requires_owner_test: true

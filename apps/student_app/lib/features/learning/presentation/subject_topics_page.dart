@@ -13,6 +13,7 @@ class SubjectTopicsPage extends StatefulWidget {
     required this.repository,
     required this.subjectId,
     this.progressRepository,
+    this.checkpointRepository,
     this.junior = true,
     this.onTopicOpen,
   });
@@ -20,6 +21,7 @@ class SubjectTopicsPage extends StatefulWidget {
   final LearningCatalogRepository repository;
   final String subjectId;
   final LearningProgressRepository? progressRepository;
+  final CheckpointRepository? checkpointRepository;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -98,6 +100,7 @@ class _SubjectTopicsPageState extends State<SubjectTopicsPage> {
         builder: (_) => TopicDetailPage(
           topic: topic,
           progressRepository: progress,
+          checkpointRepository: widget.checkpointRepository,
           junior: widget.junior,
           onOpened: (_) => _load(),
         ),

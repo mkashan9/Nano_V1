@@ -284,6 +284,7 @@ class StudentLearningTab extends StatelessWidget {
     this.homeRepository,
     this.catalogRepository,
     this.progressRepository,
+    this.checkpointRepository,
     this.companionName,
     this.onOpenFlex,
   });
@@ -292,6 +293,7 @@ class StudentLearningTab extends StatelessWidget {
   final StudentHomeRepository? homeRepository;
   final LearningCatalogRepository? catalogRepository;
   final LearningProgressRepository? progressRepository;
+  final CheckpointRepository? checkpointRepository;
   final String? companionName;
   final VoidCallback? onOpenFlex;
 
@@ -304,6 +306,7 @@ class StudentLearningTab extends StatelessWidget {
           repository: catalog,
           subjectId: subject.id,
           progressRepository: progressRepository,
+          checkpointRepository: checkpointRepository,
           junior: principal.role.usesJuniorPresentation,
         ),
       ),

@@ -1,4 +1,5 @@
 export 'home/student_home_repository.dart';
+export 'learning/checkpoint_repository.dart';
 export 'learning/learning_catalog_repository.dart';
 export 'learning/learning_progress_repository.dart';
 export 'onboarding/onboarding_repository.dart';

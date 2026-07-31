@@ -1,7 +1,7 @@
 id: LRN-03
 name: "Video Player, Resume, Captions, and Completion"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - LRN-02
 applications:

@@ -11,12 +11,14 @@ class LearningCatalogPage extends StatefulWidget {
     super.key,
     required this.repository,
     this.progressRepository,
+    this.checkpointRepository,
     this.junior = true,
     this.onTopicOpen,
   });
 
   final LearningCatalogRepository repository;
   final LearningProgressRepository? progressRepository;
+  final CheckpointRepository? checkpointRepository;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -76,6 +78,7 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
           repository: widget.repository,
           subjectId: subject.subjectId,
           progressRepository: widget.progressRepository,
+          checkpointRepository: widget.checkpointRepository,
           junior: widget.junior,
           onTopicOpen: widget.onTopicOpen,
         ),

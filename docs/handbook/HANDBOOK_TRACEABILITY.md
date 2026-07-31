@@ -39,8 +39,9 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook PRF-01 Profiles settings | STU-05 | student_app | Profile | privacy_settings,device_sessions | widget+SQL | DONE |
 | Handbook LRN-01 Learning catalog | LRN-01 | student_app | Learning Stack | learning_subjects,subject_versions,topics,topic_versions,learning_catalog | unit+widget+SQL | DONE |
 | Handbook LRN-01 topic order / prerequisites | LRN-02 | student_app | Topic detail + gates | topic_prerequisites,learning_progress,start_topic | unit+widget+SQL | DONE |
-| Handbook LRN-02 Video learning progress | LRN-03 | student_app | Topic player | topic_versions,learning_progress,topic_completions,record_playback_heartbeat,complete_topic | unit+widget+SQL | USER_TEST |
-| Handbook LRN-02 refresh checkpoints / recommendations | LRN-04,LRN-05 | student_app | player | progress | player tests | BACKLOG |
+| Handbook LRN-02 Video learning progress | LRN-03 | student_app | Topic player | topic_versions,learning_progress,topic_completions,record_playback_heartbeat,complete_topic | unit+widget+SQL | DONE |
+| Handbook LRN-02 refresh checkpoints | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events,rebuild_refresh_checkpoints,acknowledge_checkpoint | unit+widget+SQL | USER_TEST |
+| Handbook LRN-02 recommendations | LRN-05 | student_app | player | progress | player tests | BACKLOG |
 | Handbook QZ-01 Quiz authoring | QZ-01,QZ-02 | admin_web | question bank | questions | admin tests | BACKLOG |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | BACKLOG |
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
@@ -68,7 +69,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | USER_TEST |
 | Generated media cost controls | MED-02 | edge | quotas | generation_* | dedupe/hash | BACKLOG |
 | Nori voice Aoede; no privileged calc | MED-03,CMP-01 | edge+app | voice/reactions | N/A | unit | BACKLOG |
-| Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | progress | checkpoint tests | BACKLOG |
+| Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | USER_TEST |
 | School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |
 | Offline / poor network | SYNC-01,QA-03,FND-05 | apps | offline states | queue | offline tests | USER_TEST |

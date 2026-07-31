@@ -13,6 +13,7 @@ class TopicDetailPage extends StatefulWidget {
     super.key,
     required this.topic,
     required this.progressRepository,
+    this.checkpointRepository,
     this.junior = true,
     this.openPlayer = true,
     this.onOpened,
@@ -20,6 +21,7 @@ class TopicDetailPage extends StatefulWidget {
 
   final CatalogTopic topic;
   final LearningProgressRepository progressRepository;
+  final CheckpointRepository? checkpointRepository;
   final bool junior;
 
   /// Whether a successful start pushes the player. Off in tests that only
@@ -79,6 +81,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
         builder: (_) => TopicPlayerPage(
           topic: topic,
           progressRepository: widget.progressRepository,
+          checkpointRepository: widget.checkpointRepository,
           junior: widget.junior,
           onProgress: (updated) {
             if (!mounted) return;
