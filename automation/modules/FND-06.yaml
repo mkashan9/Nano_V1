@@ -1,7 +1,7 @@
 id: FND-06
 name: "Localization and English/Urdu Readiness"
 release: R0
-status: USER_TEST
+status: APPROVED
 dependencies:
   - FND-02
 applications:
