@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] STU-04 owner manual test
+- [ ] STU-05 owner manual test
 
 ## Completed
 
@@ -17,7 +17,8 @@
 - [x] STU-01
 - [x] STU-02
 - [x] STU-03
+- [x] STU-04
 
 ## Upcoming
 
-- [ ] STU-05 Student Profile and Settings
+- [ ] LRN-01 Learning Subject Catalog

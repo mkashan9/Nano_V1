@@ -1,13 +1,14 @@
 id: STU-05
 name: "Student Profile and Settings"
 release: R2
-status: BACKLOG
+status: APPROVED
 dependencies:
   - STU-03
   - STU-04
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
@@ -15,6 +16,11 @@ allowed_paths:
   - automation/
   - docs/modules/STU-05/
   - automation/modules/STU-05.yaml
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
@@ -25,21 +31,37 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for STU-05"
+  - "PRF-01 Profiles, Progress, Settings, and Device Controls — student scope"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.privacy_settings
+  - public.revoke_device_session
+server_functions:
+  - public.revoke_device_session
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Owner profile renders identity, progress, achievements, privacy, settings, devices and sign-out
+  - PublicProfileProjection never includes email, guardian data, attendance, marks, payment or device fields
+  - Privacy toggles persist immediately and feed the public projection
+  - Device session revoke is server-backed via revoke_device_session, owner-only and audited to login_events
+  - Learners cannot revoke another learner's session or re-revoke an already revoked session
+  - Direct updates to device_sessions are denied; only the RPC can revoke
+  - Sign-out clears LocalCacheStore and SyncQueueStore before ending the session
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/stu05_profile_privacy_sessions.sql
+  - packages/nano_domain/test/student_profile_view_test.dart
+  - packages/nano_data/test/student_profile_repository_test.dart
+  - apps/student_app/test/student_profile_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - owner_only_privacy
+  - owner_only_session_revoke
+  - public_projection_strips_private_fields
+  - logout_clears_private_caches
+accessibility_checks:
+  - avatar_semantics_label
+  - locale_copy_en_ur
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - See docs/modules/STU-05/MANUAL_TEST.md
+rollback_notes: "Drop public.privacy_settings and public.revoke_device_session; revert module branch commits. StudentProfileTab falls back to NavPlaceholderPage when no repository is supplied."
 requires_owner_test: true

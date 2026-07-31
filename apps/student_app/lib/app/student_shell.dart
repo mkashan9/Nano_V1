@@ -18,6 +18,7 @@ import 'package:student_app/features/home/presentation/junior_home_page.dart';
 import 'package:student_app/features/home/presentation/responsive_preview_page.dart';
 import 'package:student_app/features/home/presentation/senior_home_foundation.dart';
 import 'package:student_app/features/home/presentation/senior_home_page.dart';
+import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 
 class StudentShell extends StatelessWidget {
   const StudentShell({
@@ -361,19 +362,65 @@ class StudentCommunitiesTab extends StatelessWidget {
 }
 
 class StudentProfileTab extends StatelessWidget {
-  const StudentProfileTab({super.key, required this.principal});
+  const StudentProfileTab({
+    super.key,
+    required this.principal,
+    this.profileRepository,
+    this.preferences,
+    this.onPreferencesChanged,
+    this.onAccessibilityChanged,
+    this.onSignOut,
+    this.syncController,
+  });
 
   final SessionPrincipal principal;
+  final StudentProfileRepository? profileRepository;
+  final StudentPreferences? preferences;
+  final ValueChanged<StudentPreferences>? onPreferencesChanged;
+  final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
+  final VoidCallback? onSignOut;
+  final NanoSyncController? syncController;
 
   @override
   Widget build(BuildContext context) {
-    final authLine = principal.isAuthenticated
-        ? 'Signed in · ${principal.userId ?? '—'}'
-        : 'Preview persona';
-    return NavPlaceholderPage(
-      title: 'Profile',
-      subtitle:
-          '${principal.displayName} · ${principal.role.label}\n$authLine',
+    final repository = profileRepository;
+    if (repository == null) {
+      final authLine = principal.isAuthenticated
+          ? 'Signed in · ${principal.userId ?? '—'}'
+          : 'Preview persona';
+      return NavPlaceholderPage(
+        title: 'Profile',
+        subtitle:
+            '${principal.displayName} · ${principal.role.label}\n$authLine',
+      );
+    }
+    // Preview personas have no auth userId; the fake repository still needs one.
+    final principalForProfile = principal.userId == null
+        ? principal.copyWith(userId: TenancyFixtures.aliAlphaId)
+        : principal;
+    return StudentProfilePage(
+      repository: repository,
+      principal: principalForProfile,
+      preferences: preferences ??
+          StudentPreferences(userId: principalForProfile.userId!),
+      onPreferencesChanged: onPreferencesChanged,
+      onOpenAccessibility: onAccessibilityChanged == null
+          ? null
+          : () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => AccessibilitySettingsPage(
+                    onChanged: onAccessibilityChanged!,
+                  ),
+                ),
+              );
+            },
+      onSignOut: onSignOut == null
+          ? null
+          : () async {
+              onSignOut!();
+            },
+      syncController: syncController,
     );
   }
 }

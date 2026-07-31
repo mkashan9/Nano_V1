@@ -1,7 +1,7 @@
 id: STU-04
 name: "Senior Home"
 release: R2
-status: APPROVED
+status: DONE
 dependencies:
   - STU-02
   - FND-05

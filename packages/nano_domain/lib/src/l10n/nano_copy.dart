@@ -99,6 +99,29 @@ class NanoCopy {
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>
       isUrdu ? '$percent% مکمل' : '$percent% done';
+  String get profileTitle => isUrdu ? 'پروفائل' : 'Profile';
+  String get progressLabel => isUrdu ? 'پیش رفت' : 'Progress';
+  String get topicsCompleted => isUrdu ? 'مکمل ٹاپکس' : 'Topics completed';
+  String get nextUpLabel => isUrdu ? 'اگلا مرحلہ' : 'Next up';
+  String get achievementsLabel => isUrdu ? 'اعزازات' : 'Achievements';
+  String get privacyLabel => isUrdu ? 'پرائیویسی' : 'Privacy';
+  String get discoverableLabel =>
+      isUrdu ? 'مجھے تلاش کیا جا سکتا ہے' : 'Let others find me';
+  String get showAchievementsLabel =>
+      isUrdu ? 'اعزازات دکھائیں' : 'Show my achievements';
+  String get allowFriendRequestsLabel =>
+      isUrdu ? 'دوستی کی درخواستیں' : 'Allow friend requests';
+  String get devicesLabel => isUrdu ? 'ڈیوائسز' : 'Devices';
+  String get thisDeviceLabel => isUrdu ? 'یہ ڈیوائس' : 'This device';
+  String get revokeLabel => isUrdu ? 'رسائی ختم کریں' : 'Sign out device';
+  String get revokedLabel => isUrdu ? 'ختم شدہ' : 'Signed out';
+  String lastSeen(String label) =>
+      isUrdu ? 'آخری بار $label' : 'Last active $label';
+  String get settingsLabel => isUrdu ? 'سیٹنگز' : 'Settings';
+  String get accessibilityLabel => isUrdu ? 'ایکسیسبیلٹی' : 'Accessibility';
+  String get signOutLabel => isUrdu ? 'سائن آؤٹ' : 'Sign out';
+  String get accountTypeLabel => isUrdu ? 'اکاؤنٹ' : 'Account';
+
   String levelLabel(int level) => isUrdu ? 'لیول $level' : 'Level $level';
   String xpToNextLevel(int xp) =>
       isUrdu ? 'اگلے لیول تک $xp XP' : '$xp XP to next level';
