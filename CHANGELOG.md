@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- SEC-03: audit/session tables, suspension-aware RLS helpers, AccessGuard domain models
+
 - SEC-02: multi-school tenancy tables, RLS, nano_internal helpers, Alpha/Beta fixtures
 
 - SEC-01: remote-first Supabase baseline, app_health, migration workflow

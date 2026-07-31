@@ -1,7 +1,7 @@
 id: SEC-03
 name: "Audit Logs, Sessions, Suspension, and Permission Guards"
 release: R0
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-02
 applications:
@@ -22,6 +22,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - supabase/
+  - packages/nano_domain/
+  - docs/setup/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -29,17 +32,31 @@ forbidden_paths:
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SEC-03"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.audit_events
+  - public.device_sessions
+  - public.login_events
+  - public.security_incidents
+  - nano_internal.can_access_school
+  - nano_internal.profile_is_active
+  - nano_internal.school_is_active
+  - nano_internal.session_is_active
 server_functions: []
 acceptance:
+  - Audit/session/incident tables exist with RLS
+  - School suspension hides school rows from members
+  - Authenticated clients cannot insert audit_events
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/access_guard_test.dart
+  - supabase/tests/sec03_suspension_and_audit.sql
+  - mcp_security_advisors_clean
 security_checks:
   - no_secrets_in_diff
+  - rls_enabled_on_audit_session_tables
+  - school_suspension_blocks_access
+  - audit_append_only_for_clients
 accessibility_checks: []
 manual_test_steps:
   - Review module docs and status

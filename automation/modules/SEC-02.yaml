@@ -1,7 +1,7 @@
 id: SEC-02
 name: "Multi-School Tenancy and RLS"
 release: R0
-status: APPROVED
+status: DONE
 dependencies:
   - SEC-01
 applications:
