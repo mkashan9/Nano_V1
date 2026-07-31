@@ -27,6 +27,39 @@ class FakeAuthRepository implements AuthRepository {
         ),
       );
 
+  factory FakeAuthRepository.schoolAdmin() => FakeAuthRepository(
+        validEmail: AuthFixtures.schoolAdminEmail,
+        validPassword: AuthFixtures.schoolAdminPassword,
+        bootstrapBuilder: () => AuthBootstrap(
+          principal: SessionPrincipal.schoolAdmin(
+            displayName: 'Alpha School Admin',
+          ).copyWith(
+            userId: AuthFixtures.schoolAdminUserId,
+            schoolId: AuthFixtures.schoolAdminSchoolId,
+            isAuthenticated: true,
+          ),
+          schoolStatus: SchoolStatus.active,
+          profileStatus: MembershipStatus.active,
+          membershipStatus: MembershipStatus.active,
+        ),
+      );
+
+  factory FakeAuthRepository.superadmin() => FakeAuthRepository(
+        validEmail: AuthFixtures.platformEmail,
+        validPassword: AuthFixtures.platformPassword,
+        bootstrapBuilder: () => AuthBootstrap(
+          principal: SessionPrincipal.superadmin(
+            displayName: 'Platform Admin',
+          ).copyWith(
+            userId: AuthFixtures.platformUserId,
+            isAuthenticated: true,
+          ),
+          schoolStatus: SchoolStatus.active,
+          profileStatus: MembershipStatus.active,
+          membershipStatus: MembershipStatus.active,
+        ),
+      );
+
   final String validEmail;
   final String validPassword;
   final AuthBootstrap Function()? bootstrapBuilder;

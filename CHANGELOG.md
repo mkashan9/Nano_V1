@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- AUTH-03: admin_web sign-in for school admin + platform superadmin fixtures
+
 - AUTH-02: teacher sign-in, Ms Khan auth.users fixture, app-scoped account kinds
 
 - AUTH-01: student sign-in, Ali auth.users fixture, nano_auth session bootstrap

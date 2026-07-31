@@ -69,6 +69,7 @@ abstract final class TenancyFixtures {
   static const teacherId = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
   static const platformAdminId = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
   static const indieId = 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee';
+  static const schoolAdminId = 'ffffffff-ffff-ffff-ffff-ffffffffffff';
 
   static const alpha = School(
     id: alphaSchoolId,
