@@ -31,3 +31,4 @@ export 'src/components/states/nano_permission_denied_state.dart';
 export 'src/components/states/nano_maintenance_state.dart';
 export 'src/components/states/nano_sync_status_banner.dart';
 export 'src/components/states/nano_view_state_host.dart';
+export 'src/l10n/nano_locale_scope.dart';

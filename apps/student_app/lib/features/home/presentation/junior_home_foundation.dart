@@ -20,6 +20,8 @@ class JuniorHomeFoundation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        NanoCopy(NanoAppLocale.en);
     return NanoResponsiveBuilder(
       builder: (context, windowSize, _) {
         final columns = NanoResponsive.subjectColumnsFor(
@@ -37,7 +39,7 @@ class JuniorHomeFoundation extends StatelessWidget {
                   const SizedBox(width: NanoSpacing.sm),
                   Expanded(
                     child: Text(
-                      'Hi $studentName',
+                      copy.greeting(studentName),
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
@@ -45,9 +47,9 @@ class JuniorHomeFoundation extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: NanoSpacing.lg),
-              _ContinueCard(onContinue: onContinue),
+              _ContinueCard(onContinue: onContinue, copy: copy),
               const SizedBox(height: NanoSpacing.lg),
-              Text('Subjects', style: Theme.of(context).textTheme.titleLarge),
+              Text(copy.subjects, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: NanoSpacing.sm),
               GridView.builder(
                 shrinkWrap: true,
@@ -55,9 +57,9 @@ class JuniorHomeFoundation extends StatelessWidget {
                 itemCount: subjects.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: columns,
-                  mainAxisSpacing: NanoSpacing.listGapJunior,
-                  crossAxisSpacing: NanoSpacing.listGapJunior,
-                  childAspectRatio: windowSize == NanoWindowSize.phone ? 1.05 : 1.2,
+                  mainAxisSpacing: NanoSpacing.sm,
+                  crossAxisSpacing: NanoSpacing.sm,
+                  childAspectRatio: 1.05,
                 ),
                 itemBuilder: (context, index) {
                   final subject = subjects[index];
@@ -80,49 +82,18 @@ class JuniorHomeFoundation extends StatelessWidget {
 }
 
 class _ContinueCard extends StatelessWidget {
-  const _ContinueCard({this.onContinue});
+  const _ContinueCard({required this.copy, this.onContinue});
 
+  final NanoCopy copy;
   final VoidCallback? onContinue;
 
   @override
   Widget build(BuildContext context) {
-    final nano = Theme.of(context).nano;
-    return Material(
-      color: NanoColors.brandPrimary,
-      borderRadius: BorderRadius.circular(nano.cardRadius),
-      child: InkWell(
-        onTap: onContinue,
-        borderRadius: BorderRadius.circular(nano.cardRadius),
-        child: Padding(
-          padding: EdgeInsets.all(nano.cardPadding),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Continue Learning',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    const SizedBox(height: NanoSpacing.xxs),
-                    Text(
-                      StudentHomeFixtures.continueTitle,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: NanoSpacing.sm),
-                    FilledButton.tonal(
-                      onPressed: onContinue,
-                      child: const Text('Start'),
-                    ),
-                  ],
-                ),
-              ),
-              const CompanionSlot(size: 88, semanticLabel: 'Nori'),
-            ],
-          ),
-        ),
-      ),
+    return JuniorActionCard(
+      title: StudentHomeFixtures.continueTitle,
+      subtitle: copy.continueLearning,
+      backgroundColor: NanoColors.worldStories,
+      onTap: onContinue,
     );
   }
 }

@@ -10,12 +10,14 @@ class AdminShell extends StatelessWidget {
     required this.principal,
     required this.navigationShell,
     required this.onPrincipalChanged,
+    required this.copy,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal principal;
   final StatefulNavigationShell navigationShell;
   final ValueChanged<SessionPrincipal> onPrincipalChanged;
+  final NanoCopy copy;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class AdminShell extends StatelessWidget {
       for (final d in destinations)
         NanoSideRailItem(
           id: d.id,
-          label: d.label,
+          label: copy.navLabel(d.id),
           icon: nanoNavIcon(d.iconName),
         ),
     ];

@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] FND-05 owner manual test
+- [ ] FND-06 owner manual test
 
 ## Completed
 
@@ -11,7 +11,8 @@
 - [x] FND-02
 - [x] FND-03
 - [x] FND-04
+- [x] FND-05
 
 ## Upcoming
 
-- [ ] FND-06 Localization and English/Urdu Readiness
+- [ ] FND-07 Accessibility, Sound, Haptics, and Reduced Motion

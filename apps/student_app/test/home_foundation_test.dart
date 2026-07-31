@@ -20,7 +20,7 @@ void main() {
     for (final subject in StudentHomeFixtures.subjects) {
       expect(find.text(subject.title), findsOneWidget);
     }
-    expect(find.byType(JuniorActionCard), findsNWidgets(4));
+    expect(find.byType(JuniorActionCard), findsNWidgets(5));
 
     await tester.pumpWidget(
       MaterialApp(

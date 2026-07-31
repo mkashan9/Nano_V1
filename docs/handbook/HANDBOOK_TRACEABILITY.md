@@ -63,7 +63,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | XP rules â€” video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
 | Junior must not see Communities | COM-01,SAFE-04,STU-03 | student_app | nav guard | roles | junior nav test | BACKLOG |
 | Independent students â€” natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
-| English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | BACKLOG |
+| English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | USER_TEST |
 | Generated media cost controls | MED-02 | edge | quotas | generation_* | dedupe/hash | BACKLOG |
 | Nori voice Aoede; no privileged calc | MED-03,CMP-01 | edge+app | voice/reactions | N/A | unit | BACKLOG |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | progress | checkpoint tests | BACKLOG |

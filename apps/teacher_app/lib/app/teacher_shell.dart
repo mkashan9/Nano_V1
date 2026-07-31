@@ -9,11 +9,13 @@ class TeacherShell extends StatelessWidget {
     required this.config,
     required this.principal,
     required this.navigationShell,
+    required this.copy,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal principal;
   final StatefulNavigationShell navigationShell;
+  final NanoCopy copy;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class TeacherShell extends StatelessWidget {
       for (final d in destinations)
         NanoBottomNavItem(
           id: d.id,
-          label: d.label,
+          label: copy.navLabel(d.id),
           icon: nanoNavIcon(d.iconName),
         ),
     ];

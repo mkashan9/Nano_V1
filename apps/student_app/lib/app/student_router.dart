@@ -7,6 +7,8 @@ GoRouter createStudentRouter({
   required EnvironmentConfig config,
   required SessionPrincipal principal,
   required ValueChanged<SessionPrincipal> onPrincipalChanged,
+  required ValueChanged<NanoAppLocale> onLocaleChanged,
+  required NanoAppLocale locale,
   String? initialLocation,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
@@ -33,6 +35,8 @@ GoRouter createStudentRouter({
             principal: principal,
             navigationShell: navigationShell,
             onPrincipalChanged: onPrincipalChanged,
+            onLocaleChanged: onLocaleChanged,
+            locale: locale,
           );
         },
         branches: [

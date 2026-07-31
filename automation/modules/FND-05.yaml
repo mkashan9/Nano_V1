@@ -1,7 +1,7 @@
 id: FND-05
 name: "Error, Loading, Empty, Offline, and Maintenance States"
 release: R0
-status: APPROVED
+status: DONE
 dependencies:
   - FND-04
 applications:

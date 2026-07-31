@@ -31,6 +31,8 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   nano_domain:
     path: ../../packages/nano_domain
   nano_design_system:

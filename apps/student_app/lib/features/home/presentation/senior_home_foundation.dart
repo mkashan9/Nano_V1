@@ -22,6 +22,8 @@ class SeniorHomeFoundation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        NanoCopy(NanoAppLocale.en);
     return NanoResponsiveBuilder(
       builder: (context, windowSize, _) {
         final columns = NanoResponsive.subjectColumnsFor(
@@ -40,7 +42,7 @@ class SeniorHomeFoundation extends StatelessWidget {
                   const SizedBox(width: NanoSpacing.sm),
                   Expanded(
                     child: Text(
-                      "I'm building my future.",
+                      copy.buildingFuture,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
@@ -56,7 +58,7 @@ class SeniorHomeFoundation extends StatelessWidget {
                 onTap: onContinue,
               ),
               const SizedBox(height: NanoSpacing.lg),
-              Text("Today's Mission", style: Theme.of(context).textTheme.titleLarge),
+              Text(copy.todaysMission, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: NanoSpacing.sm),
               ...missions.map(
                 (m) => Padding(
