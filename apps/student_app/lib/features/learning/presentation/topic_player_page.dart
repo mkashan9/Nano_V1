@@ -5,33 +5,40 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// LRN-03 player: resumes where the learner stopped, reports position to the
-/// server on a heartbeat, shows captions, and only offers completion once the
-/// server has credited enough watch time.
+/// LRN-03/04 player: resumes where the learner stopped, reports position to the
+/// server on a heartbeat, shows captions, offers refresh moments at safe
+/// boundaries in long videos, and only offers completion once the server has
+/// credited enough watch time.
 ///
 /// The video surface itself is a placeholder until MED-01 lands approved
 /// provider playback; everything around it — accounting, resume, captions,
-/// completion — is the real path.
+/// checkpoints, completion — is the real path.
 class TopicPlayerPage extends StatefulWidget {
   const TopicPlayerPage({
     super.key,
     required this.topic,
     required this.progressRepository,
+    this.checkpointRepository,
     this.junior = true,
     this.captionsEnabled,
     this.reducedMotion,
+    this.refreshPromptsEnabled,
     this.tick = const Duration(seconds: 1),
     this.onProgress,
   });
 
   final CatalogTopic topic;
   final LearningProgressRepository progressRepository;
+
+  /// Absent for short content that has no refresh moments.
+  final CheckpointRepository? checkpointRepository;
   final bool junior;
 
-  /// Overrides for tests. Left null, both follow the learner's saved
+  /// Overrides for tests. Left null, these follow the learner's saved
   /// accessibility preferences.
   final bool? captionsEnabled;
   final bool? reducedMotion;
+  final bool? refreshPromptsEnabled;
 
   /// Playback clock interval, shortened by tests.
   final Duration tick;
@@ -54,6 +61,9 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
   var _busy = false;
   int _secondsSinceBeat = 0;
   String? _notice;
+  var _checkpoints = const <RefreshCheckpoint>[];
+  final _answered = <String>{};
+  RefreshCheckpoint? _pending;
 
   AccessibilityPreferences get _a11y =>
       NanoAccessibilityScope.maybeOf(context)?.preferences ??
@@ -64,10 +74,51 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
 
   bool get _reducedMotion => widget.reducedMotion ?? _a11y.reducedMotion;
 
+  /// Classroom Mode silences optional prompts, as does turning refresh prompts
+  /// off. Required checkpoints ignore both.
+  bool get _allowOptionalPrompts =>
+      widget.refreshPromptsEnabled ?? !_a11y.classroomMode;
+
+  int get _creditGate => CheckpointPolicy.creditGate(
+        _checkpoints,
+        answeredIds: _answered,
+        durationSeconds: _topic.durationSeconds,
+      );
+
+  int get _seekCeiling => CheckpointPolicy.seekCeiling(
+        policy: _topic.seekPolicy,
+        watchedSeconds: _topic.watchedSeconds,
+        durationSeconds: _topic.durationSeconds,
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCheckpoints();
+  }
+
   @override
   void dispose() {
     _clock?.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadCheckpoints() async {
+    final repo = widget.checkpointRepository;
+    if (repo == null) return;
+    try {
+      final checkpoints = await repo.forTopicVersion(_topic.topicVersionId);
+      final answered = await repo.answeredIds(_topic.topicVersionId);
+      if (!mounted) return;
+      setState(() {
+        _checkpoints = checkpoints;
+        _answered
+          ..clear()
+          ..addAll(answered);
+      });
+    } catch (_) {
+      // Without checkpoints the video simply plays straight through.
+    }
   }
 
   void _togglePlay() {
@@ -78,10 +129,14 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
     if (_playing) {
       _clock = Timer.periodic(widget.tick, (_) => _advance());
     } else {
-      _clock?.cancel();
-      _clock = null;
+      _stopClock();
       _sendHeartbeat();
     }
+  }
+
+  void _stopClock() {
+    _clock?.cancel();
+    _clock = null;
   }
 
   void _advance() {
@@ -92,15 +147,65 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
       _secondsSinceBeat++;
     });
     if (_position >= _topic.durationSeconds) {
-      _clock?.cancel();
-      _clock = null;
+      _stopClock();
       setState(() => _playing = false);
       _sendHeartbeat();
+      return;
+    }
+    final due = CheckpointPolicy.dueAt(
+      _checkpoints,
+      _position,
+      answeredIds: _answered,
+      allowOptional: _allowOptionalPrompts,
+    );
+    if (due != null && _pending?.id != due.id) {
+      _pauseFor(due);
       return;
     }
     if (_secondsSinceBeat >= PlaybackPolicy.heartbeat.inSeconds) {
       _sendHeartbeat();
     }
+  }
+
+  /// A refresh moment stops playback rather than talking over the video.
+  void _pauseFor(RefreshCheckpoint checkpoint) {
+    _stopClock();
+    setState(() {
+      _playing = false;
+      _pending = checkpoint;
+    });
+    _sendHeartbeat();
+  }
+
+  Future<void> _answer(
+    RefreshCheckpoint checkpoint,
+    CheckpointResponse response, {
+    required bool resume,
+  }) async {
+    setState(() {
+      _pending = null;
+      _answered.add(checkpoint.id);
+    });
+    try {
+      await widget.checkpointRepository?.acknowledge(
+        checkpointId: checkpoint.id,
+        response: response,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      // The prompt was answered locally; the gate stays until the server
+      // agrees, so say so rather than pretending credit will flow.
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _answered.remove(checkpoint.id);
+        _notice = copy.topicSaveFailed;
+      });
+      return;
+    }
+    if (!mounted || !resume) return;
+    setState(() => _playing = true);
+    _clock = Timer.periodic(widget.tick, (_) => _advance());
   }
 
   Future<void> _sendHeartbeat() async {
@@ -164,6 +269,12 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
     final theme = Theme.of(context);
     final cue = _topic.captions.cueAt(_position);
     final canComplete = _topic.meetsCompletionThreshold && !_topic.isCompleted;
+    final chapter = CheckpointPolicy.chapterAt(_topic.chapters, _position);
+    final gate = _creditGate;
+    final gated = gate < _topic.durationSeconds &&
+        _topic.watchedSeconds >= gate &&
+        !_topic.isCompleted;
+    final pending = _pending;
 
     return Scaffold(
       appBar: AppBar(title: Text(_topic.titleFor(locale))),
@@ -186,7 +297,8 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
             Row(
               children: [
                 IconButton(
-                  onPressed: _topic.hasVideo ? _togglePlay : null,
+                  onPressed:
+                      _topic.hasVideo && pending == null ? _togglePlay : null,
                   icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
                   tooltip: _playing ? copy.pauseLabel : copy.playLabel,
                 ),
@@ -199,8 +311,13 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                           .clamp(0, _topic.durationSeconds)
                           .toDouble(),
                       max: _topic.durationSeconds.toDouble(),
-                      onChanged: _topic.hasVideo
-                          ? (value) => setState(() => _position = value.round())
+                      onChanged: _topic.hasVideo && pending == null
+                          ? (value) => setState(
+                                // Content may forbid skipping ahead, so the
+                                // scrubber stops where the server would clamp.
+                                () => _position =
+                                    value.round().clamp(0, _seekCeiling),
+                              )
                           : null,
                       onChangeEnd: (_) => _sendHeartbeat(),
                     ),
@@ -213,6 +330,13 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                 ),
               ],
             ),
+            if (_topic.seekPolicy == SeekPolicy.noSkipAhead)
+              Text(copy.noSkipAheadNotice, style: theme.textTheme.bodySmall),
+            if (chapter != null)
+              Text(
+                chapter.titleFor(locale),
+                style: theme.textTheme.titleMedium,
+              ),
             Row(
               children: [
                 Expanded(
@@ -238,6 +362,35 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                       ? copy.noCaptionsLabel
                       : cue?.textFor(locale) ?? '…',
                   style: theme.textTheme.bodyLarge,
+                ),
+              ),
+            ],
+            if (pending != null) ...[
+              const SizedBox(height: NanoSpacing.md),
+              _CheckpointCard(
+                checkpoint: pending,
+                copy: copy,
+                locale: locale,
+                junior: widget.junior,
+                onContinue: () => _answer(
+                  pending,
+                  pending.defaultResponse,
+                  resume: true,
+                ),
+                onBreak: () => _answer(
+                  pending,
+                  CheckpointResponse.postponed,
+                  resume: false,
+                ),
+              ),
+            ],
+            if (gated && pending == null) ...[
+              const SizedBox(height: NanoSpacing.sm),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  copy.creditPausedNotice,
+                  style: theme.textTheme.bodyMedium,
                 ),
               ),
             ],
@@ -274,6 +427,88 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
               child: CompanionSlot(size: widget.junior ? 96 : 72),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CheckpointCard extends StatelessWidget {
+  const _CheckpointCard({
+    required this.checkpoint,
+    required this.copy,
+    required this.locale,
+    required this.junior,
+    required this.onContinue,
+    required this.onBreak,
+  });
+
+  final RefreshCheckpoint checkpoint;
+  final NanoCopy copy;
+  final NanoAppLocale locale;
+  final bool junior;
+  final VoidCallback onContinue;
+  final VoidCallback onBreak;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      liveRegion: true,
+      container: true,
+      child: Card(
+        color: theme.colorScheme.secondaryContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            junior ? NanoRadii.junior : NanoRadii.senior,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(NanoSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CompanionSlot(size: junior ? 64 : 48),
+                  const SizedBox(width: NanoSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      checkpoint.title(copy),
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: NanoSpacing.sm),
+              Text(
+                checkpoint.promptFor(locale),
+                style: theme.textTheme.bodyLarge,
+              ),
+              if (checkpoint.isRequired) ...[
+                const SizedBox(height: NanoSpacing.sm),
+                Text(
+                  copy.creditPausedNotice,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+              const SizedBox(height: NanoSpacing.md),
+              Wrap(
+                spacing: NanoSpacing.sm,
+                runSpacing: NanoSpacing.sm,
+                children: [
+                  FilledButton(
+                    onPressed: onContinue,
+                    child: Text(copy.keepWatchingLabel),
+                  ),
+                  TextButton(
+                    onPressed: onBreak,
+                    child: Text(copy.takeABreakLabel),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

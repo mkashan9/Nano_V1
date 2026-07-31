@@ -25,18 +25,29 @@ class FakeLearningProgressRepository implements LearningProgressRepository {
     Set<String>? unavailableVersionIds,
     this.alwaysFail = false,
     this.durationSeconds = 120,
+    Map<String, int>? durations,
+    Map<String, int>? creditGates,
     this.completionThreshold = 0.9,
     this.creditPerBeat = 15,
   })  : lockedVersionIds =
             lockedVersionIds ?? {'tv-addition-1', 'tv-plants-1'},
         unavailableVersionIds =
-            unavailableVersionIds ?? {'tv-first-loop-1'};
+            unavailableVersionIds ?? {'tv-first-loop-1'},
+        durations = durations ?? {'tv-ecosystems-1': 2400},
+        creditGates = creditGates ?? {};
 
   final String userId;
   final Set<String> lockedVersionIds;
   final Set<String> unavailableVersionIds;
   final bool alwaysFail;
   final int durationSeconds;
+
+  /// Per-topic durations for fixtures that are not the default length.
+  final Map<String, int> durations;
+
+  /// Mirrors `nano_internal.checkpoint_credit_gate`: credit stops here until a
+  /// required checkpoint is answered.
+  final Map<String, int> creditGates;
   final double completionThreshold;
 
   /// Watch seconds a heartbeat is allowed to earn, standing in for the
@@ -47,6 +58,17 @@ class FakeLearningProgressRepository implements LearningProgressRepository {
   final List<String> started = [];
   final List<int> positions = [];
   final List<String> completed = [];
+
+  int _duration(String topicVersionId) =>
+      durations[topicVersionId] ?? durationSeconds;
+
+  int _gate(String topicVersionId) =>
+      creditGates[topicVersionId] ?? _duration(topicVersionId);
+
+  /// Releases a credit gate, as answering a required checkpoint does.
+  void clearGate(String topicVersionId) {
+    creditGates.remove(topicVersionId);
+  }
 
   @override
   Future<TopicProgress> start(String topicVersionId) async {
@@ -74,8 +96,8 @@ class FakeLearningProgressRepository implements LearningProgressRepository {
     _guard(topicVersionId);
     positions.add(positionSeconds);
     final existing = rows[topicVersionId];
-    final position =
-        positionSeconds.clamp(0, durationSeconds).toInt();
+    final duration = _duration(topicVersionId);
+    final position = positionSeconds.clamp(0, duration).toInt();
     if (existing == null) {
       final seeded = TopicProgress(
         userId: userId,
@@ -93,15 +115,16 @@ class FakeLearningProgressRepository implements LearningProgressRepository {
       positionDelta: advanced,
       elapsedSeconds: creditPerBeat,
     );
-    final watched =
-        (existing.watchedSeconds + credit).clamp(0, durationSeconds).toInt();
+    final watched = (existing.watchedSeconds + credit)
+        .clamp(existing.watchedSeconds, _gate(topicVersionId).clamp(0, duration))
+        .toInt();
     final next = TopicProgress(
       userId: userId,
       topicVersionId: topicVersionId,
       status: existing.isCompleted
           ? TopicProgressStatus.completed
           : TopicProgressStatus.inProgress,
-      progress: watched / durationSeconds,
+      progress: watched / duration,
       resumeSeconds: position,
       watchedSeconds: watched,
       completedAt: existing.completedAt,
@@ -118,11 +141,11 @@ class FakeLearningProgressRepository implements LearningProgressRepository {
     final watched = existing?.watchedSeconds ?? 0;
     if (!PlaybackPolicy.canComplete(
       watchedSeconds: watched,
-      durationSeconds: durationSeconds,
+      durationSeconds: _duration(topicVersionId),
       threshold: completionThreshold,
     )) {
       final required = PlaybackPolicy.requiredSeconds(
-        durationSeconds: durationSeconds,
+        durationSeconds: _duration(topicVersionId),
         threshold: completionThreshold,
       );
       throw TopicGateException(
@@ -175,7 +198,7 @@ class FakeLearningProgressRepository implements LearningProgressRepository {
       userId: userId,
       topicVersionId: topicVersionId,
       status: existing?.status ?? TopicProgressStatus.inProgress,
-      progress: watchedSeconds / durationSeconds,
+      progress: watchedSeconds / _duration(topicVersionId),
       resumeSeconds: existing?.resumeSeconds ?? watchedSeconds,
       watchedSeconds: watchedSeconds,
       completedAt: existing?.completedAt,

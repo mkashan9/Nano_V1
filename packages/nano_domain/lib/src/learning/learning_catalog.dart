@@ -1,5 +1,6 @@
 import '../l10n/nano_app_locale.dart';
 import 'learning_subject.dart';
+import 'refresh_checkpoint.dart';
 import 'topic_playback.dart';
 
 /// Per-learner state for one published topic version.
@@ -39,6 +40,8 @@ class CatalogTopic {
     this.videoProvider,
     this.videoRef,
     this.captions = const CaptionTrack([]),
+    this.chapters = const [],
+    this.seekPolicy = SeekPolicy.free,
     this.blockingTitles = const [],
   });
 
@@ -63,6 +66,8 @@ class CatalogTopic {
       videoProvider: row['video_provider'] as String?,
       videoRef: row['video_ref'] as String?,
       captions: CaptionTrack.fromRows(row['captions']),
+      chapters: VideoChapter.listFrom(row['chapters']),
+      seekPolicy: SeekPolicy.fromName(row['seek_policy'] as String?),
       blockingTitles: _stringList(row['blocking_titles']),
     );
   }
@@ -88,6 +93,10 @@ class CatalogTopic {
   final String? videoProvider;
   final String? videoRef;
   final CaptionTrack captions;
+  final List<VideoChapter> chapters;
+
+  /// Whether the content lets the learner drag ahead of what they watched.
+  final SeekPolicy seekPolicy;
 
   /// Prerequisite topic titles still outstanding, as computed on the server.
   final List<String> blockingTitles;
@@ -121,6 +130,7 @@ class CatalogTopic {
     double? progress,
     int? resumeSeconds,
     int? watchedSeconds,
+    SeekPolicy? seekPolicy,
     List<String>? blockingTitles,
   }) {
     return CatalogTopic(
@@ -142,6 +152,8 @@ class CatalogTopic {
       videoProvider: videoProvider,
       videoRef: videoRef,
       captions: captions,
+      chapters: chapters,
+      seekPolicy: seekPolicy ?? this.seekPolicy,
       blockingTitles: blockingTitles ?? this.blockingTitles,
     );
   }

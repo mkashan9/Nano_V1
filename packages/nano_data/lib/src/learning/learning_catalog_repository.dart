@@ -178,6 +178,51 @@ class FakeLearningCatalogRepository implements LearningCatalogRepository {
               videoRef: 'plants-and-animals',
               blockingTitles: ['Living things'],
             ),
+            // Long enough for the handbook's refresh-checkpoint rule to apply.
+            CatalogTopic(
+              topicId: 'topic-ecosystems',
+              topicVersionId: 'tv-ecosystems-1',
+              slug: 'ecosystems-in-depth',
+              title: 'Ecosystems in depth',
+              titleUr: 'ماحولیاتی نظام تفصیل سے',
+              order: 3,
+              estimatedMinutes: 40,
+              objectives: [
+                'Trace energy through a food web',
+                'Explain one balance that fails',
+              ],
+              durationSeconds: 2400,
+              videoProvider: 'fixture',
+              videoRef: 'ecosystems-in-depth',
+              chapters: [
+                VideoChapter(
+                  atSeconds: 0,
+                  title: 'What an ecosystem is',
+                  titleUr: 'ماحولیاتی نظام کیا ہے',
+                ),
+                VideoChapter(
+                  atSeconds: 660,
+                  title: 'Food webs',
+                  titleUr: 'غذائی جالیں',
+                ),
+                VideoChapter(
+                  atSeconds: 1140,
+                  title: 'Check yourself',
+                  titleUr: 'اپنا جائزہ لیں',
+                  isProtected: true,
+                ),
+                VideoChapter(
+                  atSeconds: 1320,
+                  title: 'When balance fails',
+                  titleUr: 'توازن بگڑنے پر',
+                ),
+                VideoChapter(
+                  atSeconds: 1980,
+                  title: 'Recovery',
+                  titleUr: 'بحالی',
+                ),
+              ],
+            ),
           ],
         ),
     ];
@@ -193,8 +238,8 @@ class SupabaseLearningCatalogRepository implements LearningCatalogRepository {
       'topic_id, topic_slug, topic_order, topic_version_id, topic_title, '
       'topic_title_ur, objectives, estimated_minutes, resources, '
       'duration_seconds, completion_threshold, video_provider, video_ref, '
-      'captions, progress_status, progress, resume_seconds, watched_seconds, '
-      'blocking_titles, is_locked';
+      'captions, chapters, seek_policy, progress_status, progress, '
+      'resume_seconds, watched_seconds, blocking_titles, is_locked';
 
   final SupabaseClient _client;
 

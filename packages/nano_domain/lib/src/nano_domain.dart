@@ -6,6 +6,7 @@ export 'environment/service_endpoint.dart';
 export 'home/student_home_summary.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';
+export 'learning/refresh_checkpoint.dart';
 export 'learning/topic_action.dart';
 export 'learning/topic_playback.dart';
 export 'learning/learning_subject.dart';

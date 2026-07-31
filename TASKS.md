@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] LRN-03 owner manual test
+- [ ] LRN-04 owner manual test
 
 ## Completed
 
@@ -21,7 +21,8 @@
 - [x] STU-05
 - [x] LRN-01
 - [x] LRN-02
+- [x] LRN-03
 
 ## Upcoming
 
-- [ ] LRN-04 Long-Video Checkpoints and Refresh Interactions
+- [ ] LRN-05 Learning Progress and Recommendations
