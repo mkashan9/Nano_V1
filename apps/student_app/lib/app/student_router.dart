@@ -34,6 +34,7 @@ GoRouter createStudentRouter({
   StudentPreferencesRepository? preferencesRepository,
   StudentPreferences? preferences,
   ValueChanged<StudentPreferences>? onPreferencesChanged,
+  StudentHomeRepository? homeRepository,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -192,8 +193,12 @@ GoRouter createStudentRouter({
                 GoRoute(
                   path: dest.path == '/' ? '/' : dest.path,
                   name: dest.id,
-                  builder: (context, state) =>
-                      _pageFor(dest.id, principal),
+                  builder: (context, state) => _pageFor(
+                    dest.id,
+                    principal,
+                    homeRepository: homeRepository,
+                    companionName: preferences?.companionName,
+                  ),
                 ),
               ],
             ),
@@ -203,9 +208,18 @@ GoRouter createStudentRouter({
   );
 }
 
-Widget _pageFor(String id, SessionPrincipal principal) {
+Widget _pageFor(
+  String id,
+  SessionPrincipal principal, {
+  StudentHomeRepository? homeRepository,
+  String? companionName,
+}) {
   return switch (id) {
-    'home' || 'learning' => StudentLearningTab(principal: principal),
+    'home' || 'learning' => StudentLearningTab(
+        principal: principal,
+        homeRepository: homeRepository,
+        companionName: companionName,
+      ),
     'game' || 'games' => const StudentGamesTab(),
     'flex' => const StudentFlexTab(),
     'communities' => const StudentCommunitiesTab(),

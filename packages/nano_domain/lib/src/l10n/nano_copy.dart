@@ -93,6 +93,16 @@ class NanoCopy {
   String get onboardingIndependentIntro => isUrdu
       ? 'آپ خود سیکھ رہے ہیں: اسباق، کوئز اور گیمز آپ کے لیے تیار ہیں۔'
       : 'You are learning on your own: lessons, quizzes, and games are ready for you.';
+  String get keepGoing => isUrdu ? 'جاری رکھیں' : 'Keep going';
+  String get streakLabel => isUrdu ? 'دن کا سلسلہ' : 'day streak';
+  String get notificationsLabel => isUrdu ? 'اطلاعات' : 'Notifications';
+  String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
+  String percentDone(int percent) =>
+      isUrdu ? '$percent% مکمل' : '$percent% done';
+  String get accessWarning => isUrdu
+      ? 'آپ کی رسائی جلد ختم ہو رہی ہے۔ سیکھنا جاری رکھیں۔'
+      : 'Your access is ending soon. You can keep learning for now.';
+
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';
   String get companionNameLabel => isUrdu ? 'ساتھی کا نام' : 'Guide name';

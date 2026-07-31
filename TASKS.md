@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] STU-02 owner manual test
+- [ ] STU-03 owner manual test
 
 ## Completed
 
@@ -15,7 +15,9 @@
 - [x] AUTH-03
 - [x] AUTH-04
 - [x] STU-01
+- [x] STU-02
 
 ## Upcoming
 
-- [ ] STU-03 Junior Home
+- [ ] STU-04 Senior Home
+- [ ] STU-05 Student Profile and Settings

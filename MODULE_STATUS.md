@@ -21,8 +21,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | AUTH-03 | School Management and Superadmin Authentication | R1 | DONE | SEC-03, FND-04 |
 | AUTH-04 | Independent Student Signup and Recovery | R1 | DONE | AUTH-01 |
 | STU-01 | Student First-Run Onboarding | R1 | DONE | AUTH-01, FND-06, FND-07 |
-| STU-02 | Nori Naming, Language, Sound, and Accessibility Setup | R1 | USER_TEST | STU-01 |
-| STU-03 | Junior Home | R2 | BACKLOG | STU-02, FND-05 |
+| STU-02 | Nori Naming, Language, Sound, and Accessibility Setup | R1 | DONE | STU-01 |
+| STU-03 | Junior Home | R2 | USER_TEST | STU-02, FND-05 |
 | STU-04 | Senior Home | R2 | BACKLOG | STU-02, FND-05 |
 | STU-05 | Student Profile and Settings | R2 | BACKLOG | STU-03, STU-04 |
 | STU-06 | Student Notifications Inbox | R2 | BACKLOG | STU-05 |

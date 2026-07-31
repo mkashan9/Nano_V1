@@ -6,6 +6,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/student_router.dart';
+import 'package:student_app/features/home/fixtures/student_home_fixtures.dart';
 
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
@@ -50,6 +51,7 @@ class NanoStudentApp extends StatefulWidget {
     this.authRepository,
     this.onboardingRepository,
     this.preferencesRepository,
+    this.homeRepository,
     this.requireAuth = false,
   });
 
@@ -61,6 +63,7 @@ class NanoStudentApp extends StatefulWidget {
   final AuthRepository? authRepository;
   final OnboardingRepository? onboardingRepository;
   final StudentPreferencesRepository? preferencesRepository;
+  final StudentHomeRepository? homeRepository;
   final bool requireAuth;
 
   @override
@@ -76,6 +79,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   AuthBootstrap? _authBootstrap;
   OnboardingProgress? _onboarding;
   StudentPreferences? _preferences;
+  late final StudentHomeRepository _homeRepository;
   var _restoring = false;
 
   @override
@@ -87,6 +91,12 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
+    // Home content stays on fixtures until the LRN/XP modules land.
+    _homeRepository = widget.homeRepository ??
+        FakeStudentHomeRepository(
+          subjects: StudentHomeFixtures.subjects,
+          missions: StudentHomeFixtures.missions,
+        );
     _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
@@ -195,6 +205,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         _applyPreferences(prefs);
         _router = _createRouter();
       }),
+      homeRepository: _homeRepository,
     );
   }
 
