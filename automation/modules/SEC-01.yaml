@@ -1,7 +1,7 @@
 id: SEC-01
 name: "Supabase Baseline and Migration Workflow"
 release: R0
-status: USER_TEST
+status: APPROVED
 dependencies:
   - FND-01
 applications:
