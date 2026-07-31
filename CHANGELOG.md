@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- FND-05: shared NanoViewState, state host, maintenance/permission/sync chrome
+
 - FND-04: role-aware shells, go_router, deep-link fallback, Flex eligibility
 
 ### Added

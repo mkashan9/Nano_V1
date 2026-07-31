@@ -1,8 +1,8 @@
-﻿# TASKS
+# TASKS
 
 ## Active
 
-- [ ] FND-04 owner manual test
+- [ ] FND-05 owner manual test
 
 ## Completed
 
@@ -10,7 +10,8 @@
 - [x] FND-01
 - [x] FND-02
 - [x] FND-03
+- [x] FND-04
 
 ## Upcoming
 
-- [ ] FND-05 Error, Loading, Empty, Offline, and Maintenance States
+- [ ] FND-06 Localization and English/Urdu Readiness

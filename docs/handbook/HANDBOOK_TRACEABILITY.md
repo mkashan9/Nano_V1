@@ -69,7 +69,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | progress | checkpoint tests | BACKLOG |
 | School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |
-| Offline / poor network | SYNC-01,QA-03,FND-05 | apps | offline states | queue | offline tests | BACKLOG |
+| Offline / poor network | SYNC-01,QA-03,FND-05 | apps | offline states | queue | offline tests | USER_TEST |
 | Pilot release preparation | QA-06 | all | checklist | N/A | gate | BACKLOG |
 
 ## Coverage statement

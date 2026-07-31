@@ -8,8 +8,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | FND-01 | Workspace, Configuration, and Environments | R0 | DONE | AUD-01 |
 | FND-02 | Shared Design System | R0 | DONE | FND-01 |
 | FND-03 | Junior and Senior Responsive Foundations | R0 | DONE | FND-02 |
-| FND-04 | Navigation and Role-Aware Application Shells | R0 | APPROVED | FND-03 |
-| FND-05 | Error, Loading, Empty, Offline, and Maintenance States | R0 | BACKLOG | FND-04 |
+| FND-04 | Navigation and Role-Aware Application Shells | R0 | DONE | FND-03 |
+| FND-05 | Error, Loading, Empty, Offline, and Maintenance States | R0 | APPROVED | FND-04 |
 | FND-06 | Localization and English/Urdu Readiness | R0 | BACKLOG | FND-02 |
 | FND-07 | Accessibility, Sound, Haptics, and Reduced Motion | R0 | BACKLOG | FND-02 |
 | SEC-01 | Supabase Baseline and Migration Workflow | R0 | BACKLOG | FND-01 |

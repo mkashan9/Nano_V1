@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/component_gallery_page.dart';
+import 'package:student_app/app/states_preview_page.dart';
 import 'package:student_app/app/diagnostics_page.dart';
 import 'package:student_app/app/environment_badge.dart';
 import 'package:student_app/app/nav_placeholder_page.dart';
@@ -115,6 +116,16 @@ class StudentShell extends StatelessWidget {
                         );
                       },
                       child: const Text('Gallery'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const StatesPreviewPage(),
+                          ),
+                        );
+                      },
+                      child: const Text('UI states'),
                     ),
                     TextButton(
                       onPressed: () {
