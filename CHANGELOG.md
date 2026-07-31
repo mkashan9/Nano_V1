@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- SEC-02: multi-school tenancy tables, RLS, nano_internal helpers, Alpha/Beta fixtures
+
 - SEC-01: remote-first Supabase baseline, app_health, migration workflow
 
 - FND-07: accessibility prefs, feedback gates, reduced motion, A11y settings

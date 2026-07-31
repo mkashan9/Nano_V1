@@ -3,12 +3,12 @@
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** SEC-01 Supabase Baseline and Migration Workflow
+- **Current module:** SEC-02 Multi-School Tenancy and RLS
 - **Current status:** USER_TEST
-- **Current branch:** module/SEC-01-supabase-baseline
-- **Last completed module:** FND-07
+- **Current branch:** module/SEC-02-tenancy-rls
+- **Last completed module:** SEC-01
 - **Application name:** Nano
 
-## Next after SEC-01 DONE
+## Next after SEC-02 DONE
 
-SEC-02 Multi-School Tenancy and RLS
+SEC-03 Audit Logs, Sessions, Suspension, and Permission Guards

@@ -2,19 +2,14 @@
 
 ## Active
 
-- [ ] SEC-01 owner manual test
+- [ ] SEC-02 owner manual test
 
 ## Completed
 
 - [x] AUD-01
-- [x] FND-01
-- [x] FND-02
-- [x] FND-03
-- [x] FND-04
-- [x] FND-05
-- [x] FND-06
-- [x] FND-07
+- [x] FND-01 through FND-07
+- [x] SEC-01
 
 ## Upcoming
 
-- [ ] SEC-02 Multi-School Tenancy and RLS
+- [ ] SEC-03 Audit Logs, Sessions, Suspension, and Permission Guards

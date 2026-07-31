@@ -1,7 +1,7 @@
 id: SEC-02
 name: "Multi-School Tenancy and RLS"
 release: R0
-status: BACKLOG
+status: APPROVED
 dependencies:
   - SEC-01
 applications:
@@ -22,6 +22,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - supabase/
+  - packages/nano_domain/
+  - docs/setup/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -29,17 +32,31 @@ forbidden_paths:
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SEC-02"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.schools
+  - public.profiles
+  - public.school_memberships
+  - public.platform_roles
+  - public.teacher_assignments
+  - nano_internal.is_platform_admin
+  - nano_internal.is_school_member
+  - nano_internal.has_school_role
 server_functions: []
 acceptance:
+  - Tenancy tables exist with RLS enabled
+  - Cross-school select denied for student of other school
+  - SECURITY DEFINER helpers not exposed via public API schema
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/tenancy_models_test.dart
+  - supabase/tests/sec02_cross_school_isolation.sql
+  - mcp_security_advisors_clean
 security_checks:
   - no_secrets_in_diff
+  - rls_enabled_on_tenancy_tables
+  - cross_school_isolation
+  - no_public_security_definer_rpc
 accessibility_checks: []
 manual_test_steps:
   - Review module docs and status
