@@ -1,16 +1,15 @@
-﻿# TASKS
+# TASKS
 
 ## Active
 
-- [ ] SEC-03 owner manual test
+- [ ] SYNC-01 owner manual test
 
 ## Completed
 
 - [x] AUD-01
 - [x] FND-01 through FND-07
-- [x] SEC-01
-- [x] SEC-02
+- [x] SEC-01 through SEC-03
 
 ## Upcoming
 
-- [ ] SYNC-01 Local Cache, Drafts, Queue, and Conflict States
+- [ ] AUTH-01 Student Authentication

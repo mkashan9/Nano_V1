@@ -30,6 +30,7 @@ export 'src/components/states/nano_feature_disabled_state.dart';
 export 'src/components/states/nano_permission_denied_state.dart';
 export 'src/components/states/nano_maintenance_state.dart';
 export 'src/components/states/nano_sync_status_banner.dart';
+export 'src/components/states/nano_conflict_banner.dart';
 export 'src/components/states/nano_view_state_host.dart';
 export 'src/l10n/nano_locale_scope.dart';
 export 'src/accessibility/nano_accessibility_scope.dart';

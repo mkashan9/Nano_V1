@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- SYNC-01: local cache/queue substrate, conflict banner, Offline debug preview, ADR-0007
+
 - SEC-03: audit/session tables, suspension-aware RLS helpers, AccessGuard domain models
 
 - SEC-02: multi-school tenancy tables, RLS, nano_internal helpers, Alpha/Beta fixtures

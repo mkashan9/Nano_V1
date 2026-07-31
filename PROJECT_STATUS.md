@@ -1,14 +1,14 @@
-﻿# PROJECT_STATUS
+# PROJECT_STATUS
 
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** SEC-03 Audit Logs, Sessions, Suspension, and Permission Guards
+- **Current module:** SYNC-01 Local Cache, Drafts, Queue, and Conflict States
 - **Current status:** USER_TEST
-- **Current branch:** module/SEC-03-audit-sessions-guards
-- **Last completed module:** SEC-02
+- **Current branch:** module/SYNC-01-local-cache-queue
+- **Last completed module:** SEC-03
 - **Application name:** Nano
 
-## Next after SEC-03 DONE
+## Next after SYNC-01 DONE
 
-SYNC-01 Local Cache, Drafts, Queue, and Conflict States
+AUTH-01 Student Authentication

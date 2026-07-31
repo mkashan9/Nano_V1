@@ -63,6 +63,12 @@ class NanoCopy {
   String get offlineBanner => isUrdu
       ? 'آپ آف لائن ہیں۔ دوبارہ جڑنے پر ہم وقت کریں گے۔'
       : 'You are offline. Changes will sync when you reconnect.';
+  String get conflictMessage => isUrdu
+      ? 'ایک نئی محفوظ شدہ ورژن موجود ہے۔ دوبارہ کوشش کریں یا اپنی مسودہ مسترد کریں۔'
+      : 'A newer saved version exists. Try again or discard your draft.';
+  String get pendingChanges =>
+      isUrdu ? 'زیرِ التوا تبدیلیاں' : 'Pending changes';
+  String get lastUpdated => isUrdu ? 'آخری تازہ کاری' : 'Last updated';
   String get maintenanceTitle =>
       isUrdu ? 'مرمت جاری ہے' : 'Under maintenance';
   String get maintenanceMessage => isUrdu

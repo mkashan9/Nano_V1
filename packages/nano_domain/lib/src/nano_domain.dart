@@ -17,3 +17,4 @@ export 'accessibility/accessibility_preferences.dart';
 export 'accessibility/nano_sound_cue.dart';
 export 'tenancy/tenancy_models.dart';
 export 'security/access_guard.dart';
+export 'sync/sync_models.dart';

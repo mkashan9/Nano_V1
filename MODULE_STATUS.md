@@ -14,8 +14,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | FND-07 | Accessibility, Sound, Haptics, and Reduced Motion | R0 | DONE | FND-02 |
 | SEC-01 | Supabase Baseline and Migration Workflow | R0 | DONE | FND-01 |
 | SEC-02 | Multi-School Tenancy and RLS | R0 | DONE | SEC-01 |
-| SEC-03 | Audit Logs, Sessions, Suspension, and Permission Guards | R0 | USER_TEST | SEC-02 |
-| SYNC-01 | Local Cache, Drafts, Queue, and Conflict States | R0 | BACKLOG | FND-05, SEC-01 |
+| SEC-03 | Audit Logs, Sessions, Suspension, and Permission Guards | R0 | DONE | SEC-02 |
+| SYNC-01 | Local Cache, Drafts, Queue, and Conflict States | R0 | USER_TEST | FND-05, SEC-01 |
 | AUTH-01 | Student Authentication | R1 | BACKLOG | SEC-03, FND-04 |
 | AUTH-02 | Teacher Authentication | R1 | BACKLOG | SEC-03, FND-04 |
 | AUTH-03 | School Management and Superadmin Authentication | R1 | BACKLOG | SEC-03, FND-04 |

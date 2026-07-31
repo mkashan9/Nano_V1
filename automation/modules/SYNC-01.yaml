@@ -1,7 +1,7 @@
 id: SYNC-01
 name: "Local Cache, Drafts, Queue, and Conflict States"
 release: R0
-status: BACKLOG
+status: APPROVED
 dependencies:
   - FND-05
   - SEC-01
@@ -23,6 +23,11 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - apps/student_app/
+  - docs/architecture-decisions/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -33,12 +38,17 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Sync envelope and idempotent queue exist
+  - Cache refuses older revision overwrite
+  - Offline policy blocks XP/score/membership queueing
+  - Conflict banner offers retry/discard/keep-saved
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/sync_models_test.dart
+  - packages/nano_data/test/sync_store_test.dart
+  - packages/nano_design_system/test/nano_conflict_banner_test.dart
+  - apps/student_app/test/sync_preview_test.dart
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
