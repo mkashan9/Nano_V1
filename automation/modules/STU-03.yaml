@@ -1,7 +1,7 @@
 id: STU-03
 name: "Junior Home"
 release: R2
-status: USER_TEST
+status: APPROVED
 dependencies:
   - STU-02
   - FND-05
