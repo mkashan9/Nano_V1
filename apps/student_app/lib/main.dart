@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/student_router.dart';
@@ -9,22 +10,27 @@ import 'package:student_app/app/student_router.dart';
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
+  OnboardingRepository? onboardingRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
+    final client =
+        NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey);
     authRepository = SupabaseAuthRepository(
-      NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey),
+      client,
       allowedAccountKinds: const {
         'school_student',
         'independent_student',
       },
       appLabel: 'students',
     );
+    onboardingRepository = SupabaseOnboardingRepository(client);
     requireAuth = true;
   }
   runApp(
     NanoStudentApp(
       config: config,
       authRepository: authRepository,
+      onboardingRepository: onboardingRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -39,6 +45,7 @@ class NanoStudentApp extends StatefulWidget {
     this.initialLocale = NanoAppLocale.en,
     this.initialAccessibility = AccessibilityPreferences.defaults,
     this.authRepository,
+    this.onboardingRepository,
     this.requireAuth = false,
   });
 
@@ -48,6 +55,7 @@ class NanoStudentApp extends StatefulWidget {
   final NanoAppLocale initialLocale;
   final AccessibilityPreferences initialAccessibility;
   final AuthRepository? authRepository;
+  final OnboardingRepository? onboardingRepository;
   final bool requireAuth;
 
   @override
@@ -61,6 +69,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late AccessibilityPreferences _a11y;
   late final NanoFeedback _feedback;
   AuthBootstrap? _authBootstrap;
+  OnboardingProgress? _onboarding;
   var _restoring = false;
 
   @override
@@ -89,9 +98,51 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         _principal = restored.principal;
         _router = _createRouter();
       });
+      await _loadOnboarding(restored.principal);
     } finally {
       if (mounted) setState(() => _restoring = false);
     }
+  }
+
+  Future<void> _loadOnboarding(SessionPrincipal principal) async {
+    final repo = widget.onboardingRepository;
+    final userId = principal.userId;
+    if (repo == null || userId == null) return;
+    final progress = await repo.load(userId);
+    if (!mounted) return;
+    setState(() {
+      _onboarding = progress;
+      _router = _createRouter();
+    });
+  }
+
+  void _onOnboardingCompleted(
+    OnboardingProgress progress,
+    ExperienceTrack track,
+  ) {
+    final role = ExperiencePolicy.roleFor(
+      track: track,
+      independent: _principal.role == AppRole.independentStudent,
+    );
+    final upgraded = switch (role) {
+      AppRole.juniorStudent =>
+        SessionPrincipal.junior(displayName: _principal.displayName),
+      AppRole.seniorStudent => SessionPrincipal.seniorSchool(
+          displayName: _principal.displayName,
+          flexEligible: _principal.schoolId != null,
+        ),
+      _ => SessionPrincipal.independent(displayName: _principal.displayName),
+    }
+        .copyWith(
+      userId: _principal.userId,
+      schoolId: _principal.schoolId,
+      isAuthenticated: _principal.isAuthenticated,
+    );
+    setState(() {
+      _onboarding = progress;
+      _principal = upgraded;
+      _router = _createRouter();
+    });
   }
 
   GoRouter _createRouter() {
@@ -113,8 +164,13 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
           _principal = bootstrap.principal;
           _router = _createRouter();
         });
+        _loadOnboarding(bootstrap.principal);
       },
       onSignedOut: _signOut,
+      onboardingRepository: widget.onboardingRepository,
+      onboardingProgress: _onboarding,
+      onOnboardingChanged: (progress) => _onboarding = progress,
+      onOnboardingCompleted: _onOnboardingCompleted,
     );
   }
 
@@ -123,6 +179,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     if (!mounted) return;
     setState(() {
       _authBootstrap = null;
+      _onboarding = null;
       _principal = SessionPrincipal.junior(displayName: '');
       _router = _createRouter();
     });
@@ -173,6 +230,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         child: MaterialApp.router(
           key: ValueKey(
             '${_principal.role}-${_principal.isAuthenticated}-'
+            '${_onboarding?.isComplete ?? false}-'
             '${_locale.tag}-${_a11y.reducedMotion}-'
             '${_a11y.classroomMode}-${_a11y.textScale}',
           ),

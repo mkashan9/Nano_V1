@@ -1,7 +1,7 @@
 id: AUTH-04
 name: "Independent Student Signup and Recovery"
 release: R1
-status: APPROVED
+status: DONE
 dependencies:
   - AUTH-01
 applications:

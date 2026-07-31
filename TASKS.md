@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] AUTH-04 owner manual test
+- [ ] STU-01 owner manual test
 
 ## Completed
 
@@ -13,7 +13,8 @@
 - [x] AUTH-01
 - [x] AUTH-02
 - [x] AUTH-03
+- [x] AUTH-04
 
 ## Upcoming
 
-- [ ] STU-01 Student First-Run Onboarding
+- [ ] STU-02 Nori Naming, Language, Sound, and Accessibility Setup
