@@ -171,6 +171,24 @@ class NanoCopy {
       ? 'مکمل کرنے کے لیے مزید $seconds سیکنڈ دیکھیں'
       : 'Watch $seconds more seconds to finish';
   String get watchedLabel => isUrdu ? 'دیکھا گیا' : 'Watched';
+  String get progressTitle => isUrdu ? 'آپ کی پیش رفت' : 'Your progress';
+  String get recommendedTitle => isUrdu ? 'اگلا کام' : 'Up next';
+  String get reasonResume =>
+      isUrdu ? 'یہ ادھورا رہ گیا تھا' : 'You left this unfinished';
+  String get reasonNextInSubject =>
+      isUrdu ? 'اس مضمون کا اگلا موضوع' : 'Next in this subject';
+  String get reasonNewSubject =>
+      isUrdu ? 'کچھ نیا شروع کریں' : 'Start something new';
+  String get strongestLabel => isUrdu ? 'سب سے مضبوط' : 'Going well';
+  String get focusLabel => isUrdu ? 'توجہ دیں' : 'Worth some time';
+  String get allCaughtUp =>
+      isUrdu ? 'سب کچھ مکمل ہو گیا۔ شاباش!' : 'Everything is finished. Well done.';
+  String get nothingStartedYet =>
+      isUrdu ? 'ابھی کچھ شروع نہیں کیا۔' : 'Nothing started yet.';
+  String lockedCount(int count) =>
+      isUrdu ? '$count ابھی بند ہیں' : '$count still locked';
+  String watchedMinutes(int minutes) =>
+      isUrdu ? '$minutes منٹ دیکھے' : '$minutes minutes watched';
   String get checkpointStretchTitle =>
       isUrdu ? 'ذرا سستا لیں' : 'Quick break';
   String get checkpointRecallTitle =>

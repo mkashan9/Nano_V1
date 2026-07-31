@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] LRN-04 owner manual test
+- [ ] LRN-05 owner manual test
 
 ## Completed
 
@@ -22,7 +22,8 @@
 - [x] LRN-01
 - [x] LRN-02
 - [x] LRN-03
+- [x] LRN-04
 
 ## Upcoming
 
-- [ ] LRN-05 Learning Progress and Recommendations
+- [ ] QZ-01 Superadmin Question Bank

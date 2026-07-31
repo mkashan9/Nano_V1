@@ -14,6 +14,7 @@ class StudentProfilePage extends StatefulWidget {
     this.onPreferencesChanged,
     this.onPrivacyChanged,
     this.onOpenAccessibility,
+    this.onOpenProgress,
     this.onSignOut,
     this.syncController,
   });
@@ -24,6 +25,9 @@ class StudentProfilePage extends StatefulWidget {
   final ValueChanged<StudentPreferences>? onPreferencesChanged;
   final ValueChanged<PrivacySettings>? onPrivacyChanged;
   final VoidCallback? onOpenAccessibility;
+
+  /// Opens the LRN-05 learning progress screen.
+  final VoidCallback? onOpenProgress;
   final Future<void> Function()? onSignOut;
 
   /// Cleared on sign-out so private drafts and cache never survive logout.
@@ -152,6 +156,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               onPreferencesChanged: widget.onPreferencesChanged,
               onPrivacyChanged: _setPrivacy,
               onOpenAccessibility: widget.onOpenAccessibility,
+              onOpenProgress: widget.onOpenProgress,
               onRevoke: _revoke,
               revokingId: _revokingId,
               onSignOut: widget.onSignOut == null ? null : _signOut,
@@ -172,6 +177,7 @@ class _ProfileBody extends StatelessWidget {
     this.preferences,
     this.onPreferencesChanged,
     this.onOpenAccessibility,
+    this.onOpenProgress,
     this.revokingId,
     this.onSignOut,
     this.signingOut = false,
@@ -185,6 +191,7 @@ class _ProfileBody extends StatelessWidget {
   final ValueChanged<StudentPreferences>? onPreferencesChanged;
   final ValueChanged<PrivacySettings> onPrivacyChanged;
   final VoidCallback? onOpenAccessibility;
+  final VoidCallback? onOpenProgress;
   final ValueChanged<DeviceSession> onRevoke;
   final String? revokingId;
   final Future<void> Function()? onSignOut;
@@ -247,6 +254,14 @@ class _ProfileBody extends StatelessWidget {
           title: Text('${profile.streakDays} ${copy.streakLabel}'),
           subtitle: Text('${profile.completedTopics} ${copy.topicsCompleted}'),
         ),
+        if (onOpenProgress != null)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.trending_up),
+            title: Text(copy.progressTitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: onOpenProgress,
+          ),
         if (profile.recommendedNext != null)
           ListTile(
             contentPadding: EdgeInsets.zero,
