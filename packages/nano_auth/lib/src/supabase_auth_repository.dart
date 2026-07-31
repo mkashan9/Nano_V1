@@ -8,9 +8,18 @@ import 'fake_auth_repository.dart';
 
 /// Live Supabase email/password auth + profile/membership bootstrap.
 class SupabaseAuthRepository implements AuthRepository {
-  SupabaseAuthRepository(this.client);
+  SupabaseAuthRepository(
+    this.client, {
+    this.allowedAccountKinds = const {
+      'school_student',
+      'independent_student',
+    },
+    this.appLabel = 'students',
+  });
 
   final SupabaseClient client;
+  final Set<String> allowedAccountKinds;
+  final String appLabel;
   final _controller = StreamController<bool>.broadcast();
   StreamSubscription<AuthState>? _sub;
 
@@ -67,27 +76,28 @@ class SupabaseAuthRepository implements AuthRepository {
     }
     final profile = profileRows.first;
     final accountKind = profile['account_kind'] as String? ?? '';
-    if (accountKind != 'school_student' &&
-        accountKind != 'independent_student') {
+    if (!allowedAccountKinds.contains(accountKind)) {
       await client.auth.signOut();
-      throw AuthFailure('This app is for students only');
+      throw AuthFailure('This app is for $appLabel only');
     }
 
     final profileStatus = _membershipStatus(profile['status'] as String?);
     final displayName = (profile['display_name'] as String?)?.trim();
-    final name =
-        (displayName == null || displayName.isEmpty) ? 'Student' : displayName;
+    final name = (displayName == null || displayName.isEmpty)
+        ? (accountKind == 'teacher' ? 'Teacher' : 'Student')
+        : displayName;
 
     String? schoolId;
     var schoolStatus = SchoolStatus.active;
     var membershipStatus = MembershipStatus.active;
 
-    if (accountKind == 'school_student') {
+    if (accountKind == 'school_student' || accountKind == 'teacher') {
+      final role = accountKind == 'teacher' ? 'teacher' : 'student';
       final membershipRows = await client
           .from('school_memberships')
           .select('school_id, status, role')
           .eq('user_id', userId)
-          .eq('role', 'student')
+          .eq('role', role)
           .limit(1);
       if (membershipRows.isEmpty) {
         await client.auth.signOut();
@@ -108,16 +118,20 @@ class SupabaseAuthRepository implements AuthRepository {
       }
     }
 
-    final principal = accountKind == 'independent_student'
-        ? SessionPrincipal.independent(displayName: name).copyWith(
-            userId: userId,
-            isAuthenticated: true,
-          )
-        : SessionPrincipal.junior(displayName: name).copyWith(
-            userId: userId,
-            schoolId: schoolId,
-            isAuthenticated: true,
-          );
+    final SessionPrincipal principal = switch (accountKind) {
+      'independent_student' => SessionPrincipal.independent(displayName: name)
+          .copyWith(userId: userId, isAuthenticated: true),
+      'teacher' => SessionPrincipal.teacher(displayName: name).copyWith(
+          userId: userId,
+          schoolId: schoolId,
+          isAuthenticated: true,
+        ),
+      _ => SessionPrincipal.junior(displayName: name).copyWith(
+          userId: userId,
+          schoolId: schoolId,
+          isAuthenticated: true,
+        ),
+    };
 
     return AuthBootstrap(
       principal: principal,

@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] AUTH-01 owner manual test
+- [ ] AUTH-02 owner manual test
 
 ## Completed
 
@@ -10,7 +10,8 @@
 - [x] FND-01 through FND-07
 - [x] SEC-01 through SEC-03
 - [x] SYNC-01
+- [x] AUTH-01
 
 ## Upcoming
 
-- [ ] AUTH-02 Teacher Authentication
+- [ ] AUTH-03 School Management and Superadmin Authentication

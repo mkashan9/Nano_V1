@@ -31,11 +31,25 @@ void main() {
         throwsA(isA<AuthFailure>()),
       );
     });
+
+    test('signs in teacher fixture', () async {
+      final repo = FakeAuthRepository.teacher();
+      final bootstrap = await repo.signInWithPassword(
+        email: AuthFixtures.teacherEmail,
+        password: AuthFixtures.teacherPassword,
+      );
+      expect(bootstrap.principal.role, AppRole.teacher);
+      expect(bootstrap.principal.userId, AuthFixtures.teacherUserId);
+    });
   });
 
   group('AuthFixtures', () {
     test('bind to tenancy Ali UUID', () {
       expect(AuthFixtures.aliUserId, TenancyFixtures.aliAlphaId);
+    });
+
+    test('bind to tenancy teacher UUID', () {
+      expect(AuthFixtures.teacherUserId, TenancyFixtures.teacherId);
     });
   });
 }

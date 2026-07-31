@@ -10,12 +10,16 @@ class TeacherShell extends StatelessWidget {
     required this.principal,
     required this.navigationShell,
     required this.copy,
+    this.onSignOut,
+    this.liveAuth = false,
   });
 
   final EnvironmentConfig config;
   final SessionPrincipal principal;
   final StatefulNavigationShell navigationShell;
   final NanoCopy copy;
+  final VoidCallback? onSignOut;
+  final bool liveAuth;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +39,8 @@ class TeacherShell extends StatelessWidget {
       appBar: AppBar(
         title: Text('${config.appDisplayName} Teacher'),
         actions: [
+          if (liveAuth && onSignOut != null)
+            TextButton(onPressed: onSignOut, child: const Text('Sign out')),
           if (config.environment.showDebugTools)
             Padding(
               padding: const EdgeInsets.all(12),
