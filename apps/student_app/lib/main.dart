@@ -11,6 +11,7 @@ void main() {
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
   OnboardingRepository? onboardingRepository;
+  StudentPreferencesRepository? preferencesRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -24,6 +25,7 @@ void main() {
       appLabel: 'students',
     );
     onboardingRepository = SupabaseOnboardingRepository(client);
+    preferencesRepository = SupabaseStudentPreferencesRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -31,6 +33,7 @@ void main() {
       config: config,
       authRepository: authRepository,
       onboardingRepository: onboardingRepository,
+      preferencesRepository: preferencesRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -46,6 +49,7 @@ class NanoStudentApp extends StatefulWidget {
     this.initialAccessibility = AccessibilityPreferences.defaults,
     this.authRepository,
     this.onboardingRepository,
+    this.preferencesRepository,
     this.requireAuth = false,
   });
 
@@ -56,6 +60,7 @@ class NanoStudentApp extends StatefulWidget {
   final AccessibilityPreferences initialAccessibility;
   final AuthRepository? authRepository;
   final OnboardingRepository? onboardingRepository;
+  final StudentPreferencesRepository? preferencesRepository;
   final bool requireAuth;
 
   @override
@@ -70,6 +75,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late final NanoFeedback _feedback;
   AuthBootstrap? _authBootstrap;
   OnboardingProgress? _onboarding;
+  StudentPreferences? _preferences;
   var _restoring = false;
 
   @override
@@ -109,11 +115,23 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     final userId = principal.userId;
     if (repo == null || userId == null) return;
     final progress = await repo.load(userId);
+    final prefs = await widget.preferencesRepository?.load(userId);
     if (!mounted) return;
     setState(() {
       _onboarding = progress;
+      if (prefs != null) {
+        _applyPreferences(prefs);
+      }
       _router = _createRouter();
     });
+  }
+
+  /// Server settings win over local defaults once a learner has saved them.
+  void _applyPreferences(StudentPreferences prefs) {
+    _preferences = prefs;
+    _locale = prefs.locale;
+    _a11y = prefs.accessibility;
+    _feedback.updatePreferences(prefs.accessibility);
   }
 
   void _onOnboardingCompleted(
@@ -171,6 +189,12 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       onboardingProgress: _onboarding,
       onOnboardingChanged: (progress) => _onboarding = progress,
       onOnboardingCompleted: _onOnboardingCompleted,
+      preferencesRepository: widget.preferencesRepository,
+      preferences: _preferences,
+      onPreferencesChanged: (prefs) => setState(() {
+        _applyPreferences(prefs);
+        _router = _createRouter();
+      }),
     );
   }
 
@@ -180,6 +204,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     setState(() {
       _authBootstrap = null;
       _onboarding = null;
+      _preferences = null;
       _principal = SessionPrincipal.junior(displayName: '');
       _router = _createRouter();
     });
@@ -197,6 +222,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       _locale = next;
       _router = _createRouter();
     });
+    _persistPreferences(locale: next);
   }
 
   void _setA11y(AccessibilityPreferences next) {
@@ -204,6 +230,21 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       _a11y = next;
       _feedback.updatePreferences(next);
     });
+    _persistPreferences(accessibility: next);
+  }
+
+  /// Settings changed outside onboarding still belong to the learner's row.
+  Future<void> _persistPreferences({
+    NanoAppLocale? locale,
+    AccessibilityPreferences? accessibility,
+  }) async {
+    final repo = widget.preferencesRepository;
+    final userId = _principal.userId;
+    if (repo == null || userId == null) return;
+    final base = _preferences ?? StudentPreferences(userId: userId);
+    final next = base.copyWith(locale: locale, accessibility: accessibility);
+    _preferences = next;
+    await repo.save(next);
   }
 
   @override

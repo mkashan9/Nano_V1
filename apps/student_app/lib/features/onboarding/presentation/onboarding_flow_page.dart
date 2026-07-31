@@ -14,6 +14,9 @@ class OnboardingFlowPage extends StatefulWidget {
     required this.onProgressChanged,
     required this.onCompleted,
     this.schoolName,
+    this.preferencesRepository,
+    this.preferences,
+    this.onPreferencesChanged,
   });
 
   final OnboardingRepository repository;
@@ -23,6 +26,9 @@ class OnboardingFlowPage extends StatefulWidget {
   final void Function(OnboardingProgress progress, ExperienceTrack track)
       onCompleted;
   final String? schoolName;
+  final StudentPreferencesRepository? preferencesRepository;
+  final StudentPreferences? preferences;
+  final ValueChanged<StudentPreferences>? onPreferencesChanged;
 
   @override
   State<OnboardingFlowPage> createState() => _OnboardingFlowPageState();
@@ -31,7 +37,18 @@ class OnboardingFlowPage extends StatefulWidget {
 class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
   late OnboardingProgress _progress = widget.progress;
   late OnboardingStep _step = widget.progress.resumeStep;
+  late StudentPreferences _preferences = widget.preferences ??
+      StudentPreferences(userId: widget.principal.userId ?? 'local');
+  late final TextEditingController _companionName =
+      TextEditingController(text: _preferences.companionName);
   var _busy = false;
+  String? _nameError;
+
+  @override
+  void dispose() {
+    _companionName.dispose();
+    super.dispose();
+  }
 
   bool get _independent =>
       widget.principal.role == AppRole.independentStudent;
@@ -58,7 +75,35 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
     }
   }
 
+  Future<void> _savePreferences(StudentPreferences next) async {
+    final repo = widget.preferencesRepository;
+    setState(() {
+      _preferences = next;
+      _nameError = null;
+    });
+    widget.onPreferencesChanged?.call(next);
+    if (repo == null) return;
+    await repo.save(next);
+  }
+
+  /// Returns false when the current step still needs a correction.
+  Future<bool> _commitStep() async {
+    if (_step != OnboardingStep.preferences) return true;
+    final error = CompanionNamePolicy.validate(_companionName.text);
+    if (error != null) {
+      setState(() => _nameError = error);
+      return false;
+    }
+    await _savePreferences(
+      _preferences.copyWith(
+        companionName: CompanionNamePolicy.normalize(_companionName.text),
+      ),
+    );
+    return true;
+  }
+
   Future<void> _advance() async {
+    if (!await _commitStep()) return;
     if (_step.isLast) {
       final completed = _progress.copyWith(
         currentStep: OnboardingStep.ready,
@@ -98,37 +143,39 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
             constraints: const BoxConstraints(maxWidth: 480),
             child: Padding(
               padding: const EdgeInsets.all(NanoSpacing.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (_resumed)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: NanoSpacing.md),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (_resumed)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: NanoSpacing.md),
+                        child: Text(
+                          copy.onboardingResumed,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    _StepProgress(step: _step),
+                    const SizedBox(height: NanoSpacing.lg),
+                    ..._stepContent(copy, theme),
+                    const SizedBox(height: NanoSpacing.lg),
+                    FilledButton(
+                      onPressed: _busy || !_canAdvance ? null : _advance,
                       child: Text(
-                        copy.onboardingResumed,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodySmall,
+                        _step.isLast
+                            ? copy.onboardingStart
+                            : copy.onboardingContinue,
                       ),
                     ),
-                  _StepProgress(step: _step),
-                  const SizedBox(height: NanoSpacing.lg),
-                  ..._stepContent(copy, theme),
-                  const SizedBox(height: NanoSpacing.lg),
-                  FilledButton(
-                    onPressed: _busy || !_canAdvance ? null : _advance,
-                    child: Text(
-                      _step.isLast
-                          ? copy.onboardingStart
-                          : copy.onboardingContinue,
-                    ),
-                  ),
-                  if (_step != OnboardingStep.welcome)
-                    TextButton(
-                      onPressed: _busy ? null : _back,
-                      child: Text(copy.onboardingBack),
-                    ),
-                ],
+                    if (_step != OnboardingStep.welcome)
+                      TextButton(
+                        onPressed: _busy ? null : _back,
+                        child: Text(copy.onboardingBack),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -198,6 +245,80 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
             ),
           ],
         ];
+      case OnboardingStep.preferences:
+        final a11y = _preferences.accessibility;
+        return [
+          Text(
+            copy.onboardingSetupTitle,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.headlineSmall,
+          ),
+          const SizedBox(height: NanoSpacing.md),
+          TextField(
+            controller: _companionName,
+            enabled: !_busy,
+            maxLength: CompanionNamePolicy.maxLength,
+            decoration: InputDecoration(
+              labelText: copy.companionNameLabel,
+              helperText: copy.companionNameHelp,
+              errorText: _nameError,
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          SegmentedButton<NanoAppLocale>(
+            segments: [
+              ButtonSegment(
+                value: NanoAppLocale.en,
+                label: Text(copy.languageEnglish),
+              ),
+              ButtonSegment(
+                value: NanoAppLocale.ur,
+                label: Text(copy.languageUrdu),
+              ),
+            ],
+            selected: {_preferences.locale},
+            onSelectionChanged: _busy
+                ? null
+                : (selection) =>
+                    _savePreferences(_preferences.copyWith(locale: selection.first)),
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(copy.soundLabel),
+            value: a11y.soundEnabled,
+            onChanged: _busy
+                ? null
+                : (value) => _savePreferences(
+                      _preferences.copyWith(
+                        accessibility: a11y.copyWith(soundEnabled: value),
+                      ),
+                    ),
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(copy.captionsLabel),
+            value: a11y.captionsEnabled,
+            onChanged: _busy
+                ? null
+                : (value) => _savePreferences(
+                      _preferences.copyWith(
+                        accessibility: a11y.copyWith(captionsEnabled: value),
+                      ),
+                    ),
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(copy.reducedMotionLabel),
+            value: a11y.reducedMotion,
+            onChanged: _busy
+                ? null
+                : (value) => _savePreferences(
+                      _preferences.copyWith(
+                        accessibility: a11y.copyWith(reducedMotion: value),
+                      ),
+                    ),
+          ),
+        ];
       case OnboardingStep.context:
         return [
           Text(
@@ -217,7 +338,7 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
           ),
           const SizedBox(height: NanoSpacing.sm),
           Text(
-            copy.welcomeLine(widget.principal.displayName),
+            copy.companionGreeting(_preferences.companionName),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium,
           ),

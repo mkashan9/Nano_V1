@@ -93,6 +93,20 @@ class NanoCopy {
   String get onboardingIndependentIntro => isUrdu
       ? 'آپ خود سیکھ رہے ہیں: اسباق، کوئز اور گیمز آپ کے لیے تیار ہیں۔'
       : 'You are learning on your own: lessons, quizzes, and games are ready for you.';
+  String get onboardingSetupTitle =>
+      isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';
+  String get companionNameLabel => isUrdu ? 'ساتھی کا نام' : 'Guide name';
+  String get companionNameHelp => isUrdu
+      ? 'یہ نام صرف آپ دیکھتے ہیں۔ آپ اسے بعد میں بدل سکتے ہیں۔'
+      : 'Only you see this name. You can change it later.';
+  String get languageLabel => isUrdu ? 'زبان' : 'Language';
+  String get soundLabel => isUrdu ? 'آواز' : 'Sound';
+  String get captionsLabel => isUrdu ? 'کیپشنز' : 'Captions';
+  String get reducedMotionLabel => isUrdu ? 'کم حرکت' : 'Reduced motion';
+  String companionGreeting(String companionName) => isUrdu
+      ? '$companionName آپ کے ساتھ سیکھنے کے لیے تیار ہے۔'
+      : '$companionName is ready to learn with you.';
+
   String get onboardingReadyTitle => isUrdu ? 'سب تیار ہے' : 'You are all set';
   String get onboardingResumed =>
       isUrdu ? 'ہم نے آپ کی جگہ محفوظ رکھی' : 'We saved your place';

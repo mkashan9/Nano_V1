@@ -7,7 +7,7 @@ void main() {
       expect(OnboardingStep.welcome.next, OnboardingStep.experience);
       expect(OnboardingStep.ready.next, OnboardingStep.ready);
       expect(OnboardingStep.welcome.previous, OnboardingStep.welcome);
-      expect(OnboardingStep.context.previous, OnboardingStep.experience);
+      expect(OnboardingStep.context.previous, OnboardingStep.preferences);
     });
 
     test('round-trips through its wire name', () {

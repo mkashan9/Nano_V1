@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] STU-01 owner manual test
+- [ ] STU-02 owner manual test
 
 ## Completed
 
@@ -14,7 +14,8 @@
 - [x] AUTH-02
 - [x] AUTH-03
 - [x] AUTH-04
+- [x] STU-01
 
 ## Upcoming
 
-- [ ] STU-02 Nori Naming, Language, Sound, and Accessibility Setup
+- [ ] STU-03 Junior Home
