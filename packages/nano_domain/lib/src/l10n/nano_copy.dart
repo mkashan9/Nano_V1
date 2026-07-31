@@ -163,7 +163,29 @@ class NanoCopy {
   String get completedLabel => isUrdu ? 'مکمل' : 'Completed';
   String get startLabel => isUrdu ? 'شروع کریں' : 'Start';
   String get resumeLabel => isUrdu ? 'جاری رکھیں' : 'Resume';
+  String get reviewLabel => isUrdu ? 'دوبارہ دیکھیں' : 'Review';
   String get nextUpTitle => isUrdu ? 'اگلا کریں' : 'Do this next';
+  String get topicDetailTitle => isUrdu ? 'ٹاپک' : 'Topic';
+  String get topicGateFailed => isUrdu
+      ? 'یہ ٹاپک ابھی کھولا نہیں جا سکتا۔'
+      : "This topic can't be opened yet.";
+  String get topicSaveFailed => isUrdu
+      ? 'پیشرفت محفوظ نہیں ہو سکی۔ دوبارہ کوشش کریں۔'
+      : "Couldn't save progress. Try again.";
+  String get estimatedTimeLabel => isUrdu ? 'تخمینی وقت' : 'Estimated time';
+  String percentComplete(int percent) =>
+      isUrdu ? '$percent٪ مکمل' : '$percent% complete';
+  String get unlockTitle => isUrdu ? 'کیسے کھلے گا' : 'How to unlock';
+  String resumeFrom(int seconds) {
+    final minutes = (seconds / 60).floor();
+    final rem = seconds % 60;
+    if (minutes == 0) {
+      return isUrdu ? '$rem سیکنڈ سے جاری' : 'Resume from ${rem}s';
+    }
+    return isUrdu
+        ? '$minutes منٹ $rem سیکنڈ سے جاری'
+        : 'Resume from ${minutes}m ${rem}s';
+  }
 
   String get accessWarning => isUrdu
       ? 'آپ کی رسائی جلد ختم ہو رہی ہے۔ سیکھنا جاری رکھیں۔'

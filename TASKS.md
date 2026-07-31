@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] LRN-01 owner manual test
+- [ ] LRN-02 owner manual test
 
 ## Completed
 
@@ -19,7 +19,8 @@
 - [x] STU-03
 - [x] STU-04
 - [x] STU-05
+- [x] LRN-01
 
 ## Upcoming
 
-- [ ] LRN-02 Topic List, Ordering, and Prerequisites
+- [ ] LRN-03 Video Player, Resume, Captions, and Completion

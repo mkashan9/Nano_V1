@@ -37,7 +37,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | student_onboarding,student_preferences | widget | DONE |
 | Handbook STU-02 Student Home | STU-03,STU-04 | student_app | Home | progress | widget | DONE |
 | Handbook PRF-01 Profiles settings | STU-05 | student_app | Profile | privacy_settings,device_sessions | widget+SQL | DONE |
-| Handbook LRN-01 Learning catalog | LRN-01 | student_app | Learning Stack | learning_subjects,subject_versions,topics,topic_versions,learning_catalog | unit+widget+SQL | USER_TEST |
+| Handbook LRN-01 Learning catalog | LRN-01 | student_app | Learning Stack | learning_subjects,subject_versions,topics,topic_versions,learning_catalog | unit+widget+SQL | DONE |
+| Handbook LRN-01 topic order / prerequisites | LRN-02 | student_app | Topic detail + gates | topic_prerequisites,learning_progress,start_topic,save_topic_progress | unit+widget+SQL | USER_TEST |
 | Handbook LRN-02 Video learning progress | LRN-03,LRN-04,LRN-05 | student_app | player | progress | player tests | BACKLOG |
 | Handbook QZ-01 Quiz authoring | QZ-01,QZ-02 | admin_web | question bank | questions | admin tests | BACKLOG |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | BACKLOG |

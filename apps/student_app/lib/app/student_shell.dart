@@ -283,6 +283,7 @@ class StudentLearningTab extends StatelessWidget {
     required this.principal,
     this.homeRepository,
     this.catalogRepository,
+    this.progressRepository,
     this.companionName,
     this.onOpenFlex,
   });
@@ -290,6 +291,7 @@ class StudentLearningTab extends StatelessWidget {
   final SessionPrincipal principal;
   final StudentHomeRepository? homeRepository;
   final LearningCatalogRepository? catalogRepository;
+  final LearningProgressRepository? progressRepository;
   final String? companionName;
   final VoidCallback? onOpenFlex;
 
@@ -301,6 +303,7 @@ class StudentLearningTab extends StatelessWidget {
         builder: (_) => SubjectTopicsPage(
           repository: catalog,
           subjectId: subject.id,
+          progressRepository: progressRepository,
           junior: principal.role.usesJuniorPresentation,
         ),
       ),

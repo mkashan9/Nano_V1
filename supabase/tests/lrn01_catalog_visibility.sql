@@ -43,10 +43,16 @@ begin
   end;
 end $$;
 
--- Completing the prerequisite unlocks the next topic.
+-- Completing the prerequisite unlocks the next topic (service role: clients
+-- cannot write completion after LRN-02).
+reset role;
 insert into public.learning_progress (user_id, topic_version_id, status, progress, completed_at)
-values (auth.uid(), '40000000-0000-0000-0000-000000000001', 'completed', 1, timezone('utc', now()))
-on conflict (user_id, topic_version_id) do update set status = 'completed';
+values ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        '40000000-0000-0000-0000-000000000001', 'completed', 1, timezone('utc', now()))
+on conflict (user_id, topic_version_id) do update set status = 'completed', progress = 1;
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","role":"authenticated"}';
 
 select 'junior_addition_unlocked' as check, is_locked::text
 from public.learning_catalog where topic_slug = 'addition';

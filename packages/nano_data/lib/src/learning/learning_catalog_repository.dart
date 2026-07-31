@@ -131,6 +131,20 @@ class FakeLearningCatalogRepository implements LearningCatalogRepository {
               estimatedMinutes: 18,
               objectives: ['Sort living and non-living'],
             ),
+            CatalogTopic(
+              topicId: 'topic-plants',
+              topicVersionId: 'tv-plants-1',
+              slug: 'plants-and-animals',
+              title: 'Plants and animals',
+              titleUr: 'پودے اور جانور',
+              order: 2,
+              estimatedMinutes: 16,
+              objectives: [
+                'Compare plants and animals',
+                'Name what living things need',
+              ],
+              blockingTitles: ['Living things'],
+            ),
           ],
         ),
     ];

@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
 
 /// LRN-01 subject detail: ordered topics with server-reported lock state,
-/// estimated time, and objectives. Junior and Senior render the same
-/// `topic_version_id`s so a preview cannot drift from the live catalog.
+/// estimated time, and objectives. LRN-02 opens the topic detail and runs
+/// start/resume through the progress repository.
 class SubjectTopicsPage extends StatefulWidget {
   const SubjectTopicsPage({
     super.key,
     required this.repository,
     required this.subjectId,
+    this.progressRepository,
     this.junior = true,
     this.onTopicOpen,
   });
 
   final LearningCatalogRepository repository;
   final String subjectId;
+  final LearningProgressRepository? progressRepository;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -80,8 +83,24 @@ class _SubjectTopicsPageState extends State<SubjectTopicsPage> {
                 copy: copy,
                 locale: locale,
                 junior: widget.junior,
-                onTopicOpen: widget.onTopicOpen,
+                onTopicOpen: _openTopic,
               ),
+      ),
+    );
+  }
+
+  void _openTopic(CatalogTopic topic) {
+    widget.onTopicOpen?.call(topic);
+    final progress = widget.progressRepository;
+    if (progress == null) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TopicDetailPage(
+          topic: topic,
+          progressRepository: progress,
+          junior: widget.junior,
+          onOpened: (_) => _load(),
+        ),
       ),
     );
   }
@@ -155,9 +174,7 @@ class _SubjectTopicsBody extends StatelessWidget {
                 copy: copy,
                 locale: locale,
                 junior: junior,
-                onOpen: topic.isLocked || onTopicOpen == null
-                    ? null
-                    : () => onTopicOpen!(topic),
+                onOpen: onTopicOpen == null ? null : () => onTopicOpen!(topic),
               ),
             ),
         ],
@@ -197,7 +214,7 @@ class _TopicTile extends StatelessWidget {
                 : copy.startLabel;
     return Semantics(
       button: onOpen != null,
-      enabled: !locked,
+      enabled: true,
       label: locked
           ? '$title, ${copy.lockedBecause(topic.blockingTitles.join(', '))}'
           : '$title, $actionLabel',
@@ -209,7 +226,7 @@ class _TopicTile extends StatelessWidget {
           junior ? NanoRadii.junior : NanoRadii.senior,
         ),
         child: InkWell(
-          onTap: locked ? null : onOpen,
+          onTap: onOpen,
           borderRadius: BorderRadius.circular(
             junior ? NanoRadii.junior : NanoRadii.senior,
           ),
