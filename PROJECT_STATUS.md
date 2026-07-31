@@ -1,4 +1,4 @@
-# PROJECT_STATUS
+﻿# PROJECT_STATUS
 
 ## Current state
 
@@ -11,4 +11,4 @@
 
 ## Next after SEC-03 DONE
 
-AUTH-01 (next module in automation queue after SEC-03)
+SYNC-01 Local Cache, Drafts, Queue, and Conflict States

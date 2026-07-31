@@ -1,4 +1,4 @@
-# TASKS
+﻿# TASKS
 
 ## Active
 
@@ -13,4 +13,4 @@
 
 ## Upcoming
 
-- [ ] AUTH-01 (after SEC-03 DONE)
+- [ ] SYNC-01 Local Cache, Drafts, Queue, and Conflict States
