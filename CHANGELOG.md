@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- AUTH-01: student sign-in, Ali auth.users fixture, nano_auth session bootstrap
+
 - SYNC-01: local cache/queue substrate, conflict banner, Offline debug preview, ADR-0007
 
 - SEC-03: audit/session tables, suspension-aware RLS helpers, AccessGuard domain models

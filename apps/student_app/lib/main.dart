@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/app/student_router.dart';
+import 'package:supabase/supabase.dart';
 
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
-  runApp(NanoStudentApp(config: config));
+  AuthRepository? authRepository;
+  var requireAuth = false;
+  if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
+    authRepository = SupabaseAuthRepository(
+      SupabaseClient(config.supabaseUrl, config.supabaseAnonKey),
+    );
+    requireAuth = true;
+  }
+  runApp(
+    NanoStudentApp(
+      config: config,
+      authRepository: authRepository,
+      requireAuth: requireAuth,
+    ),
+  );
 }
 
 class NanoStudentApp extends StatefulWidget {
@@ -18,6 +34,8 @@ class NanoStudentApp extends StatefulWidget {
     this.initialLocation,
     this.initialLocale = NanoAppLocale.en,
     this.initialAccessibility = AccessibilityPreferences.defaults,
+    this.authRepository,
+    this.requireAuth = false,
   });
 
   final EnvironmentConfig config;
@@ -25,6 +43,8 @@ class NanoStudentApp extends StatefulWidget {
   final String? initialLocation;
   final NanoAppLocale initialLocale;
   final AccessibilityPreferences initialAccessibility;
+  final AuthRepository? authRepository;
+  final bool requireAuth;
 
   @override
   State<NanoStudentApp> createState() => _NanoStudentAppState();
@@ -36,15 +56,41 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late NanoAppLocale _locale;
   late AccessibilityPreferences _a11y;
   late final NanoFeedback _feedback;
+  AuthBootstrap? _authBootstrap;
+  var _restoring = false;
 
   @override
   void initState() {
     super.initState();
-    _principal = widget.initialPrincipal ?? SessionPrincipal.junior();
+    _principal = widget.initialPrincipal ??
+        (widget.requireAuth
+            ? const SessionPrincipal(
+                role: AppRole.juniorStudent,
+                displayName: '',
+              )
+            : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
     _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
+    if (widget.requireAuth && widget.authRepository != null) {
+      _restore();
+    }
+  }
+
+  Future<void> _restore() async {
+    setState(() => _restoring = true);
+    try {
+      final restored = await widget.authRepository!.restoreSession();
+      if (!mounted || restored == null) return;
+      setState(() {
+        _authBootstrap = restored;
+        _principal = restored.principal;
+        _router = _createRouter();
+      });
+    } finally {
+      if (mounted) setState(() => _restoring = false);
+    }
   }
 
   GoRouter _createRouter() {
@@ -57,7 +103,31 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       locale: _locale,
       accessibility: _a11y,
       initialLocation: widget.initialLocation,
+      authRepository: widget.authRepository,
+      requireAuth: widget.requireAuth,
+      authBootstrap: _authBootstrap,
+      onAuthBootstrap: (bootstrap) {
+        setState(() {
+          _authBootstrap = bootstrap;
+          _principal = bootstrap.principal;
+          _router = _createRouter();
+        });
+      },
+      onSignedOut: _signOut,
     );
+  }
+
+  Future<void> _signOut() async {
+    await widget.authRepository?.signOut();
+    if (!mounted) return;
+    setState(() {
+      _authBootstrap = null;
+      _principal = const SessionPrincipal(
+        role: AppRole.juniorStudent,
+        displayName: '',
+      );
+      _router = _createRouter();
+    });
   }
 
   void _setPrincipal(SessionPrincipal next) {
@@ -88,6 +158,14 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         ? NanoTheme.junior(localeTag: _locale.tag)
         : NanoTheme.senior(localeTag: _locale.tag);
     final flutterLocale = Locale(_locale.languageCode);
+    if (_restoring) {
+      return MaterialApp(
+        theme: theme,
+        home: const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
     return NanoLocaleScope(
       locale: _locale,
       copy: copy,
@@ -96,7 +174,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         feedback: _feedback,
         child: MaterialApp.router(
           key: ValueKey(
-            '${_principal.role}-${_locale.tag}-${_a11y.reducedMotion}-'
+            '${_principal.role}-${_principal.isAuthenticated}-'
+            '${_locale.tag}-${_a11y.reducedMotion}-'
             '${_a11y.classroomMode}-${_a11y.textScale}',
           ),
           title: copy.appName,
