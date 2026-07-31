@@ -10,7 +10,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | 1.1 Product statement â€” Nano education platform | AUD-01 | all | N/A | N/A | docs review | IN_PROGRESS |
 | 1.2 Product surfaces â€” student, teacher, school mgmt, superadmin | FND-04 | all apps | role shells | roles | shell tests | USER_TEST |
 | 1.3 Account model â€” school vs independent students | AUTH-01,AUTH-04,IND-02 | student_app | auth/onboarding | profiles,school_id | auth/RLS | BACKLOG |
-| 1.4 Non-negotiable rules â€” safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | BACKLOG |
+| 1.4 Non-negotiable rules â€” safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | USER_TEST |
 | 2.x Release strategy and pilot criteria | QA-06 | docs | pilot checklist | N/A | release checklist | BACKLOG |
 | 3.1 Shared domain, separate shells | FND-04 | all apps | shells | N/A | widget | USER_TEST |
 | 3.2 Junior interaction rules | FND-03,STU-03 | student_app | Junior Home | prefs | widget/golden | BACKLOG |
@@ -20,7 +20,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | 4.x Technical architecture / packages | FND-01 | packages | workspace | N/A | analyze | BACKLOG |
 | 5.x Repository organization / feature folders | FND-01 | apps/packages | structure | N/A | structure check | BACKLOG |
 | 6.1 Identity model | AUTH-01,AUTH-02,AUTH-03 | nano_auth | session | auth.users,profiles | auth tests | BACKLOG |
-| 6.2 Multi-school security | SEC-02 | supabase | RLS | school_id | two-school RLS | BACKLOG |
+| 6.2 Multi-school security | SEC-02 | supabase | RLS | school_id | two-school RLS | USER_TEST |
 | 6.3 Trusted operations (scores, XP, publish) | QZ-05,XP-01,MRK-04,GME-05 | edge functions | scoring | ledgers | function tests | BACKLOG |
 | 6.4 Versioning and history | SEC-03,MRK-04,ATT-03 | supabase | audit | audit_logs | history tests | BACKLOG |
 | 7.x Reuse-first engineering | AUD-01 | docs/provenance | registry | N/A | docs | IN_PROGRESS |
