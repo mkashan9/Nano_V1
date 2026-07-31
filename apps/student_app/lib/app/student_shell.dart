@@ -6,6 +6,7 @@ import 'package:student_app/app/component_gallery_page.dart';
 import 'package:student_app/app/states_preview_page.dart';
 import 'package:student_app/app/locale_preview_page.dart';
 import 'package:student_app/app/accessibility_settings_page.dart';
+import 'package:student_app/app/supabase_health_page.dart';
 import 'package:student_app/app/diagnostics_page.dart';
 import 'package:student_app/app/environment_badge.dart';
 import 'package:student_app/app/nav_placeholder_page.dart';
@@ -191,6 +192,17 @@ class StudentShell extends StatelessWidget {
                         );
                       },
                       child: const Text('A11y'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) =>
+                                SupabaseHealthPage(config: config),
+                          ),
+                        );
+                      },
+                      child: const Text('DB health'),
                     ),
                     TextButton(
                       onPressed: () {

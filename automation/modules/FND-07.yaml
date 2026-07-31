@@ -1,7 +1,7 @@
 id: FND-07
 name: "Accessibility, Sound, Haptics, and Reduced Motion"
 release: R0
-status: APPROVED
+status: DONE
 dependencies:
   - FND-02
 applications:

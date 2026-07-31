@@ -11,8 +11,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | FND-04 | Navigation and Role-Aware Application Shells | R0 | DONE | FND-03 |
 | FND-05 | Error, Loading, Empty, Offline, and Maintenance States | R0 | DONE | FND-04 |
 | FND-06 | Localization and English/Urdu Readiness | R0 | DONE | FND-02 |
-| FND-07 | Accessibility, Sound, Haptics, and Reduced Motion | R0 | APPROVED | FND-02 |
-| SEC-01 | Supabase Baseline and Migration Workflow | R0 | BACKLOG | FND-01 |
+| FND-07 | Accessibility, Sound, Haptics, and Reduced Motion | R0 | DONE | FND-02 |
+| SEC-01 | Supabase Baseline and Migration Workflow | R0 | APPROVED | FND-01 |
 | SEC-02 | Multi-School Tenancy and RLS | R0 | BACKLOG | SEC-01 |
 | SEC-03 | Audit Logs, Sessions, Suspension, and Permission Guards | R0 | BACKLOG | SEC-02 |
 | SYNC-01 | Local Cache, Drafts, Queue, and Conflict States | R0 | BACKLOG | FND-05, SEC-01 |

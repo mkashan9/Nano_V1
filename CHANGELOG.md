@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- SEC-01: remote-first Supabase baseline, app_health, migration workflow
+
 - FND-07: accessibility prefs, feedback gates, reduced motion, A11y settings
 
 - FND-06: English/Urdu NanoCopy, RTL locale wiring, locale preview

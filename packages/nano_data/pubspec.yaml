@@ -1,5 +1,5 @@
 name: nano_data
-description: Nano nano_data package
+description: Nano data layer — Supabase gateway and repositories
 publish_to: none
 version: 0.1.0
 
@@ -10,6 +10,7 @@ resolution: workspace
 dependencies:
   nano_domain:
     path: ../nano_domain
+  supabase: ^2.8.0
 
 dev_dependencies:
   lints: ^6.0.0
