@@ -8,7 +8,9 @@ GoRouter createStudentRouter({
   required SessionPrincipal principal,
   required ValueChanged<SessionPrincipal> onPrincipalChanged,
   required ValueChanged<NanoAppLocale> onLocaleChanged,
+  required ValueChanged<AccessibilityPreferences> onAccessibilityChanged,
   required NanoAppLocale locale,
+  required AccessibilityPreferences accessibility,
   String? initialLocation,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
@@ -36,7 +38,9 @@ GoRouter createStudentRouter({
             navigationShell: navigationShell,
             onPrincipalChanged: onPrincipalChanged,
             onLocaleChanged: onLocaleChanged,
+            onAccessibilityChanged: onAccessibilityChanged,
             locale: locale,
+            accessibility: accessibility,
           );
         },
         branches: [

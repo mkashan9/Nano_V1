@@ -27,7 +27,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | 8.1â€“8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
 | 8.3 Design tokens | FND-02 | nano_design_system | tokens | N/A | golden | BACKLOG |
 | 8.4 Component families | FND-02 | nano_design_system | components | N/A | widget | BACKLOG |
-| 8.5 Accessibility contract | FND-07,QA-04 | all apps | a11y | prefs | a11y tests | BACKLOG |
+| 8.5 Accessibility contract | FND-07,QA-04 | all apps | a11y | prefs | a11y tests | USER_TEST |
 | Handbook FND-01 Workspace | FND-01 | workspace | config | env | CI | BACKLOG |
 | Handbook FND-02 Design system shells | FND-02,FND-03 | design_system | shells | N/A | golden | BACKLOG |
 | Handbook FND-03 Auth sessions roles | AUTH-01,AUTH-02,AUTH-03,SEC-03 | nano_auth | auth | sessions | auth | BACKLOG |

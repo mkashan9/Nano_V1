@@ -3,12 +3,12 @@
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** FND-06 Localization and English/Urdu Readiness
+- **Current module:** FND-07 Accessibility, Sound, Haptics, and Reduced Motion
 - **Current status:** USER_TEST
-- **Current branch:** module/FND-06-localization
-- **Last completed module:** FND-05
+- **Current branch:** module/FND-07-accessibility
+- **Last completed module:** FND-06
 - **Application name:** Nano
 
-## Next after FND-06 DONE
+## Next after FND-07 DONE
 
-FND-07 Accessibility, Sound, Haptics, and Reduced Motion
+SEC-01 Supabase Baseline and Migration Workflow

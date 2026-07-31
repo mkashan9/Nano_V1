@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] FND-06 owner manual test
+- [ ] FND-07 owner manual test
 
 ## Completed
 
@@ -12,7 +12,8 @@
 - [x] FND-03
 - [x] FND-04
 - [x] FND-05
+- [x] FND-06
 
 ## Upcoming
 
-- [ ] FND-07 Accessibility, Sound, Haptics, and Reduced Motion
+- [ ] SEC-01 Supabase Baseline and Migration Workflow
