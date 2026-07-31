@@ -32,7 +32,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook FND-02 Design system shells | FND-02,FND-03 | design_system | shells | N/A | golden | BACKLOG |
 | Handbook FND-03 Auth sessions roles | AUTH-01,AUTH-02,AUTH-03,SEC-03 | nano_auth | auth | sessions | auth | BACKLOG |
 | Handbook FND-04 Navigation deep links | FND-04,NOT-01 | apps | nav | N/A | nav tests | USER_TEST |
-| Handbook SEC-01 Tenancy RLS audit | SEC-01,SEC-02,SEC-03 | supabase | RLS/audit | policies | pgTAP | BACKLOG |
+| Handbook SEC-01 Tenancy RLS audit | SEC-01,SEC-02,SEC-03 | supabase | RLS/audit | policies | pgTAP | USER_TEST |
 | Handbook FND-05 Cache sync queue | SYNC-01 | packages | queue | local db | sync tests | BACKLOG |
 | Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | prefs | widget | BACKLOG |
 | Handbook STU-02 Student Home | STU-03,STU-04 | student_app | Home | progress | golden | BACKLOG |

@@ -1,4 +1,1 @@
-/// Package placeholder for nano_data.
-class NanoData {
-  const NanoData();
-}
+export 'supabase/nano_supabase.dart';

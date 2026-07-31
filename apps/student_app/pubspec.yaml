@@ -37,6 +37,8 @@ dependencies:
     path: ../../packages/nano_domain
   nano_design_system:
     path: ../../packages/nano_design_system
+  nano_data:
+    path: ../../packages/nano_data
 
 
   # The following adds the Cupertino Icons font to your application.

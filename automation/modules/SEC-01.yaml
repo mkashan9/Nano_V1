@@ -1,7 +1,7 @@
 id: SEC-01
 name: "Supabase Baseline and Migration Workflow"
 release: R0
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - FND-01
 applications:
@@ -17,11 +17,17 @@ allowed_paths:
   - automation/
   - docs/modules/SEC-01/
   - automation/modules/SEC-01.yaml
+  - automation/scripts/scaffold_sec01_supabase.py
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - supabase/
+  - scripts/
+  - packages/nano_data/
+  - apps/student_app/
+  - docs/setup/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -29,15 +35,21 @@ forbidden_paths:
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SEC-01"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.app_health
+  - public.set_updated_at
 server_functions: []
 acceptance:
+  - Baseline migration applied to development nano_v1
+  - app_health exists with RLS enabled
+  - Migration conventions documented (no Docker)
+  - NanoSupabase health probe available
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - scripts/check_migration_layout.ps1
+  - packages/nano_data/test/app_health_snapshot_test.dart
+  - mcp_list_tables_app_health
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []

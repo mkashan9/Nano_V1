@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] FND-07 owner manual test
+- [ ] SEC-01 owner manual test
 
 ## Completed
 
@@ -13,7 +13,8 @@
 - [x] FND-04
 - [x] FND-05
 - [x] FND-06
+- [x] FND-07
 
 ## Upcoming
 
-- [ ] SEC-01 Supabase Baseline and Migration Workflow
+- [ ] SEC-02 Multi-School Tenancy and RLS

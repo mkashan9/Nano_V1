@@ -3,12 +3,12 @@
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** FND-07 Accessibility, Sound, Haptics, and Reduced Motion
+- **Current module:** SEC-01 Supabase Baseline and Migration Workflow
 - **Current status:** USER_TEST
-- **Current branch:** module/FND-07-accessibility
-- **Last completed module:** FND-06
+- **Current branch:** module/SEC-01-supabase-baseline
+- **Last completed module:** FND-07
 - **Application name:** Nano
 
-## Next after FND-07 DONE
+## Next after SEC-01 DONE
 
-SEC-01 Supabase Baseline and Migration Workflow
+SEC-02 Multi-School Tenancy and RLS
