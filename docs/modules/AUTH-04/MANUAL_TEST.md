@@ -2,10 +2,16 @@
 
 ## Setup
 
-```
-flutter run -d chrome -t apps/student_app/lib/main.dart \
-  --dart-define=SUPABASE_URL=<project url> \
-  --dart-define=SUPABASE_ANON_KEY=<anon key>
+Run from the app directory. Running from the repo root builds the
+`nano_workspace` package, which bundles no Material Icons font, so every icon
+renders as an empty box.
+
+```powershell
+cd D:\nano\apps\student_app
+flutter run -d chrome `
+  --dart-define=NANO_ENV=development `
+  --dart-define=SUPABASE_URL=https://jjsnvmxasbtimesjsyoy.supabase.co `
+  --dart-define=SUPABASE_ANON_KEY=<anon-key>
 ```
 
 ## Steps
