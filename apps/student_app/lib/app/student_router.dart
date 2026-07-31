@@ -35,6 +35,8 @@ GoRouter createStudentRouter({
   StudentPreferences? preferences,
   ValueChanged<StudentPreferences>? onPreferencesChanged,
   StudentHomeRepository? homeRepository,
+  StudentProfileRepository? profileRepository,
+  NanoSyncController? syncController,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -199,6 +201,12 @@ GoRouter createStudentRouter({
                     principal,
                     homeRepository: homeRepository,
                     companionName: preferences?.companionName,
+                    profileRepository: profileRepository,
+                    preferences: preferences,
+                    onPreferencesChanged: onPreferencesChanged,
+                    onAccessibilityChanged: onAccessibilityChanged,
+                    onSignOut: onSignedOut,
+                    syncController: syncController,
                   ),
                 ),
               ],
@@ -215,6 +223,12 @@ Widget _pageFor(
   SessionPrincipal principal, {
   StudentHomeRepository? homeRepository,
   String? companionName,
+  StudentProfileRepository? profileRepository,
+  StudentPreferences? preferences,
+  ValueChanged<StudentPreferences>? onPreferencesChanged,
+  ValueChanged<AccessibilityPreferences>? onAccessibilityChanged,
+  VoidCallback? onSignOut,
+  NanoSyncController? syncController,
 }) {
   return switch (id) {
     'home' || 'learning' => StudentLearningTab(
@@ -228,7 +242,15 @@ Widget _pageFor(
     'game' || 'games' => const StudentGamesTab(),
     'flex' => const StudentFlexTab(),
     'communities' => const StudentCommunitiesTab(),
-    'profile' => StudentProfileTab(principal: principal),
+    'profile' => StudentProfileTab(
+        principal: principal,
+        profileRepository: profileRepository,
+        preferences: preferences,
+        onPreferencesChanged: onPreferencesChanged,
+        onAccessibilityChanged: onAccessibilityChanged,
+        onSignOut: onSignOut,
+        syncController: syncController,
+      ),
     _ => Center(child: Text('Unknown tab: $id')),
   };
 }

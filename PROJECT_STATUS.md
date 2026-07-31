@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R2 Student Core
-- **Current module:** STU-04 Senior Home
+- **Current module:** STU-05 Student Profile and Settings
 - **Current status:** USER_TEST
-- **Current branch:** module/STU-04-senior-home
-- **Last completed module:** STU-03
+- **Current branch:** module/STU-05-student-profile
+- **Last completed module:** STU-04
 - **Application name:** Nano
 
 ## Releases
 
-- R1 Identity: complete (AUTH-01 through AUTH-04, STU-01, STU-02 all DONE)
-- R2 Student Core: STU-03 DONE, STU-04 in USER_TEST, STU-05 next
+- R1 Identity: complete
+- R2 Student Core: STU-03 and STU-04 DONE, STU-05 in USER_TEST
 
-## Next after STU-04 DONE
+## Next after STU-05 DONE
 
-STU-05 Student Profile and Settings (R2)
+Next eligible module per MODULE_STATUS (R2 complete after STU-05; R3 Learning starts with LRN-01 unless a remaining R2 item exists)

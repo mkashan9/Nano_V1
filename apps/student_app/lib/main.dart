@@ -52,6 +52,8 @@ class NanoStudentApp extends StatefulWidget {
     this.onboardingRepository,
     this.preferencesRepository,
     this.homeRepository,
+    this.profileRepository,
+    this.syncController,
     this.requireAuth = false,
   });
 
@@ -64,6 +66,8 @@ class NanoStudentApp extends StatefulWidget {
   final OnboardingRepository? onboardingRepository;
   final StudentPreferencesRepository? preferencesRepository;
   final StudentHomeRepository? homeRepository;
+  final StudentProfileRepository? profileRepository;
+  final NanoSyncController? syncController;
   final bool requireAuth;
 
   @override
@@ -80,6 +84,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   OnboardingProgress? _onboarding;
   StudentPreferences? _preferences;
   late final StudentHomeRepository _homeRepository;
+  late final StudentProfileRepository _profileRepository;
+  late final NanoSyncController _syncController;
   var _restoring = false;
 
   @override
@@ -91,12 +97,29 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
-    // Home content stays on fixtures until the LRN/XP modules land.
+    // Home and profile content stay on fixtures until LRN/XP modules land.
     _homeRepository = widget.homeRepository ??
         FakeStudentHomeRepository(
           subjects: StudentHomeFixtures.subjects,
           missions: StudentHomeFixtures.missions,
         );
+    _profileRepository = widget.profileRepository ??
+        FakeStudentProfileRepository(
+          sessions: [
+            SecurityFixtures.activeSession.copyWith(isCurrent: true),
+            SecurityFixtures.revokedSession,
+            DeviceSession(
+              id: 'f3333333-3333-3333-3333-333333333333',
+              userId: TenancyFixtures.aliAlphaId,
+              schoolId: TenancyFixtures.alphaSchoolId,
+              deviceLabel: 'iPad',
+              lastSeenAt: DateTime.now().toUtc().subtract(
+                    const Duration(hours: 5),
+                  ),
+            ),
+          ],
+        );
+    _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
@@ -206,16 +229,25 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         _router = _createRouter();
       }),
       homeRepository: _homeRepository,
+      profileRepository: _profileRepository,
+      syncController: _syncController,
     );
   }
 
   Future<void> _signOut() async {
+    // Clear private caches first so a failed network still leaves nothing
+    // for the next person on this device (handbook PRF-01).
+    _syncController.cache.clear();
+    _syncController.queue.clear();
     await widget.authRepository?.signOut();
     if (!mounted) return;
     setState(() {
       _authBootstrap = null;
       _onboarding = null;
       _preferences = null;
+      _locale = NanoAppLocale.en;
+      _a11y = AccessibilityPreferences.defaults;
+      _feedback.updatePreferences(_a11y);
       _principal = SessionPrincipal.junior(displayName: '');
       _router = _createRouter();
     });

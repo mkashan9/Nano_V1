@@ -60,6 +60,9 @@ class DeviceSession {
     required this.deviceLabel,
     this.schoolId,
     this.revokedAt,
+    this.lastSeenAt,
+    this.userAgent,
+    this.isCurrent = false,
   });
 
   final String id;
@@ -67,8 +70,55 @@ class DeviceSession {
   final String? schoolId;
   final String deviceLabel;
   final DateTime? revokedAt;
+  final DateTime? lastSeenAt;
+  final String? userAgent;
+
+  /// The device the learner is holding right now, which the UI labels so a
+  /// revoke does not look like it signs out someone else.
+  final bool isCurrent;
 
   bool get isActive => revokedAt == null;
+
+  /// Revoking the session you are using would sign you out, so the profile
+  /// screen offers it separately from "sign out everywhere else".
+  bool get isRevocable => isActive && !isCurrent;
+
+  String get lastSeenLabel {
+    final seen = lastSeenAt;
+    if (seen == null) return 'unknown';
+    final age = DateTime.now().toUtc().difference(seen.toUtc());
+    if (age.inMinutes < 1) return 'just now';
+    if (age.inHours < 1) return '${age.inMinutes} min ago';
+    if (age.inDays < 1) return '${age.inHours} h ago';
+    return '${age.inDays} d ago';
+  }
+
+  DeviceSession copyWith({DateTime? revokedAt, bool? isCurrent}) {
+    return DeviceSession(
+      id: id,
+      userId: userId,
+      deviceLabel: deviceLabel,
+      schoolId: schoolId,
+      revokedAt: revokedAt ?? this.revokedAt,
+      lastSeenAt: lastSeenAt,
+      userAgent: userAgent,
+      isCurrent: isCurrent ?? this.isCurrent,
+    );
+  }
+
+  factory DeviceSession.fromRow(Map<String, dynamic> row) {
+    DateTime? parse(Object? value) =>
+        value == null ? null : DateTime.parse(value as String).toUtc();
+    return DeviceSession(
+      id: row['id'] as String,
+      userId: row['user_id'] as String,
+      deviceLabel: (row['device_label'] as String?) ?? '',
+      schoolId: row['school_id'] as String?,
+      revokedAt: parse(row['revoked_at']),
+      lastSeenAt: parse(row['last_seen_at']),
+      userAgent: row['user_agent'] as String?,
+    );
+  }
 }
 
 class AuditEvent {

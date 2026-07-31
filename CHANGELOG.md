@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- STU-05: student profile with privacy settings, audited device revoke, and sign-out that clears private caches
+
 - STU-04: senior home with level and XP progress, Today's Plan, eligibility-gated Flex summary, and partial-data section notices
 
 - STU-03: junior home with aggregated home summary, repository-backed content, and full state coverage
