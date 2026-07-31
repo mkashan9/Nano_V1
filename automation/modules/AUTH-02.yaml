@@ -1,7 +1,7 @@
 id: AUTH-02
 name: "Teacher Authentication"
 release: R1
-status: USER_TEST
+status: APPROVED
 dependencies:
   - SEC-03
   - FND-04
