@@ -1,7 +1,7 @@
 id: STU-05
 name: "Student Profile and Settings"
 release: R2
-status: USER_TEST
+status: APPROVED
 dependencies:
   - STU-03
   - STU-04
