@@ -1,3 +1,4 @@
+export 'home/student_home_repository.dart';
 export 'onboarding/onboarding_repository.dart';
 export 'preferences/student_preferences_repository.dart';
 export 'supabase/nano_supabase.dart';

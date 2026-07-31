@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- STU-03: junior home with aggregated home summary, repository-backed content, and full state coverage
+
 - STU-02: companion naming, language, sound, and accessibility preferences with owner-only RLS
 
 - STU-01: student first-run onboarding with resumable server-side progress and grade-derived experience track

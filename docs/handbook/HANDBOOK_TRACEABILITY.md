@@ -13,7 +13,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | 1.4 Non-negotiable rules â€” safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | USER_TEST |
 | 2.x Release strategy and pilot criteria | QA-06 | docs | pilot checklist | N/A | release checklist | BACKLOG |
 | 3.1 Shared domain, separate shells | FND-04 | all apps | shells | N/A | widget | USER_TEST |
-| 3.2 Junior interaction rules | FND-03,STU-03 | student_app | Junior Home | prefs | widget/golden | BACKLOG |
+| 3.2 Junior interaction rules | FND-03,STU-03 | student_app | Junior Home | prefs | widget/golden | USER_TEST |
 | 3.3 Senior interaction rules | FND-03,STU-04 | student_app | Senior Home | prefs | widget/golden | BACKLOG |
 | 3.4 Teacher data-entry rules | TCH-01,ATT-01,MRK-02 | teacher_app | grids | attendance,marks | widget | BACKLOG |
 | 3.5 Web administration rules | ADM-01,SCH-01 | admin_web | dashboards | schools | e2e | BACKLOG |
@@ -34,8 +34,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook FND-04 Navigation deep links | FND-04,NOT-01 | apps | nav | N/A | nav tests | USER_TEST |
 | Handbook SEC-01 Tenancy RLS audit | SEC-01,SEC-02,SEC-03 | supabase | RLS/audit | policies | pgTAP | USER_TEST |
 | Handbook FND-05 Cache sync queue | SYNC-01 | packages | queue | local db | sync tests | BACKLOG |
-| Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | student_onboarding,student_preferences | widget | USER_TEST |
-| Handbook STU-02 Student Home | STU-03,STU-04 | student_app | Home | progress | golden | BACKLOG |
+| Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | student_onboarding,student_preferences | widget | DONE |
+| Handbook STU-02 Student Home | STU-03,STU-04 | student_app | Home | progress | widget | USER_TEST (junior via STU-03; senior pending STU-04) |
 | Handbook PRF-01 Profiles settings | STU-05 | student_app | Profile | profiles | widget | BACKLOG |
 | Handbook LRN-01 Learning catalog | LRN-01,LRN-02 | student_app | Learning Stack | subjects,topics | repo tests | BACKLOG |
 | Handbook LRN-02 Video learning progress | LRN-03,LRN-04,LRN-05 | student_app | player | progress | player tests | BACKLOG |

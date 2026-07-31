@@ -11,7 +11,10 @@ import 'package:student_app/app/supabase_health_page.dart';
 import 'package:student_app/app/diagnostics_page.dart';
 import 'package:student_app/app/environment_badge.dart';
 import 'package:student_app/app/nav_placeholder_page.dart';
+import 'package:nano_data/nano_data.dart';
+import 'package:student_app/features/home/fixtures/student_home_fixtures.dart';
 import 'package:student_app/features/home/presentation/junior_home_foundation.dart';
+import 'package:student_app/features/home/presentation/junior_home_page.dart';
 import 'package:student_app/features/home/presentation/responsive_preview_page.dart';
 import 'package:student_app/features/home/presentation/senior_home_foundation.dart';
 
@@ -272,16 +275,38 @@ class StudentShell extends StatelessWidget {
 }
 
 class StudentLearningTab extends StatelessWidget {
-  const StudentLearningTab({super.key, required this.principal});
+  const StudentLearningTab({
+    super.key,
+    required this.principal,
+    this.homeRepository,
+    this.companionName,
+  });
 
   final SessionPrincipal principal;
+  final StudentHomeRepository? homeRepository;
+  final String? companionName;
 
   @override
   Widget build(BuildContext context) {
-    if (principal.role.usesJuniorPresentation) {
+    if (!principal.role.usesJuniorPresentation) {
+      return const SeniorHomeFoundation();
+    }
+    final repository = homeRepository;
+    if (repository == null) {
+      // Static preview until a data source is supplied (FND-03 foundation).
       return const JuniorHomeFoundation();
     }
-    return const SeniorHomeFoundation();
+    return JuniorHomePage(
+      repository: repository,
+      learnerName: principal.displayName.isEmpty
+          ? StudentHomeFixtures.studentName
+          : principal.displayName,
+      userId: principal.userId ?? 'local',
+      companionName: companionName ?? 'Nori',
+      onSubjectTap: (_) {},
+      onContinue: (_) {},
+      onNotifications: () {},
+    );
   }
 }
 

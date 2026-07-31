@@ -1,7 +1,7 @@
 id: STU-03
 name: "Junior Home"
 release: R2
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-02
   - FND-05
@@ -15,6 +15,9 @@ allowed_paths:
   - automation/
   - docs/modules/STU-03/
   - automation/modules/STU-03.yaml
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
@@ -25,21 +28,30 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for STU-03"
-ui_references: []
+  - "STU-02 Student Home (greeting, continue learning, mission, progress, notifications) — Junior presentation"
+ui_references:
+  - UI_reference/kids/home
 database_scope: []
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
+  - Junior home answers what happened, what to do next, and how it is going in one screen
+  - Home data comes from a repository behind an interface, so live data can replace fixtures without UI changes
+  - Loading, error with retry, empty, offline-with-timestamp, and maintenance states all render
+  - Junior mission list stays at three items and shows the XP available
+  - Companion name from STU-02 preferences is used by the home greeting slot
   - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/student_home_summary_test.dart
+  - packages/nano_data/test/student_home_repository_test.dart
+  - apps/student_app/test/junior_home_page_test.dart
+  - apps/student_app/test/widget_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_client_side_xp_or_progress_writes
+accessibility_checks:
+  - large_junior_tap_targets
+  - locale_copy_en_ur
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - See docs/modules/STU-03/MANUAL_TEST.md
+rollback_notes: "Revert module branch commits; StudentLearningTab falls back to JuniorHomeFoundation when no home repository is supplied"
 requires_owner_test: true

@@ -2,13 +2,17 @@
 
 ## Current state
 
-- **Current release:** R1 Identity
-- **Current module:** STU-02 Nori Naming, Language, Sound, and Accessibility Setup
+- **Current release:** R2 Student Core
+- **Current module:** STU-03 Junior Home
 - **Current status:** USER_TEST
-- **Current branch:** module/STU-02-companion-preferences
-- **Last completed module:** STU-01
+- **Current branch:** module/STU-03-junior-home
+- **Last completed module:** STU-02
 - **Application name:** Nano
 
-## Next after STU-02 DONE
+## Releases
 
-STU-03 Junior Home (R2) — or next R1-eligible module per MODULE_STATUS
+- R1 Identity: complete (AUTH-01 through AUTH-04, STU-01, STU-02 all DONE)
+
+## Next after STU-03 DONE
+
+STU-04 Senior Home (R2)
