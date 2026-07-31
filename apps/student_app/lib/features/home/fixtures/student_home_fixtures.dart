@@ -11,7 +11,7 @@ abstract final class StudentHomeFixtures {
 
   static const subjects = <LearningSubject>[
     LearningSubject(
-      id: 'math',
+      id: 'subject-math',
       title: 'Math',
       progress: 0.55,
       worldColorValue: 0xFF2F7BFF,
@@ -29,7 +29,7 @@ abstract final class StudentHomeFixtures {
       shortPrompt: 'ABC time',
     ),
     LearningSubject(
-      id: 'science',
+      id: 'subject-science',
       title: 'Science',
       progress: 0.65,
       worldColorValue: 0xFFFF8A3D,

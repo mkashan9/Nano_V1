@@ -2,18 +2,19 @@
 
 ## Current state
 
-- **Current release:** R2 Student Core
-- **Current module:** STU-05 Student Profile and Settings
+- **Current release:** R3 Learning
+- **Current module:** LRN-01 Learning Subject Catalog
 - **Current status:** USER_TEST
-- **Current branch:** module/STU-05-student-profile
-- **Last completed module:** STU-04
+- **Current branch:** module/LRN-01-learning-catalog
+- **Last completed module:** STU-05
 - **Application name:** Nano
 
 ## Releases
 
 - R1 Identity: complete
-- R2 Student Core: STU-03 and STU-04 DONE, STU-05 in USER_TEST
+- R2 Student Core: complete (STU-03 through STU-05 DONE)
+- R3 Learning: LRN-01 in USER_TEST
 
-## Next after STU-05 DONE
+## Next after LRN-01 DONE
 
-Next eligible module per MODULE_STATUS (R2 complete after STU-05; R3 Learning starts with LRN-01 unless a remaining R2 item exists)
+Next eligible module per MODULE_STATUS (LRN-02 Topic List, Ordering, and Prerequisites)

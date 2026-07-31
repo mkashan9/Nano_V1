@@ -137,6 +137,31 @@ class NanoCopy {
       isUrdu ? 'یہ حصہ ابھی لوڈ نہیں ہوا۔' : "This part didn't load.";
   String get retryLabel => isUrdu ? 'دوبارہ کوشش' : 'Try again';
 
+  String get catalogTitle => isUrdu ? 'سیکھنے کا مواد' : 'Learning';
+  String get catalogSearchHint =>
+      isUrdu ? 'مضمون یا ٹاپک تلاش کریں' : 'Search subjects and topics';
+  String get catalogNoResults =>
+      isUrdu ? 'کوئی نتیجہ نہیں ملا۔' : 'No matches found.';
+  String get catalogEmpty => isUrdu
+      ? 'ابھی آپ کے لیے کوئی مضمون تیار نہیں۔'
+      : 'No subjects are ready for you yet.';
+  String topicCount(int count) =>
+      isUrdu ? '$count ٹاپکس' : '$count topics';
+  String topicsDone(int done, int total) =>
+      isUrdu ? '$total میں سے $done مکمل' : '$done of $total done';
+  String minutesLabel(int minutes) =>
+      isUrdu ? '$minutes منٹ' : '$minutes min';
+  String get objectivesLabel => isUrdu ? 'آپ کیا سیکھیں گے' : "What you'll learn";
+  String get resourcesLabel => isUrdu ? 'اضافی مواد' : 'Extra material';
+  String get lockedLabel => isUrdu ? 'بند' : 'Locked';
+  String lockedBecause(String prerequisites) => isUrdu
+      ? 'پہلے $prerequisites مکمل کریں'
+      : 'Finish $prerequisites first';
+  String get completedLabel => isUrdu ? 'مکمل' : 'Completed';
+  String get startLabel => isUrdu ? 'شروع کریں' : 'Start';
+  String get resumeLabel => isUrdu ? 'جاری رکھیں' : 'Resume';
+  String get nextUpTitle => isUrdu ? 'اگلا کریں' : 'Do this next';
+
   String get accessWarning => isUrdu
       ? 'آپ کی رسائی جلد ختم ہو رہی ہے۔ سیکھنا جاری رکھیں۔'
       : 'Your access is ending soon. You can keep learning for now.';

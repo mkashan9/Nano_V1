@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- LRN-01: learning catalog with publication model, eligibility, prerequisite locks, Junior worlds / Senior search, and shared version IDs
+
 - STU-05: student profile with privacy settings, audited device revoke, and sign-out that clears private caches
 
 - STU-04: senior home with level and XP progress, Today's Plan, eligibility-gated Flex summary, and partial-data section notices

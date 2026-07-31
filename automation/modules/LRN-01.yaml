@@ -1,7 +1,7 @@
 id: LRN-01
 name: "Learning Subject Catalog"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-03
   - STU-04
@@ -11,6 +11,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -21,26 +22,60 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LRN-01"
+  - "Learning Stack Catalog (LRN-01)"
+  - "Unpublished content invisible"
+  - "Prerequisites and eligibility on server reads"
+  - "Junior and Senior previews share version IDs"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.learning_subjects
+  - public.subject_versions
+  - public.topics
+  - public.topic_versions
+  - public.topic_prerequisites
+  - public.eligibility_rules
+  - public.learning_progress
+  - public.learning_catalog
+server_functions:
+  - nano_internal.learner_track
+  - nano_internal.learner_grade
+  - nano_internal.subject_is_eligible
+  - nano_internal.subject_is_visible
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Unpublished content is invisible to learners
+  - Prerequisites and eligibility are enforced on server reads
+  - Junior and Senior previews use identical underlying version IDs
+  - Subject tap opens ordered topics with lock state, time, and objectives
+  - Senior search filters the same catalog rows
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/learning_catalog_test.dart
+  - packages/nano_data/test/learning_catalog_repository_test.dart
+  - apps/student_app/test/learning_catalog_page_test.dart
+  - supabase/tests/lrn01_catalog_visibility.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - drafts_invisible_to_learners
+  - eligibility_server_enforced
+  - progress_owner_only
+  - no_client_writes_to_catalog_tables
+accessibility_checks:
+  - locked_topics_announce_reason
+  - large_tap_targets_on_junior_worlds
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open student app as Junior, tap Math, confirm Adding is locked
+  - Switch persona to Senior, confirm Science appears and Math version IDs match
+  - Search "living" as Senior and confirm only Science remains
+rollback_notes: "Revert module branch commits; drop LRN-01 tables only with owner approval"
 requires_owner_test: true
