@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+
+IconData nanoNavIcon(String name) => switch (name) {
+      'home' => Icons.home_outlined,
+      'sports_esports' => Icons.sports_esports_outlined,
+      'person' => Icons.person_outline,
+      'menu_book' => Icons.menu_book_outlined,
+      'bolt' => Icons.bolt_outlined,
+      'groups' => Icons.groups_outlined,
+      'dashboard' => Icons.dashboard_outlined,
+      'class_' => Icons.class_outlined,
+      'fact_check' => Icons.fact_check_outlined,
+      'grade' => Icons.grade_outlined,
+      'cast_for_education' => Icons.cast_for_education_outlined,
+      'school' => Icons.school_outlined,
+      'badge' => Icons.badge_outlined,
+      'assessment' => Icons.assessment_outlined,
+      'settings' => Icons.settings_outlined,
+      'dns' => Icons.dns_outlined,
+      'apartment' => Icons.apartment_outlined,
+      'library_books' => Icons.library_books_outlined,
+      'gavel' => Icons.gavel_outlined,
+      'insights' => Icons.insights_outlined,
+      'history' => Icons.history_outlined,
+      _ => Icons.circle_outlined,
+    };

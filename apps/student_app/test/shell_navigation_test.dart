@@ -3,7 +3,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/main.dart';
 
 void main() {
-  testWidgets('junior shell shows Home Play Me tabs', (tester) async {
+  testWidgets('senior shell shows Flex when eligible', (tester) async {
     const config = EnvironmentConfig(
       environment: NanoEnvironment.development,
       supabaseUrl: '',
@@ -13,18 +13,14 @@ void main() {
     await tester.pumpWidget(
       NanoStudentApp(
         config: config,
-        initialPrincipal: SessionPrincipal.junior(),
+        initialPrincipal: SessionPrincipal.seniorSchool(),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Home'), findsWidgets);
-    expect(find.text('Play'), findsOneWidget);
-    expect(find.text('Me'), findsOneWidget);
-    expect(find.text('Flex'), findsNothing);
-    expect(find.text('Math'), findsOneWidget);
+    expect(find.text('Flex'), findsOneWidget);
   });
 
-  testWidgets('independent shell hides Flex tab', (tester) async {
+  testWidgets('deep link to flex redirects independent to home', (tester) async {
     const config = EnvironmentConfig(
       environment: NanoEnvironment.development,
       supabaseUrl: '',
@@ -35,11 +31,12 @@ void main() {
       NanoStudentApp(
         config: config,
         initialPrincipal: SessionPrincipal.independent(),
+        initialLocation: '/flex',
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Learning'), findsWidgets);
     expect(find.text('Flex'), findsNothing);
-    expect(find.text('Communities'), findsOneWidget);
+    expect(find.text('Learning'), findsWidgets);
+    expect(find.text("Today's Mission"), findsOneWidget);
   });
 }

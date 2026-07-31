@@ -3,12 +3,12 @@
 ## Current state
 
 - **Current release:** R0 Foundation
-- **Current module:** FND-03 Junior and Senior Responsive Foundations
+- **Current module:** FND-04 Navigation and Role-Aware Application Shells
 - **Current status:** USER_TEST
-- **Current branch:** module/FND-03-junior-senior-responsive
-- **Last completed module:** FND-02
+- **Current branch:** module/FND-04-navigation-shells
+- **Last completed module:** FND-03
 - **Application name:** Nano
 
-## Next after FND-03 DONE
+## Next after FND-04 DONE
 
-FND-04 Navigation and Role-Aware Application Shells
+FND-05 Error, Loading, Empty, Offline, and Maintenance States

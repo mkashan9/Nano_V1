@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- FND-04: role-aware shells, go_router, deep-link fallback, Flex eligibility
+
 ### Added
 
 - FND-03: Junior/Senior responsive home foundations, preview widths, shared fixtures

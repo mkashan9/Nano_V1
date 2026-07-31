@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:teacher_app/app/teacher_router.dart';
 
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
@@ -8,28 +9,29 @@ void main() {
 }
 
 class NanoTeacherApp extends StatelessWidget {
-  const NanoTeacherApp({super.key, required this.config});
+  const NanoTeacherApp({
+    super.key,
+    required this.config,
+    this.principal,
+    this.initialLocation,
+  });
 
   final EnvironmentConfig config;
+  final SessionPrincipal? principal;
+  final String? initialLocation;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final session = principal ?? SessionPrincipal.teacher();
+    final router = createTeacherRouter(
+      config: config,
+      principal: session,
+      initialLocation: initialLocation,
+    );
+    return MaterialApp.router(
       title: '${config.appDisplayName} Teacher',
       theme: NanoTheme.teacher(),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('${config.appDisplayName} Teacher'),
-          actions: [
-            if (config.environment.showDebugTools)
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Chip(label: Text(config.environment.name.toUpperCase())),
-              ),
-          ],
-        ),
-        body: const Center(child: Text('Teacher app foundation')),
-      ),
+      routerConfig: router,
     );
   }
 }

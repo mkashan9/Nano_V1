@@ -1,18 +1,18 @@
-# HANDBOOK_TRACEABILITY
+﻿# HANDBOOK_TRACEABILITY
 
 Maps handbook requirements to automation modules. Automation queue is intentionally
 more granular than handbook module IDs; no major handbook requirement is left unmapped.
 
-Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Handbook_v1.0.docx`
+Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementation_Handbook_v1.0.docx`
 
 | Handbook requirement | Module ID(s) | Application | Screen / service | Database responsibility | Test responsibility | Status |
 |----------------------|--------------|-------------|------------------|-------------------------|----------------------|--------|
-| 1.1 Product statement — Nano education platform | AUD-01 | all | N/A | N/A | docs review | IN_PROGRESS |
-| 1.2 Product surfaces — student, teacher, school mgmt, superadmin | FND-04 | all apps | role shells | roles | shell tests | BACKLOG |
-| 1.3 Account model — school vs independent students | AUTH-01,AUTH-04,IND-02 | student_app | auth/onboarding | profiles,school_id | auth/RLS | BACKLOG |
-| 1.4 Non-negotiable rules — safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | BACKLOG |
+| 1.1 Product statement â€” Nano education platform | AUD-01 | all | N/A | N/A | docs review | IN_PROGRESS |
+| 1.2 Product surfaces â€” student, teacher, school mgmt, superadmin | FND-04 | all apps | role shells | roles | shell tests | USER_TEST |
+| 1.3 Account model â€” school vs independent students | AUTH-01,AUTH-04,IND-02 | student_app | auth/onboarding | profiles,school_id | auth/RLS | BACKLOG |
+| 1.4 Non-negotiable rules â€” safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | BACKLOG |
 | 2.x Release strategy and pilot criteria | QA-06 | docs | pilot checklist | N/A | release checklist | BACKLOG |
-| 3.1 Shared domain, separate shells | FND-04 | all apps | shells | N/A | widget | BACKLOG |
+| 3.1 Shared domain, separate shells | FND-04 | all apps | shells | N/A | widget | USER_TEST |
 | 3.2 Junior interaction rules | FND-03,STU-03 | student_app | Junior Home | prefs | widget/golden | BACKLOG |
 | 3.3 Senior interaction rules | FND-03,STU-04 | student_app | Senior Home | prefs | widget/golden | BACKLOG |
 | 3.4 Teacher data-entry rules | TCH-01,ATT-01,MRK-02 | teacher_app | grids | attendance,marks | widget | BACKLOG |
@@ -24,14 +24,14 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | 6.3 Trusted operations (scores, XP, publish) | QZ-05,XP-01,MRK-04,GME-05 | edge functions | scoring | ledgers | function tests | BACKLOG |
 | 6.4 Versioning and history | SEC-03,MRK-04,ATT-03 | supabase | audit | audit_logs | history tests | BACKLOG |
 | 7.x Reuse-first engineering | AUD-01 | docs/provenance | registry | N/A | docs | IN_PROGRESS |
-| 8.1–8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
+| 8.1â€“8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
 | 8.3 Design tokens | FND-02 | nano_design_system | tokens | N/A | golden | BACKLOG |
 | 8.4 Component families | FND-02 | nano_design_system | components | N/A | widget | BACKLOG |
 | 8.5 Accessibility contract | FND-07,QA-04 | all apps | a11y | prefs | a11y tests | BACKLOG |
 | Handbook FND-01 Workspace | FND-01 | workspace | config | env | CI | BACKLOG |
 | Handbook FND-02 Design system shells | FND-02,FND-03 | design_system | shells | N/A | golden | BACKLOG |
 | Handbook FND-03 Auth sessions roles | AUTH-01,AUTH-02,AUTH-03,SEC-03 | nano_auth | auth | sessions | auth | BACKLOG |
-| Handbook FND-04 Navigation deep links | FND-04,NOT-01 | apps | nav | N/A | nav tests | BACKLOG |
+| Handbook FND-04 Navigation deep links | FND-04,NOT-01 | apps | nav | N/A | nav tests | USER_TEST |
 | Handbook SEC-01 Tenancy RLS audit | SEC-01,SEC-02,SEC-03 | supabase | RLS/audit | policies | pgTAP | BACKLOG |
 | Handbook FND-05 Cache sync queue | SYNC-01 | packages | queue | local db | sync tests | BACKLOG |
 | Handbook STU-01 Onboarding preferences | STU-01,STU-02 | student_app | onboarding | prefs | widget | BACKLOG |
@@ -60,9 +60,9 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook MED-01 Media asset delivery | MED-01,MED-02,MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | BACKLOG |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |
 | Handbook PAR-01 Guardian guidance | PAR-01,PAR-02,PAR-03,FBK-01 | student+admin | Parent card | guidance | guardian | BACKLOG |
-| XP rules — video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
+| XP rules â€” video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
 | Junior must not see Communities | COM-01,SAFE-04,STU-03 | student_app | nav guard | roles | junior nav test | BACKLOG |
-| Independent students — natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
+| Independent students â€” natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
 | English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | BACKLOG |
 | Generated media cost controls | MED-02 | edge | quotas | generation_* | dedupe/hash | BACKLOG |
 | Nori voice Aoede; no privileged calc | MED-03,CMP-01 | edge+app | voice/reactions | N/A | unit | BACKLOG |
@@ -75,7 +75,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 ## Coverage statement
 
 - Mapped requirement rows: **64**
-- Handbook catalog modules (FND/SEC/STU/…): each appears in at least one row
+- Handbook catalog modules (FND/SEC/STU/â€¦): each appears in at least one row
 - Master automation queue (120 modules): each release feature is reachable from a handbook row
 - Status values: BACKLOG | IN_PROGRESS | DONE
 
