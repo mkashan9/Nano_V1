@@ -4,6 +4,7 @@ import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/app/student_auth_redirect.dart';
 import 'package:student_app/app/student_shell.dart';
 import 'package:student_app/features/auth/presentation/recover_password_page.dart';
 import 'package:student_app/features/auth/presentation/sign_in_page.dart';
@@ -55,35 +56,14 @@ GoRouter createStudentRouter({
   return GoRouter(
     initialLocation: resolvedInitial,
     redirect: (context, state) {
-      final path = state.uri.path;
-      if (requireAuth && !principal.isAuthenticated) {
-        return const {'/sign-in', '/sign-up', '/recover'}.contains(path)
-            ? null
-            : '/sign-in';
-      }
-      if (requireAuth &&
-          principal.isAuthenticated &&
-          (authBootstrap?.isBlocked ?? false) &&
-          path != '/blocked') {
-        return '/blocked';
-      }
-      if (requireAuth &&
-          principal.isAuthenticated &&
-          const {'/sign-in', '/sign-up', '/recover'}.contains(path)) {
-        return needsOnboarding ? '/onboarding' : '/';
-      }
-      if (needsOnboarding && path != '/onboarding') {
-        return '/onboarding';
-      }
-      if (!needsOnboarding && path == '/onboarding') {
-        return '/';
-      }
-      if (!principal.isAuthenticated) return null;
-      final resolution = DeepLinkResolver.resolve(principal, path);
-      if (resolution.fellBack && resolution.location != path) {
-        return resolution.location;
-      }
-      return null;
+      return studentAuthRedirect(
+        path: state.uri.path,
+        requireAuth: requireAuth,
+        isAuthenticated: principal.isAuthenticated,
+        isBlocked: authBootstrap?.isBlocked ?? false,
+        needsOnboarding: needsOnboarding,
+        principal: principal,
+      );
     },
     routes: [
       GoRoute(
