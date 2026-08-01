@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- CMP-02: controlled Nori variants (guide, explorer, quiz coach, builder, celebration) inside one shared frame, plus reaction rules — story cards for rare moments, priority for colliding moments, a per-session appearance budget, and Classroom Mode holding back everything non-essential
+
 - CMP-01: a deterministic local Nori runtime — six core reactions, junior/senior density, cooldowns, captions that survive muted sound and Classroom Mode, and an asset ladder that never needs the network
 
 - QZ-06: quiz results with per-question review and explanations released only after submit, a server-enforced retake budget, and recommendations that keep an unpassed quiz as review work

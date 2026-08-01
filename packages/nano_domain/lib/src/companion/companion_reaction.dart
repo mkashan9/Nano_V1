@@ -1,4 +1,5 @@
 import '../l10n/nano_app_locale.dart';
+import 'companion_mode.dart';
 
 /// Moments the companion may respond to (CMP-01).
 ///
@@ -8,6 +9,7 @@ enum CompanionEvent {
   appOpen,
   home,
   learningEntry,
+  newWorld,
   videoStart,
   videoComplete,
   quizStart,
@@ -55,6 +57,7 @@ enum CompanionMood {
         CompanionEvent.returnFromInactivity =>
           CompanionMood.greeting,
         CompanionEvent.learningEntry ||
+        CompanionEvent.newWorld ||
         CompanionEvent.videoStart ||
         CompanionEvent.quizStart ||
         CompanionEvent.emptyState =>
@@ -226,6 +229,8 @@ class CompanionReaction {
     required this.mood,
     required this.script,
     required this.tier,
+    this.mode = CompanionMode.guide,
+    this.presentation = CompanionPresentation.inline,
     this.companionName = 'Nori',
     this.speaks = false,
     this.showsCaption = true,
@@ -236,6 +241,12 @@ class CompanionReaction {
   final CompanionMood mood;
   final CompanionScript script;
   final CompanionAssetTier tier;
+
+  /// Which controlled variant is on screen (CMP-02).
+  final CompanionMode mode;
+
+  /// Inline guidance or a rare framed story card (CMP-02).
+  final CompanionPresentation presentation;
 
   /// The learner's name for the companion, carried so a caption cannot be
   /// rendered with the default name by accident.
@@ -250,8 +261,9 @@ class CompanionReaction {
   /// Junior guidance is larger and more central than Senior's.
   final bool prominent;
 
-  /// Stable key for art lookup and for goldens.
-  String get assetKey => '${mood.name}_${tier.name}';
+  /// Stable key for art lookup and for goldens. Mode is part of it because a
+  /// mode is a different set of art for the same mood.
+  String get assetKey => '${mode.name}_${mood.name}_${tier.name}';
 
   String captionFor(NanoAppLocale locale, {String? companionName}) =>
       script.textFor(

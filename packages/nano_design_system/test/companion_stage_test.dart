@@ -35,7 +35,10 @@ void main() {
 
   testWidgets('shows the caption for the reaction', (tester) async {
     await pumpStage(tester, reactionFor(CompanionEvent.appOpen));
-    expect(find.textContaining('Nori'), findsOneWidget);
+    expect(
+      find.textContaining('is here whenever you are ready'),
+      findsOneWidget,
+    );
     expect(find.byType(CompanionSlot), findsOneWidget);
   });
 
@@ -65,7 +68,8 @@ void main() {
       reactionFor(CompanionEvent.appOpen, companionName: 'Bao'),
     );
     expect(find.bySemanticsLabel('Bao'), findsOneWidget);
-    expect(find.textContaining('Bao'), findsOneWidget);
+    // The caption and the mode badge both name the companion.
+    expect(find.textContaining('Bao'), findsWidgets);
   });
 
   testWidgets('shows the Urdu caption for an Urdu locale', (tester) async {

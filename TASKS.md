@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] CMP-01 owner manual test
+- [ ] CMP-02 owner manual test
 
 ## Completed
 
@@ -30,7 +30,8 @@
 - [x] QZ-04
 - [x] QZ-05
 - [x] QZ-06
+- [x] CMP-01
 
 ## Upcoming
 
-- [ ] CMP-02 Nori Modes and Reaction Rules
+- [ ] CMP-03 Junior and Senior Companion Placement

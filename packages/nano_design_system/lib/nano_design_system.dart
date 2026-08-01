@@ -19,6 +19,7 @@ export 'src/components/states/nano_error_state.dart';
 export 'src/components/states/nano_offline_banner.dart';
 export 'src/components/states/nano_suspended_state.dart';
 export 'src/components/companion_slot.dart';
+export 'src/components/companion_mode_theme.dart';
 export 'src/components/companion_stage.dart';
 export 'src/components/nano_avatar.dart';
 export 'src/components/xp_chip.dart';

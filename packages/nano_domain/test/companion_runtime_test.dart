@@ -155,10 +155,12 @@ void main() {
     });
 
     test('classroom mode silences the voice even with sound on', () {
+      // CMP-02 rations ordinary moments in Classroom Mode, so this checks the
+      // essential one that still gets through.
       final runtime = CompanionRuntime.forExperience(
         junior: true,
         preferences: const AccessibilityPreferences(classroomMode: true),
-      ).notify(CompanionEvent.appOpen, now: t0);
+      ).notify(CompanionEvent.resultPassed, now: t0);
       expect(runtime.speaks, isFalse);
       expect(runtime.reaction!.tier, CompanionAssetTier.staticArt);
     });
