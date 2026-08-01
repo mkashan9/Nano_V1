@@ -3,7 +3,7 @@
 ## Active
 
 - [x] MED-11
-- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
+- [ ] MED-12 owner manual test
 
 ## Completed
 
@@ -47,6 +47,5 @@
 
 ## Upcoming
 
-- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger

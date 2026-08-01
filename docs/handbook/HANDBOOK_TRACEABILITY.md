@@ -85,7 +85,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Nori is one recognisable character in every pose | MED-09 | packages+student_app | bundled offline art, approved pose pack | generated_assets,companion_character_sheet | SQL+widget | DONE |
 | A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, bob, mood motion | none | widget | DONE |
 | A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | DONE |
-| Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | ACTIVE |
+| Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | USER_TEST |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
 | School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |

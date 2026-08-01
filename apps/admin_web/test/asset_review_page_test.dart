@@ -30,6 +30,39 @@ void main() {
     expect(find.text('guide_greeting_staticArt'), findsWidgets);
     expect(find.text('Approve'), findsOneWidget);
     expect(find.text('Reject'), findsOneWidget);
+    // MED-12: the curated celebration pack starts empty in the fake, so the
+    // gaps report is visible without reading a test log.
+    expect(find.text('Companion gaps'), findsOneWidget);
+    expect(find.text('guide_celebration_shortClip'), findsOneWidget);
+  });
+
+  testWidgets('an approved celebration clip clears its gap', (tester) async {
+    final repository = FakeAssetReviewRepository(
+      seed: [
+        const AssetReviewItem(
+          id: 'a0000000-0000-0000-0000-000000000099',
+          kind: GeneratedAssetKind.video,
+          slot: 'guide_celebration_shortClip',
+          locale: 'en',
+          aspectRatio: '1:1',
+          status: GeneratedAssetStatus.ready,
+          moderation: GeneratedAssetModeration.approved,
+          prompt: 'A warm approving nod.',
+          promptVersion: 'v1',
+          providerId: 'wan_i2v_space',
+          feature: 'companion',
+          storageBucket: 'generated-assets',
+          storagePath: 'video/guide_celebration_shortClip/en/hash.mp4',
+          contentType: 'video/mp4',
+          byteSize: 200000,
+          checksum: 'sha256:seed-clip',
+        ),
+      ],
+    );
+    await _pump(tester, repository: repository);
+
+    expect(find.text('guide_celebration_shortClip'), findsNothing);
+    expect(find.text('explorer_celebration_shortClip'), findsOneWidget);
   });
 
   testWidgets('a reviewer sees the prompt and provider behind an asset',

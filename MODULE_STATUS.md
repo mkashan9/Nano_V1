@@ -51,7 +51,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | MED-09 | Nori Character Sheet and Static Pose Pack | R4 | DONE | MED-08 |
 | MED-10 | Idle Life and Local Animation Tier | R4 | DONE | MED-09 |
 | MED-11 | Full Narration and Celebration Clip Pack | R4 | DONE | MED-09 |
-| MED-12 | Nori Everywhere and Companion Coverage Gate | R4 | ACTIVE | MED-10, MED-11 |
+| MED-12 | Nori Everywhere and Companion Coverage Gate | R4 | USER_TEST | MED-10, MED-11 |
 | XP-01 | Trusted XP Ledger | R5 | BACKLOG | SEC-02, AUTH-01 |
 | XP-02 | Levels and Thresholds | R5 | BACKLOG | XP-01 |
 | XP-03 | Achievements and Stickers | R5 | BACKLOG | XP-02 |

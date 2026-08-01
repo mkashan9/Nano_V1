@@ -8,9 +8,12 @@ import 'package:student_app/features/quiz/presentation/junior_quiz_page.dart';
 
 const _counting = 'tv-counting-1';
 
+var _now = DateTime.utc(2026, 8, 2, 11);
+
 Future<void> _pump(
   WidgetTester tester,
   Widget page, {
+  required CompanionController companion,
   AccessibilityPreferences preferences = AccessibilityPreferences.defaults,
 }) async {
   await tester.binding.setSurfaceSize(const Size(900, 2000));
@@ -22,7 +25,10 @@ Future<void> _pump(
       child: NanoAccessibilityScope(
         preferences: preferences,
         feedback: NanoFeedback(preferences: preferences),
-        child: MaterialApp(home: page),
+        child: NanoCompanionScope(
+          controller: companion,
+          child: MaterialApp(home: page),
+        ),
       ),
     ),
   );
@@ -64,8 +70,12 @@ Widget _onboarding({
 }
 
 void main() {
+  setUp(() => _now = DateTime.utc(2026, 8, 2, 11));
+
   testWidgets('quiz results are coached, not turned into a milestone',
       (tester) async {
+    final companion = CompanionController(junior: true, clock: () => _now);
+    addTearDown(companion.dispose);
     await _pump(
       tester,
       JuniorQuizPage(
@@ -73,45 +83,55 @@ void main() {
         repository: FakeLearnerQuizRepository(),
         attemptRepository: FakeQuizAttemptRepository(),
       ),
+      companion: companion,
     );
     await _finishJuniorQuiz(tester);
 
-    final stage = tester.widget<CompanionStage>(find.byType(CompanionStage));
-    expect(stage.reaction!.mode, CompanionMode.quizCoach);
-    expect(stage.reaction!.presentation, CompanionPresentation.inline);
+    expect(companion.reaction!.mode, CompanionMode.quizCoach);
+    expect(companion.reaction!.presentation, CompanionPresentation.inline);
     expect(find.text('Nori · Quiz coach'), findsOneWidget);
   });
 
   testWidgets('the first opening is a framed story card', (tester) async {
-    await _pump(tester, _onboarding());
+    final companion = CompanionController(junior: true, clock: () => _now);
+    addTearDown(companion.dispose);
+    await _pump(tester, _onboarding(), companion: companion);
 
-    final stage = tester.widget<CompanionStage>(find.byType(CompanionStage));
-    expect(stage.reaction!.presentation, CompanionPresentation.storyCard);
-    expect(stage.reaction!.mode, CompanionMode.guide);
+    expect(companion.reaction!.presentation, CompanionPresentation.storyCard);
+    expect(companion.reaction!.mode, CompanionMode.guide);
     expect(find.text('Nori · Guide'), findsOneWidget);
   });
 
   testWidgets('a renamed companion is named in its own badge', (tester) async {
-    await _pump(tester, _onboarding(companionName: 'Bao'));
+    final companion = CompanionController(
+      junior: true,
+      companionName: 'Bao',
+      clock: () => _now,
+    );
+    addTearDown(companion.dispose);
+    await _pump(tester, _onboarding(companionName: 'Bao'), companion: companion);
 
     expect(find.text('Bao · Guide'), findsOneWidget);
   });
 
   testWidgets('classroom mode holds back the welcome without shifting layout',
       (tester) async {
-    // Onboarding reads the learner's own saved preferences, since the flow is
-    // where they are set.
+    const preferences = AccessibilityPreferences(classroomMode: true);
+    final companion = CompanionController(
+      junior: true,
+      preferences: preferences,
+      clock: () => _now,
+    );
+    addTearDown(companion.dispose);
     await _pump(
       tester,
-      _onboarding(
-        accessibility: const AccessibilityPreferences(classroomMode: true),
-      ),
+      _onboarding(accessibility: preferences),
+      companion: companion,
+      preferences: preferences,
     );
 
-    final stage = tester.widget<CompanionStage>(find.byType(CompanionStage));
-    expect(stage.reaction, isNull);
+    expect(companion.reaction, isNull);
     expect(find.textContaining('Guide'), findsNothing);
-    // The step itself still explains itself in words.
     expect(find.textContaining('Ayesha'), findsOneWidget);
   });
 }

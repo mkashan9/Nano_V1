@@ -142,6 +142,8 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
       body: NanoViewStateHost(
         state: _state,
         onRetry: _load,
+        companionSurface: CompanionSurface.quiz,
+        junior: false,
         child: flow == null
             ? Center(child: Text(copy.quizUnavailableLabel))
             : NanoMaxContentWidth(
@@ -219,6 +221,12 @@ class _QuestionPane extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        CompanionSurfaceStage(
+          surface: CompanionSurface.quiz,
+          junior: false,
+          entryEvent: CompanionEvent.quizQuestion,
+          seed: flow.currentIndex,
+        ),
         Text(
           copy.quizAnsweredCount(flow.answeredCount, flow.questionCount),
           style: theme.textTheme.labelLarge,

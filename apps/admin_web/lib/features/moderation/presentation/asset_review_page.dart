@@ -29,6 +29,7 @@ class _AssetReviewPageState extends State<AssetReviewPage> {
   GeneratedAssetModeration? _filter = GeneratedAssetModeration.unreviewed;
   final _reason = TextEditingController();
   var _deciding = false;
+  List<String> _missingSlots = const [];
 
   @override
   void initState() {
@@ -46,10 +47,19 @@ class _AssetReviewPageState extends State<AssetReviewPage> {
     setState(() => _state = const NanoViewLoading());
     try {
       final items = await widget.repository.queue(moderation: _filter);
+      // The coverage report needs the published set, not the filtered queue.
+      // An empty unreviewed queue would otherwise look like "nothing missing".
+      final published = await widget.repository.queue(
+        moderation: GeneratedAssetModeration.approved,
+        limit: 500,
+      );
       if (!mounted) return;
       final copy = _copy;
+      final approvedSlots = published.map((item) => item.slot).toSet();
       setState(() {
         _items = items;
+        _missingSlots =
+            CompanionCoverage.missingCuratedSlots(approvedSlots);
         _selected = items.isEmpty
             ? null
             : items.firstWhere(
@@ -145,6 +155,8 @@ class _AssetReviewPageState extends State<AssetReviewPage> {
                 copy.assetReviewTitle,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
+              const SizedBox(height: NanoSpacing.sm),
+              _CoverageReport(copy: copy, missingSlots: _missingSlots),
               const SizedBox(height: NanoSpacing.sm),
               _FilterBar(
                 copy: copy,
@@ -505,4 +517,55 @@ class _Preview extends StatelessWidget {
 
   static String _size(int? bytes) =>
       bytes == null ? '—' : '${(bytes / 1024).round()} KB';
+}
+
+/// MED-12: the curated companion slots that still have no approved art.
+///
+/// Lives above the queue so a complete review queue cannot hide an incomplete
+/// companion. Derived from [CompanionCoverage.curatedSlots], not listed here.
+class _CoverageReport extends StatelessWidget {
+  const _CoverageReport({
+    required this.copy,
+    required this.missingSlots,
+  });
+
+  final NanoCopy copy;
+  final List<String> missingSlots;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (missingSlots.isEmpty) {
+      return Text(
+        copy.assetReviewCoverageComplete,
+        style: theme.textTheme.bodyMedium,
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          copy.assetReviewCoverageTitle,
+          style: theme.textTheme.titleSmall,
+        ),
+        const SizedBox(height: NanoSpacing.xs),
+        Text(
+          copy.assetReviewCoverageBody,
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: NanoSpacing.xs),
+        Wrap(
+          spacing: NanoSpacing.xs,
+          runSpacing: NanoSpacing.xs,
+          children: [
+            for (final slot in missingSlots)
+              Chip(
+                label: Text(slot),
+                visualDensity: VisualDensity.compact,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
 }
