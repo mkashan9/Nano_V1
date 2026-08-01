@@ -205,6 +205,16 @@ class NanoCopy {
       : "You can't skip ahead in this video.";
   String get questionBankTitle =>
       isUrdu ? 'سوالات کا ذخیرہ' : 'Question bank';
+  String get topicQuizzesTitle =>
+      isUrdu ? 'موضوع کے کوئز' : 'Topic quizzes';
+  String get newQuizLabel => isUrdu ? 'نیا کوئز' : 'New quiz';
+  String get publishQuizLabel => isUrdu ? 'کوئز شائع کریں' : 'Publish quiz';
+  String get retireQuizLabel => isUrdu ? 'کوئز ریٹائر کریں' : 'Retire quiz';
+  String get quizItemsLabel => isUrdu ? 'ترتیب والے سوالات' : 'Ordered questions';
+  String get passPercentLabel => isUrdu ? 'پاسنگ فیصد' : 'Pass percent';
+  String get fixedOrderLabel =>
+      isUrdu ? 'ترتیب محفوظ ہے' : 'Order is preserved';
+  String quizItemNumber(int n) => isUrdu ? 'سوال $n' : 'Question $n';
   String get newQuestionLabel => isUrdu ? 'نیا سوال' : 'New question';
   String get publishQuestionLabel => isUrdu ? 'شائع کریں' : 'Publish';
   String get retireQuestionLabel => isUrdu ? 'ریٹائر کریں' : 'Retire';

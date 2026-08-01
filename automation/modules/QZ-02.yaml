@@ -1,15 +1,16 @@
 id: QZ-02
 name: "Video-Specific Ordered Quiz Authoring"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - QZ-01
   - LRN-02
 applications:
-  - student_app
+  - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -20,26 +21,60 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for QZ-02"
+  - "QZ-01 Quiz Authoring: ordered sequence, option order, policies, publication, preview"
+  - "A video points to one active quiz version"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.quiz_versions
+  - public.quiz_policies
+  - public.quiz_items
+  - public.quiz_authoring
+  - public.learner_quiz
+server_functions:
+  - public.create_quiz_draft
+  - public.replace_quiz_items
+  - public.publish_quiz_version
+  - public.retire_quiz_version
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - A published quiz is immutable (version, items, and policies)
+  - A topic version has at most one published quiz
+  - Quiz items keep a stable order unless shuffle is explicitly enabled in policy
+  - Only published question versions can be attached
+  - Publishing records the actor and timestamp
+  - Retiring does not delete the quiz or its items
+  - Learners never see correct answers through learner_quiz
+  - Platform admins only can author; school staff cannot
+  - Junior and Senior previews share the same quiz version id
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/topic_quiz_test.dart
+  - packages/nano_data/test/topic_quiz_repository_test.dart
+  - apps/admin_web/test/topic_quiz_page_test.dart
+  - supabase/tests/qz02_topic_quiz.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - quiz_authoring_platform_admin_only
+  - learner_quiz_strips_correctness
+  - published_quiz_immutable
+accessibility_checks:
+  - ordered_items_readable
+  - junior_and_senior_preview_both_render
 manual_test_steps:
-  - Review module docs and status
+  - Open admin Content and switch to Topic quizzes
+  - Confirm Counting has a published ordered quiz
+  - Create or open a draft, reorder is visible as 1..n
+  - Publish and confirm Junior/Senior previews share the version id
+  - Switch to School shell and confirm no quiz authoring surface
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

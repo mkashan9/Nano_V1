@@ -9,6 +9,7 @@ export 'learning/learning_catalog.dart';
 export 'learning/learning_insights.dart';
 export 'learning/refresh_checkpoint.dart';
 export 'quiz/question_bank.dart';
+export 'quiz/topic_quiz.dart';
 export 'learning/topic_action.dart';
 export 'learning/topic_playback.dart';
 export 'learning/learning_subject.dart';

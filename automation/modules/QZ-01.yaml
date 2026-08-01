@@ -1,7 +1,7 @@
 id: QZ-01
 name: "Superadmin Question Bank"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - SEC-03
 applications:
