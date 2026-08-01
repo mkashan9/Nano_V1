@@ -1,7 +1,7 @@
 id: MED-07
 name: "Wan 2.2 Character Animation with Compose Fallback"
 release: R4
-status: ACTIVE
+status: DONE
 dependencies:
   - MED-06
 dependency_notes: >
@@ -53,12 +53,20 @@ acceptance:
   - MED-05 still reviews every clip before a learner sees it — i2v can invent, so the human gate is load-bearing
   - Neither a Hugging Face token (if ever required) nor any provider key appears in a Flutter client or in git
   - Module documentation complete
-required_tests: []
+required_tests:
+  - supabase/tests/med07_wan_i2v_and_fallback.sql
+  - supabase/functions/generate-asset/adapters/wan_i2v_test.ts
 security_checks:
   - no_secrets_in_diff
   - unapproved_art_never_sent_to_wan
   - supabase_advisors_no_new_errors
-manual_test_steps: []
+manual_test_steps:
+  - Confirm generate-asset is ACTIVE at version 6+
+  - Play the Wan guide_greeting clip in Moderation and decide it
+  - Confirm a clip without approved art is refused with NM011
+  - Optionally point VIDEO_SPACE_URL at a dead host and confirm fallback to json2video with the swap recorded
+  - Confirm no secrets appear in a client bundle or in git
+
 rollback_notes: >
   Revert the module branch. Restore json2video_compose as the sole default
   video provider. Drop the Wan provider row and adapter.

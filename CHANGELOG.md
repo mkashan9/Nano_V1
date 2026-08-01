@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- MED-07: character animation instead of a camera pan — Wan 2.2 image-to-video is the default clip provider, animates approved Nori art rather than inventing it, falls back in one hop to json2video when the public Space is unusable, records the swap so a reviewer sees who actually made the file, and holds the connection for the whole render because the Space is not resumable
+
 - MED-06: Fish Audio narration and composed reaction clips — Fish is the default voice (MP3, stock until a reference_id is picked), json2video is the default video provider and animates only companion art a reviewer has already approved, a closed motion set replaces free-form generative prompts, unapproved or wrong-shaped art is refused before any money is spent, and a missing key still fails closed so every caption and every local reaction keeps working
 
 - MED-06: art a person supplied — the only image model Nano can reach without buying one cannot draw a mascot, so rather than lower the gate a curator may now place a picture in the bucket and register it, with rights required and provenance recorded; curated art enters `ready` and `unreviewed` exactly like generated art, stays unreadable by every learner until a reviewer approves it, and a file nobody registered is unreachable by anyone

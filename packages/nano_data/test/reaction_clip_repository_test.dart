@@ -114,7 +114,7 @@ void main() {
         ),
       );
 
-      expect(outcome.asset.providerId, 'json2video_compose');
+      expect(outcome.asset.providerId, 'wan_i2v_space');
     });
   });
 }

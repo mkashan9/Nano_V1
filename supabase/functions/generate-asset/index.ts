@@ -213,13 +213,18 @@ Deno.serve(async (request) => {
   // Which approved picture this clip was made of, recorded on the finished asset
   // so a reviewer looking at a clip can find the art it came from.
   let sourceAssetId: string | undefined;
+  // MED-07: who covers for this provider when it cannot be used. The database
+  // names it, so changing who falls back to whom is a row rather than a deploy.
+  let fallbackProviderId: string | undefined;
 
   if (clipSlug) {
     const provider = await worker
       .from('generation_providers')
-      .select('composes_from_art')
+      .select('composes_from_art, fallback_provider_id')
       .eq('id', providerId)
       .maybeSingle();
+
+    fallbackProviderId = provider.data?.fallback_provider_id as string | undefined;
 
     // Resolved only when a job is about to be started. Collecting a render that
     // is already paid for should not fail because a reviewer changed their mind
@@ -294,8 +299,7 @@ Deno.serve(async (request) => {
 
   const startedAt = Date.now();
   try {
-    const adapter = adapterFor(providerId, kind);
-    const outcome = await runAdapter(adapter, {
+    const request = {
       kind,
       slot,
       prompt,
@@ -307,7 +311,38 @@ Deno.serve(async (request) => {
       durationSeconds,
       sourceImageUrl,
       motion,
-    });
+    };
+
+    // MED-07. The preferred video provider is a public Space with no agreement
+    // behind it: it sleeps, it queues behind strangers, and it cannot be
+    // collected from later. A reaction losing its clip because somebody else's
+    // job was in front of ours is not a good enough reason to have no clip, so
+    // an unusable provider hands the request to the one named in its row.
+    let usedProviderId = providerId;
+    let fallbackReason: string | undefined;
+    let outcome: GenerateOutcome;
+    try {
+      outcome = await runAdapter(adapterFor(providerId, kind), request);
+    } catch (error) {
+      const failure = asProviderError(error);
+      if (!fallbackProviderId || !worthFallingBackFrom(failure)) throw error;
+      usedProviderId = fallbackProviderId;
+      fallbackReason = failure.code;
+      outcome = await runAdapter(adapterFor(fallbackProviderId, kind), request);
+    }
+
+    if (usedProviderId !== providerId) {
+      // Before anything else is written, so the row never claims a provider
+      // that did not make the file — a reviewer reads that column to decide.
+      const swap = await worker.rpc('record_generated_asset_provider_swap', {
+        p_asset_id: assetId,
+        p_provider_id: usedProviderId,
+        p_reason: fallbackReason ?? null,
+      });
+      if (swap.error) {
+        return errorResponse('RECORD_FAILED', swap.error.message, 500);
+      }
+    }
 
     if (outcome.status === 'pending') {
       // The job outlives this invocation. Recording the handle is what lets the
@@ -409,4 +444,33 @@ async function runAdapter(
     return await adapter.generateOrPending(request);
   }
   return { status: 'ready', bytes: await adapter.generate(request) };
+}
+
+function asProviderError(error: unknown): ProviderError {
+  return error instanceof ProviderError
+    ? error
+    : new ProviderError('PROVIDER_FAILED', 'The provider call failed', true);
+}
+
+/// Which failures are worth asking somebody else about (MED-07).
+///
+/// "The provider is unusable" is; "the request was wrong" is not. Falling back
+/// on a refusal would hide a real fault behind a second provider that is about
+/// to refuse for the same reason — and in the case of missing approved art, it
+/// would look like the compose gate had been worked around.
+const fallbackWorthyCodes = new Set([
+  'ADAPTER_MISSING',
+  'PROVIDER_EMPTY_RESPONSE',
+  'PROVIDER_FAILED',
+  'PROVIDER_OUT_OF_CREDIT',
+  'PROVIDER_REJECTED',
+  'PROVIDER_TIMEOUT',
+  'PROVIDER_UNAVAILABLE',
+  'PROVIDER_UNCONFIGURED',
+  'PROVIDER_UNEXPECTED_RESPONSE',
+  'PROVIDER_UNREACHABLE',
+]);
+
+function worthFallingBackFrom(failure: ProviderError): boolean {
+  return fallbackWorthyCodes.has(failure.code);
 }
