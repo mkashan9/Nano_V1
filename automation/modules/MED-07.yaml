@@ -1,7 +1,7 @@
 id: MED-07
 name: "Wan 2.2 Character Animation with Compose Fallback"
 release: R4
-status: BACKLOG
+status: ACTIVE
 dependencies:
   - MED-06
 dependency_notes: >

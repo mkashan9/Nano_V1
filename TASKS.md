@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-06 owner manual test
+- [ ] MED-07 Wan 2.2 Character Animation with Compose Fallback
 
 ## Completed
 
@@ -38,9 +38,9 @@
 - [x] MED-03
 - [x] MED-04
 - [x] MED-05
+- [x] MED-06
 
 ## Upcoming
 
-- [ ] MED-07 Wan 2.2 Character Animation with Compose Fallback
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger

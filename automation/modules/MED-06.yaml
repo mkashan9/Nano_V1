@@ -1,7 +1,7 @@
 id: MED-06
 name: "Fish Audio Narration and Composed Reaction Clips"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - MED-03
   - MED-04
