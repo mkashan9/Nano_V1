@@ -1,7 +1,7 @@
 id: ADM-08
 name: "Platform Analytics"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - ADM-01
 dependency_notes: >

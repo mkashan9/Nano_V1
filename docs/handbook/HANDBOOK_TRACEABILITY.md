@@ -54,7 +54,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook ATT-01 Attendance | ATT-01,ATT-02,ATT-03 | teacher_app | Attendance grid | attendance | grid+excel | BACKLOG |
 | Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | BACKLOG |
 | Handbook CLS-01 Classroom | CLS-01,CLS-02,CLS-03 | teacher_app | Classroom | announcements | ack tests | BACKLOG |
-| Handbook SCH-01 School setup branding | SCH-01 | admin_web | School dash | schools | branding | BACKLOG |
+| Handbook SCH-01 School setup branding | SCH-01 | admin_web | School dash | schools | branding | USER_TEST |
 | Handbook SCH-02 Academic structure | SCH-02 | admin_web | Classes | classes | structure | BACKLOG |
 | Handbook SCH-03 Users imports enrollment | SCH-03,SCH-04 | admin_web | Imports | users | excel import | BACKLOG |
 | Handbook SCH-04 Teacher assignment | SCH-05 | admin_web | Assignment matrix | assignments | matrix | BACKLOG |
@@ -63,7 +63,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook GAM-01 admin ops | ADM-05 | admin_web | Superadmin | gamification | admin | DONE |
 | Handbook game catalog admin | ADM-06 | admin_web | Superadmin | games | admin | DONE |
 | Handbook notification templates admin | ADM-07 | admin_web | Superadmin | notifications | admin | DONE |
-| Handbook platform analytics ops | ADM-08 | admin_web | Superadmin | analytics | admin | USER_TEST |
+| Handbook platform analytics ops | ADM-08 | admin_web | Superadmin | analytics | admin | DONE |
 | Handbook GME-01 Games secure host | GME-01,GME-02,GME-05,GME-07 | student_app | Games | game_sessions | verify score | BACKLOG |
 | Handbook SOC-01 Friends challenges sharing | SOC-01,SOC-02,SOC-03,SOC-04,LGE-03 | student_app | Social | friends | social+block | BACKLOG |
 | Handbook COM-01 Senior Communities | COM-01..COM-06 | student_app | Communities | communities | junior exclusion | BACKLOG |

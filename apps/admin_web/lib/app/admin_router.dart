@@ -27,6 +27,7 @@ GoRouter createAdminRouter({
   AssetReviewRepository? assetReviewRepository,
   PlatformDashboardRepository? platformDashboardRepository,
   PlatformAnalyticsRepository? platformAnalyticsRepository,
+  SchoolDashboardRepository? schoolDashboardRepository,
   SchoolAdminRepository? schoolAdminRepository,
   PlatformUserRepository? platformUserRepository,
 }) {
@@ -130,6 +131,7 @@ GoRouter createAdminRouter({
             assetReviewRepository: assetReviewRepository,
             platformDashboardRepository: platformDashboardRepository,
             platformAnalyticsRepository: platformAnalyticsRepository,
+            schoolDashboardRepository: schoolDashboardRepository,
             schoolAdminRepository: schoolAdminRepository,
             platformUserRepository: platformUserRepository,
           );
@@ -153,6 +155,7 @@ GoRouter createAdminRouter({
                     assetReviewRepository: assetReviewRepository,
                     platformDashboardRepository: platformDashboardRepository,
                     platformAnalyticsRepository: platformAnalyticsRepository,
+                    schoolDashboardRepository: schoolDashboardRepository,
                     schoolAdminRepository: schoolAdminRepository,
                     platformUserRepository: platformUserRepository,
                   ),

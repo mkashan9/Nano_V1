@@ -1,4 +1,5 @@
 import '../onboarding/onboarding_models.dart';
+import '../tenancy/tenancy_models.dart';
 import 'app_role.dart';
 
 /// Fixture/session identity used by client route guards.
@@ -119,10 +120,14 @@ class SessionPrincipal {
         },
       );
 
-  factory SessionPrincipal.schoolAdmin({String displayName = 'School Admin'}) =>
+  factory SessionPrincipal.schoolAdmin({
+    String displayName = 'School Admin',
+    String? schoolId = TenancyFixtures.alphaSchoolId,
+  }) =>
       SessionPrincipal(
         role: AppRole.schoolAdmin,
         displayName: displayName,
+        schoolId: schoolId,
         permissions: const {
           'school.overview',
           'school.students',

@@ -46,6 +46,48 @@ class NanoCopy {
   String get teachers => isUrdu ? 'اساتذہ' : 'Teachers';
   String get reports => isUrdu ? 'رپورٹس' : 'Reports';
   String get settings => isUrdu ? 'ترتیبات' : 'Settings';
+  String get schoolMetricLearners => isUrdu ? 'طلبہ' : 'Learners';
+  String get schoolMetricTeachers => isUrdu ? 'اساتذہ' : 'Teachers';
+  String get schoolMetricStaff => isUrdu ? 'عملہ' : 'Staff';
+  String get schoolMetricClasses => isUrdu ? 'کلاسز' : 'Classes';
+  String get schoolSetupTitle => isUrdu ? 'سیٹ اپ' : 'Setup progress';
+  String schoolSetupProgress(int done, int total) => isUrdu
+      ? '$done / $total مکمل'
+      : '$done of $total complete';
+  String get schoolSetupAdmin => isUrdu ? 'اسکول ایڈمن' : 'School admin assigned';
+  String get schoolSetupBranding =>
+      isUrdu ? 'برانڈنگ تیار' : 'Branding ready';
+  String get schoolSetupContact =>
+      isUrdu ? 'رابطہ تفصیل' : 'Contact details';
+  String get schoolSetupYear =>
+      isUrdu ? 'تعلیمی سال' : 'Academic year';
+  String get schoolBrandingTitle =>
+      isUrdu ? 'اسکول برانڈنگ' : 'School branding';
+  String get schoolBrandingSubtitle => isUrdu
+      ? 'نام، رنگ، رابطہ — کوڈ اور حیثیت یہاں نہیں بدلتے۔'
+      : 'Name, colors, and contact — code and status stay elsewhere.';
+  String get schoolDisplayName => isUrdu ? 'ظاہری نام' : 'Display name';
+  String get schoolAcademicYear => isUrdu ? 'تعلیمی سال' : 'Academic year';
+  String get schoolPrimaryColor =>
+      isUrdu ? 'بنیادی رنگ' : 'Primary color';
+  String get schoolSecondaryColor =>
+      isUrdu ? 'ثانوی رنگ' : 'Secondary color';
+  String get schoolAddress => isUrdu ? 'پتہ' : 'Address';
+  String get schoolContactEmail =>
+      isUrdu ? 'رابطہ ای میل' : 'Contact email';
+  String get schoolContactPhone =>
+      isUrdu ? 'رابطہ فون' : 'Contact phone';
+  String get schoolLogoUrl => isUrdu ? 'لوگو لنک' : 'Logo URL';
+  String get schoolSaveBranding =>
+      isUrdu ? 'برانڈنگ محفوظ' : 'Save branding';
+  String get schoolMarkSetupComplete =>
+      isUrdu ? 'سیٹ اپ مکمل' : 'Mark setup complete';
+  String get schoolBrandingSaved =>
+      isUrdu ? 'برانڈنگ محفوظ ہو گئی' : 'Branding saved';
+  String get schoolEditBranding =>
+      isUrdu ? 'برانڈنگ تبدیل' : 'Edit branding';
+  String get schoolYearMissing =>
+      isUrdu ? 'تعلیمی سال نہیں' : 'No academic year yet';
   String get platform => isUrdu ? 'پلیٹ فارم' : 'Platform';
   String get platformDashboardTitle =>
       isUrdu ? 'پلیٹ فارم ڈیش بورڈ' : 'Platform dashboard';
