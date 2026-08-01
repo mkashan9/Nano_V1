@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] QZ-06 owner manual test
+- [ ] CMP-01 owner manual test
 
 ## Completed
 
@@ -29,7 +29,8 @@
 - [x] QZ-03
 - [x] QZ-04
 - [x] QZ-05
+- [x] QZ-06
 
 ## Upcoming
 
-- [ ] CMP-01 Nori Core Runtime
+- [ ] CMP-02 Nori Modes and Reaction Rules

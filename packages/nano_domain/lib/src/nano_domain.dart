@@ -3,6 +3,8 @@ export 'environment/environment_config.dart';
 export 'environment/feature_flag.dart';
 export 'environment/nano_environment.dart';
 export 'environment/service_endpoint.dart';
+export 'companion/companion_reaction.dart';
+export 'companion/companion_runtime.dart';
 export 'home/student_home_summary.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';

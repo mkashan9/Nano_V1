@@ -2,20 +2,21 @@
 
 ## Current state
 
-- **Current release:** R3 Learning
-- **Current module:** QZ-06 Quiz Results, Explanations, and Progress Update
+- **Current release:** R4 Companion
+- **Current module:** CMP-01 Nori Core Runtime
 - **Current status:** USER_TEST
-- **Current branch:** module/QZ-06-results-explanations
-- **Last completed module:** QZ-05
+- **Current branch:** module/CMP-01-nori-core-runtime
+- **Last completed module:** QZ-06
 - **Application name:** Nano
 
 ## Releases
 
 - R1 Identity: complete
 - R2 Student Core: complete (STU-03 through STU-05 DONE)
-- R3 Learning: LRN-01 through LRN-05 DONE; QZ-01–QZ-05 DONE; QZ-06 in USER_TEST
+- R3 Learning: complete (LRN-01–LRN-05, QZ-01–QZ-06 DONE)
+- R4 Companion: CMP-01 in USER_TEST
 
-## Next after QZ-06 DONE
+## Next after CMP-01 DONE
 
-R3 Learning closes with QZ-06. Next eligible module per MODULE_STATUS is
-CMP-01 Nori Core Runtime, which opens R4 Companion.
+Next eligible module per MODULE_STATUS is CMP-02 Nori Modes and Reaction Rules,
+which builds the mode/story-card variants on top of this runtime.

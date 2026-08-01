@@ -47,7 +47,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook QZ-02 Junior quiz attempt UX | QZ-03 | student_app | Junior quiz | learner_quiz,JuniorQuizFlow | unit+widget | DONE |
 | Handbook QZ-02 Senior quiz navigation | QZ-04 | student_app | Senior quiz | learner_quiz,SeniorQuizFlow | unit+widget | DONE |
 | Handbook QZ-02 trusted scoring / resume | QZ-05 | student_app | quiz attempts | quiz_attempts,attempt_answers,score_results,submit_quiz_attempt | unit+widget+SQL | DONE |
-| Handbook QZ-02 results, explanations, recommendations | QZ-06 | student_app | quiz results | topic_quiz_progress,learner_quiz_history,get_attempt_result,learning_next_up | unit+widget+SQL | USER_TEST |
+| Handbook QZ-02 results, explanations, recommendations | QZ-06 | student_app | quiz results | topic_quiz_progress,learner_quiz_history,get_attempt_result,learning_next_up | unit+widget+SQL | DONE |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | DONE |
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
 | Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | BACKLOG |
@@ -64,7 +64,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook SOC-01 Friends challenges sharing | SOC-01,SOC-02,SOC-03,SOC-04,LGE-03 | student_app | Social | friends | social+block | BACKLOG |
 | Handbook COM-01 Senior Communities | COM-01..COM-06 | student_app | Communities | communities | junior exclusion | BACKLOG |
 | Handbook SAFE-01 Community safety | SAFE-01,SAFE-02,SAFE-03,SAFE-04 | admin+student | moderation | reports | safety | BACKLOG |
-| Handbook CMP-01 Nori companion | CMP-01,CMP-02,CMP-03 | student_app | Nori | prefs | companion | BACKLOG |
+| Handbook CMP-01 Nori companion | CMP-01 | student_app | Nori reactions on quiz results + gallery | CompanionRuntime,CompanionStage (no DB) | unit+widget | USER_TEST |
+| Handbook CMP-01 Nori modes and enrichment | CMP-02,CMP-03 | student_app | Nori | prefs | companion | BACKLOG |
 | Handbook MED-01 Media asset delivery | MED-01,MED-02,MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | BACKLOG |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |
 | Handbook PAR-01 Guardian guidance | PAR-01,PAR-02,PAR-03,FBK-01 | student+admin | Parent card | guidance | guardian | BACKLOG |

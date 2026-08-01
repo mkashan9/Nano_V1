@@ -1,7 +1,7 @@
 id: QZ-06
 name: "Quiz Results, Explanations, and Progress Update"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - QZ-05
 applications:
