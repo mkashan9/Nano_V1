@@ -45,6 +45,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | MED-03 | Voice Generation and Aoede Learning Guide | R4 | DONE | MED-02, CMP-01 |
 | MED-04 | Video Generation and Reusable Reaction Library | R4 | DONE | MED-02, CMP-02 |
 | MED-05 | Superadmin Asset Review and Publication | R4 | USER_TEST | MED-02, ADM-01 |
+| MED-06 | Fish Audio Narration and Composed Reaction Clips | R4 | BACKLOG | MED-03, MED-04, MED-05 |
 | XP-01 | Trusted XP Ledger | R5 | BACKLOG | SEC-02, AUTH-01 |
 | XP-02 | Levels and Thresholds | R5 | BACKLOG | XP-01 |
 | XP-03 | Achievements and Stickers | R5 | BACKLOG | XP-02 |

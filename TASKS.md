@@ -40,5 +40,6 @@
 
 ## Upcoming
 
+- [ ] MED-06 Fish Audio Narration and Composed Reaction Clips
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger

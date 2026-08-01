@@ -1,0 +1,95 @@
+id: MED-06
+name: "Fish Audio Narration and Composed Reaction Clips"
+release: R4
+status: BACKLOG
+dependencies:
+  - MED-03
+  - MED-04
+  - MED-05
+dependency_notes: >
+  Owner approved the provider switch after MED-05 was already in USER_TEST, and
+  asked that MED-05 finish first. Do not start this module until MED-05 is DONE.
+  The keys themselves are not in this file — they live only as Supabase Edge
+  Function secrets once the owner pastes them.
+applications:
+  - packages
+  - supabase
+  - docs
+  - automation
+allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/generate-asset/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_media/
+  - docs/
+  - automation/
+  - docs/modules/MED-06/
+  - automation/modules/MED-06.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-06"
+ui_references: []
+database_scope:
+  - generation_providers (fish_audio_voice, json2video_compose)
+  - narration_voices (Fish reference_id as provider_voice_name)
+  - reaction_clip_versions (direction becomes a movie specification, not a prompt)
+server_functions:
+  - "adapter: FishAudioVoiceAdapter"
+  - "adapter: Json2VideoComposeAdapter"
+  - "replaced: gemini_voice_aoede is no longer the default"
+  - "replaced: gemini_veo_video is no longer the default"
+acceptance:
+  - Fish Audio is the default voice provider; a recording of an authored line lands in storage as MP3
+  - A missing VOICE_PROVIDER_API_KEY still fails closed with PROVIDER_UNCONFIGURED and never breaks a caption
+  - The Learning Guide's voice is identified by a Fish reference_id stored in narration_voices, defaulting to Fish's stock voice until the owner picks one
+  - json2video is the default video provider; a reaction clip is composed from approved companion art, not invented from a prompt
+  - A missing VIDEO_PROVIDER_API_KEY still fails closed with PROVIDER_UNCONFIGURED and every reaction keeps its local art
+  - A clip direction is a movie specification a curator authors; an unauthored shape is still refused with NM009
+  - Neither key ever appears in a Flutter client, a git commit, or a log
+  - Daily budgets still refuse before a provider is reached
+  - Module documentation complete, including what the Gemini adapters become once they are no longer default
+required_tests:
+  - supabase/tests/med06_fish_and_json2video.sql
+  - supabase/functions/generate-asset/adapters/fish_audio_test.ts
+  - supabase/functions/generate-asset/adapters/json2video_test.ts
+security_checks:
+  - no_secrets_in_diff
+  - keys_only_in_edge_function_secrets
+  - unapproved_art_never_sent_to_json2video
+  - supabase_advisors_no_new_errors
+manual_test_steps:
+  - Set VOICE_PROVIDER_API_KEY and VIDEO_PROVIDER_API_KEY as Edge Function secrets (owner paste; never commit)
+  - Record one authored narration line and confirm an MP3 lands in generated-assets and is unreviewed
+  - Compose one reaction clip from the already-approved companion image and confirm an MP4 lands unreviewed
+  - Confirm a missing key still fails closed without breaking captions or local art
+  - Confirm neither key appears in a client bundle
+rollback_notes: >
+  Revert the module branch. Restore gemini_voice_aoede and gemini_veo_video as
+  the defaults. Remove the Fish and json2video provider rows. Secrets can be
+  deleted from Studio independently; rolling back the code without removing the
+  secrets leaves them unused.
+requires_owner_test: true
+owner_decisions_locked:
+  sequencing: "After MED-05 DONE. One module ACTIVE."
+  voice: >
+    Fish Audio. Build the adapter; default to Fish's stock voice until the
+    owner picks a reference_id. Keys validated live against /v1/tts on
+    2026-08-01; do not re-paste into chat.
+  video: >
+    json2video as a composer over approved Nori art, not as a generative
+    substitute for Veo. Keys validated live against /v2/movies on 2026-08-01;
+    do not re-paste into chat. This is a design change to MED-04's direction
+    field, not a config change.
+  cost: >
+    Correct VIDEO_COST_MICROS_PER_CLIP to the real per-clip figure once the
+    json2video credit cost of a short reaction is known. The $3/day video
+    budget and the 20-requests-per-day ceiling both stay.

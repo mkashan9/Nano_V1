@@ -22,16 +22,11 @@
 end and cost nothing: one real companion image has been generated and is sitting
 unreviewed, ready for the MED-05 manual test.
 
-Two things are still open, and both are owner decisions:
-
-- **Voice.** `VOICE_PROVIDER_API_KEY` is unset, so narration fails closed. Only
-  a Supabase Edge Function secret is needed; the Gemini TTS adapter is deployed.
-- **Video.** `VIDEO_PROVIDER_API_KEY` is unset, and the adapter still defaults to
-  `veo-2.0-generate-001`, which is a legacy model. Video needs both a key and a
-  decision about which Veo 3.1 tier to target, because the tiers differ in price
-  by roughly eight times. The `VIDEO_COST_MICROS_PER_CLIP` default of 50,000
-  ($0.05) is far below any real tier, so today the 20-requests-per-day ceiling is
-  the effective spend limit, not the $3.00 cost budget.
+Voice and video keys have been chosen (Fish Audio and json2video) and validated
+live, but they are not set as Edge Function secrets yet and the adapters that
+speak those APIs do not exist. That work is MED-06 and waits for MED-05 DONE.
+Until then both kinds fail closed with `PROVIDER_UNCONFIGURED`, which is the
+correct undeployed state: every caption and every reaction keeps its local art.
 
 MED-05 was also built on the admin shell QZ-01 and QZ-02 shipped, because ADM-01
 is still BACKLOG. ADM-01 should absorb the Moderation screen rather than replace
@@ -39,6 +34,18 @@ it.
 
 ## Next after MED-05 DONE
 
-R4 Companion is finished once MED-05 is approved. R5 opens with XP-01 Trusted XP
-Ledger, unless you want ADM-01 first so the superadmin shell stops being
-borrowed.
+MED-06 Fish Audio Narration and Composed Reaction Clips. The owner approved a
+provider switch after MED-05 was already in USER_TEST and asked that MED-05
+finish first:
+
+- Voice moves from Gemini TTS to Fish Audio. The adapter is new; the default
+  voice is Fish's stock voice until a `reference_id` is picked.
+- Video moves from generative Veo to json2video composing short clips from
+  approved Nori art. That is a design change to MED-04's direction field — a
+  clip is no longer invented from a prompt, it is motion over art a reviewer
+  already signed off.
+- Both keys have been validated live and must be pasted into Supabase Edge
+  Function secrets by the owner; they are not in git and must never be.
+
+R5 (XP-01) and ADM-01 stay available after MED-06. ADM-01 should still absorb
+the borrowed Moderation destination rather than replace it.
