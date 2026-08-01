@@ -5,6 +5,8 @@ import 'package:admin_web/features/gamification/presentation/gamification_admin_
 import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
 import 'package:admin_web/features/notifications/presentation/notification_admin_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
+import 'package:admin_web/features/school/presentation/school_branding_settings_page.dart';
+import 'package:admin_web/features/school/presentation/school_overview_page.dart';
 import 'package:admin_web/features/schools/presentation/schools_page.dart';
 import 'package:admin_web/features/users/presentation/users_page.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class AdminShell extends StatelessWidget {
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.platformAnalyticsRepository,
+    this.schoolDashboardRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -52,6 +55,7 @@ class AdminShell extends StatelessWidget {
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
+  final SchoolDashboardRepository? schoolDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -169,6 +173,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.platformAnalyticsRepository,
+    this.schoolDashboardRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -184,11 +189,26 @@ class AdminDestinationPage extends StatelessWidget {
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
+  final SchoolDashboardRepository? schoolDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
   @override
   Widget build(BuildContext context) {
+    if (destination.id == 'overview' &&
+        principal.role == AppRole.schoolAdmin &&
+        schoolDashboardRepository != null) {
+      return SchoolOverviewPage(repository: schoolDashboardRepository!);
+    }
+
+    if (destination.id == 'settings' &&
+        principal.role == AppRole.schoolAdmin &&
+        schoolDashboardRepository != null) {
+      return SchoolBrandingSettingsPage(
+        repository: schoolDashboardRepository!,
+      );
+    }
+
     // ADM-01: Platform home absorbs the previous stub without replacing
     // Content or Moderation.
     if (destination.id == 'platform' &&

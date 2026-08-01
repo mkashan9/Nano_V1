@@ -65,8 +65,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | ADM-05 | Gamification Administration | R6 | DONE | ADM-01, XP-02 |
 | ADM-06 | Game Administration | R6 | DONE | ADM-01 |
 | ADM-07 | Notification Administration | R6 | DONE | ADM-01 |
-| ADM-08 | Platform Analytics | R6 | USER_TEST | ADM-01 |
-| SCH-01 | School Dashboard and Branding | R6 | BACKLOG | AUTH-03, SEC-02 |
+| ADM-08 | Platform Analytics | R6 | DONE | ADM-01 |
+| SCH-01 | School Dashboard and Branding | R6 | USER_TEST | AUTH-03, SEC-02 |
 | SCH-02 | Classes, Grades, Sections, and Subjects | R6 | BACKLOG | SCH-01 |
 | SCH-03 | Teacher Management and Excel Import | R6 | BACKLOG | SCH-02 |
 | SCH-04 | Student Management and Excel Import | R6 | BACKLOG | SCH-02 |

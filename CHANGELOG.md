@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SCH-01: school admins get Overview metrics/setup progress and Settings branding edits
 - ADM-08: platform staff can open Analytics for privacy-safe health, catalog, and 7-day activity aggregates
 - ADM-07: platform staff can draft, publish, and disable notification templates from Notifications
 - ADM-06: platform staff can draft, publish, and disable game catalog versions from Games

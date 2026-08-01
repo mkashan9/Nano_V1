@@ -1,45 +1,76 @@
 id: SCH-01
 name: "School Dashboard and Branding"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - AUTH-03
   - SEC-02
+dependency_notes: >
+  AUTH-03/SEC-02 provide school_admin memberships and tenancy. ADM-02 owns
+  platform school create/status/first-admin. This module owns school Overview
+  and branding Settings for the signed-in school admin.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-01/
   - automation/modules/SCH-01.yaml
+  - automation/modules/ADM-08.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook SCH-01 School setup branding"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.schools
+server_functions:
+  - "public.school_dashboard"
+  - "public.update_school_branding"
 acceptance:
+  - School admin Overview shows tenant metrics and setup progress
+  - School admin can update branding with valid #RRGGBB colors
+  - School code and status are not editable here
+  - Non-school-admins cannot call school dashboard RPCs
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch01_school_dashboard.sql
+  - packages/nano_domain/test/school_dashboard_test.dart
+  - packages/nano_data/test/school_dashboard_repository_test.dart
+  - apps/admin_web/test/school_overview_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
+  - brand_color_hex_validation
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Overview as school admin and confirm metrics
+  - Edit branding in Settings and save
+  - Confirm Overview reflects changes
+rollback_notes: >
+  Revert the branch and migration. Overview/Settings return to stubs.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Overview + branding Settings for schoolAdmin. No class CRUD, no platform
+    school create/status.
+  deferred: >
+    SCH-02 classes, logo upload, live theme apply.
