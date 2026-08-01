@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-09 owner manual test
+- [ ] MED-10 Idle Life and Local Animation Tier
 
 ## Completed
 
@@ -41,6 +41,7 @@
 - [x] MED-06
 - [x] MED-07
 - [x] MED-08
+- [x] MED-09
 
 ## Upcoming
 
