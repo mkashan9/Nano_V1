@@ -2,7 +2,8 @@
 
 ## Active
 
-- [ ] MED-11 owner manual test
+- [x] MED-11
+- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
 
 ## Completed
 

@@ -1,7 +1,7 @@
 id: MED-11
 name: "Full Narration and Celebration Clip Pack"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - MED-09
 dependency_notes: >

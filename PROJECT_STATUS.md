@@ -3,10 +3,10 @@
 ## Current state
 
 - **Current release:** R4 Companion
-- **Current module:** MED-11 Full Narration and Celebration Clip Pack
-- **Current status:** USER_TEST
-- **Current branch:** module/MED-11-narration-and-celebration-clips
-- **Last completed module:** MED-10
+- **Current module:** MED-12 Nori Everywhere and Companion Coverage Gate
+- **Current status:** ACTIVE
+- **Current branch:** module/MED-12-nori-everywhere-coverage-gate
+- **Last completed module:** MED-11
 - **Application name:** Nano
 
 ## Releases
@@ -14,7 +14,7 @@
 - R1 Identity: complete
 - R2 Student Core: complete (STU-03 through STU-05 DONE)
 - R3 Learning: complete (LRN-01–LRN-05, QZ-01–QZ-06 DONE)
-- R4 Companion: CMP-01–CMP-03 and MED-01–MED-10 DONE; MED-11 and MED-12 close
+- R4 Companion: CMP-01–CMP-03 and MED-01–MED-11 DONE; MED-12 closes
   the avatar arc
 
 ## The avatar arc
@@ -28,8 +28,8 @@ that gap and end with the companion roughly ninety percent implemented.
 | MED-08 | The app can finally show an image and play a voice or a clip | DONE |
 | MED-09 | One canonical Nori, static art for all 25 reachable reactions, bundled offline floor | DONE |
 | MED-10 | Free local motion: breathing, drift, a tilt that reads as the mood | DONE |
-| MED-11 | A recorded line for every moment, a clip for every celebration | BACKLOG |
-| MED-12 | Presence on every surface, plus a build gate that fails when a reaction has no art | BACKLOG |
+| MED-11 | A recorded line for every moment, a clip for every celebration | DONE |
+| MED-12 | Presence on every surface, plus a build gate that fails when a reaction has no art | ACTIVE |
 
 The remaining tenth is deliberately deferred: the game surface waits on
 GME-01, level and achievement celebrations wait on XP-02 and XP-03, and Tier 3
@@ -37,40 +37,25 @@ personalised clips stay feature-flagged and unbuilt.
 
 ## What a learner can actually see and hear
 
-Nori is a drawing everywhere now, in the mood the moment calls for. On the
-Junior home she is the approved published art, with a Listen button in the cast
-guide voice and a play badge for the Wan clip. Everywhere else she is the
-bundled pose for that mood, which needs no network and no approval. The mood
-icon is no longer reachable outside a corrupt install.
+Nori is a drawing everywhere she is placed, in the mood the moment calls for.
+She breathes, drifts, and tilts. She speaks every non-personalised line in
+English and Urdu, in the cast guide voice. Every celebration mode has a silent
+clip composed from the approved celebration art.
 
-She now breathes, drifts, and tilts, differently for each mood, and stops dead
-the moment a learner asks for reduced motion or Classroom Mode. All of it is
-arithmetic over art that already shipped: no render spend, no network, and no
-ticker running while nobody is looking.
-
-Still missing: gesture. Nori's pointing pose points because it was drawn
-pointing, not because an arm moves. Real gesture is a clip, and the clip pack
-is MED-11.
+Still missing: gesture beyond the drawing, presence on every surface the
+placement policy already names, and the build gate that keeps it that way.
+That is MED-12.
 
 ## Content coverage
 
 | Surface | Authored | Approved |
 |---------|----------|----------|
-| Narration lines | 6 slugs × en/ur | 2 (`greeting-2` en, guide voice) |
-| Reaction clips | 3 slugs | 1 (`guide_greeting` Wan clip) |
-| Companion art, published per slot | 1 slot | 1 (`guide_greeting` 1:1) |
+| Narration lines | 8 recordable slugs × en/ur | 16 (all approved) |
+| Reaction clips | 5 celebration + 1 greeting | 5 celebration + 1 greeting |
+| Companion art, published per slot | celebration × 5 modes + greeting | same |
 | Companion art, bundled per mood | 6 moods | 6 (ships with the app) |
 | Reachable reactions with a drawing | 25 | 25 |
 
 ## Owner decision waiting
 
-Sixteen items are in the Moderation queue: seven English recordings, eight Urdu
-recordings, and the celebration source art. Follow
-`docs/modules/MED-11/MANUAL_TEST.md`.
-
-The Urdu set is the decision that matters. The voice was cast against English
-lines and has never been verified against Urdu script. Rejecting all eight is a
-supported outcome that returns Urdu to captions and costs nothing.
-
-Approving the celebration art unblocks the clip pack, which is the second half
-of MED-11 and cannot be rendered before that approval.
+None. MED-11 was approved. MED-12 is in progress.
