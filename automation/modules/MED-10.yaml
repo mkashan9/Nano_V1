@@ -1,7 +1,7 @@
 id: MED-10
 name: "Idle Life and Local Animation Tier"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - MED-09
 dependency_notes: >

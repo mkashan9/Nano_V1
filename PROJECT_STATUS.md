@@ -3,10 +3,10 @@
 ## Current state
 
 - **Current release:** R4 Companion
-- **Current module:** MED-10 Idle Life and Local Animation Tier
-- **Current status:** USER_TEST
-- **Current branch:** module/MED-10-idle-life-and-local-animation
-- **Last completed module:** MED-09
+- **Current module:** MED-11 Full Narration and Celebration Clip Pack
+- **Current status:** ACTIVE
+- **Current branch:** module/MED-11-narration-and-celebration-clips
+- **Last completed module:** MED-10
 - **Application name:** Nano
 
 ## Releases
@@ -14,8 +14,8 @@
 - R1 Identity: complete
 - R2 Student Core: complete (STU-03 through STU-05 DONE)
 - R3 Learning: complete (LRN-01–LRN-05, QZ-01–QZ-06 DONE)
-- R4 Companion: CMP-01–CMP-03 and MED-01–MED-09 DONE; MED-10 through MED-12
-  are the rest of the avatar arc
+- R4 Companion: CMP-01–CMP-03 and MED-01–MED-10 DONE; MED-11 and MED-12 close
+  the avatar arc
 
 ## The avatar arc
 
@@ -27,7 +27,7 @@ that gap and end with the companion roughly ninety percent implemented.
 |--------|------------------|--------|
 | MED-08 | The app can finally show an image and play a voice or a clip | DONE |
 | MED-09 | One canonical Nori, static art for all 25 reachable reactions, bundled offline floor | DONE |
-| MED-10 | Free local motion: breathing, drift, a tilt that reads as the mood | USER_TEST |
+| MED-10 | Free local motion: breathing, drift, a tilt that reads as the mood | DONE |
 | MED-11 | A recorded line for every moment, a clip for every celebration | BACKLOG |
 | MED-12 | Presence on every surface, plus a build gate that fails when a reaction has no art | BACKLOG |
 
@@ -64,7 +64,5 @@ is MED-11.
 
 ## Owner decision waiting
 
-Run the MED-10 manual test in `docs/modules/MED-10/MANUAL_TEST.md`. It is
-judged by sitting still and watching rather than by clicking: the two failure
-modes are "looks frozen" and "will not stop fidgeting", and both take a minute
-of doing nothing to notice.
+None. MED-10 was approved. MED-11 is in progress and will return with a
+Moderation queue of recordings and clips to decide.
