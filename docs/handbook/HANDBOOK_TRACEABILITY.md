@@ -80,7 +80,12 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Reusable reaction clips; silent optional motion | MED-04,CMP-02 | edge+app | reaction clip library, async Veo, per-slot availability | reaction_clips,reaction_clip_versions,generated_assets | SQL+unit+widget | DONE |
 | Generated assets reviewed before a learner sees them; publication is a named decision | MED-05 | admin_web | Moderation queue, preview, approve/reject, history | asset_review_events,generated_assets | SQL+unit+widget | DONE |
 | Narration and reaction clips through the chosen providers | MED-06 | edge+packages+admin_web | Moderation plays voice and video | generation_providers,narration_voices,reaction_clip_versions | SQL+Deno+widget | DONE |
-| Character animation of approved companion art | MED-07 | edge+packages | Moderation reviews Wan clips | generation_providers | SQL+Deno | USER_TEST |
+| Character animation of approved companion art | MED-07 | edge+packages | Moderation reviews Wan clips | generation_providers | SQL+Deno | DONE |
+| Approved media finally reaches a child; nothing plays unasked | MED-08 | student_app+packages | companion art, Listen, Play clip, real topic playback | none | widget+unit | ACTIVE |
+| Nori is one recognisable character in every pose | MED-09 | packages+student_app | bundled offline art, approved pose pack | generated_assets | SQL+widget | BACKLOG |
+| A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, blink, mood motion | none | widget | BACKLOG |
+| A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | BACKLOG |
+| Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | BACKLOG |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
 | School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |
