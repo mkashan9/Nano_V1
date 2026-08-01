@@ -7,6 +7,7 @@ import { geminiVeoAdapter } from './gemini_veo.ts';
 import { geminiVoiceAdapter } from './gemini_voice.ts';
 import { json2VideoComposeAdapter } from './json2video_compose.ts';
 import { PollinationsImageAdapter } from './pollinations_image.ts';
+import { wanI2VSpaceAdapter } from './wan_i2v_space.ts';
 import { GeneratedAssetKind, ProviderAdapter, ProviderError } from './types.ts';
 
 /// The adapters this function knows how to run (MED-01).
@@ -23,8 +24,9 @@ export function adapters(): ProviderAdapter[] {
     fishAudioVoiceAdapter(),
     geminiVoiceAdapter(),
     configuredVoiceAdapter(),
-    // Companion clips (MED-06), composed from approved art rather than
-    // generated from a description. Same reasoning for the ones below it.
+    // Companion clips. MED-07 animates the character; MED-06's composer stays
+    // registered because it is now what MED-07 falls back to, not a leftover.
+    wanI2VSpaceAdapter(),
     json2VideoComposeAdapter(),
     geminiVeoAdapter(),
     configuredVideoAdapter(),

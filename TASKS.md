@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-07 Wan 2.2 Character Animation with Compose Fallback
+- [ ] MED-07 owner manual test
 
 ## Completed
 

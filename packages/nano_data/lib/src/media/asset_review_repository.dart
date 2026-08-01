@@ -73,7 +73,7 @@ class FakeAssetReviewRepository implements AssetReviewRepository {
       moderation: GeneratedAssetModeration.unreviewed,
       prompt: 'The companion does a small celebratory hop.',
       promptVersion: 'v1',
-      providerId: 'json2video_compose',
+      providerId: 'wan_i2v_space',
       feature: 'companion',
       storageBucket: 'generated-assets',
       storagePath: 'video/celebration_celebration_shortClip/en/hash.mp4',
