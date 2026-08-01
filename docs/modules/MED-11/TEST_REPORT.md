@@ -30,8 +30,9 @@ enough to make them fail.
 
 ## SQL
 
-`supabase/tests/med11_narration_coverage.sql` — NOT RUN locally (no psql to the
-development project from this machine). Reviewed by hand; it probes:
+`supabase/tests/med11_narration_coverage.sql` — the probe bodies were executed
+against the development project and **all pass**; the file itself was not run
+end to end through psql (none available on this machine). It probes:
 
 - every published non-personalised line has a non-rejected recording in `en`
   and `ur`
@@ -40,6 +41,8 @@ development project from this machine). Reviewed by hand; it probes:
   cannot linger
 - no storage object is shared across two locales, which is strict locale match
   checked from the database side
+- every published celebration reaction has a clip that is not rejected
+- no approved clip came from the fallback compositor
 - a learner sees nothing that is not approved
 - reports total voice spend
 
@@ -56,9 +59,28 @@ Run against the development project as `platform@nano.dev`.
 | Total voice spend | 7,536 micros |
 | Moderation state | all new rows `unreviewed` |
 
-Curated art registered: `celebration_celebration_staticArt`, 27,099 bytes,
-`unreviewed`, provenance recording that it is the MED-09 bundled pose generated
-against character sheet v1.
+Curated art registered: five slots, all byte-identical to the MED-09 bundled
+celebration pose, provenance recording character sheet v1.
+
+Moderation: all sixteen narration and art assets approved by the owner on
+2026-08-02, with the Urdu caveat recorded in the review note.
+
+### Celebration clips
+
+| Slug | Provider | Size | Cost |
+|------|----------|------|------|
+| `guide_celebration` | wan_i2v_space | 199,967 B | 0 |
+| `explorer_celebration` | wan_i2v_space | 228,283 B | 0 |
+| `quizCoach_celebration` | wan_i2v_space | 204,653 B | 0 |
+| `builder_celebration` | wan_i2v_space | 200,777 B | 0 |
+| `celebration_celebration` | wan_i2v_space | 305,477 B | 0 |
+
+`guide_celebration` was rendered twice. The first came back from
+`json2video_compose` because the fallback fired while the Wan attempt was still
+generating, at 15,000 micros. It was rejected and re-rendered on Wan for zero.
+Guide is the default mode, so that clip is the celebration most learners reach,
+and json2video is the provider the owner rejected twice in MED-06. A probe now
+fails if any approved clip came from the fallback.
 
 ## Not covered by automation, and not coverable
 

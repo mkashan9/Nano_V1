@@ -1,7 +1,18 @@
 # MED-11 manual test
 
-There are sixteen things in the Moderation queue and one of them matters far
-more than the rest. Read part 2 before you start clicking.
+The sixteen narration and art assets were **already approved** on your
+instruction on 2026-08-02, without the Urdu being listened to. Parts 1–3 below
+are therefore a check after the fact rather than a gate: if something is wrong,
+it can still be rejected and the companion falls back a rung.
+
+What is still genuinely undecided is the **five celebration clips** in part 3b.
+
+Everything is downloaded locally so you can play it without launching anything:
+
+- `review/MED-11-audio/` — fifteen recordings, with `WHAT_YOU_SHOULD_HEAR.md`
+- `review/MED-11-clips/` — five clips, with `WHAT_YOU_SHOULD_SEE.md`
+
+For the queue itself:
 
 ```powershell
 cd d:\nano\apps\admin_web
@@ -49,12 +60,25 @@ the easy one to reach by clicking through.
 
 ## 3. The celebration picture
 
-One image, `celebration_celebration_staticArt`. It is the same celebration pose
-you already approved in the MED-09 pack, now registered so a clip can be
-composed from it.
+Five image rows, all byte-identical: the celebration pose from the MED-09 pack,
+registered once per celebration mode because clip composition resolves art by
+slot. Approved already; the clips below were composed from it.
 
-Approving it unblocks the celebration clip pack. Rejecting it leaves
-celebrations as a still picture with local motion, which is what they are now.
+## 3b. The five celebration clips — the open decision
+
+In `review/MED-11-clips/`, or in Moderation as video. All silent by design, so
+they never fight the narration. All composed from that one drawing, all Wan
+renders, all free.
+
+Watch for two things. **Is it still Nori** — composition can distort a face
+across four seconds even when the source is fixed. And **is it calm enough to
+meet several times a day** — every direction caps at three or four seconds and
+says "calm and unhurried", and anything that reads as frantic is a reject.
+
+Watch `guide_celebration` twice. Guide is the default mode, so it is the
+celebration most learners actually reach, and it is the one whose first render
+came back from the json2video fallback — the provider you rejected twice in
+MED-06 for looking fake. That render was rejected and this is a fresh Wan one.
 
 ## 4. Hear it in the app
 
@@ -72,11 +96,11 @@ rule, and it is worth seeing work.
 
 ## 5. The spend
 
-Voice generation for this whole run cost **7,536 micros**, under one cent. The
-Moderation detail pane shows per-asset cost if you want to confirm.
+Voice generation cost **7,536 micros** and all five clips cost **nothing**, so
+the whole module is under one cent. The one exception was the json2video render
+of `guide_celebration` at 15,000 micros, which was rejected.
 
 ## What to say back
 
-- `NEXT` if the pack is right and you approved the celebration art — the clips
-  get rendered next
-- `FIX: reject urdu` or similar, naming what to redo
+- `NEXT` — the clips are good and MED-12 starts
+- `FIX: …` naming the clips or recordings to redo

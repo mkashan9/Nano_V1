@@ -41,29 +41,45 @@ outside), or a recording from a superseded voice.
 from, and the celebration pose only existed bundled. It is now registered as a
 curated asset and sits in the review queue beside the recordings.
 
-## What is not finished
+**The celebration clip pack, all five modes.** `guide`, `explorer`,
+`quizCoach`, `builder`, and `celebration` each have a rendered clip, composed
+from the approved celebration art by Wan, silent, three to four seconds, at
+**zero cost**.
 
-**The celebration clips are not rendered.** This is a gate, not an oversight.
-A clip is composed from an *approved* image, and the celebration art is
-unreviewed until you decide it. Rendering first would have meant bypassing the
-MED-05 review gate, which is the one thing in this pipeline that must never be
-convenient to skip.
+The clips were held back until the source art was approved, because a clip
+composes from an *approved* image and rendering first would have meant
+bypassing the MED-05 gate. The owner approved the art and the pack followed in
+the same session.
 
-Sequence is: approve the celebration art → clips are rendered from it → they
-return to the same queue as video. Two of the five celebration clip slugs
-(`celebration_celebration`, `quizCoach_celebration`) are already authored with
-direction and motion; `guide`, `explorer`, and `builder` still need drafts.
+Three of the five reactions did not exist in the clip library.
+`create_reaction_clip_draft` authors a new version of an *existing* reaction and
+refuses an unknown slug, so `guide`, `explorer`, and `builder` arrive by
+migration rather than over the wire. That constraint is worth keeping: a
+reaction is a product decision that belongs in git and in review, not something
+a script can conjure at 2am.
 
-## The Urdu question
+## The Urdu question, and how it was settled
 
-Every Urdu line rendered without error, at a plausible size, at a plausible
-cost. That is all a machine can tell you.
+Every Urdu line rendered without error, at a plausible size and cost. That is
+all a machine can tell you. The cast voice is a Fish Audio reference clone
+selected against **English** lines, and nothing about Urdu was part of that
+choice.
 
-The cast voice is a Fish Audio reference clone selected against **English**
-lines. Whether it reads Urdu script as Urdu, or as an English speaker guessing
-at it, is a judgement only a listener can make, and it is the single most
-important thing in the manual test.
+The owner was shown this and chose to approve the set without listening. The
+review note on all sixteen assets records that, so if the Urdu turns out wrong
+the reason is in the log rather than in somebody's memory. Rejecting them later
+costs nothing: strict locale match degrades a missing recording to its caption.
 
-Rejecting the Urdu set is a legitimate outcome and costs nothing: strict locale
-match means a missing Urdu recording shows the caption, which is exactly what
-Urdu learners have today.
+## One clip was rendered twice
+
+`guide_celebration` first came back from `json2video_compose` — the fallback
+fired because the Wan attempt was still generating when the request was
+retried. It was rejected and re-rendered on Wan.
+
+That mattered more than one clip usually would. Guide is the default mode, so
+it is the celebration most learners actually reach, and json2video is the
+provider whose output the owner rejected twice in MED-06 for looking fake. It
+also costs 15,000 micros against Wan's zero. The whole pack would have been
+free and consistent except for the one clip nobody would have thought to check.
+
+There is now a probe that fails if any approved clip came from the fallback.

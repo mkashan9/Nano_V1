@@ -1,13 +1,26 @@
 # MED-11 known issues
 
-**The celebration clip pack is not rendered.** Blocked, deliberately, on the
-owner approving the celebration source art. Two of the five celebration slugs
-are authored (`celebration_celebration`, `quizCoach_celebration`); `guide`,
-`explorer`, and `builder` have no draft yet.
+**The Urdu voice is unverified, and was approved anyway.** It renders. Whether
+it reads Urdu as Urdu is unknown, because nobody has listened. The voice was
+cast against English lines in ADR-0008 and Urdu was never part of that
+decision; the owner chose to approve the set on that basis, and the review note
+on every asset records it. Rejecting them later costs nothing.
 
-**The Urdu voice is unverified.** It renders. Whether it reads Urdu as Urdu is
-unknown until someone listens. The voice was cast against English lines in
-ADR-0008 and Urdu was never part of that decision.
+**`celebration_celebration` has no 9:16 clip.** Its published direction lists
+both `1:1` and `9:16`, but composition resolves art by slot *and* by shape, and
+only a square source exists. The portrait variant needs a 9:16 drawing, which
+is new art rather than a re-labelling of the approved one.
+
+**The celebration art is one file registered under five slots.** Byte-identical
+each time, which follows the MED-09 decision that mode does not change the
+drawing. It means five review rows for one picture, and it means a future
+per-mode celebration drawing has to replace five rows rather than one.
+
+**Clips are English-locale rows although they are silent.** Every clip is
+stored with `locale = en` because the pipeline requires a locale, but there is
+nothing language-specific in a silent video. An Urdu learner reaching a
+celebration is served the `en` row, which is correct behaviour reached by an
+incorrect-looking route.
 
 **One recording per line, no variants.** Each slug has a single take. There is
 no way to prefer a warmer reading over a flatter one without rejecting and

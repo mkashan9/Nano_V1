@@ -106,6 +106,51 @@ begin
   end if;
 
   -- -------------------------------------------------------------------------
+  -- Every celebration mode has a clip
+  -- -------------------------------------------------------------------------
+  -- Derived from the published clip library rather than from a list of modes,
+  -- so adding a celebration reaction is enough to make this fail until it is
+  -- rendered. A mode with direction written and no clip behind it is the
+  -- failure that looks fine in the database and shows a still picture in the
+  -- app.
+  select string_agg(c.slug, ', ')
+  into v_missing
+  from public.reaction_clips c
+  join public.reaction_clip_versions v
+    on v.clip_id = c.id and v.status = 'published'
+  where c.mood = 'celebration'
+    and not exists (
+      select 1
+      from public.generated_assets a
+      where a.kind = 'video'
+        and a.slot = c.slug || '_shortClip'
+        and a.moderation <> 'rejected'
+    );
+
+  if v_missing is not null then
+    raise exception 'FAIL: no clip rendered for %', v_missing;
+  end if;
+
+  -- -------------------------------------------------------------------------
+  -- No clip came from the fallback compositor
+  -- -------------------------------------------------------------------------
+  -- The fallback exists so a render never hard-fails, not so it can quietly
+  -- become the source of the art. Its output was rejected twice by the owner
+  -- in MED-06 for looking fake, and it costs 15,000 micros against Wan's zero.
+  -- A fallback render that nobody notices is the expensive, ugly outcome.
+  select count(*)
+  into v_count
+  from public.generated_assets
+  where kind = 'video'
+    and moderation = 'approved'
+    and provider_id = 'json2video_compose';
+
+  if v_count > 0 then
+    raise exception
+      'FAIL: % approved clip(s) came from the fallback compositor', v_count;
+  end if;
+
+  -- -------------------------------------------------------------------------
   -- Nothing reaches a learner without passing review
   -- -------------------------------------------------------------------------
   select id into v_learner

@@ -17,8 +17,49 @@ Three ways forward were available:
    reviewed, through a path with no provenance and no rejection route.
 3. Register the art, queue it, and stop. Chosen.
 
-The cost is that MED-11 returns in two passes rather than one. That is the
-correct cost.
+The cost is that MED-11 returned in two passes rather than one. The owner
+approved the art and the pack was rendered in the same session, so the cost was
+one round trip.
+
+## The clip library stayed closed
+
+`create_reaction_clip_draft` authors a new *version* of an existing reaction and
+raises `NM004` on an unknown slug. Three of the five celebration modes did not
+exist as reactions, so they could not be created over the wire.
+
+That looked like an obstacle and is actually the design working. A reaction is a
+product decision — which moments deserve a clip at all — and it belongs in git
+and in review rather than in whatever script happened to run. `guide`,
+`explorer`, and `builder` were added by migration.
+
+## The fallback compositor is now a test failure, not just a preference
+
+`guide_celebration` came back from `json2video_compose` because the fallback
+fired while the Wan attempt was still generating. Nothing errored. The clip was
+fine-looking metadata in a table.
+
+Three things made it worth catching rather than shrugging at: guide is the
+default mode, so it is the celebration most learners reach; json2video is the
+provider whose output the owner rejected twice in MED-06 for looking fake; and
+it costs 15,000 micros against Wan's zero, so the whole pack would have been
+free except for that one clip.
+
+The fallback exists so a render never hard-fails, not so it can quietly become
+the source of the art. A probe now fails on any approved clip from it, because
+"the expensive ugly one slipped through and nobody looked" is exactly the
+failure mode that does not announce itself.
+
+## The same drawing was registered five times
+
+Composition resolves art by slot, so a clip for `builder_celebration` needs
+`builder_celebration_staticArt` specifically. MED-09 established that the mode
+changes the framing and the accent rather than the character, so all five point
+at byte-identical files with the same checksum.
+
+The alternative — teaching composition to fall back to a shared celebration
+image — would have put a special case in the middle of the provenance chain to
+save four rows. Provenance is the part of this pipeline that has to stay
+boring.
 
 ## Urdu was generated rather than assumed
 
