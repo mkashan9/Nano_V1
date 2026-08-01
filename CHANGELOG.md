@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- MED-11: Nori can be heard everywhere it can be seen — MED-03 built narration and MED-06 cast the voice, but exactly one line had ever been recorded, so a companion that appeared on every surface spoke on one of them; every published non-personalised line is now recorded in English and in Urdu in the cast guide voice, sixteen recordings for 7,536 micros, which is under a cent and less than the two rejected clip attempts from MED-06 cost
+
+- MED-11: the personalised greeting stays silent on purpose and a test enforces it — a recording of "Hello, {name}" would say one child's companion name to every other child, so ADR-0008 makes those lines caption-only, and the coverage probe now fails if a personalised line ever acquires an approved recording by some future convenience
+
+- MED-11: coverage became an invariant rather than a fact — it is the kind of property that is true on the day it ships and quietly false six modules later, so the reachable set is derived from `CompanionEvent.values` instead of listed, and a separate assertion catches the case that looks fine from outside: a mood whose only line is personalised is permanently mute however much narration gets generated
+
+- MED-11: the Urdu recordings were generated rather than reasoned about — the voice is a clone cast against English lines and nothing verified it against Urdu script, so fifteen files of evidence a person can listen to beat a paragraph of speculation; rejecting the whole Urdu set costs nothing because strict locale match already degrades a missing recording to its caption, and one probe now checks from the database side that no audio file is ever shared across two locales
+
+- MED-11: the celebration clips were deliberately not rendered — a clip composes from an approved image and the celebration art had only ever existed bundled, so the choice was to approve it on the owner's behalf, bypass the ladder entirely, or register it and stop; an agent that approves its own output to unblock itself has removed the MED-05 gate rather than passed it, so the art is queued and the clips wait
+
 - MED-10: Nori breathes — a drawing that holds perfectly still reads as broken rather than calm, and `CompanionAssetTier.localAnimation` had been mapped to the greeting mood since CMP-01 with nothing implementing it, so it silently resolved down to static art; each of the six moods now carries its own breath, drift, and tilt, applied as arithmetic over art that already shipped, so the tier that makes a companion feel alive is also the only one that costs nothing to run
 
 - MED-10: motion is capped, framed, and free — nothing moves more than four percent and most under two, because a companion that moves enough to notice is competing with the lesson, and a test asserts the ceiling so a later "make it livelier" tweak cannot quietly raise it; the transform sits inside the circular mask so the ring and the play badge never move under a learner's finger, and the ticker comes from `TickerMode` so an off-screen or backgrounded companion burns nothing

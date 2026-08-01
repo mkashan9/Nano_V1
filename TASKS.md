@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-11 Full Narration and Celebration Clip Pack
+- [ ] MED-11 owner manual test
 
 ## Completed
 

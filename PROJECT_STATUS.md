@@ -4,7 +4,7 @@
 
 - **Current release:** R4 Companion
 - **Current module:** MED-11 Full Narration and Celebration Clip Pack
-- **Current status:** ACTIVE
+- **Current status:** USER_TEST
 - **Current branch:** module/MED-11-narration-and-celebration-clips
 - **Last completed module:** MED-10
 - **Application name:** Nano
@@ -64,5 +64,13 @@ is MED-11.
 
 ## Owner decision waiting
 
-None. MED-10 was approved. MED-11 is in progress and will return with a
-Moderation queue of recordings and clips to decide.
+Sixteen items are in the Moderation queue: seven English recordings, eight Urdu
+recordings, and the celebration source art. Follow
+`docs/modules/MED-11/MANUAL_TEST.md`.
+
+The Urdu set is the decision that matters. The voice was cast against English
+lines and has never been verified against Urdu script. Rejecting all eight is a
+supported outcome that returns Urdu to captions and costs nothing.
+
+Approving the celebration art unblocks the clip pack, which is the second half
+of MED-11 and cannot be rendered before that approval.
