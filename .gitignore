@@ -35,3 +35,8 @@ avatar_trials/
 # Local SQL scratch
 _sec02_*
 
+# Generated assets pulled down for an owner review pass. They belong in
+# storage, behind moderation; a copy in git would be an unreviewed asset with
+# no provenance and no way to reject it.
+review/
+
