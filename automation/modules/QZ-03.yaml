@@ -1,7 +1,7 @@
 id: QZ-03
 name: "Junior Quiz Experience"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - QZ-02
   - STU-03
@@ -20,26 +20,46 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for QZ-03"
+  - "QZ-02 Student Quiz: one question per screen for Junior"
+  - "Companion reactions for correct, wrong, retry, hint, and completion"
+  - "Client never determines the final score"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.learner_quiz
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Junior quiz shows one question per screen
+  - Options never reveal is_correct from learner data
+  - Companion slot and gentle prompts appear on each question
+  - Learner can select an answer and advance through ordered items
+  - Finishing the flow does not invent a client-side score
+  - Entry is available after a topic can be opened (detail/player) for Junior only
+  - Senior learners are not routed into the Junior quiz surface
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/junior_quiz_flow_test.dart
+  - packages/nano_data/test/learner_quiz_repository_test.dart
+  - apps/student_app/test/junior_quiz_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - learner_options_without_correctness
+  - no_client_side_final_score
+accessibility_checks:
+  - one_question_readable
+  - companion_slot_labeled
 manual_test_steps:
-  - Review module docs and status
+  - Open student_app as Junior and complete or open Counting
+  - Tap Take quiz and answer one question per screen with companion present
+  - Finish without seeing a numeric score
+  - Switch to Senior and confirm Take quiz does not open Junior quiz UI
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

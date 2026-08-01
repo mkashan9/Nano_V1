@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/quiz/presentation/junior_quiz_page.dart';
 
 /// LRN-03/04 player: resumes where the learner stopped, reports position to the
 /// server on a heartbeat, shows captions, offers refresh moments at safe
 /// boundaries in long videos, and only offers completion once the server has
-/// credited enough watch time.
+/// credited enough watch time. QZ-03 adds Junior Take quiz after the video.
 ///
 /// The video surface itself is a placeholder until MED-01 lands approved
 /// provider playback; everything around it — accounting, resume, captions,
@@ -19,6 +20,8 @@ class TopicPlayerPage extends StatefulWidget {
     required this.topic,
     required this.progressRepository,
     this.checkpointRepository,
+    this.learnerQuizRepository,
+    this.companionName,
     this.junior = true,
     this.captionsEnabled,
     this.reducedMotion,
@@ -32,6 +35,8 @@ class TopicPlayerPage extends StatefulWidget {
 
   /// Absent for short content that has no refresh moments.
   final CheckpointRepository? checkpointRepository;
+  final LearnerQuizRepository? learnerQuizRepository;
+  final String? companionName;
   final bool junior;
 
   /// Overrides for tests. Left null, these follow the learner's saved
@@ -421,6 +426,28 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
               onPressed: canComplete && !_busy ? _complete : null,
               child: Text(copy.markCompleteLabel),
             ),
+            if (widget.junior &&
+                widget.learnerQuizRepository != null &&
+                !_topic.isLocked) ...[
+              const SizedBox(height: NanoSpacing.sm),
+              OutlinedButton(
+                onPressed: () {
+                  final locale = NanoLocaleScope.maybeOf(context)?.locale ??
+                      NanoAppLocale.en;
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => JuniorQuizPage(
+                        topicVersionId: _topic.topicVersionId,
+                        repository: widget.learnerQuizRepository!,
+                        companionName: widget.companionName ?? 'Nori',
+                        topicTitle: _topic.titleFor(locale),
+                      ),
+                    ),
+                  );
+                },
+                child: Text(copy.takeQuizLabel),
+              ),
+            ],
             const SizedBox(height: NanoSpacing.lg),
             Align(
               alignment: Alignment.centerLeft,

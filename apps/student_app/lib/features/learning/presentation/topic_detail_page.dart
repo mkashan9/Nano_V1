@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/quiz/presentation/junior_quiz_page.dart';
 
 import 'topic_player_page.dart';
 
 /// LRN-02 topic detail: objectives, resources, time, progress, unlock reason,
 /// and a primary action that goes through the server write path. LRN-03 hands
-/// an opened topic to the player.
+/// an opened topic to the player. QZ-03 adds Junior Take quiz.
 class TopicDetailPage extends StatefulWidget {
   const TopicDetailPage({
     super.key,
     required this.topic,
     required this.progressRepository,
     this.checkpointRepository,
+    this.learnerQuizRepository,
+    this.companionName,
     this.junior = true,
     this.openPlayer = true,
     this.onOpened,
@@ -22,6 +25,8 @@ class TopicDetailPage extends StatefulWidget {
   final CatalogTopic topic;
   final LearningProgressRepository progressRepository;
   final CheckpointRepository? checkpointRepository;
+  final LearnerQuizRepository? learnerQuizRepository;
+  final String? companionName;
   final bool junior;
 
   /// Whether a successful start pushes the player. Off in tests that only
@@ -82,12 +87,31 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
           topic: topic,
           progressRepository: widget.progressRepository,
           checkpointRepository: widget.checkpointRepository,
+          learnerQuizRepository: widget.learnerQuizRepository,
+          companionName: widget.companionName,
           junior: widget.junior,
           onProgress: (updated) {
             if (!mounted) return;
             setState(() => _topic = updated);
             widget.onOpened?.call(updated);
           },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openQuiz() async {
+    final repo = widget.learnerQuizRepository;
+    if (!widget.junior || repo == null) return;
+    final locale =
+        NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => JuniorQuizPage(
+          topicVersionId: _topic.topicVersionId,
+          repository: repo,
+          companionName: widget.companionName ?? 'Nori',
+          topicTitle: _topic.titleFor(locale),
         ),
       ),
     );
@@ -194,6 +218,15 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                 child: Text(action.label(copy)),
               ),
             ),
+            if (widget.junior &&
+                widget.learnerQuizRepository != null &&
+                !_topic.isLocked) ...[
+              const SizedBox(height: NanoSpacing.sm),
+              OutlinedButton(
+                onPressed: _openQuiz,
+                child: Text(copy.takeQuizLabel),
+              ),
+            ],
           ],
         ),
       ),

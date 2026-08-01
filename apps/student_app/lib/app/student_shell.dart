@@ -288,6 +288,7 @@ class StudentLearningTab extends StatelessWidget {
     this.progressRepository,
     this.checkpointRepository,
     this.insightsRepository,
+    this.learnerQuizRepository,
     this.companionName,
     this.onOpenFlex,
   });
@@ -298,6 +299,7 @@ class StudentLearningTab extends StatelessWidget {
   final LearningProgressRepository? progressRepository;
   final CheckpointRepository? checkpointRepository;
   final LearningInsightsRepository? insightsRepository;
+  final LearnerQuizRepository? learnerQuizRepository;
   final String? companionName;
   final VoidCallback? onOpenFlex;
 
@@ -311,6 +313,8 @@ class StudentLearningTab extends StatelessWidget {
           subjectId: subject.id,
           progressRepository: progressRepository,
           checkpointRepository: checkpointRepository,
+          learnerQuizRepository: learnerQuizRepository,
+          companionName: companionName,
           junior: principal.role.usesJuniorPresentation,
         ),
       ),
@@ -349,6 +353,8 @@ class StudentLearningTab extends StatelessWidget {
                 topic: topic,
                 progressRepository: progress,
                 checkpointRepository: checkpointRepository,
+                learnerQuizRepository: learnerQuizRepository,
+                companionName: companionName,
                 junior: junior,
               ),
             ),

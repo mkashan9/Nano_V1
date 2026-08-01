@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- QZ-03: Junior one-question-per-screen quiz with companion prompts and no client-side score
+
 - QZ-02: topic-attached ordered quiz versions with immutable publish, learner-safe projection, and Junior/Senior curator preview
 
 - QZ-01: platform-admin question bank with immutable published versions, duplicate-stem warnings, and Junior/Senior curator preview

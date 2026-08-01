@@ -15,6 +15,8 @@ class LearningCatalogPage extends StatefulWidget {
     this.progressRepository,
     this.checkpointRepository,
     this.insightsRepository,
+    this.learnerQuizRepository,
+    this.companionName,
     this.junior = true,
     this.onTopicOpen,
   });
@@ -23,6 +25,8 @@ class LearningCatalogPage extends StatefulWidget {
   final LearningProgressRepository? progressRepository;
   final CheckpointRepository? checkpointRepository;
   final LearningInsightsRepository? insightsRepository;
+  final LearnerQuizRepository? learnerQuizRepository;
+  final String? companionName;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -83,6 +87,8 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
           subjectId: subject.subjectId,
           progressRepository: widget.progressRepository,
           checkpointRepository: widget.checkpointRepository,
+          learnerQuizRepository: widget.learnerQuizRepository,
+          companionName: widget.companionName,
           junior: widget.junior,
           onTopicOpen: widget.onTopicOpen,
         ),
@@ -122,6 +128,8 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
           topic: topic,
           progressRepository: progress,
           checkpointRepository: widget.checkpointRepository,
+          learnerQuizRepository: widget.learnerQuizRepository,
+          companionName: widget.companionName,
           junior: widget.junior,
           onOpened: widget.onTopicOpen,
         ),
