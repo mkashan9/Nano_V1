@@ -228,6 +228,18 @@ class NanoCopy {
   String quizProgressLabel(int current, int total) => isUrdu
       ? 'سوال $current از $total'
       : 'Question $current of $total';
+  String get quizReviewLabel => isUrdu ? 'جائزہ' : 'Review';
+  String get quizPreviousLabel => isUrdu ? 'پچھلا' : 'Previous';
+  String get quizSubmitReviewLabel =>
+      isUrdu ? 'جائزہ کے بعد ختم کریں' : 'Review & finish';
+  String get quizUnansweredLabel =>
+      isUrdu ? 'جواب نہیں دیا' : 'Unanswered';
+  String get quizAnsweredLabel => isUrdu ? 'جواب دے دیا' : 'Answered';
+  String get quizNavigatorLabel =>
+      isUrdu ? 'سوال نیویگیٹر' : 'Question navigator';
+  String quizAnsweredCount(int answered, int total) => isUrdu
+      ? '$answered از $total جواب'
+      : '$answered of $total answered';
   String get newQuestionLabel => isUrdu ? 'نیا سوال' : 'New question';
   String get publishQuestionLabel => isUrdu ? 'شائع کریں' : 'Publish';
   String get retireQuestionLabel => isUrdu ? 'ریٹائر کریں' : 'Retire';

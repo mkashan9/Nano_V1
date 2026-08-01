@@ -1,7 +1,7 @@
 id: QZ-03
 name: "Junior Quiz Experience"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - QZ-02
   - STU-03
