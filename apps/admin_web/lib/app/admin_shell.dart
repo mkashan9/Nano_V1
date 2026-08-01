@@ -1,4 +1,5 @@
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
+import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_design_system/nano_design_system.dart';
@@ -17,6 +18,7 @@ class AdminShell extends StatelessWidget {
     this.liveAuth = false,
     this.questionBankRepository,
     this.topicQuizRepository,
+    this.assetReviewRepository,
   });
 
   final EnvironmentConfig config;
@@ -28,6 +30,7 @@ class AdminShell extends StatelessWidget {
   final bool liveAuth;
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
+  final AssetReviewRepository? assetReviewRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -136,12 +139,14 @@ class AdminDestinationPage extends StatelessWidget {
     required this.principal,
     this.questionBankRepository,
     this.topicQuizRepository,
+    this.assetReviewRepository,
   });
 
   final NavDestination destination;
   final SessionPrincipal principal;
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
+  final AssetReviewRepository? assetReviewRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -153,6 +158,14 @@ class AdminDestinationPage extends StatelessWidget {
         questionBankRepository: questionBankRepository!,
         topicQuizRepository: topicQuizRepository!,
       );
+    }
+
+    // MED-05. The role check is a courtesy for the preview shell; the server
+    // refuses a non-admin regardless of which screen they reach.
+    if (destination.id == 'moderation' &&
+        principal.role == AppRole.superadmin &&
+        assetReviewRepository != null) {
+      return AssetReviewPage(repository: assetReviewRepository!);
     }
 
     final authLine = principal.isAuthenticated

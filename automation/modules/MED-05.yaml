@@ -1,19 +1,28 @@
 id: MED-05
 name: "Superadmin Asset Review and Publication"
 release: R4
-status: BACKLOG
+status: DONE
 dependencies:
   - MED-02
   - ADM-01
+dependency_notes: >
+  ADM-01 (Superadmin Dashboard) is still BACKLOG. Owner approved starting MED-05
+  against the superadmin shell that QZ-01 and QZ-02 already built in admin_web
+  (router, side rail, Content hub). MED-05 adds a Moderation destination to that
+  existing shell; ADM-01 later absorbs it rather than replacing it.
 applications:
-  - student_app
-  - teacher_app
   - admin_web
+  - student_app
   - packages
   - supabase
   - docs
   - automation
 allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/admin_web/
   - docs/
   - automation/
   - docs/modules/MED-05/
@@ -28,21 +37,69 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "10.5 Generated assets are reviewed before a learner ever sees them"
+  - "10.6 Publication is a decision with a name attached to it"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-05"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - asset_review_events
+  - generated_assets (reviewed_by, reviewed_at, review_note, reuse index)
+server_functions:
+  - review_generated_assets
+  - review_generated_asset
+  - list_assets_for_review
+  - asset_review_history
+  - nano_internal.apply_asset_review
+  - "policy: generated_assets_bucket_read_admin"
+  - "replaced: request_generated_asset (rejected rows are no longer reused)"
+  - "nano_internal.asset_review_events_are_final (append-only guard; cascade exempt)"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Approval is the only thing that makes a generated asset visible to a learner, and it is a superadmin decision
+  - A reviewer can see and hear the actual file before deciding, while a learner still cannot
+  - Every decision is recorded with who made it, when, and what it changed, and the record cannot be edited or deleted
+  - Rejecting an approved asset removes it from learners immediately, through both the catalog and storage
+  - Rejecting frees the slot so a better version can be generated; a rejected asset is never handed back as a reuse
+  - An asset that has no file cannot be approved
+  - A batch decision is all-or-nothing and costs one round trip
+  - A school admin, teacher, or learner cannot review, cannot list the queue, and cannot read an unapproved file
+  - The student app shows an approved asset and keeps local art for everything else
+  - Module documentation complete, including what still has never run
+  - Owner manual test steps provided and runnable without Docker
 required_tests:
-  - documentation_review
+  - supabase/tests/med05_asset_review_publication.sql
+  - packages/nano_domain/test/asset_review_test.dart
+  - packages/nano_data/test/asset_review_repository_test.dart
+  - apps/admin_web/test/asset_review_page_test.dart
+  - apps/admin_web/test/widget_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - rls_on_every_new_table
+  - review_events_append_only
+  - only_platform_admin_can_review
+  - unapproved_files_not_readable_by_learners
+  - rejected_assets_never_served
+  - supabase_advisors_no_new_errors
+accessibility_checks:
+  - review_decisions_reachable_by_keyboard
+  - decision_outcome_announced_not_only_coloured
+  - preview_failure_never_blocks_a_decision
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Confirm the learner catalog is empty and nothing has been decided
+  - Plant two reviewable assets, since nano_v1 has never generated a real file
+  - Approve one asset and confirm the catalog and the file open together for a learner
+  - Confirm a rejection without a reason is refused, then reject and confirm the learner loses it immediately
+  - Confirm the rejected slot can be generated again rather than returning the rejected file
+  - Confirm a school admin is refused the queue and the decision
+  - Open admin_web Moderation and approve, then reject, an asset from the queue
+  - Delete the planted assets and confirm the audit record outlives them
+rollback_notes: >
+  Revert module branch commits. Database rollback: drop public.review_generated_assets,
+  review_generated_asset, list_assets_for_review, asset_review_history,
+  nano_internal.apply_asset_review, nano_internal.asset_review_events_are_final,
+  the asset_review_events table, the
+  generated_assets_bucket_read_admin storage policy, and the reviewed_by,
+  reviewed_at and review_note columns on generated_assets; restore the MED-04
+  request_generated_asset and the reuse index without the moderation predicate.
+  Rolling back un-publishes every approved asset, so companion surfaces fall back
+  to local art. Nothing breaks; learners simply stop seeing generated media.
 requires_owner_test: true

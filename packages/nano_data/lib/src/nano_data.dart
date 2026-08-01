@@ -7,6 +7,7 @@ export 'quiz/question_bank_repository.dart';
 export 'quiz/quiz_attempt_repository.dart';
 export 'quiz/topic_quiz_repository.dart';
 export 'learning/learning_progress_repository.dart';
+export 'media/asset_review_repository.dart';
 export 'media/generated_asset_repository.dart';
 export 'media/narration_repository.dart';
 export 'media/reaction_clip_repository.dart';
