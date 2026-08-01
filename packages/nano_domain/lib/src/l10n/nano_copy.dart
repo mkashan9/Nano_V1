@@ -123,6 +123,45 @@ class NanoCopy {
   String get policiesClosePeriodAction => isUrdu ? 'بند' : 'Close';
   String get policiesReasonLabel => isUrdu ? 'وجہ' : 'Reason';
   String get policiesConfirmAction => isUrdu ? 'تصدیق' : 'Confirm';
+  String get reportsPageTitle => isUrdu ? 'رپورٹس' : 'Reports';
+  String get reportsPageSubtitle => isUrdu
+      ? 'اسکول کے محفوظ خلاصے — طالب علم کے ذاتی رابطے نہیں۔'
+      : 'Privacy-safe school summaries — no learner contact details.';
+  String reportsGeneratedAt(String iso) =>
+      isUrdu ? 'تیار: $iso' : 'Generated: $iso';
+  String get reportsLearners => isUrdu ? 'طلبہ' : 'Learners';
+  String get reportsTeachers => isUrdu ? 'اساتذہ' : 'Teachers';
+  String get reportsClasses => isUrdu ? 'کلاسز' : 'Classes';
+  String get reportsSubjects => isUrdu ? 'مضامین' : 'Subjects';
+  String get reportsCoverageTitle =>
+      isUrdu ? 'تفویض کوریج' : 'Assignment coverage';
+  String get reportsActiveAssignments =>
+      isUrdu ? 'فعال تفویضات' : 'Active assignments';
+  String get reportsUncovered =>
+      isUrdu ? 'بغیر استاد مضامین' : 'Uncovered subjects';
+  String get reportsTeachersAssigned =>
+      isUrdu ? 'تفویض شدہ اساتذہ' : 'Teachers with assignments';
+  String get reportsCoverageGapHint => isUrdu
+      ? 'کچھ کلاس مضامین ابھی بغیر استاد ہیں۔'
+      : 'Some class subjects still need a teacher.';
+  String get reportsEnrollmentTitle => isUrdu ? 'اندراج' : 'Enrollment';
+  String get reportsStudentsWithClass =>
+      isUrdu ? 'کلاس والے طلبہ' : 'Students with class';
+  String get reportsStudentsWithoutClass =>
+      isUrdu ? 'بغیر کلاس طلبہ' : 'Students without class';
+  String get reportsResultsTitle =>
+      isUrdu ? 'نتائج پالیسی' : 'Results policy';
+  String get reportsOpenPeriods => isUrdu ? 'کھلے ادوار' : 'Open periods';
+  String get reportsClosedPeriods => isUrdu ? 'بند ادوار' : 'Closed periods';
+  String get reportsPassingPercent => isUrdu ? 'پاس فیصد' : 'Passing percent';
+  String get reportsAttendanceMode =>
+      isUrdu ? 'حاضری موڈ' : 'Attendance mode';
+  String get reportsWorkloadTitle =>
+      isUrdu ? 'استاد ورکلوڈ' : 'Teacher workload';
+  String get reportsWorkloadEmpty =>
+      isUrdu ? 'ابھی کوئی استاد نہیں۔' : 'No teachers yet.';
+  String reportsWorkloadValue(int count) =>
+      isUrdu ? '$count فعال' : '$count active';
   String get schoolEditBranding =>
       isUrdu ? 'برانڈنگ تبدیل' : 'Edit branding';
   String get schoolYearMissing =>

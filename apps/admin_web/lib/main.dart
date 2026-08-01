@@ -25,6 +25,7 @@ void main() {
   SchoolStudentRepository? schoolStudentRepository;
   TeacherAssignmentRepository? teacherAssignmentRepository;
   SchoolMarksPolicyRepository? schoolMarksPolicyRepository;
+  SchoolReportsRepository? schoolReportsRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     // One client, so the review calls carry the signed-in reviewer's token.
@@ -51,6 +52,7 @@ void main() {
     schoolStudentRepository = SupabaseSchoolStudentRepository(client);
     teacherAssignmentRepository = SupabaseTeacherAssignmentRepository(client);
     schoolMarksPolicyRepository = SupabaseSchoolMarksPolicyRepository(client);
+    schoolReportsRepository = SupabaseSchoolReportsRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -72,6 +74,7 @@ void main() {
       schoolStudentRepository: schoolStudentRepository,
       teacherAssignmentRepository: teacherAssignmentRepository,
       schoolMarksPolicyRepository: schoolMarksPolicyRepository,
+      schoolReportsRepository: schoolReportsRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -103,6 +106,7 @@ class NanoAdminApp extends StatefulWidget {
     this.schoolStudentRepository,
     this.teacherAssignmentRepository,
     this.schoolMarksPolicyRepository,
+    this.schoolReportsRepository,
   });
 
   final EnvironmentConfig config;
@@ -128,6 +132,7 @@ class NanoAdminApp extends StatefulWidget {
   final SchoolStudentRepository? schoolStudentRepository;
   final TeacherAssignmentRepository? teacherAssignmentRepository;
   final SchoolMarksPolicyRepository? schoolMarksPolicyRepository;
+  final SchoolReportsRepository? schoolReportsRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -154,6 +159,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late final SchoolStudentRepository _schoolStudentRepository;
   late final TeacherAssignmentRepository _teacherAssignmentRepository;
   late final SchoolMarksPolicyRepository _schoolMarksPolicyRepository;
+  late final SchoolReportsRepository _schoolReportsRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -201,6 +207,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         widget.teacherAssignmentRepository ?? FakeTeacherAssignmentRepository();
     _schoolMarksPolicyRepository =
         widget.schoolMarksPolicyRepository ?? FakeSchoolMarksPolicyRepository();
+    _schoolReportsRepository =
+        widget.schoolReportsRepository ?? FakeSchoolReportsRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -263,6 +271,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       schoolStudentRepository: _schoolStudentRepository,
       teacherAssignmentRepository: _teacherAssignmentRepository,
       schoolMarksPolicyRepository: _schoolMarksPolicyRepository,
+      schoolReportsRepository: _schoolReportsRepository,
     );
   }
 
