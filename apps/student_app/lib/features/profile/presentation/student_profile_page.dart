@@ -276,7 +276,11 @@ class _ProfileBody extends StatelessWidget {
           for (final achievement in profile.achievements)
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.emoji_events_outlined),
+              leading: Icon(
+                achievement.isSticker
+                    ? Icons.sticky_note_2_outlined
+                    : Icons.emoji_events_outlined,
+              ),
               title: Text(achievement.title),
             ),
         ],

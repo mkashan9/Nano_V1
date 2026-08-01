@@ -53,8 +53,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | MED-11 | Full Narration and Celebration Clip Pack | R4 | DONE | MED-09 |
 | MED-12 | Nori Everywhere and Companion Coverage Gate | R4 | DONE | MED-10, MED-11 |
 | XP-01 | Trusted XP Ledger | R5 | DONE | SEC-02, AUTH-01 |
-| XP-02 | Levels and Thresholds | R5 | USER_TEST | XP-01 |
-| XP-03 | Achievements and Stickers | R5 | BACKLOG | XP-02 |
+| XP-02 | Levels and Thresholds | R5 | DONE | XP-01 |
+| XP-03 | Achievements and Stickers | R5 | USER_TEST | XP-02 |
 | XP-04 | Daily and Weekly Missions | R5 | BACKLOG | XP-01 |
 | XP-05 | Streaks and Gentle Motivation | R5 | BACKLOG | XP-01, CMP-02 |
 | XP-06 | Shareable Achievement and Score Cards | R5 | BACKLOG | XP-03 |

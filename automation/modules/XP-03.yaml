@@ -1,15 +1,27 @@
 id: XP-03
 name: "Achievements and Stickers"
 release: R5
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - XP-02
+dependency_notes: >
+  Levels and the ledger are trusted. This module awards named badges and
+  stickers from those events, shows them on Me, and keeps the grant path
+  server-only. Featured pinning for social cards waits on XP-06; admin editing
+  of definitions waits on ADM-05. Streak achievements wait on XP-05.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/XP-03/
@@ -18,27 +30,54 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions, and Streaks"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for XP-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.achievement_definitions
+  - public.achievement_awards
+server_functions:
+  - "nano_internal.award_achievement"
+  - "nano_internal.evaluate_achievements"
+  - "public.my_achievements"
 acceptance:
+  - Achievement definitions are server-owned; clients never invent a badge
+  - Awards are unique per (user_id, achievement_id); replay cannot grant twice
+  - First video, first quiz pass, and level thresholds can grant from trusted events
+  - Stickers are a kind of definition, not a second grant path
+  - Me shows awards from my_achievements when the repository is wired
+  - Learners cannot insert awards; only the evaluate path can
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/xp03_achievements.sql
+  - packages/nano_domain/test/achievement_test.dart
+  - packages/nano_data/test/achievement_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_client_award_write
+  - award_idempotent
+  - own_awards_only
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Complete a first video and confirm First Steps sticker appears on Me
+  - Pass a first quiz and confirm Quiz Rookie appears once
+  - Reach level 2 and confirm Rising Star appears
+  - Replay the same events and confirm awards do not duplicate
+rollback_notes: >
+  Revert the branch and migration. Profile falls back to fixture achievements;
+  the ledger and levels stay intact.
 requires_owner_test: true
+owner_decisions_locked:
+  seed: >
+    Seed four grants: first_steps (sticker, first video), quiz_rookie
+    (achievement, first quiz pass), rising_star (level >= 2), level_climber
+    (level >= 3). Titles are bilingual on the definition; ADM-05 may add more.
+  evaluation: >
+    evaluate_achievements runs after award_xp refresh and after complete_topic /
+    submit_quiz_attempt so a capped XP day can still unlock a sticker from the
+    underlying event.
