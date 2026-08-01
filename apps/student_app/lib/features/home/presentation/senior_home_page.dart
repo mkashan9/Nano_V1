@@ -150,10 +150,14 @@ class _SeniorHomeContent extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
             children: [
               const SizedBox(height: NanoSpacing.md),
+              // CMP-03: Senior keeps the companion small and beside the header.
+              const CompanionSurfaceStage(
+                surface: CompanionSurface.home,
+                junior: false,
+                entryEvent: CompanionEvent.home,
+              ),
               Row(
                 children: [
-                  const CompanionSlot(size: 48),
-                  const SizedBox(width: NanoSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

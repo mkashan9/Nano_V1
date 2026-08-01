@@ -65,8 +65,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook COM-01 Senior Communities | COM-01..COM-06 | student_app | Communities | communities | junior exclusion | BACKLOG |
 | Handbook SAFE-01 Community safety | SAFE-01,SAFE-02,SAFE-03,SAFE-04 | admin+student | moderation | reports | safety | BACKLOG |
 | Handbook CMP-01 Nori companion | CMP-01 | student_app | Nori reactions on quiz results + gallery | CompanionRuntime,CompanionStage (no DB) | unit+widget | DONE |
-| Handbook 10.1 controlled variants and reaction rules | CMP-02 | student_app | Nori modes, story cards | CompanionMode,CompanionRules (no DB) | unit+widget | USER_TEST |
-| Handbook CMP-01 companion placement and enrichment | CMP-03 | student_app | Nori | prefs | companion | BACKLOG |
+| Handbook 10.1 controlled variants and reaction rules | CMP-02 | student_app | Nori modes, story cards | CompanionMode,CompanionRules (no DB) | unit+widget | DONE |
+| Handbook CMP-01 companion placement and enrichment | CMP-03 | student_app | Nori on home, learning, progress at junior/senior density | CompanionPlacement,CompanionController (no DB) | unit+widget | USER_TEST |
 | Handbook MED-01 Media asset delivery | MED-01,MED-02,MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | BACKLOG |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |
 | Handbook PAR-01 Guardian guidance | PAR-01,PAR-02,PAR-03,FBK-01 | student+admin | Parent card | guidance | guardian | BACKLOG |

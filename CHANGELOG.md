@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- CMP-03: Nori placed on the real learner screens at Junior and Senior density from one placement table, owned by a single session controller so cooldowns and the appearance budget survive navigation, only the surface in front speaks, and a held-back reaction costs no layout height
+
 - CMP-02: controlled Nori variants (guide, explorer, quiz coach, builder, celebration) inside one shared frame, plus reaction rules — story cards for rare moments, priority for colliding moments, a per-session appearance budget, and Classroom Mode holding back everything non-essential
 
 - CMP-01: a deterministic local Nori runtime — six core reactions, junior/senior density, cooldowns, captions that survive muted sound and Classroom Mode, and an asset ladder that never needs the network

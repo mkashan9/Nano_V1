@@ -127,15 +127,20 @@ class _InsightsBody extends StatelessWidget {
           if (recommendation == null)
             _Panel(
               junior: junior,
-              child: Row(
+              // CMP-03: an empty recommendation list is one of the moments the
+              // companion is allowed to fill.
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CompanionSlot(size: junior ? 72 : 56),
-                  const SizedBox(width: NanoSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      copy.allCaughtUp,
-                      style: theme.textTheme.titleMedium,
-                    ),
+                  Text(
+                    copy.allCaughtUp,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: NanoSpacing.xs),
+                  CompanionSurfaceStage(
+                    surface: CompanionSurface.progress,
+                    junior: junior,
+                    entryEvent: CompanionEvent.emptyState,
                   ),
                 ],
               ),

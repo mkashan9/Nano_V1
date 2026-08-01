@@ -122,10 +122,14 @@ class _JuniorHomeContent extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
             children: [
               const SizedBox(height: NanoSpacing.md),
+              // CMP-03: Junior leads with the companion above the greeting.
+              const CompanionSurfaceStage(
+                surface: CompanionSurface.home,
+                junior: true,
+                entryEvent: CompanionEvent.home,
+              ),
               Row(
                 children: [
-                  const CompanionSlot(size: 56),
-                  const SizedBox(width: NanoSpacing.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

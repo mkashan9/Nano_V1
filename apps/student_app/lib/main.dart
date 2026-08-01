@@ -86,7 +86,8 @@ class NanoStudentApp extends StatefulWidget {
   State<NanoStudentApp> createState() => _NanoStudentAppState();
 }
 
-class _NanoStudentAppState extends State<NanoStudentApp> {
+class _NanoStudentAppState extends State<NanoStudentApp>
+    with WidgetsBindingObserver {
   late SessionPrincipal _principal;
   late GoRouter _router;
   late NanoAppLocale _locale;
@@ -104,6 +105,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late final LearnerQuizRepository _learnerQuizRepository;
   late final QuizAttemptRepository _quizAttemptRepository;
   late final NanoSyncController _syncController;
+  late CompanionController _companion;
   var _restoring = false;
 
   @override
@@ -154,10 +156,26 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         widget.quizAttemptRepository ?? FakeQuizAttemptRepository();
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
+    _companion = _createCompanion();
+    WidgetsBinding.instance.addObserver(this);
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
     }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _companion.dispose();
+    super.dispose();
+  }
+
+  /// CMP-03: coming back to the app is a moment; the controller decides whether
+  /// the gap was long enough to be worth a word.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _companion.appResumed();
   }
 
   Future<void> _restore() async {
@@ -198,6 +216,32 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     _locale = prefs.locale;
     _a11y = prefs.accessibility;
     _feedback.updatePreferences(prefs.accessibility);
+    _syncCompanion();
+  }
+
+  CompanionController _createCompanion() => CompanionController(
+        junior: _principal.role.usesJuniorPresentation,
+        preferences: _a11y,
+        companionName:
+            _preferences?.companionName ?? CompanionNamePolicy.defaultName,
+      );
+
+  /// Accessibility changes reach the live controller; a renamed companion or a
+  /// changed experience needs a new one, which also starts a fresh session.
+  void _syncCompanion() {
+    final junior = _principal.role.usesJuniorPresentation;
+    final name =
+        _preferences?.companionName ?? CompanionNamePolicy.defaultName;
+    final sameExperience = _companion.runtime.policy ==
+        (junior ? CompanionPolicy.junior : CompanionPolicy.senior);
+    if (sameExperience && _companion.runtime.companionName == name) {
+      _companion.updatePreferences(_a11y);
+      return;
+    }
+    final previous = _companion;
+    _companion = _createCompanion();
+    // Let the rebuild detach listeners before the old controller goes away.
+    WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
   }
 
   void _onOnboardingCompleted(
@@ -288,6 +332,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       _a11y = AccessibilityPreferences.defaults;
       _feedback.updatePreferences(_a11y);
       _principal = SessionPrincipal.junior(displayName: '');
+      _syncCompanion();
+      _companion.endSession();
       _router = _createRouter();
     });
   }
@@ -295,6 +341,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   void _setPrincipal(SessionPrincipal next) {
     setState(() {
       _principal = next;
+      _syncCompanion();
       if (widget.catalogRepository == null) {
         _catalogRepository = FakeLearningCatalogRepository(
           seniorEligible: !next.role.usesJuniorPresentation,
@@ -316,6 +363,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
     setState(() {
       _a11y = next;
       _feedback.updatePreferences(next);
+      _companion.updatePreferences(next);
     });
     _persistPreferences(accessibility: next);
   }
@@ -355,38 +403,41 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       child: NanoAccessibilityScope(
         preferences: _a11y,
         feedback: _feedback,
-        child: MaterialApp.router(
-          key: ValueKey(
-            '${_principal.role}-${_principal.isAuthenticated}-'
-            '${_onboarding?.isComplete ?? false}-'
-            '${_locale.tag}-${_a11y.reducedMotion}-'
-            '${_a11y.classroomMode}-${_a11y.textScale}',
+        child: NanoCompanionScope(
+          controller: _companion,
+          child: MaterialApp.router(
+            key: ValueKey(
+              '${_principal.role}-${_principal.isAuthenticated}-'
+              '${_onboarding?.isComplete ?? false}-'
+              '${_locale.tag}-${_a11y.reducedMotion}-'
+              '${_a11y.classroomMode}-${_a11y.textScale}',
+            ),
+            title: copy.appName,
+            theme: theme,
+            locale: flutterLocale,
+            supportedLocales: const [
+              Locale('en'),
+              Locale('ur'),
+            ],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            builder: (context, child) {
+              final mq = MediaQuery.of(context);
+              final scaled = mq.textScaler.scale(1) * _a11y.textScale;
+              return MediaQuery(
+                data: mq.copyWith(
+                  textScaler: TextScaler.linear(scaled),
+                  disableAnimations:
+                      mq.disableAnimations || _a11y.effectiveReducedMotion,
+                ),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+            routerConfig: _router,
           ),
-          title: copy.appName,
-          theme: theme,
-          locale: flutterLocale,
-          supportedLocales: const [
-            Locale('en'),
-            Locale('ur'),
-          ],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          builder: (context, child) {
-            final mq = MediaQuery.of(context);
-            final scaled = mq.textScaler.scale(1) * _a11y.textScale;
-            return MediaQuery(
-              data: mq.copyWith(
-                textScaler: TextScaler.linear(scaled),
-                disableAnimations:
-                    mq.disableAnimations || _a11y.effectiveReducedMotion,
-              ),
-              child: child ?? const SizedBox.shrink(),
-            );
-          },
-          routerConfig: _router,
         ),
       ),
     );
