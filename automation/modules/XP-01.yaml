@@ -1,7 +1,7 @@
 id: XP-01
 name: "Trusted XP Ledger"
 release: R5
-status: USER_TEST
+status: DONE
 dependencies:
   - SEC-02
   - AUTH-01
@@ -87,3 +87,5 @@ owner_decisions_locked:
     Video completion 10 XP. First quiz pass 30 XP. Failed quiz 0. Daily cap
     200 XP. Numbers are server-owned in xp_award_rules so they can change
     without a client release.
+owner_test_result: approved
+owner_approved_at: "2026-08-01T20:17:53Z"

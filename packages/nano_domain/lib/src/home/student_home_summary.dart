@@ -1,5 +1,8 @@
 import '../learning/home_plan_item.dart';
 import '../learning/learning_subject.dart';
+import '../xp/level_progress.dart';
+
+export '../xp/level_progress.dart' show LevelProgress;
 
 /// A resumable lesson. Progress drives the junior "keep going" card.
 class ContinueLearningItem {
@@ -25,37 +28,6 @@ enum HomeNoticeKind { none, maintenance, accessWarning }
 /// whole screen (handbook STU-02: "Home renders with partial data when one
 /// source fails").
 enum HomeSection { continueLearning, missions, subjects, flex, updates }
-
-/// Display-only level derived from server-owned XP.
-///
-/// The server remains the authority for XP; this only decides how to draw it,
-/// so a client cannot award itself a level.
-class LevelProgress {
-  const LevelProgress({
-    required this.level,
-    required this.xpIntoLevel,
-    required this.xpPerLevel,
-  });
-
-  static const int defaultXpPerLevel = 250;
-
-  factory LevelProgress.fromXp(int xp, {int xpPerLevel = defaultXpPerLevel}) {
-    final safeXp = xp < 0 ? 0 : xp;
-    return LevelProgress(
-      level: safeXp ~/ xpPerLevel + 1,
-      xpIntoLevel: safeXp % xpPerLevel,
-      xpPerLevel: xpPerLevel,
-    );
-  }
-
-  final int level;
-  final int xpIntoLevel;
-  final int xpPerLevel;
-
-  int get xpToNextLevel => xpPerLevel - xpIntoLevel;
-
-  double get fraction => xpIntoLevel / xpPerLevel;
-}
 
 /// Flex snapshot for school-eligible seniors only.
 class FlexSummary {
@@ -103,6 +75,7 @@ class StudentHomeSummary {
     this.flex,
     this.latestUpdate,
     this.failedSections = const {},
+    this.levelProgress,
   });
 
   final String learnerName;
@@ -128,6 +101,9 @@ class StudentHomeSummary {
   /// taking down the rest of the home.
   final Set<HomeSection> failedSections;
 
+  /// XP-02: server-owned level when the ledger balance carried one.
+  final LevelProgress? levelProgress;
+
   bool get hasContent =>
       continueItem != null ||
       subjects.isNotEmpty ||
@@ -139,7 +115,7 @@ class StudentHomeSummary {
 
   bool get isPartial => failedSections.isNotEmpty;
 
-  LevelProgress get level => LevelProgress.fromXp(xp);
+  LevelProgress get level => levelProgress ?? LevelProgress.fromXp(xp);
 
   bool get showsFlex => flex != null && !failed(HomeSection.flex);
 
@@ -175,6 +151,7 @@ class StudentHomeSummary {
     FlexSummary? flex,
     HomeUpdate? latestUpdate,
     Set<HomeSection>? failedSections,
+    LevelProgress? levelProgress,
   }) {
     return StudentHomeSummary(
       learnerName: learnerName ?? this.learnerName,
@@ -191,6 +168,7 @@ class StudentHomeSummary {
       flex: flex ?? this.flex,
       latestUpdate: latestUpdate ?? this.latestUpdate,
       failedSections: failedSections ?? this.failedSections,
+      levelProgress: levelProgress ?? this.levelProgress,
     );
   }
 }

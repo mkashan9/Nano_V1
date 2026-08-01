@@ -52,9 +52,9 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
   }) async {
     if (alwaysFail) throw StateError('Profile unavailable');
     final schoolLinked = role != AppRole.independentStudent;
-    final xp = xpLedger == null
-        ? progress.xp
-        : (await xpLedger!.balance()).total;
+    final XpBalance? balance =
+        xpLedger == null ? null : await xpLedger!.balance();
+    final xp = balance?.total ?? progress.xp;
     return StudentProfileView(
       userId: userId,
       displayName: displayName,
@@ -66,6 +66,7 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
       attendanceLabel: '94% this term',
       latestMarkLabel: 'Fractions quiz 8/10',
       xp: xp,
+      levelProgress: balance?.levelProgress,
       streakDays: progress.streak,
       completedTopics: progress.topics,
       recommendedNext: 'Fractions: equal parts',

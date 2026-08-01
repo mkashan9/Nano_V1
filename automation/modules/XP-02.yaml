@@ -1,15 +1,27 @@
 id: XP-02
 name: "Levels and Thresholds"
 release: R5
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - XP-01
+dependency_notes: >
+  XP-01 owns the ledger total. This module owns how that total becomes a
+  level: the threshold table, the server recalculation, and the fields Home
+  and Me already draw. Achievements stay XP-03; missions and streaks stay
+  XP-04 / XP-05. Editing rules in the admin UI waits on ADM-05.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/XP-02/
@@ -18,27 +30,51 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions, and Streaks"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for XP-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.level_rules
+  - public.xp_progress
+server_functions:
+  - "nano_internal.level_progress_for_xp"
+  - "nano_internal.refresh_xp_progress"
+  - "public.my_xp_balance (extended with level fields)"
 acceptance:
+  - Level thresholds live in level_rules; clients never invent a curve
+  - my_xp_balance returns level, xp_into_level, xp_to_next, and xp_per_level from the server
+  - Ledger totals reconcile to xp_progress.level after every award
+  - Home and Me draw the server level, not a local 250-XP guess when the ledger is wired
+  - Changing a threshold does not require a client release
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/xp02_level_thresholds.sql
+  - packages/nano_domain/test/level_progress_test.dart
+  - packages/nano_data/test/xp_ledger_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - learners_read_own_progress_only
+  - no_client_level_write
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Home as a learner with known XP and confirm the level line matches the ledger total against level_rules
+  - Earn enough XP to cross a threshold and confirm Home and Me show the new level without a client restart
+  - Confirm xp_progress.level equals level_progress_for_xp(sum of ledger)
+rollback_notes: >
+  Revert the branch and the migration. Level display falls back to the
+  client 250-XP derivation; the ledger itself is untouched.
 requires_owner_test: true
+owner_decisions_locked:
+  curve: >
+    Seed a flat 250 XP per level through level 40. The table shape supports a
+    non-linear curve later without changing the RPC contract; ADM-05 will own
+    editing the rows.
+  cache: >
+    xp_progress is a server-maintained projection of the ledger total and
+    level, refreshed inside award_xp so Home never has to recompute the curve
+    and so "ledger reconciles to profile level" is a real invariant.
