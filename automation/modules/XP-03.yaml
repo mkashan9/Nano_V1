@@ -1,7 +1,7 @@
 id: XP-03
 name: "Achievements and Stickers"
 release: R5
-status: USER_TEST
+status: DONE
 dependencies:
   - XP-02
 dependency_notes: >
@@ -81,3 +81,5 @@ owner_decisions_locked:
     evaluate_achievements runs after award_xp refresh and after complete_topic /
     submit_quiz_attempt so a capped XP day can still unlock a sticker from the
     underlying event.
+owner_test_result: approved
+owner_approved_at: "2026-08-01T20:43:38Z"

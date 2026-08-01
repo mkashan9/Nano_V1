@@ -1,5 +1,6 @@
 import 'package:nano_domain/nano_domain.dart';
 
+import '../xp/mission_repository.dart';
 import '../xp/xp_ledger_repository.dart';
 
 /// Aggregates the student home in one read.
@@ -29,6 +30,7 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     this.failSections = const {},
     this.includeUpdate = true,
     this.xpLedger,
+    this.missionRepository,
     this.fixtureXp = 560,
   });
 
@@ -47,6 +49,9 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
 
   /// XP-01: when set, Home reads the ledger total instead of [fixtureXp].
   final XpLedgerRepository? xpLedger;
+
+  /// XP-04: when set, Home plan comes from live missions.
+  final MissionRepository? missionRepository;
   final int fixtureXp;
 
   var loadCount = 0;
@@ -74,6 +79,17 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     final XpBalance? balance =
         xpLedger == null ? null : await xpLedger!.balance();
     final xp = balance?.total ?? fixtureXp;
+    final List<HomePlanItem> plan;
+    if (failed.contains(HomeSection.missions)) {
+      plan = const [];
+    } else if (missionRepository != null) {
+      plan = [
+        for (final m in await missionRepository!.current())
+          m.toHomePlanItem(urdu: false),
+      ];
+    } else {
+      plan = missions;
+    }
     return StudentHomeSummary(
       learnerName: learnerName,
       companionName: companionName,
@@ -93,7 +109,7 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
               subjectId: 'science',
               progress: 0.42,
             ),
-      missions: failed.contains(HomeSection.missions) ? const [] : missions,
+      missions: plan,
       subjects: failed.contains(HomeSection.subjects) ? const [] : subjects,
       // Flex is a server-side entitlement; the fake honours the caller's
       // eligibility rather than letting the UI decide.

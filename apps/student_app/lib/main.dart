@@ -23,6 +23,7 @@ void main() {
   NarrationRepository? narrationRepository;
   XpLedgerRepository? xpLedgerRepository;
   AchievementRepository? achievementRepository;
+  MissionRepository? missionRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -41,6 +42,7 @@ void main() {
     narrationRepository = SupabaseNarrationRepository(client);
     xpLedgerRepository = SupabaseXpLedgerRepository(client);
     achievementRepository = SupabaseAchievementRepository(client);
+    missionRepository = SupabaseMissionRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -53,6 +55,7 @@ void main() {
       narrationRepository: narrationRepository,
       xpLedgerRepository: xpLedgerRepository,
       achievementRepository: achievementRepository,
+      missionRepository: missionRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -85,6 +88,7 @@ class NanoStudentApp extends StatefulWidget {
     this.narrationRepository,
     this.xpLedgerRepository,
     this.achievementRepository,
+    this.missionRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -124,6 +128,10 @@ class NanoStudentApp extends StatefulWidget {
   /// XP-03: live achievements for Me. Optional — without it the profile keeps
   /// fixture badges.
   final AchievementRepository? achievementRepository;
+
+  /// XP-04: live daily/weekly missions for Home. Optional — without it Home
+  /// keeps fixture plan items.
+  final MissionRepository? missionRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -173,16 +181,17 @@ class _NanoStudentAppState extends State<NanoStudentApp>
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
-    // Home and profile still use fixtures for missions and subjects; XP-01
-    // replaces only the XP number with the ledger total when a live repo is
-    // available. XP-03 does the same for achievements on Me.
+    // Home and profile still use fixtures for subjects; XP-01 replaces XP,
+    // XP-03 replaces achievements, XP-04 replaces the mission plan when live.
     final xpLedger = widget.xpLedgerRepository;
     final achievementRepo = widget.achievementRepository;
+    final missionRepo = widget.missionRepository;
     _homeRepository = widget.homeRepository ??
         FakeStudentHomeRepository(
           subjects: StudentHomeFixtures.subjects,
           missions: StudentHomeFixtures.missions,
           xpLedger: xpLedger,
+          missionRepository: missionRepo,
         );
     _profileRepository = widget.profileRepository ??
         FakeStudentProfileRepository(

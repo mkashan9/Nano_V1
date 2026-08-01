@@ -10,6 +10,7 @@ export 'companion/companion_reaction.dart';
 export 'companion/companion_runtime.dart';
 export 'xp/achievement.dart';
 export 'xp/level_progress.dart';
+export 'xp/mission.dart';
 export 'xp/xp_ledger.dart';
 export 'media/asset_review.dart';
 export 'media/generated_asset.dart';
