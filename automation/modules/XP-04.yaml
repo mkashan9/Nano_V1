@@ -1,15 +1,27 @@
 id: XP-04
 name: "Daily and Weekly Missions"
 release: R5
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - XP-01
+dependency_notes: >
+  The ledger and its hooks already exist. This module owns mission definitions,
+  per-period progress, optional bonus XP on completion, and the Home plan list
+  that today still uses fixtures. Streaks stay XP-05; admin editing waits on
+  ADM-05. Game missions wait on GME.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/XP-04/
@@ -18,27 +30,51 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions, and Streaks"
+  - "11.4 XP policy example"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for XP-04"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.missions
+  - public.mission_progress
+server_functions:
+  - "nano_internal.evaluate_missions"
+  - "public.my_missions"
+  - "mission_complete via nano_internal.award_xp"
 acceptance:
+  - Daily and weekly mission definitions are server-owned
+  - Progress is unique per (user, mission, period); completing twice cannot award twice
+  - Completing a mission awards the defined bonus XP through the ledger
+  - Home plan prefers my_missions when a repository is wired
+  - Learners cannot insert missions or progress rows
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/xp04_missions.sql
+  - packages/nano_domain/test/mission_test.dart
+  - packages/nano_data/test/mission_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_client_mission_write
+  - mission_bonus_idempotent
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Home and confirm today's daily missions match the seed (not only fixtures)
+  - Complete a topic and confirm the daily lesson mission progresses / completes once
+  - Pass a quiz and confirm the daily quiz mission progresses / completes once
+  - Confirm bonus XP appears on the ledger for a completed mission only once
+rollback_notes: >
+  Revert the branch and migration. Home falls back to fixture missions; the
+  ledger keeps any already-granted mission bonus rows.
 requires_owner_test: true
+owner_decisions_locked:
+  seed: >
+    Two daily (complete 1 video, pass 1 quiz) and two weekly (3 videos, 2 quiz
+    passes). Bonus XP is on the definition; period keys are UTC day and ISO week.
+  cadence: >
+    Daily resets at UTC midnight. Weekly uses ISO week (IYYY-IW). Progress
+    counts events whose timestamps fall in the current period.

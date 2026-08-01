@@ -265,7 +265,9 @@ class _SeniorHomeContent extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: NanoSpacing.sm),
                     child: TeacherTaskCard(
                       title: item.title,
-                      subtitle: '${item.subtitle} · +${item.xpReward} XP',
+                      subtitle: item.completed
+                          ? '${item.subtitle} · Done'
+                          : '${item.subtitle} · +${item.xpReward} XP',
                     ),
                   )
               else if (summary.failed(HomeSection.missions))

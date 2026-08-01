@@ -11,7 +11,8 @@ enum XpSourceKind {
   quizPass,
   manualAdjust,
   reversal,
-  gameResult;
+  gameResult,
+  missionComplete;
 
   static XpSourceKind fromName(String value) => switch (value) {
         'video_completion' => XpSourceKind.videoCompletion,
@@ -19,6 +20,7 @@ enum XpSourceKind {
         'manual_adjust' => XpSourceKind.manualAdjust,
         'reversal' => XpSourceKind.reversal,
         'game_result' => XpSourceKind.gameResult,
+        'mission_complete' => XpSourceKind.missionComplete,
         _ => XpSourceKind.manualAdjust,
       };
 
@@ -28,6 +30,7 @@ enum XpSourceKind {
         XpSourceKind.manualAdjust => 'manual_adjust',
         XpSourceKind.reversal => 'reversal',
         XpSourceKind.gameResult => 'game_result',
+        XpSourceKind.missionComplete => 'mission_complete',
       };
 }
 

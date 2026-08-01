@@ -204,7 +204,9 @@ class _JuniorHomeContent extends StatelessWidget {
                       leading: const Icon(Icons.flag_outlined),
                       title: Text(mission.title),
                       subtitle: Text(mission.subtitle),
-                      trailing: Text('+${mission.xpReward}'),
+                      trailing: Text(
+                        mission.completed ? 'Done' : '+${mission.xpReward}',
+                      ),
                     ),
                   ),
               ],

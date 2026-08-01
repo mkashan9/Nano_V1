@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- XP-04: Home's plan is finally real missions � daily lesson/quiz and weekly lesson/quiz targets track period progress, award bonus XP once through the ledger, and replace the fixture trio when Supabase is wired
+
 - XP-03: Me shows real badges and stickers — First Steps, Quiz Rookie, Rising Star, and Level Climber unlock from topic completions, quiz passes, and level bands, unique so a replay cannot grant twice, and stickers are a kind on the same catalog rather than a second grant path
 
 - XP-02: levels left the client — `level_rules` owns the curve (flat 250 XP through level 40 at seed), `xp_progress` stays in lockstep with every ledger award, and `my_xp_balance` now returns the level Home and Me already draw, so a threshold change is a data change rather than an app release
