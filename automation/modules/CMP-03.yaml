@@ -1,7 +1,7 @@
 id: CMP-03
 name: "Junior and Senior Companion Placement"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - CMP-02
   - STU-03

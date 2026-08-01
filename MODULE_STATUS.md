@@ -39,8 +39,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | QZ-06 | Quiz Results, Explanations, and Progress Update | R3 | DONE | QZ-05 |
 | CMP-01 | Nori Core Runtime | R4 | DONE | STU-02, FND-07 |
 | CMP-02 | Nori Modes and Reaction Rules | R4 | DONE | CMP-01 |
-| CMP-03 | Junior and Senior Companion Placement | R4 | USER_TEST | CMP-02, STU-03, STU-04 |
-| MED-01 | Generated Asset Provider Adapters | R4 | BACKLOG | SEC-01 |
+| CMP-03 | Junior and Senior Companion Placement | R4 | DONE | CMP-02, STU-03, STU-04 |
+| MED-01 | Generated Asset Provider Adapters | R4 | USER_TEST | SEC-01, CMP-01 |
 | MED-02 | Asset Caching, Hashing, Quotas, and Fallback | R4 | BACKLOG | MED-01 |
 | MED-03 | Voice Generation and Aoede Learning Guide | R4 | BACKLOG | MED-02, CMP-01 |
 | MED-04 | Video Generation and Reusable Reaction Library | R4 | BACKLOG | MED-02, CMP-02 |
