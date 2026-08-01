@@ -2,6 +2,7 @@ export 'admin/game_admin_ops.dart';
 export 'admin/gamification_ops.dart';
 export 'admin/learning_content_ops.dart';
 export 'admin/notification_admin_ops.dart';
+export 'admin/platform_analytics.dart';
 export 'admin/platform_dashboard.dart';
 export 'admin/platform_user_ops.dart';
 export 'admin/school_admin_ops.dart';

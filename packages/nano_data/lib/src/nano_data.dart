@@ -2,6 +2,7 @@ export 'admin/game_admin_repository.dart';
 export 'admin/gamification_admin_repository.dart';
 export 'admin/learning_content_repository.dart';
 export 'admin/notification_admin_repository.dart';
+export 'admin/platform_analytics_repository.dart';
 export 'admin/platform_dashboard_repository.dart';
 export 'admin/platform_user_repository.dart';
 export 'admin/school_admin_repository.dart';

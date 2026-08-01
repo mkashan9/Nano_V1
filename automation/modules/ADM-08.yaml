@@ -1,44 +1,72 @@
 id: ADM-08
 name: "Platform Analytics"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
+dependency_notes: >
+  ADM-01 owns Platform home. This module fills /analytics with privacy-safe
+  aggregates. ANA-01 owns event taxonomy and school health; SCH-07 owns school
+  report packs.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-08/
   - automation/modules/ADM-08.yaml
+  - automation/modules/ADM-07.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook ANL-01 platform ops half"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-08"
 ui_references: []
 database_scope: []
-server_functions: []
+server_functions:
+  - "public.platform_analytics"
 acceptance:
+  - Platform staff can open Analytics and see safe aggregates
+  - Payload rejects privacy-unsafe keys client-side
+  - Learners cannot call platform_analytics
+  - Analytics destination is wired in admin_web
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm08_platform_analytics.sql
+  - packages/nano_domain/test/platform_analytics_test.dart
+  - packages/nano_data/test/platform_analytics_repository_test.dart
+  - apps/admin_web/test/platform_analytics_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - platform_admin_only_rpc
+  - no_pii_in_analytics_payload
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Analytics and confirm health, catalog, and 7-day sections
+  - Confirm action breakdown or empty copy
+  - Refresh and use Platform/Moderation shortcuts
+rollback_notes: >
+  Revert the branch and migration. Analytics returns to the shell stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Read-only platform aggregates on /analytics. No analytics_events table.
+  deferred: >
+    ANA-01 taxonomy/health, SCH-07 school reports, custom date ranges.
