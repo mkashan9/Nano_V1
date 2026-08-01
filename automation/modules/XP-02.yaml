@@ -1,7 +1,7 @@
 id: XP-02
 name: "Levels and Thresholds"
 release: R5
-status: USER_TEST
+status: DONE
 dependencies:
   - XP-01
 dependency_notes: >
@@ -78,3 +78,5 @@ owner_decisions_locked:
     xp_progress is a server-maintained projection of the ledger total and
     level, refreshed inside award_xp so Home never has to recompute the curve
     and so "ledger reconciles to profile level" is a real invariant.
+owner_test_result: approved
+owner_approved_at: "2026-08-01T20:30:33Z"

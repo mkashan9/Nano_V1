@@ -1,6 +1,7 @@
 import '../home/student_home_summary.dart';
 import '../l10n/nano_app_locale.dart';
 import '../navigation/app_role.dart';
+import '../xp/achievement.dart';
 
 /// Learner-controlled visibility. Social modules read these, never the raw
 /// profile.
@@ -52,11 +53,30 @@ class ProfileAchievement {
     required this.id,
     required this.title,
     required this.earnedAt,
+    this.kind = AchievementKind.achievement,
+    this.slug = '',
   });
+
+  factory ProfileAchievement.fromAward(
+    AchievementAward award, {
+    required bool urdu,
+  }) {
+    return ProfileAchievement(
+      id: award.awardId,
+      title: award.titleFor(urdu: urdu),
+      earnedAt: award.awardedAt,
+      kind: award.kind,
+      slug: award.slug,
+    );
+  }
 
   final String id;
   final String title;
   final DateTime earnedAt;
+  final AchievementKind kind;
+  final String slug;
+
+  bool get isSticker => kind == AchievementKind.sticker;
 }
 
 /// The owner's view of their own profile. Includes private data that must

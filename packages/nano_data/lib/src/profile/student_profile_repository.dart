@@ -1,6 +1,7 @@
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
+import '../xp/achievement_repository.dart';
 import '../xp/xp_ledger_repository.dart';
 
 /// Profile, privacy, and device sessions for the signed-in learner.
@@ -29,7 +30,24 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     this.revokeFails = false,
     this.progress = const (xp: 560, streak: 7, topics: 12),
     this.xpLedger,
-  }) : _sessions = [...?sessions];
+    this.achievements,
+    List<ProfileAchievement>? fixtureAchievements,
+  })  : _sessions = [...?sessions],
+        fixtureAchievements = fixtureAchievements ??
+            [
+              ProfileAchievement(
+                id: 'a1',
+                title: 'First quiz cleared',
+                earnedAt: DateTime.utc(2026, 7, 20),
+                kind: AchievementKind.achievement,
+                slug: 'quiz_rookie',
+              ),
+              ProfileAchievement(
+                id: 'a2',
+                title: '7 day streak',
+                earnedAt: DateTime.utc(2026, 7, 30),
+              ),
+            ];
 
   final bool alwaysFail;
   final bool revokeFails;
@@ -37,6 +55,11 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
 
   /// XP-01: when set, profile XP comes from the ledger.
   final XpLedgerRepository? xpLedger;
+
+  /// XP-03: when set, Me reads awards from the repository instead of fixtures.
+  final AchievementRepository? achievements;
+
+  final List<ProfileAchievement> fixtureAchievements;
 
   final List<DeviceSession> _sessions;
   PrivacySettings? _privacy;
@@ -55,6 +78,16 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     final XpBalance? balance =
         xpLedger == null ? null : await xpLedger!.balance();
     final xp = balance?.total ?? progress.xp;
+    final List<ProfileAchievement> awards;
+    if (achievements != null) {
+      final mine = await achievements!.mine();
+      awards = [
+        for (final award in mine)
+          ProfileAchievement.fromAward(award, urdu: false),
+      ];
+    } else {
+      awards = fixtureAchievements;
+    }
     return StudentProfileView(
       userId: userId,
       displayName: displayName,
@@ -70,18 +103,7 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
       streakDays: progress.streak,
       completedTopics: progress.topics,
       recommendedNext: 'Fractions: equal parts',
-      achievements: [
-        ProfileAchievement(
-          id: 'a1',
-          title: 'First quiz cleared',
-          earnedAt: DateTime.utc(2026, 7, 20),
-        ),
-        ProfileAchievement(
-          id: 'a2',
-          title: '7 day streak',
-          earnedAt: DateTime.utc(2026, 7, 30),
-        ),
-      ],
+      achievements: awards,
     );
   }
 
