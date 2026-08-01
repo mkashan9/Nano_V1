@@ -1,4 +1,5 @@
 import '../accessibility/accessibility_preferences.dart';
+import 'companion_mode.dart';
 import 'companion_reaction.dart';
 
 /// How often and how loudly the companion may appear for one experience.
@@ -40,7 +41,22 @@ class CompanionPolicy {
       event.isEssential ? Duration.zero : cooldown;
 }
 
-/// The companion state machine (CMP-01).
+/// Why a moment produced nothing. Useful in tests and for a debug surface.
+enum CompanionSkipReason {
+  /// This experience does not react to the moment at all.
+  quietForExperience,
+
+  /// The same moment appeared too recently.
+  cooldown,
+
+  /// Classroom Mode allows essential moments only.
+  classroomMode,
+
+  /// The session's ordinary-appearance budget is spent.
+  sessionBudget,
+}
+
+/// The companion state machine (CMP-01, extended by CMP-02).
 ///
 /// Immutable and pure: [notify] returns a new runtime and nothing here reads a
 /// clock, a random source, or the network. That is what makes reactions
@@ -52,16 +68,20 @@ class CompanionPolicy {
 class CompanionRuntime {
   const CompanionRuntime({
     required this.policy,
+    this.rules = CompanionRules.junior,
+    this.surface = CompanionSurface.home,
     this.preferences = AccessibilityPreferences.defaults,
     this.companionName = 'Nori',
     this.manifest = CompanionAssetManifest.defaults,
     this.clipsAvailable = false,
     this.reaction,
     this.lastShownAt = const {},
+    this.shownThisSession = 0,
   });
 
   factory CompanionRuntime.forExperience({
     required bool junior,
+    CompanionSurface surface = CompanionSurface.home,
     AccessibilityPreferences preferences = AccessibilityPreferences.defaults,
     String companionName = 'Nori',
     CompanionAssetManifest manifest = CompanionAssetManifest.defaults,
@@ -69,6 +89,8 @@ class CompanionRuntime {
   }) {
     return CompanionRuntime(
       policy: junior ? CompanionPolicy.junior : CompanionPolicy.senior,
+      rules: junior ? CompanionRules.junior : CompanionRules.senior,
+      surface: surface,
       preferences: preferences,
       companionName: companionName,
       manifest: manifest,
@@ -77,6 +99,10 @@ class CompanionRuntime {
   }
 
   final CompanionPolicy policy;
+  final CompanionRules rules;
+
+  /// Where the learner is, which picks the mode.
+  final CompanionSurface surface;
   final AccessibilityPreferences preferences;
   final String companionName;
   final CompanionAssetManifest manifest;
@@ -88,21 +114,39 @@ class CompanionRuntime {
   final CompanionReaction? reaction;
   final Map<CompanionEvent, DateTime> lastShownAt;
 
+  /// Ordinary appearances so far this session, rationed by [rules].
+  final int shownThisSession;
+
   bool get isVisible => reaction != null;
 
   bool get speaks => reaction?.speaks ?? false;
 
-  /// True when [event] would be skipped: either this experience stays quiet
-  /// about it, or it appeared too recently.
-  bool isSuppressed(CompanionEvent event, DateTime now) {
-    if (!policy.allows(event)) return true;
+  CompanionMode modeFor(CompanionEvent event) =>
+      CompanionMode.resolve(surface: surface, event: event);
+
+  /// Why [event] would be skipped at [now], or null when it may appear.
+  CompanionSkipReason? skipReason(CompanionEvent event, DateTime now) {
+    if (!policy.allows(event)) return CompanionSkipReason.quietForExperience;
+    if (preferences.classroomMode && !event.isEssential) {
+      return CompanionSkipReason.classroomMode;
+    }
+    if (rules.countsAgainstBudget(event) &&
+        shownThisSession >= rules.maxPerSession) {
+      return CompanionSkipReason.sessionBudget;
+    }
     final last = lastShownAt[event];
-    if (last == null) return false;
-    return now.difference(last) < policy.cooldownFor(event);
+    if (last != null && now.difference(last) < policy.cooldownFor(event)) {
+      return CompanionSkipReason.cooldown;
+    }
+    return null;
   }
 
+  bool isSuppressed(CompanionEvent event, DateTime now) =>
+      skipReason(event, now) != null;
+
   /// Reacts to [event] at [now]. Returns this runtime unchanged when the moment
-  /// is suppressed, so a caller can notify freely without tracking cooldowns.
+  /// is suppressed, so a caller can notify freely without tracking cooldowns,
+  /// budgets, or Classroom Mode.
   CompanionRuntime notify(
     CompanionEvent event, {
     required DateTime now,
@@ -119,6 +163,8 @@ class CompanionRuntime {
         reducedMotion: preferences.effectiveReducedMotion,
         clipsAvailable: clipsAvailable,
       ),
+      mode: modeFor(event),
+      presentation: rules.presentationFor(surface: surface, event: event),
       companionName: companionName,
       speaks: preferences.effectiveSoundEnabled,
       showsCaption: preferences.captionsEnabled,
@@ -127,31 +173,73 @@ class CompanionRuntime {
     return _copyWith(
       reaction: next,
       lastShownAt: {...lastShownAt, event: now},
+      shownThisSession:
+          shownThisSession + (rules.countsAgainstBudget(event) ? 1 : 0),
     );
+  }
+
+  /// Reacts to the most important of several moments that arrived together.
+  ///
+  /// Ties keep the order the caller listed, so a screen reporting the same pair
+  /// twice gets the same answer twice.
+  CompanionRuntime notifyFirstOf(
+    Iterable<CompanionEvent> events, {
+    required DateTime now,
+    int seed = 0,
+  }) {
+    CompanionEvent? winner;
+    var best = -1;
+    for (final event in events) {
+      if (isSuppressed(event, now)) continue;
+      final priority = rules.priorityOf(surface: surface, event: event);
+      if (priority > best) {
+        best = priority;
+        winner = event;
+      }
+    }
+    if (winner == null) return this;
+    return notify(winner, now: now, seed: seed);
   }
 
   /// Clears the current reaction without forgetting the cooldown.
   CompanionRuntime dismiss() => _copyWith(clearReaction: true);
 
+  /// Moves to another surface, which changes the mode but not the history.
+  CompanionRuntime withSurface(CompanionSurface surface) =>
+      _copyWith(surface: surface, clearReaction: true);
+
   CompanionRuntime withPreferences(AccessibilityPreferences preferences) =>
       _copyWith(preferences: preferences);
 
+  /// A fresh session: the budget and the cooldowns start over.
+  CompanionRuntime newSession() => _copyWith(
+        clearReaction: true,
+        lastShownAt: const {},
+        shownThisSession: 0,
+      );
+
   CompanionRuntime _copyWith({
     CompanionPolicy? policy,
+    CompanionRules? rules,
+    CompanionSurface? surface,
     AccessibilityPreferences? preferences,
     String? companionName,
     CompanionReaction? reaction,
     bool clearReaction = false,
     Map<CompanionEvent, DateTime>? lastShownAt,
+    int? shownThisSession,
   }) {
     return CompanionRuntime(
       policy: policy ?? this.policy,
+      rules: rules ?? this.rules,
+      surface: surface ?? this.surface,
       preferences: preferences ?? this.preferences,
       companionName: companionName ?? this.companionName,
       manifest: manifest,
       clipsAvailable: clipsAvailable,
       reaction: clearReaction ? null : (reaction ?? this.reaction),
       lastShownAt: lastShownAt ?? this.lastShownAt,
+      shownThisSession: shownThisSession ?? this.shownThisSession,
     );
   }
 }

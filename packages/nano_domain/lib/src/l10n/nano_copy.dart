@@ -1,3 +1,4 @@
+import '../companion/companion_mode.dart';
 import 'nano_app_locale.dart';
 
 /// Foundation UI copy for English and Urdu.
@@ -343,6 +344,21 @@ class NanoCopy {
   String companionGreeting(String companionName) => isUrdu
       ? '$companionName آپ کے ساتھ سیکھنے کے لیے تیار ہے۔'
       : '$companionName is ready to learn with you.';
+
+  /// Mode names label the same companion in a different role, so they read as
+  /// "$companionName the explorer" rather than as a different character.
+  String companionModeLabel(CompanionMode mode) => switch (mode) {
+        CompanionMode.guide => isUrdu ? 'رہنما' : 'Guide',
+        CompanionMode.explorer => isUrdu ? 'کھوجی' : 'Explorer',
+        CompanionMode.quizCoach => isUrdu ? 'کوئز کوچ' : 'Quiz coach',
+        CompanionMode.builder => isUrdu ? 'کاریگر' : 'Builder',
+        CompanionMode.celebration => isUrdu ? 'جشن' : 'Celebration',
+      };
+
+  String companionModeBadge(String companionName, CompanionMode mode) =>
+      '$companionName · ${companionModeLabel(mode)}';
+
+  String get companionDismissLabel => isUrdu ? 'بند کریں' : 'Dismiss';
 
   String get onboardingReadyTitle => isUrdu ? 'سب تیار ہے' : 'You are all set';
   String get onboardingResumed =>

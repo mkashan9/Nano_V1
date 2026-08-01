@@ -32,11 +32,15 @@ class QuizResultView extends StatelessWidget {
   /// CMP-01: the companion reacts to the outcome the server reported, and to
   /// nothing it worked out for itself. Seeding with the attempt number and
   /// timing with `scoredAt` keeps the reaction reproducible.
+  ///
+  /// CMP-02: the quiz surface makes this Quiz Coach Nori, so a celebration here
+  /// stays coaching rather than turning into a milestone.
   CompanionReaction? _reaction(BuildContext context) {
     final preferences = NanoAccessibilityScope.maybeOf(context)?.preferences ??
         AccessibilityPreferences.defaults;
     return CompanionRuntime.forExperience(
       junior: junior,
+      surface: CompanionSurface.quiz,
       preferences: preferences,
       companionName: companionName,
     )

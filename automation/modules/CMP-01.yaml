@@ -1,7 +1,7 @@
 id: CMP-01
 name: "Nori Core Runtime"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-02
   - FND-07

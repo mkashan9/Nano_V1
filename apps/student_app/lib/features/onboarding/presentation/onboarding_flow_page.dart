@@ -243,11 +243,29 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       _step != OnboardingStep.experience ||
       _progress.selfReportedGradeLevel != null;
 
+  /// The welcome moment. A fresh runtime has no cooldown or budget history, so
+  /// the clock only has to be stable across rebuilds.
+  CompanionReaction? _welcomeReaction() {
+    return CompanionRuntime.forExperience(
+      junior: _track == ExperienceTrack.junior,
+      surface: CompanionSurface.onboarding,
+      preferences: _preferences.accessibility,
+      companionName: _preferences.companionName,
+    )
+        .notify(CompanionEvent.appOpen, now: DateTime.utc(2026))
+        .reaction;
+  }
+
   List<Widget> _stepContent(NanoCopy copy, ThemeData theme) {
     switch (_step) {
       case OnboardingStep.welcome:
         return [
-          const CompanionSlot(),
+          // CMP-02: first opening is one of the rare story-card moments, so the
+          // introduction gets the framed treatment instead of an inline aside.
+          CompanionStage(
+            reaction: _welcomeReaction(),
+            companionName: _preferences.companionName,
+          ),
           const SizedBox(height: NanoSpacing.md),
           Text(
             copy.onboardingWelcomeTitle,

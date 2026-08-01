@@ -1,7 +1,7 @@
 id: CMP-02
 name: "Nori Modes and Reaction Rules"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - CMP-01
 applications:
@@ -19,26 +19,54 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_design_system/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for CMP-02"
-ui_references: []
+  - "Chapter 10.1 controlled variation: intentional modes and story cards inside one branded frame"
+  - "CMP-01 business rules: cooldowns prevent repeated interruption; Junior larger and more frequent than Senior"
+  - "Classroom Mode suppresses non-essential interruptions and feedback noise"
+ui_references:
+  - CompanionSlot
+  - CompanionStage
 database_scope: []
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Mode comes from the surface and mood from the event, independently
+  - A milestone is Celebration Nori on every surface; a new world is an Explorer reveal
+  - All modes share the script book, the frame, and the caption design
+  - Each reaction names its mode, so a variant is never carried by colour alone
+  - Story cards are limited to the onboarding welcome, a new world, and a level milestone
+  - Colliding moments resolve by a fixed priority with a stable tie-break
+  - A session budget rations ordinary appearances and exempts essential outcomes
+  - Classroom Mode holds back ordinary guidance without spending the budget
+  - Suppression reports which rule fired
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/companion_modes_test.dart
+  - packages/nano_design_system/test/companion_mode_frame_test.dart
+  - apps/student_app/test/companion_modes_wiring_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_provider_keys_in_flutter
+  - companion_cannot_author_scores
+accessibility_checks:
+  - mode_named_in_words_not_colour
+  - caption_shown_when_voice_is_off
+  - static_art_under_reduced_motion
+  - layout_stable_when_companion_is_held_back
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - In the component gallery, confirm each mode has its own accent, emblem, and badge inside the same frame
+  - Confirm new world and level up render as story cards and everything else is inline
+  - Toggle Senior and confirm ordinary navigation moments disappear
+  - Finish a quiz and confirm the results companion is the Quiz coach
+  - Start onboarding and confirm the welcome is a framed story card
+  - Rename the companion and confirm the badge follows
+  - Enable Classroom Mode and confirm only outcomes still appear
+  - Switch to Urdu and confirm the mode names are translated
+rollback_notes: "Revert module branch commits; no database changes to undo"
 requires_owner_test: true

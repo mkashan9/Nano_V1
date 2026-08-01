@@ -43,21 +43,26 @@ class _ComponentGalleryPageState extends State<ComponentGalleryPage> {
             const SizedBox(height: NanoSpacing.md),
             const CompanionSlot(),
             const SizedBox(height: NanoSpacing.md),
-            // CMP-01: every core reaction, at the density this experience uses.
-            for (final event in const [
-              CompanionEvent.home,
-              CompanionEvent.learningEntry,
-              CompanionEvent.quizQuestion,
-              CompanionEvent.resultNeedsReview,
-              CompanionEvent.resultPassed,
-              CompanionEvent.idle,
+            // CMP-01/CMP-02: every core reaction at this experience's density,
+            // and every mode in its own frame.
+            for (final moment in const [
+              (CompanionSurface.home, CompanionEvent.home),
+              (CompanionSurface.learning, CompanionEvent.learningEntry),
+              (CompanionSurface.quiz, CompanionEvent.quizQuestion),
+              (CompanionSurface.quiz, CompanionEvent.resultNeedsReview),
+              (CompanionSurface.quiz, CompanionEvent.resultPassed),
+              (CompanionSurface.game, CompanionEvent.emptyState),
+              (CompanionSurface.home, CompanionEvent.idle),
+              (CompanionSurface.learning, CompanionEvent.newWorld),
+              (CompanionSurface.progress, CompanionEvent.levelUp),
             ])
               Padding(
                 padding: const EdgeInsets.only(bottom: NanoSpacing.sm),
                 child: CompanionStage(
-                  reaction: CompanionRuntime.forExperience(junior: !senior)
-                      .notify(event, now: _galleryClock)
-                      .reaction,
+                  reaction: CompanionRuntime.forExperience(
+                    junior: !senior,
+                    surface: moment.$1,
+                  ).notify(moment.$2, now: _galleryClock).reaction,
                 ),
               ),
             const SizedBox(height: NanoSpacing.md),
