@@ -1,7 +1,7 @@
 id: MED-12
 name: "Nori Everywhere and Companion Coverage Gate"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - MED-10
   - MED-11
