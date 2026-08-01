@@ -52,6 +52,17 @@ master it was resized from is not in git. `assets/provenance/` is the obvious
 home for it, but committing binaries is a decision the owner has not made, and
 MED-01 put bundled companion art out of scope.
 
+## Playback is admin_web only
+
+The Moderation queue plays voice and video through the browser's own elements,
+reached by a conditional import. Nothing else in Nano gained a player: the
+student and teacher apps still show captions and local art, and attaching a
+player there is still MED-03 and MED-04 work that has not been done.
+
+The widget tests run on the VM, so they resolve the stub and exercise the
+metadata fallback rather than the players. Playback itself was verified by
+building for web and opening the queue.
+
 ## Deno was never on the PATH
 
 Adapter tests for MED-03 and MED-04 had been written but never executed. This

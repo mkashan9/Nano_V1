@@ -68,7 +68,17 @@ Reject the companion picture (or leave a different reaction without approved
 art). Ask for that reaction's clip. Expect `NOT_COMPOSABLE` / `NM011`, and no
 new `generated_assets` row for the clip.
 
-### 6. Nothing leaked
+### 6. Watch the clip and hear the line
+
+Open admin_web → Moderation and select the MP4, then the MP3. Both play in
+place: the clip in a looping video element, the line in an audio bar. Decide
+each on what you see and hear, not on its checksum.
+
+If a preview does not load, the screen falls back to the file's type, size, and
+checksum, and the Reject button still works — a broken preview must never force
+an approval.
+
+### 7. Nothing leaked
 
 - Search the admin_web and student_app builds for either API key string — zero
   hits.

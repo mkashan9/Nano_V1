@@ -75,6 +75,25 @@ asset id onto the row when it already has them, and
 `record_generated_asset_result` merges provenance while stripping nulls so a
 worker reporting ignorance cannot erase knowledge.
 
+## The reviewer plays the file, in the browser, with no plugin
+
+MED-03 and MED-04 left voice and video unplayable and said so, on the reasoning
+that a player meant a plugin in every app. That reasoning does not survive
+contact with the Moderation queue: asking somebody whether a child should see a
+clip while showing them a checksum is not a review, it is a signature. The
+first owner to reach the queue with a real MP4 and a real MP3 in it asked how to
+play them, which settles the question.
+
+admin_web is the one app that only ever runs in a browser, and a browser plays
+MP3 and MP4 already. A conditional import gives the web build real `<audio>` and
+`<video>` elements through `package:web` — wasm-clean, unlike `dart:html` — and
+gives everything else a stub that returns nothing, so the VM widget tests keep
+exercising the old metadata fallback. The student and teacher apps gain no
+player and no dependency.
+
+The fallback stays reachable on purpose. A preview that will not load must leave
+Reject working, because rejecting is the safe direction.
+
 ## Cost estimates are non-zero by default
 
 A cost budget that reads zero for every recording and every clip is a cost

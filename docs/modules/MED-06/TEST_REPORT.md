@@ -40,6 +40,21 @@
 | Live json2video compose with a real key | **passed** — `guide_greeting` MP4 landed with motion and source art recorded |
 | Learner-facing published voice / clip | Waiting on Moderation approval of the two unreviewed assets |
 
+## Gap caught during the owner's manual test
+
+The owner reached the queue, found an MP4 and an MP3 waiting, and asked how to
+play them. Nothing did: MED-05's preview rendered images and described everything
+else by content type, size, and checksum. Approving media you cannot open is not
+review.
+
+admin_web now plays both in place through the browser's own elements. Verified
+by `flutter build web` (clean, and the wasm dry run passes — `package:web`
+rather than the deprecated `dart:html`), then by opening the queue against
+`nano_v1` and playing each asset. `flutter analyze` reports only the two
+pre-existing `unnecessary_underscores` from the content pages; all 22 admin_web
+widget tests pass on the VM, where the conditional import resolves the stub and
+exercises the metadata fallback.
+
 ## Regression caught live
 
 The first composed clip recorded `motion: null` and `composed_from_asset_id: null`.

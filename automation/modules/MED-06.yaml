@@ -13,9 +13,19 @@ dependency_notes: >
 applications:
   - packages
   - supabase
+  - admin_web
   - docs
   - automation
+scope_amendments:
+  - >
+    admin_web was added on 2026-08-01, during USER_TEST, after the owner reached
+    the Moderation queue and found the MP4 and MP3 unplayable. MED-05 previewed
+    images and described everything else by checksum, which turns a review into
+    a signature. The fix is confined to the review screen's preview and touches
+    no learner-facing app.
 allowed_paths:
+  - apps/admin_web/lib/features/moderation/
+  - apps/admin_web/pubspec.yaml
   - supabase/migrations/
   - supabase/tests/
   - supabase/functions/generate-asset/
@@ -66,6 +76,8 @@ acceptance:
   - Motion is a closed authored set; an unknown motion is refused with NM009 and a published motion cannot be edited (NM008)
   - Neither key ever appears in a Flutter client, a git commit, or a log
   - Daily budgets still refuse before a provider is reached
+  - A reviewer can play a voice recording and a reaction clip inside the Moderation queue, and a preview that fails to load still leaves Reject available
+  - No player or web-only dependency reaches student_app or teacher_app
   - Module documentation complete, including what the Gemini adapters become once they are no longer default
   - Owner manual test steps provided and runnable without Docker
 required_tests:
@@ -85,6 +97,7 @@ manual_test_steps:
   - Record one authored narration line and confirm an MP3 lands in generated-assets and is unreviewed
   - Approve companion art for a reaction, then compose a clip and confirm an MP4 lands unreviewed
   - Confirm a clip without approved art is refused with NM011 and creates no asset row
+  - Play the MP4 and the MP3 in the Moderation queue and decide each on what you see and hear
   - Confirm neither key appears in a client bundle or in git
 rollback_notes: >
   Revert the module branch. Restore gemini_voice_aoede and gemini_veo_video as
