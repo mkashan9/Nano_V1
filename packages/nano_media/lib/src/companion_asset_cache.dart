@@ -49,6 +49,7 @@ class CompanionAssetCache {
 
   CompanionAssetCatalog _catalog = CompanionAssetCatalog.empty;
   DateTime? _fetchedAt;
+  var _attempted = false;
   Future<CompanionAssetCatalog>? _inFlight;
   Object? _lastError;
   var fetchCount = 0;
@@ -58,8 +59,8 @@ class CompanionAssetCache {
   /// What is cached right now, without asking anyone. Safe before the first load.
   CompanionAssetCatalog get current => _catalog;
 
-  /// True when a load has produced a catalog, successfully or not.
-  bool get isLoaded => _fetchedAt != null;
+  /// True when a load has been attempted, successfully or not.
+  bool get isLoaded => _attempted;
 
   bool get isStale {
     final fetchedAt = _fetchedAt;
@@ -85,6 +86,7 @@ class CompanionAssetCache {
 
   Future<CompanionAssetCatalog> _refresh() async {
     fetchCount++;
+    _attempted = true;
     try {
       final assets = await _fetchAssets();
       _catalog = CompanionAssetCatalog.fromAssets(assets);
@@ -97,8 +99,9 @@ class CompanionAssetCache {
     } catch (error) {
       _lastError = error;
       // Keep whatever was already known. On a first run that is an empty
-      // catalog, which is exactly what a device with no generated assets has.
-      _fetchedAt ??= _clock();
+      // catalog — but do not stamp [_fetchedAt]: a fetch that failed because
+      // nobody has signed in yet must not poison the next six hours, or the
+      // approved art that exists after sign-in is never asked for again.
       return _catalog;
     }
   }
@@ -139,6 +142,7 @@ class CompanionAssetCache {
   void clear() {
     _catalog = CompanionAssetCatalog.empty;
     _fetchedAt = null;
+    _attempted = false;
     _lastError = null;
     _urls.clear();
   }

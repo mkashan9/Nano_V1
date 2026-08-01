@@ -89,6 +89,34 @@ void main() {
       expect(cache.isLoaded, isTrue, reason: 'a failure still counts as answered');
     });
 
+    test('a failed first fetch does not lock out a later successful one', () async {
+      // The app probes before sign-in; that probe fails. Sign-in then asks
+      // again, and the approved art must be reachable without waiting out the
+      // TTL or passing force: true.
+      var fail = true;
+      final cache = CompanionAssetCache(
+        fetch: () async {
+          if (fail) throw StateError('not signed in');
+          return [
+            _asset(
+              slot: 'guide_greeting_staticArt',
+              kind: GeneratedAssetKind.image,
+            ),
+          ];
+        },
+        ttl: const Duration(hours: 6),
+      );
+
+      await cache.load();
+      expect(cache.current.length, 0);
+      expect(cache.isStale, isTrue, reason: 'a failure must stay stale');
+
+      fail = false;
+      final catalog = await cache.load();
+      expect(catalog.length, 1);
+      expect(cache.fetchCount, 2);
+    });
+
     test('signs a URL once and reuses it until it is nearly expired', () async {
       var now = DateTime.utc(2026, 8, 1, 9);
       var signCount = 0;

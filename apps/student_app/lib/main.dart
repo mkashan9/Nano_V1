@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -200,10 +202,14 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     WidgetsBinding.instance.addObserver(this);
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
+      // Catalogs wait for a session: an anonymous fetch fails closed and used
+      // to be cached as empty for the whole TTL, so the approved art that
+      // exists after sign-in was never asked for again (MED-08).
       _restore();
+    } else {
+      _loadCompanionAssets();
+      _loadNarration();
     }
-    _loadCompanionAssets();
-    _loadNarration();
   }
 
   @override
@@ -230,10 +236,17 @@ class _NanoStudentAppState extends State<NanoStudentApp>
         _principal = restored.principal;
         _router = _createRouter();
       });
-      await _loadOnboarding(restored.principal);
+      await _afterSignedIn(restored.principal);
     } finally {
       if (mounted) setState(() => _restoring = false);
     }
+  }
+
+  Future<void> _afterSignedIn(SessionPrincipal principal) async {
+    await _loadOnboarding(principal);
+    if (!mounted) return;
+    await _loadCompanionAssets(force: true);
+    await _loadNarration(force: true);
   }
 
   Future<void> _loadOnboarding(SessionPrincipal principal) async {
@@ -298,8 +311,8 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   /// empty catalog on failure, and an empty catalog is indistinguishable from a
   /// library nobody has recorded yet — which is the resting state until MED-05
   /// approves something. Either way the captions on screen are already correct.
-  Future<void> _loadNarration() async {
-    await _narrationCache.load(_locale);
+  Future<void> _loadNarration({bool force = false}) async {
+    await _narrationCache.load(_locale, force: force);
     if (!mounted) return;
     _companion.attachNarration(
       catalog: _narrationCache.current,
@@ -313,9 +326,10 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   /// Deliberately unawaited and deliberately not guarded: the cache swallows a
   /// failure and answers with an empty catalog, which is the same thing a device
   /// with nothing published has. Until a curator approves a clip this changes
-  /// nothing on screen, and that is the intended resting state.
-  Future<void> _loadCompanionAssets() async {
-    await _assetCache.load();
+  /// nothing on screen, and that is the intended resting state. Call with
+  /// [force] after sign-in so a failed anonymous probe cannot win.
+  Future<void> _loadCompanionAssets({bool force = false}) async {
+    await _assetCache.load(force: force);
     if (!mounted) return;
     _companion.setClipsAvailable(_assetCache.clipsAvailable);
     _companion.setClipSlots(_assetCache.current.clipSlots);
@@ -419,7 +433,11 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           _principal = bootstrap.principal;
           _router = _createRouter();
         });
-        _loadOnboarding(bootstrap.principal);
+        // Track first, then catalogs: the home greeting is announced against
+        // whichever experience the track selects, and the picture for it has
+        // to be asked for with a live session rather than the anonymous one
+        // that was probing before the form submitted.
+        unawaited(_afterSignedIn(bootstrap.principal));
       },
       onSignedOut: _signOut,
       onboardingRepository: widget.onboardingRepository,
@@ -542,7 +560,9 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           controller: _companion,
           child: MaterialApp.router(
             key: ValueKey(
-              '${_principal.role}-${_principal.isAuthenticated}-'
+              '${_principal.role}-'
+              '${_principal.experienceTrack?.name ?? 'unset'}-'
+              '${_principal.isAuthenticated}-'
               '${_onboarding?.isComplete ?? false}-'
               '${_locale.tag}-${_a11y.reducedMotion}-'
               '${_a11y.classroomMode}-${_a11y.textScale}',

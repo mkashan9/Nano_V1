@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix: approved companion art reaches a learner after sign-in — the app used to ask for the published catalog before anyone was authenticated, cache the anonymous failure as an empty answer for six hours, and never ask again, so a reviewer-approved Nori stayed invisible while the icon and caption still rendered; catalogs now load only with a live session, and a failed fetch no longer locks the TTL
+
 - Fix: a learner's experience follows the track they chose, not the account kind they signed up with — onboarding recorded junior or senior in `student_onboarding`, sign-in reads `profiles` and never saw it, and the app loaded the track on every launch and then dropped it, applying it only in the session where onboarding happened to finish; a returning Junior was handed the Senior experience, which is quiet on home, so the companion never appeared at all. `SessionPrincipal` now carries the track and presentation follows it, because an independent learner keeps one role at every age and a role alone cannot tell a six-year-old from a sixteen-year-old
 
 - MED-08: the media finally reaches a child — seven modules generated, budgeted, reviewed, published, and delivered companion assets that nothing on screen could display, so Nori was a paw icon and the Listen and Play controls could never appear; the app now draws the approved picture, plays the recording in the voice that was cast, and plays the Wan clip silently, and every failure below that — an expired URL, a dead link, a codec that will not open, no plugin at all — falls to a picture or an icon and a caption rather than an error or an empty frame

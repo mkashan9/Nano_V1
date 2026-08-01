@@ -55,6 +55,21 @@ therefore always showed the one greeting the Guide can never say aloud. Home
 now seeds the second variant, so the voice is reachable in the ordinary path
 rather than only in a contrived one.
 
+## Catalogs wait for a session (defect found in USER_TEST)
+
+The approved picture, voice, and clip never appeared for a learner who signed
+in through the form. `initState` asked for both catalogs before anyone was
+authenticated; the anonymous RPC failed closed; and a failure stamped the
+cache as fresh for six hours. Sign-in then found a "good enough" empty
+catalog and never asked again. The icon and caption still rendered (they do
+not need the network), so the surface looked present while Nori herself —
+the art a reviewer had already approved — was invisible.
+
+Catalogs now load only after a session exists (or immediately when the app
+is running without auth, as widget tests do), and a failed fetch no longer
+counts as a successful empty answer for the TTL. Force-reload after sign-in
+is the belt; leaving `_fetchedAt` unset on failure is the braces.
+
 ## Presentation follows the track, not the role (defect found in USER_TEST)
 
 The owner reported the same UI whether they signed in as a Junior or a Senior

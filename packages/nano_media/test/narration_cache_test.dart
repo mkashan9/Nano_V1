@@ -74,6 +74,26 @@ void main() {
     expect(cache.lastError, isA<StateError>());
   });
 
+  test('a failed first fetch does not lock out a later successful one', () async {
+    var fail = true;
+    final cache = NarrationCache(
+      fetch: (locale) async {
+        if (fail) throw StateError('not signed in');
+        return [line()];
+      },
+      ttl: const Duration(hours: 6),
+    );
+
+    await cache.load(NanoAppLocale.en);
+    expect(cache.current.length, 0);
+    expect(cache.isStaleFor(NanoAppLocale.en), isTrue);
+
+    fail = false;
+    final catalog = await cache.load(NanoAppLocale.en);
+    expect(catalog.length, 1);
+    expect(cache.fetchCount, 2);
+  });
+
   test('a later failure keeps the last good catalog', () async {
     var fail = false;
     var now = DateTime.utc(2026, 8, 1, 9);
