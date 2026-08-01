@@ -18,11 +18,20 @@
 
 ## Owner decision waiting
 
-`generate-asset` is still committed and undeployed, and no provider key is set.
-MED-05 closed the last gap that was not about deployment: generated media can now
-be reviewed and published. Nothing has been published yet, because nothing has
-been generated — every MED-05 path was proven against planted rows rather than
-real files.
+`generate-asset` is **deployed** (owner approved, 2026-08-01). Images work end to
+end and cost nothing: one real companion image has been generated and is sitting
+unreviewed, ready for the MED-05 manual test.
+
+Two things are still open, and both are owner decisions:
+
+- **Voice.** `VOICE_PROVIDER_API_KEY` is unset, so narration fails closed. Only
+  a Supabase Edge Function secret is needed; the Gemini TTS adapter is deployed.
+- **Video.** `VIDEO_PROVIDER_API_KEY` is unset, and the adapter still defaults to
+  `veo-2.0-generate-001`, which is a legacy model. Video needs both a key and a
+  decision about which Veo 3.1 tier to target, because the tiers differ in price
+  by roughly eight times. The `VIDEO_COST_MICROS_PER_CLIP` default of 50,000
+  ($0.05) is far below any real tier, so today the 20-requests-per-day ceiling is
+  the effective spend limit, not the $3.00 cost budget.
 
 MED-05 was also built on the admin shell QZ-01 and QZ-02 shipped, because ADM-01
 is still BACKLOG. ADM-01 should absorb the Moderation screen rather than replace

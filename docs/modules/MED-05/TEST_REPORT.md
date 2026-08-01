@@ -46,10 +46,23 @@ One pre-existing failure was fixed on the way through:
 fake's unconfigured voice provider, which MED-03 renamed to
 `gemini_voice_aoede`.
 
+## Live pipeline (added after the module was written, on owner approval)
+
+`generate-asset` was deployed to `nano_v1` and one real image was generated
+through it, which retires the largest "never run" item.
+
+| Check | Result |
+|-------|--------|
+| `generate-asset` deployed, `verify_jwt` on | ACTIVE, version 1 |
+| Superadmin sign-in → `request_generated_asset` → Pollinations → storage | 17,688-byte JPEG, `ready`, `unreviewed` |
+| Charged once, at zero cost (keyless provider) | 1 image request, 0 micros |
+| Reviewer signed URL on an unapproved object | downloaded and rendered |
+| Learner catalog and storage on that same real row | 0 rows, not readable |
+
 ## Not run
 
 | Test | Why |
 |------|-----|
-| Reviewer preview of real bytes | No asset has ever been generated on `nano_v1`; `generate-asset` is undeployed and no provider key is set |
+| Voice and video generation | No `VOICE_PROVIDER_API_KEY` or `VIDEO_PROVIDER_API_KEY`; both fail closed with `PROVIDER_UNCONFIGURED` |
 | Audio / video playback in the reviewer's browser | No player plugin (MED-03, MED-04) |
-| Learner-facing published media end to end | Depends on the two rows above existing |
+| Learner-facing published media end to end | Nothing has been approved yet; that is the owner's decision in the manual test |

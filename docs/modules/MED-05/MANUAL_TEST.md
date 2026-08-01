@@ -3,10 +3,15 @@
 SQL against `nano_v1` in the Studio SQL editor, then one `admin_web` run. No
 Docker, nothing to deploy.
 
-`nano_v1` has never generated a real file, so step 2 plants two assets that look
-exactly like a finished job except that no bytes exist behind the path. That is
-enough to exercise every decision; the only thing you will not see is the
-picture itself, which reads as **Preview unavailable**. Step 9 removes them.
+`generate-asset` is now deployed, and one **real** companion image has been
+generated through it and is sitting unreviewed in the queue. That is the asset
+to review on the screen in step 8 — its preview is an actual picture.
+
+Steps 2 through 7 additionally plant two assets that look exactly like a
+finished job except that no bytes exist behind the path. Those exist to
+exercise the refusal and slot-recovery paths cheaply; their previews read
+**Preview unavailable**, which is itself the behaviour being checked. Step 9
+removes the planted pair and leaves the real image alone.
 
 ## Fixtures
 
@@ -18,14 +23,18 @@ picture itself, which reads as **Preview unavailable**. Step 9 removes them.
 
 Development fixtures only.
 
-## 1. Nothing is published, because nothing has been decided
+## 1. One real asset, generated and undecided
 
 ```sql
-select count(*) as assets from public.generated_assets;
+select slot, kind, status, moderation, byte_size, provider_id, cost_micros
+from public.generated_assets;
+
 select count(*) as decisions from public.asset_review_events;
 ```
 
-Expect `0` and `0`.
+Expect one `guide_greeting_staticArt` row: `ready`, `unreviewed`, about 17 KB of
+real JPEG from `pollinations_image` at zero cost — and zero decisions. It has
+bytes, and no learner can reach them yet.
 
 ## 2. Plant two reviewable assets
 
@@ -174,12 +183,15 @@ flutter run -d chrome `
 
 Sign in as `platform@nano.dev`, then open **Moderation** in the side rail.
 
-- **Unreviewed** is selected. `med05_screen_test` is listed and decidable;
-  the fresh `med05_owner_test` row shows an hourglass, and Approve is disabled
-  with "Only a ready asset can be approved" underneath.
-- Select `med05_screen_test`. The prompt, provider, prompt version, feature, and
-  cost are all shown — none of which a learner can ever read. The preview says
-  **Preview unavailable**, because no bytes were ever uploaded.
+- **Unreviewed** is selected. `guide_greeting_staticArt` and `med05_screen_test`
+  are listed and decidable; the fresh `med05_owner_test` row shows an hourglass,
+  and Approve is disabled with "Only a ready asset can be approved" underneath.
+- Select `guide_greeting_staticArt`. **The preview is a real picture** — this is
+  the one asset with bytes behind it. The prompt, provider, prompt version,
+  feature, and cost are all shown, none of which a learner can ever read.
+- Select `med05_screen_test`. Same detail, but the preview says **Preview
+  unavailable**, because no bytes were ever uploaded. Confirm the decision
+  buttons still work — a preview that will not load must never block a review.
 - Press **Approve**. Expect "1 published". The row leaves the Unreviewed filter
   and appears under **Published**.
 - Press **Reject** with the reason box empty. Expect the server's sentence in a
@@ -191,25 +203,27 @@ Sign in as `platform@nano.dev`, then open **Moderation** in the side rail.
 
 ## 9. Clean up
 
+Remove only the planted pair. Leave `guide_greeting_staticArt`: it is a real
+generated asset and it is useful to keep around.
+
 ```sql
 delete from public.generated_assets
 where slot in ('med05_owner_test', 'med05_screen_test');
 
-select count(*) as assets from public.generated_assets;
+select slot, moderation from public.generated_assets;
 select count(*) as decisions from public.asset_review_events;
 select count(*) as audit_survives
 from public.audit_events
 where target_type = 'generated_asset';
 ```
 
-Expect `0`, `0`, and a non-zero audit count: the per-asset detail goes with the
-asset, the durable record of who decided what does not.
+Expect the real image to be the only row left, no review events for the deleted
+pair, and a non-zero audit count: the per-asset detail goes with the asset, the
+durable record of who decided what does not.
 
-You may also want to clear the image generation charges this test recorded:
-
-```sql
-delete from public.generation_usage where kind = 'image';
-```
+Decide what state you want the real image left in. Leaving it **rejected** or
+**unreviewed** keeps every learner surface on local art, which is what the rest
+of the app currently expects.
 
 ## 10. No secrets in clients
 

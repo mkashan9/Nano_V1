@@ -1,19 +1,22 @@
 # MED-05 known issues
 
-## Never run against a real file
+## Images are proven end to end; voice and video are not
 
-`nano_v1` has zero generated assets, because `generate-asset` is undeployed and
-no provider key exists (owner approval, MED-01). Every review path was exercised
-against rows planted as `service_role` with a `storage_path` and no object
-behind it. What that means in practice:
+`generate-asset` was deployed to `nano_v1` with owner approval after the module
+was written, and one real companion image has been generated, stored, and
+previewed. That closed the biggest gap:
 
-- The reviewer preview has never rendered a real image.
-- Signed-URL generation through `generated_assets_bucket_read_admin` was proven
-  by policy, not by a successful download.
+- The reviewer preview has rendered a real picture.
+- `generated_assets_bucket_read_admin` was proven by an actual signed download,
+  not only by policy.
+- The learner gates were re-checked against that real row: catalog returns
+  nothing and the object is unreadable while it is unreviewed.
 
-The manual test plants the same kind of row, so the owner sees the queue, the
-decision, and the audit trail, and sees "Preview unavailable" where the picture
-would be.
+Voice and video have still never produced a file. Neither
+`VOICE_PROVIDER_API_KEY` nor `VIDEO_PROVIDER_API_KEY` is set, so both fail
+closed with `PROVIDER_UNCONFIGURED`. The planted rows in the manual test stand
+in for them, which also exercises the case that matters most for those kinds: a
+preview that cannot load must not block a decision.
 
 ## Voice and video previews are metadata
 
