@@ -47,8 +47,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | MED-05 | Superadmin Asset Review and Publication | R4 | DONE | MED-02, ADM-01 |
 | MED-06 | Fish Audio Narration and Composed Reaction Clips | R4 | DONE | MED-03, MED-04, MED-05 |
 | MED-07 | Wan 2.2 Character Animation with Compose Fallback | R4 | DONE | MED-06 |
-| MED-08 | Real Playback and Companion Art Rendering | R4 | USER_TEST | MED-07, FND-07 |
-| MED-09 | Nori Character Sheet and Static Pose Pack | R4 | BACKLOG | MED-08 |
+| MED-08 | Real Playback and Companion Art Rendering | R4 | DONE | MED-07, FND-07 |
+| MED-09 | Nori Character Sheet and Static Pose Pack | R4 | ACTIVE | MED-08 |
 | MED-10 | Idle Life and Local Animation Tier | R4 | BACKLOG | MED-09 |
 | MED-11 | Full Narration and Celebration Clip Pack | R4 | BACKLOG | MED-09 |
 | MED-12 | Nori Everywhere and Companion Coverage Gate | R4 | BACKLOG | MED-10, MED-11 |

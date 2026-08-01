@@ -3,10 +3,10 @@
 ## Current state
 
 - **Current release:** R4 Companion
-- **Current module:** MED-08 Real Playback and Companion Art Rendering
-- **Current status:** USER_TEST
-- **Current branch:** module/MED-08-playback-and-companion-art
-- **Last completed module:** MED-07
+- **Current module:** MED-09 Nori Character Sheet and Static Pose Pack
+- **Current status:** ACTIVE
+- **Current branch:** module/MED-09-character-sheet-and-poses
+- **Last completed module:** MED-08
 - **Application name:** Nano
 
 ## Releases
@@ -14,8 +14,8 @@
 - R1 Identity: complete
 - R2 Student Core: complete (STU-03 through STU-05 DONE)
 - R3 Learning: complete (LRN-01–LRN-05, QZ-01–QZ-06 DONE)
-- R4 Companion: CMP-01–CMP-03 and MED-01–MED-07 DONE; MED-08 through MED-12
-  are the avatar arc that makes the companion real in the app
+- R4 Companion: CMP-01–CMP-03 and MED-01–MED-08 DONE; MED-09 through MED-12
+  are the rest of the avatar arc
 
 ## The avatar arc
 
@@ -25,8 +25,8 @@ that gap and end with the companion roughly ninety percent implemented.
 
 | Module | What it delivers | Status |
 |--------|------------------|--------|
-| MED-08 | The app can finally show an image and play a voice or a clip | USER_TEST |
-| MED-09 | One canonical Nori, static art for all 25 reachable reactions, bundled offline floor | BACKLOG |
+| MED-08 | The app can finally show an image and play a voice or a clip | DONE |
+| MED-09 | One canonical Nori, static art for all 25 reachable reactions, bundled offline floor | ACTIVE |
 | MED-10 | Free local motion: breathing, blink, a bounce that reads as the mood | BACKLOG |
 | MED-11 | A recorded line for every moment, a clip for every celebration | BACKLOG |
 | MED-12 | Presence on every surface, plus a build gate that fails when a reaction has no art | BACKLOG |
@@ -53,5 +53,6 @@ path is finished, the art pack is not.
 
 ## Owner decision waiting
 
-Run the MED-08 manual test in `docs/modules/MED-08/MANUAL_TEST.md`. Everything
-it needs is already approved, and the Junior home shows all three at once.
+None. MED-08 was approved. MED-09 is in progress and will return for a manual
+test — the pose pack is reviewed one pose at a time, so expect a Moderation
+queue rather than a single yes or no.

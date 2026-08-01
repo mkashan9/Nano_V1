@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-08 owner manual test
+- [ ] MED-09 Nori Character Sheet and Static Pose Pack
 
 ## Completed
 
@@ -40,10 +40,10 @@
 - [x] MED-05
 - [x] MED-06
 - [x] MED-07
+- [x] MED-08
 
 ## Upcoming
 
-- [ ] MED-09 Nori Character Sheet and Static Pose Pack
 - [ ] MED-10 Idle Life and Local Animation Tier
 - [ ] MED-11 Full Narration and Celebration Clip Pack
 - [ ] MED-12 Nori Everywhere and Companion Coverage Gate
