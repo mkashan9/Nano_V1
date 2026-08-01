@@ -1,44 +1,80 @@
 id: SCH-04
 name: "Student Management and Excel Import"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SCH-02
+dependency_notes: >
+  SCH-02 owns classes used for enrollment. SCH-03 owns teachers. This module
+  owns school-admin student directory, create, suspend, enrollment, and CSV.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-04/
   - automation/modules/SCH-04.yaml
+  - automation/modules/SCH-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook SCH-03 Users imports enrollment (students slice)"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-04"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.profiles
+  - public.school_memberships
+  - public.student_enrollments
+  - auth.users
+server_functions:
+  - "public.list_school_students"
+  - "public.create_school_student"
+  - "public.set_school_student_status"
+  - "public.enroll_school_student"
+  - "public.preview_student_import"
+  - "public.commit_student_import"
 acceptance:
+  - School admin Students hub lists in-tenant students
+  - Create student provisions auth+profile+membership
+  - Suspend/restore requires reason
+  - CSV import commits only when preview has zero failures
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch04_student_management.sql
+  - packages/nano_domain/test/school_student_ops_test.dart
+  - packages/nano_data/test/school_student_repository_test.dart
+  - apps/admin_web/test/school_students_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
+  - import_all_or_nothing
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Students as school admin
+  - Create, suspend, restore a student
+  - Preview and commit CSV import
+rollback_notes: >
+  Revert the branch and migration. Students returns to stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Students only. CSV import with optional class_name. No guardians/promotion.
+  deferred: >
+    SCH-05 assignments; guardians; bulk promotion.
