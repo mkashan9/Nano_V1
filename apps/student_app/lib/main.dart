@@ -58,6 +58,7 @@ class NanoStudentApp extends StatefulWidget {
     this.checkpointRepository,
     this.insightsRepository,
     this.learnerQuizRepository,
+    this.quizAttemptRepository,
     this.syncController,
     this.requireAuth = false,
   });
@@ -77,6 +78,7 @@ class NanoStudentApp extends StatefulWidget {
   final CheckpointRepository? checkpointRepository;
   final LearningInsightsRepository? insightsRepository;
   final LearnerQuizRepository? learnerQuizRepository;
+  final QuizAttemptRepository? quizAttemptRepository;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -100,6 +102,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late final CheckpointRepository _checkpointRepository;
   late final LearningInsightsRepository _insightsRepository;
   late final LearnerQuizRepository _learnerQuizRepository;
+  late final QuizAttemptRepository _quizAttemptRepository;
   late final NanoSyncController _syncController;
   var _restoring = false;
 
@@ -147,6 +150,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         widget.insightsRepository ?? FakeLearningInsightsRepository();
     _learnerQuizRepository =
         widget.learnerQuizRepository ?? FakeLearnerQuizRepository();
+    _quizAttemptRepository =
+        widget.quizAttemptRepository ?? FakeQuizAttemptRepository();
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
@@ -263,6 +268,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       checkpointRepository: _checkpointRepository,
       insightsRepository: _insightsRepository,
       learnerQuizRepository: _learnerQuizRepository,
+      quizAttemptRepository: _quizAttemptRepository,
       syncController: _syncController,
     );
   }

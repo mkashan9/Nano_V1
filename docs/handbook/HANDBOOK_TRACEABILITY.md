@@ -45,7 +45,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook QZ-01 Quiz authoring | QZ-01 | admin_web | question bank | questions,question_versions,question_bank,create_question_draft,publish_question_version | unit+widget+SQL | DONE |
 | Handbook QZ-01 video quiz attachment | QZ-02 | admin_web | topic quizzes | quiz_versions,quiz_policies,quiz_items,quiz_authoring,learner_quiz | unit+widget+SQL | DONE |
 | Handbook QZ-02 Junior quiz attempt UX | QZ-03 | student_app | Junior quiz | learner_quiz,JuniorQuizFlow | unit+widget | DONE |
-| Handbook QZ-02 Senior quiz navigation | QZ-04 | student_app | Senior quiz | learner_quiz,SeniorQuizFlow | unit+widget | USER_TEST |
+| Handbook QZ-02 Senior quiz navigation | QZ-04 | student_app | Senior quiz | learner_quiz,SeniorQuizFlow | unit+widget | DONE |
+| Handbook QZ-02 trusted scoring / resume | QZ-05 | student_app | quiz attempts | quiz_attempts,attempt_answers,score_results,submit_quiz_attempt | unit+widget+SQL | USER_TEST |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | BACKLOG |
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
 | Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | BACKLOG |

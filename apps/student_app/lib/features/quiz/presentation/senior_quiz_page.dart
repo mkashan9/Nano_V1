@@ -3,18 +3,20 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// QZ-04 Senior attempt: free navigation, review checklist, local selections
-/// only — no client-side final score (QZ-05).
+/// QZ-04/QZ-05 Senior attempt: navigation + review; finish submits for a
+/// server score.
 class SeniorQuizPage extends StatefulWidget {
   const SeniorQuizPage({
     super.key,
     required this.topicVersionId,
     required this.repository,
+    this.attemptRepository,
     this.topicTitle,
   });
 
   final String topicVersionId;
   final LearnerQuizRepository repository;
+  final QuizAttemptRepository? attemptRepository;
   final String? topicTitle;
 
   @override
@@ -24,6 +26,11 @@ class SeniorQuizPage extends StatefulWidget {
 class _SeniorQuizPageState extends State<SeniorQuizPage> {
   NanoViewState _state = const NanoViewLoading();
   SeniorQuizFlow? _flow;
+  String? _attemptId;
+  ScoreResult? _score;
+  var _submitting = false;
+  late final QuizAttemptRepository _attempts =
+      widget.attemptRepository ?? FakeQuizAttemptRepository();
 
   @override
   void initState() {
@@ -46,8 +53,13 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
         });
         return;
       }
+      final session = await _attempts.startOrResume(widget.topicVersionId);
+      if (!mounted) return;
       setState(() {
-        _flow = SeniorQuizFlow.start(quiz);
+        _attemptId = session.attemptId;
+        _flow = session.answers.isEmpty
+            ? SeniorQuizFlow.start(quiz)
+            : SeniorQuizFlow.resume(quiz, session.answers);
         _state = const NanoViewReady();
       });
     } catch (_) {
@@ -56,7 +68,51 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
     }
   }
 
+  Future<void> _select(String optionId) async {
+    final flow = _flow;
+    final attemptId = _attemptId;
+    if (flow == null || flow.finished || attemptId == null) return;
+    final next = flow.select(optionId);
+    setState(() => _flow = next);
+    try {
+      await _attempts.saveAnswer(
+        attemptId: attemptId,
+        questionVersionId: next.currentItem.questionVersionId,
+        selectedOptionId: optionId,
+      );
+    } catch (_) {}
+  }
+
   void _update(SeniorQuizFlow next) => setState(() => _flow = next);
+
+  Future<void> _finish() async {
+    final flow = _flow;
+    final attemptId = _attemptId;
+    if (flow == null || !flow.canFinish || attemptId == null || _submitting) {
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _flow = flow.finish();
+    });
+    try {
+      final score = await _attempts.submit(attemptId);
+      if (!mounted) return;
+      setState(() {
+        _score = score;
+        _submitting = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _flow = flow;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not submit quiz')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,22 +139,23 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
                     NanoSpacing.md,
                     NanoSpacing.xxl,
                   ),
-                  child: flow.finished
-                      ? _FinishedPane(copy: copy)
+                  child: flow.finished || _score != null
+                      ? _FinishedPane(copy: copy, score: _score)
                       : flow.reviewing
                           ? _ReviewPane(
                               flow: flow,
                               copy: copy,
+                              submitting: _submitting,
                               onJump: (i) => _update(flow.jumpTo(i)),
                               onExit: () => _update(flow.exitReview()),
-                              onFinish: () => _update(flow.finish()),
+                              onFinish: _finish,
                             )
                           : _QuestionPane(
                               flow: flow,
                               copy: copy,
                               locale: locale,
                               theme: theme,
-                              onSelect: (id) => _update(flow.select(id)),
+                              onSelect: _select,
                               onJump: (i) => _update(flow.jumpTo(i)),
                               onPrevious: () => _update(flow.goPrevious()),
                               onNext: () => _update(flow.goNext()),
@@ -238,6 +295,7 @@ class _ReviewPane extends StatelessWidget {
     required this.onJump,
     required this.onExit,
     required this.onFinish,
+    this.submitting = false,
   });
 
   final SeniorQuizFlow flow;
@@ -245,6 +303,7 @@ class _ReviewPane extends StatelessWidget {
   final ValueChanged<int> onJump;
   final VoidCallback onExit;
   final VoidCallback onFinish;
+  final bool submitting;
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +352,7 @@ class _ReviewPane extends StatelessWidget {
             ),
             const Spacer(),
             FilledButton(
-              onPressed: flow.canFinish ? onFinish : null,
+              onPressed: flow.canFinish && !submitting ? onFinish : null,
               child: Text(copy.quizFinishLabel),
             ),
           ],
@@ -313,9 +372,10 @@ class _ReviewPane extends StatelessWidget {
 }
 
 class _FinishedPane extends StatelessWidget {
-  const _FinishedPane({required this.copy});
+  const _FinishedPane({required this.copy, this.score});
 
   final NanoCopy copy;
+  final ScoreResult? score;
 
   @override
   Widget build(BuildContext context) {
@@ -330,11 +390,33 @@ class _FinishedPane extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: NanoSpacing.md),
-        Text(
-          copy.quizScoreLaterNotice,
-          style: theme.textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-        ),
+        if (score != null) ...[
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              copy.quizServerScore(score!.scorePercent),
+              style: theme.textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Text(
+            score!.passed ? copy.quizPassedLabel : copy.quizFailedLabel,
+            style: theme.textTheme.titleLarge,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Text(
+            copy.quizScoreFromServerNotice,
+            style: theme.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+        ] else
+          Text(
+            copy.quizScoreLaterNotice,
+            style: theme.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
         const Spacer(),
         OutlinedButton(
           onPressed: () => Navigator.of(context).maybePop(),

@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] QZ-04 owner manual test
+- [ ] QZ-05 owner manual test
 
 ## Completed
 
@@ -27,7 +27,8 @@
 - [x] QZ-01
 - [x] QZ-02
 - [x] QZ-03
+- [x] QZ-04
 
 ## Upcoming
 
-- [ ] QZ-05 Trusted Scoring, Attempts, Retakes, and Resume
+- [ ] QZ-06 Quiz Results, Explanations, and Progress Update

@@ -15,6 +15,7 @@ class SubjectTopicsPage extends StatefulWidget {
     this.progressRepository,
     this.checkpointRepository,
     this.learnerQuizRepository,
+    this.quizAttemptRepository,
     this.companionName,
     this.junior = true,
     this.onTopicOpen,
@@ -25,6 +26,7 @@ class SubjectTopicsPage extends StatefulWidget {
   final LearningProgressRepository? progressRepository;
   final CheckpointRepository? checkpointRepository;
   final LearnerQuizRepository? learnerQuizRepository;
+  final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
@@ -106,6 +108,7 @@ class _SubjectTopicsPageState extends State<SubjectTopicsPage> {
           progressRepository: progress,
           checkpointRepository: widget.checkpointRepository,
           learnerQuizRepository: widget.learnerQuizRepository,
+          quizAttemptRepository: widget.quizAttemptRepository,
           companionName: widget.companionName,
           junior: widget.junior,
           onOpened: (_) => _load(),
