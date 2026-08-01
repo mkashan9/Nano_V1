@@ -84,6 +84,8 @@ class _CompanionSurfaceStageState extends State<CompanionSurfaceStage> {
         placement: placement,
         action: widget.action,
         onDismiss: widget.dismissible ? controller.dismiss : null,
+        // Only when a recording of these exact words exists and sound is allowed.
+        onListen: controller.canSpeak ? controller.speak : null,
       ),
     );
   }

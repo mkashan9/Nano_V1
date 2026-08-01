@@ -16,6 +16,9 @@ export interface AssetRequest {
   /// Stable per request, so a provider that accepts a seed returns the same
   /// output for the same ask.
   readonly promptHash: string;
+  /// The provider's own name for the voice, resolved from the registry (MED-03).
+  /// Absent for anything that is not a recording.
+  readonly voiceName?: string;
 }
 
 export interface GeneratedBytes {

@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:nano_media/nano_media.dart';
+
+import 'nano_voice_player.dart';
 
 /// Session-scoped owner of the companion runtime (CMP-03).
 ///
@@ -46,6 +49,7 @@ class CompanionController extends ChangeNotifier {
   /// the previous screen is cleared, but cooldowns and the budget carry over.
   void enterSurface(CompanionSurface surface) {
     if (_runtime.surface == surface) return;
+    _silence();
     _runtime = _runtime.withSurface(surface);
     notifyListeners();
   }
@@ -65,14 +69,26 @@ class CompanionController extends ChangeNotifier {
     }
     next = next.notify(event, now: now, seed: seed);
     if (next == _runtime) return;
+    // A new line replaces the old one on screen, so the old one must stop being
+    // audible under it.
+    _silence();
     _runtime = next;
     notifyListeners();
   }
 
   void dismiss() {
     if (_runtime.reaction == null) return;
+    _silence();
     _runtime = _runtime.dismiss();
     notifyListeners();
+  }
+
+  /// Stop any narration, without waiting for it. Called whenever the words on
+  /// screen change.
+  void _silence() {
+    final player = _player;
+    if (player == null || !player.isPlaying) return;
+    player.stop();
   }
 
   /// Whether any generated clip has been published (MED-02).
@@ -89,6 +105,65 @@ class CompanionController extends ChangeNotifier {
   }
 
   bool get clipsAvailable => _runtime.clipsAvailable;
+
+  NarrationCatalog _narration = NarrationCatalog.empty;
+  NanoVoicePlayer? _player;
+  Future<String?> Function(NarrationAudio audio)? _resolveUrl;
+
+  /// Give the companion a voice (MED-03).
+  ///
+  /// Every argument is optional and the app is complete without any of them: no
+  /// catalog means no line is recorded, no player means nothing can be played, and
+  /// in both cases the caption is what a learner gets. Like [setClipsAvailable],
+  /// this arrives after screens are up and disturbs nothing — no reaction changes,
+  /// no cooldown moves, and the session budget is untouched.
+  void attachNarration({
+    NarrationCatalog? catalog,
+    NanoVoicePlayer? player,
+    Future<String?> Function(NarrationAudio audio)? resolveUrl,
+  }) {
+    final nextCatalog = catalog ?? _narration;
+    final changed = nextCatalog != _narration ||
+        (player != null && player != _player) ||
+        (resolveUrl != null && resolveUrl != _resolveUrl);
+    _narration = nextCatalog;
+    _player ??= player;
+    _resolveUrl ??= resolveUrl;
+    if (changed) notifyListeners();
+  }
+
+  /// What to show and whether it can be heard, for the reaction on screen.
+  ///
+  /// Null only when there is nothing on screen to say.
+  NarrationChoice? get narration {
+    final current = _runtime.reaction;
+    if (current == null) return null;
+    // The reaction already carries the name and whether sound is allowed.
+    return _narration.choose(current);
+  }
+
+  /// Whether a listen control should appear at all. False is the ordinary state.
+  bool get canSpeak =>
+      _player != null && _resolveUrl != null && (narration?.canSpeak ?? false);
+
+  /// Play the line on screen, if it can be played.
+  ///
+  /// Nothing speaks unasked in this module. A learner taps to listen, which keeps
+  /// one voice on one device without needing the audio focus rules MED-01 owns,
+  /// and means a recording can never surprise a classroom.
+  Future<void> speak() async {
+    final audio = narration?.audio;
+    final player = _player;
+    final resolve = _resolveUrl;
+    if (audio == null || player == null || resolve == null) return;
+    final url = await resolve(audio);
+    // A URL that could not be minted is a fallback, not a failure: the caption
+    // stays exactly as it was.
+    if (url == null) return;
+    await player.play(url);
+  }
+
+  Future<void> stopSpeaking() => _player?.stop() ?? Future.value();
 
   void updatePreferences(AccessibilityPreferences preferences) {
     if (_runtime.preferences == preferences) return;

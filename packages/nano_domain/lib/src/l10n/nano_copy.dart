@@ -360,6 +360,10 @@ class NanoCopy {
 
   String get companionDismissLabel => isUrdu ? 'بند کریں' : 'Dismiss';
 
+  /// MED-03. A control, not a promise: it appears only when a recording of the
+  /// line on screen exists.
+  String get companionListenLabel => isUrdu ? 'سنیں' : 'Listen';
+
   String get onboardingReadyTitle => isUrdu ? 'سب تیار ہے' : 'You are all set';
   String get onboardingResumed =>
       isUrdu ? 'ہم نے آپ کی جگہ محفوظ رکھی' : 'We saved your place';

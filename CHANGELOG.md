@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- MED-03: Aoede Learning Guide voice — authored bilingual narration lines with immutable publish, a voice registry and voice-aware reuse hash, Gemini TTS adapter that wraps PCM as WAV, and a caption-first companion path where Listen appears only when a matching recording exists and sound is allowed (no player attached yet, so every line stays a caption)
+
 - MED-02: generation budgets that refuse before a provider is reached — per-day platform, feature, and school limits with reuse deliberately charged nothing, real cost charged once when the provider reports it, approved files delivered through cacheable signed URLs while unapproved ones stay invisible, and a client catalog cache that asks rarely, keeps its last good answer, and lets a learner's screen look identical whether a clip exists, is refused, or the network is gone
 
 - MED-01: server-side generated asset pipeline — a provider registry the database owns, hash-deduplicated requests that only a superadmin can make, single-flight claims and worker-only results, the first Edge Function with keyless image generation and key-holding voice/video adapters, and a client path that sees approved files with no prompt, provider, or cost

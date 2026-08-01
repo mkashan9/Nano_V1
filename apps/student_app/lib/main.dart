@@ -15,6 +15,7 @@ void main() {
   OnboardingRepository? onboardingRepository;
   StudentPreferencesRepository? preferencesRepository;
   GeneratedAssetRepository? assetRepository;
+  NarrationRepository? narrationRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -30,6 +31,7 @@ void main() {
     onboardingRepository = SupabaseOnboardingRepository(client);
     preferencesRepository = SupabaseStudentPreferencesRepository(client);
     assetRepository = SupabaseGeneratedAssetRepository(client);
+    narrationRepository = SupabaseNarrationRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -39,6 +41,7 @@ void main() {
       onboardingRepository: onboardingRepository,
       preferencesRepository: preferencesRepository,
       assetRepository: assetRepository,
+      narrationRepository: narrationRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -64,6 +67,8 @@ class NanoStudentApp extends StatefulWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.assetRepository,
+    this.narrationRepository,
+    this.voicePlayer,
     this.syncController,
     this.requireAuth = false,
   });
@@ -88,6 +93,15 @@ class NanoStudentApp extends StatefulWidget {
   /// MED-02: where published companion art comes from. Optional, because the app
   /// is complete without it — every companion moment has local art.
   final GeneratedAssetRepository? assetRepository;
+
+  /// MED-03: where the Learning Guide's authored lines come from. Optional for
+  /// the same reason as [assetRepository]: the captions that ship with the app are
+  /// the experience, and a recording is the extra.
+  final NarrationRepository? narrationRepository;
+
+  /// MED-03: who plays a recording. Null — the state today — means the listen
+  /// control never appears, because a control that cannot work should not exist.
+  final NanoVoicePlayer? voicePlayer;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -116,6 +130,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   late final NanoSyncController _syncController;
   late CompanionController _companion;
   late final CompanionAssetCache _assetCache;
+  late final NarrationCache _narrationCache;
   var _restoring = false;
 
   @override
@@ -167,6 +182,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
     _assetCache = _createAssetCache();
+    _narrationCache = _createNarrationCache();
     _companion = _createCompanion();
     WidgetsBinding.instance.addObserver(this);
     _router = _createRouter();
@@ -174,6 +190,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       _restore();
     }
     _loadCompanionAssets();
+    _loadNarration();
   }
 
   @override
@@ -224,11 +241,13 @@ class _NanoStudentAppState extends State<NanoStudentApp>
 
   /// Server settings win over local defaults once a learner has saved them.
   void _applyPreferences(StudentPreferences prefs) {
+    final languageChanged = _locale != prefs.locale;
     _preferences = prefs;
     _locale = prefs.locale;
     _a11y = prefs.accessibility;
     _feedback.updatePreferences(prefs.accessibility);
     _syncCompanion();
+    if (languageChanged) _loadNarration();
   }
 
   CompanionAssetCache _createAssetCache() {
@@ -237,6 +256,32 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       fetch: () => repository.listPublished(),
       sign: (asset, expiresIn) =>
           repository.signedUrl(asset, expiresIn: expiresIn),
+    );
+  }
+
+  NarrationCache _createNarrationCache() {
+    final repository = widget.narrationRepository ?? FakeNarrationRepository();
+    return NarrationCache(
+      fetch: (locale) =>
+          repository.published(locale: locale, surface: 'companion'),
+      sign: (audio, expiresIn) =>
+          repository.signedUrl(audio, expiresIn: expiresIn),
+    );
+  }
+
+  /// MED-03: find out what the Guide can say in this language.
+  ///
+  /// Unawaited and unguarded, like the asset catalog: the cache answers with an
+  /// empty catalog on failure, and an empty catalog is indistinguishable from a
+  /// library nobody has recorded yet — which is the resting state until MED-05
+  /// approves something. Either way the captions on screen are already correct.
+  Future<void> _loadNarration() async {
+    await _narrationCache.load(_locale);
+    if (!mounted) return;
+    _companion.attachNarration(
+      catalog: _narrationCache.current,
+      player: widget.voicePlayer,
+      resolveUrl: _narrationCache.urlFor,
     );
   }
 
@@ -278,6 +323,12 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     }
     final previous = _companion;
     _companion = _createCompanion();
+    // A new controller starts with what is already known rather than asking again.
+    _companion.attachNarration(
+      catalog: _narrationCache.current,
+      player: widget.voicePlayer,
+      resolveUrl: _narrationCache.urlFor,
+    );
     // Let the rebuild detach listeners before the old controller goes away.
     WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
   }
@@ -363,6 +414,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     // Signed URLs are personal, time-limited credentials, so they go with
     // everything else rather than waiting for their own expiry (MED-02).
     _assetCache.clear();
+    _narrationCache.clear();
     await widget.authRepository?.signOut();
     if (!mounted) return;
     setState(() {
@@ -397,6 +449,10 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       _locale = next;
       _router = _createRouter();
     });
+    // Speech does not cross languages, so the previous language's recordings are
+    // dropped and this one is fetched (MED-03). Captions change immediately either
+    // way, because they come from the app.
+    _loadNarration();
     _persistPreferences(locale: next);
   }
 
