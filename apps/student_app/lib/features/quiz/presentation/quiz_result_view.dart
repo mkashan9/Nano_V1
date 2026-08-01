@@ -29,38 +29,21 @@ class QuizResultView extends StatelessWidget {
   final VoidCallback? onRetake;
   final VoidCallback? onDone;
 
-  /// CMP-01: the companion reacts to the outcome the server reported, and to
-  /// nothing it worked out for itself. Seeding with the attempt number and
-  /// timing with `scoredAt` keeps the reaction reproducible.
-  ///
-  /// CMP-02: the quiz surface makes this Quiz Coach Nori, so a celebration here
-  /// stays coaching rather than turning into a milestone.
-  CompanionReaction? _reaction(BuildContext context) {
-    final preferences = NanoAccessibilityScope.maybeOf(context)?.preferences ??
-        AccessibilityPreferences.defaults;
-    return CompanionRuntime.forExperience(
-      junior: junior,
-      surface: CompanionSurface.quiz,
-      preferences: preferences,
-      companionName: companionName,
-    )
-        .notify(
-          CompanionEvent.forOutcome(passed: result.passed),
-          now: result.scoredAt ?? DateTime.now(),
-          seed: result.attemptNumber - 1,
-        )
-        .reaction;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListView(
       children: [
-        CompanionStage(
-          reaction: _reaction(context),
-          companionName: companionName,
-          locale: locale,
+        // MED-12: the session companion, so cooldowns and the session budget
+        // apply here the same way they do on home. CMP-03 previously kept
+        // results on a throwaway runtime so a derived screen could not spend
+        // the budget; that made results the one place a celebration never
+        // counted, which was the opposite of the rule that mattered.
+        CompanionSurfaceStage(
+          surface: CompanionSurface.quiz,
+          junior: junior,
+          entryEvent: CompanionEvent.forOutcome(passed: result.passed),
+          seed: result.attemptNumber - 1,
         ),
         const SizedBox(height: NanoSpacing.md),
         Text(

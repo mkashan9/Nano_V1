@@ -373,6 +373,14 @@ class NanoCopy {
   /// administration words; the Urdu is provided because the shell can be read in
   /// Urdu, not because a learner ever sees them.
   String get assetReviewTitle => isUrdu ? 'میڈیا کا جائزہ' : 'Media review';
+  String get assetReviewCoverageTitle =>
+      isUrdu ? 'ساتھی کی کمی' : 'Companion gaps';
+  String get assetReviewCoverageComplete => isUrdu
+      ? 'ہر جشن کے کلپ منظور ہو چکے ہیں۔'
+      : 'Every celebration clip is approved.';
+  String get assetReviewCoverageBody => isUrdu
+      ? 'یہ سلاٹ ابھی منظور شدہ آرٹ کے بغیر ہیں۔ بچہ بندل پوز دیکھے گا جب تک آپ فیصلہ نہ کریں۔'
+      : 'These slots have no approved art yet. A learner sees the bundled pose until you decide.';
   String get assetReviewQueueEmptyTitle =>
       isUrdu ? 'جائزے کے لیے کچھ نہیں' : 'Nothing to review';
   String get assetReviewQueueEmptyBody => isUrdu

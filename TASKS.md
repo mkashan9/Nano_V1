@@ -1,9 +1,8 @@
-# TASKS
+﻿# TASKS
 
 ## Active
 
-- [x] MED-11
-- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
+- [ ] XP-01 Trusted XP Ledger
 
 ## Completed
 
@@ -34,19 +33,9 @@
 - [x] CMP-01
 - [x] CMP-02
 - [x] CMP-03
-- [x] MED-01
-- [x] MED-02
-- [x] MED-03
-- [x] MED-04
-- [x] MED-05
-- [x] MED-06
-- [x] MED-07
-- [x] MED-08
-- [x] MED-09
-- [x] MED-10
+- [x] MED-01 through MED-12
 
 ## Upcoming
 
-- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
+- [ ] XP-02 Levels and Thresholds
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
-- [ ] XP-01 Trusted XP Ledger

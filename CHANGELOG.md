@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- MED-12: Nori is present on every product surface the placement policy names — onboarding and quiz results left the throwaway runtimes that made a celebration never count against the session budget and a greeting after onboarding fire twice; both now go through the shared controller, quiz questions carry coaching instead of a blank slot, and error/empty/offline may show Nori above the chrome without ever covering the button you need to press
+
+- MED-12: coverage became a build gate rather than a checklist — `CompanionCoverage` derives the reachable matrix from the enums so adding a surface or an event is enough to fail the build, student tests fail when a product surface does not mount the session companion, and Moderation shows which celebration clip slots still have no approved art so a complete review queue can no longer hide an incomplete companion
+
 - MED-11: Nori can be heard everywhere it can be seen — MED-03 built narration and MED-06 cast the voice, but exactly one line had ever been recorded, so a companion that appeared on every surface spoke on one of them; every published non-personalised line is now recorded in English and in Urdu in the cast guide voice, sixteen recordings for 7,536 micros, which is under a cent and less than the two rejected clip attempts from MED-06 cost
 
 - MED-11: the personalised greeting stays silent on purpose and a test enforces it — a recording of "Hello, {name}" would say one child's companion name to every other child, so ADR-0008 makes those lines caption-only, and the coverage probe now fails if a personalised line ever acquires an approved recording by some future convenience

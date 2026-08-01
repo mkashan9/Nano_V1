@@ -1,7 +1,7 @@
 id: MED-12
 name: "Nori Everywhere and Companion Coverage Gate"
 release: R4
-status: BACKLOG
+status: DONE
 dependencies:
   - MED-10
   - MED-11
@@ -19,7 +19,7 @@ applications:
   - automation
 allowed_paths:
   - apps/student_app/
-  - apps/admin_web/lib/features/media/
+  - apps/admin_web/lib/features/moderation/
   - packages/nano_design_system/
   - packages/nano_domain/
   - packages/nano_media/

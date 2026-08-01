@@ -146,6 +146,8 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
       body: NanoViewStateHost(
         state: _state,
         onRetry: _load,
+        companionSurface: CompanionSurface.quiz,
+        junior: true,
         child: flow == null
             ? Center(child: Text(copy.quizUnavailableLabel))
             : NanoMaxContentWidth(
@@ -221,11 +223,15 @@ class _QuestionPane extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        CompanionSurfaceStage(
+          surface: CompanionSurface.quiz,
+          junior: true,
+          entryEvent: CompanionEvent.quizQuestion,
+          seed: flow.currentIndex,
+        ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CompanionSlot(size: 88, semanticLabel: companionName),
-            const SizedBox(width: NanoSpacing.md),
             Expanded(
               child: Semantics(
                 liveRegion: true,
