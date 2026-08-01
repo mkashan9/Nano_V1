@@ -79,6 +79,7 @@ class StudentProfileView {
     this.completedTopics = 0,
     this.recommendedNext,
     this.achievements = const [],
+    this.levelProgress,
   });
 
   final String userId;
@@ -101,13 +102,17 @@ class StudentProfileView {
   final String? recommendedNext;
   final List<ProfileAchievement> achievements;
 
-  LevelProgress get level => LevelProgress.fromXp(xp);
+  /// XP-02: server-owned level when the ledger balance carried one.
+  final LevelProgress? levelProgress;
+
+  LevelProgress get level => levelProgress ?? LevelProgress.fromXp(xp);
 
   bool get isSchoolLinked => schoolName != null;
 
   StudentProfileView copyWith({
     String? companionName,
     NanoAppLocale? locale,
+    LevelProgress? levelProgress,
   }) {
     return StudentProfileView(
       userId: userId,
@@ -126,6 +131,7 @@ class StudentProfileView {
       completedTopics: completedTopics,
       recommendedNext: recommendedNext,
       achievements: achievements,
+      levelProgress: levelProgress ?? this.levelProgress,
     );
   }
 

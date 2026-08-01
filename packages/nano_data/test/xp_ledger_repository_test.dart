@@ -26,13 +26,17 @@ void main() {
     expect((await repo.recent()).single.amount, 10);
   });
 
-  test('home reads XP from the ledger when one is attached', () async {
+  test('home reads XP and level from the ledger when one is attached', () async {
     final xp = FakeXpLedgerRepository(
       balanceValue: const XpBalance(
-        total: 40,
+        total: 560,
         today: 40,
         dailyCap: 200,
         remainingToday: 160,
+        level: 3,
+        xpIntoLevel: 60,
+        xpToNext: 190,
+        xpPerLevel: 250,
       ),
     );
     final home = FakeStudentHomeRepository(xpLedger: xp);
@@ -40,8 +44,10 @@ void main() {
       userId: 'u1',
       learnerName: 'Ali',
     );
-    expect(summary.xp, 40);
-    expect(summary.level.level, 1);
+    expect(summary.xp, 560);
+    expect(summary.level.level, 3);
+    expect(summary.level.xpIntoLevel, 60);
+    expect(summary.levelProgress, isNotNull);
   });
 
   test('home keeps the fixture XP when no ledger is attached', () async {
@@ -51,5 +57,25 @@ void main() {
       learnerName: 'Ali',
     );
     expect(summary.xp, 560);
+    expect(summary.levelProgress, isNull);
+    expect(summary.level.level, 3);
+  });
+
+  test('fake credit refreshes the derived level', () async {
+    final repo = FakeXpLedgerRepository(balanceValue: XpBalance.empty);
+    repo.credit(
+      XpLedgerEntry(
+        id: 'e1',
+        userId: 'u1',
+        amount: 250,
+        sourceKind: XpSourceKind.quizPass,
+        sourceId: 'q-1',
+        awardedAt: DateTime.utc(2026, 8, 2),
+      ),
+    );
+    final balance = await repo.balance();
+    expect(balance.total, 250);
+    expect(balance.level, 2);
+    expect(balance.xpIntoLevel, 0);
   });
 }

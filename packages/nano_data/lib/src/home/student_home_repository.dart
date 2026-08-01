@@ -71,15 +71,16 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     }
     final now = DateTime.now().toUtc();
     final failed = failSections;
-    final xp = xpLedger == null
-        ? fixtureXp
-        : (await xpLedger!.balance()).total;
+    final XpBalance? balance =
+        xpLedger == null ? null : await xpLedger!.balance();
+    final xp = balance?.total ?? fixtureXp;
     return StudentHomeSummary(
       learnerName: learnerName,
       companionName: companionName,
       updatedAt: servesCache ? now.subtract(cacheAge) : now,
       fromCache: servesCache,
       xp: xp,
+      levelProgress: balance?.levelProgress,
       streakDays: 7,
       unreadNotifications: 2,
       notice: notice,

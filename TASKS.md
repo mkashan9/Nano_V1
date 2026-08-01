@@ -37,5 +37,6 @@
 
 ## Upcoming
 
+- [x] XP-01 Trusted XP Ledger
 - [ ] XP-02 Levels and Thresholds
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)

@@ -9,15 +9,22 @@ void main() {
         'today': 10,
         'daily_cap': 200,
         'remaining_today': 190,
+        'level': 1,
+        'xp_into_level': 40,
+        'xp_to_next': 210,
+        'xp_per_level': 250,
       });
       expect(balance.total, 40);
       expect(balance.remainingToday, 190);
+      expect(balance.levelProgress.level, 1);
+      expect(balance.levelProgress.xpIntoLevel, 40);
     });
 
     test('missing fields read as zero rather than null', () {
       final balance = XpBalance.fromJson({});
       expect(balance.total, 0);
       expect(balance.dailyCap, 200);
+      expect(balance.level, 1);
     });
   });
 
@@ -44,14 +51,6 @@ void main() {
       expect(credit.isCredit, isTrue);
       expect(debit.isDebit, isTrue);
       expect(credit.sourceKind, XpSourceKind.videoCompletion);
-    });
-  });
-
-  group('LevelProgress still derives from server XP', () {
-    test('40 XP is still level 1 until XP-02 owns thresholds', () {
-      final level = LevelProgress.fromXp(40);
-      expect(level.level, 1);
-      expect(level.xpIntoLevel, 40);
     });
   });
 }

@@ -1,7 +1,7 @@
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
-/// XP-01 read side of the trusted ledger.
+/// XP ledger read side (XP-01 totals, XP-02 level fields).
 ///
 /// Awards happen only on the server, inside the source-event transactions.
 /// This repository never constructs a credit.
@@ -18,6 +18,10 @@ class FakeXpLedgerRepository implements XpLedgerRepository {
       today: 40,
       dailyCap: 200,
       remainingToday: 160,
+      level: 3,
+      xpIntoLevel: 60,
+      xpToNext: 190,
+      xpPerLevel: 250,
     ),
     List<XpLedgerEntry>? entries,
   }) : _entries = [...?entries];
@@ -37,12 +41,21 @@ class FakeXpLedgerRepository implements XpLedgerRepository {
 
   void credit(XpLedgerEntry entry) {
     _entries.add(entry);
+    final total = balanceValue.total + entry.amount;
+    final today =
+        balanceValue.today + (entry.amount > 0 ? entry.amount : 0);
+    final remaining = (balanceValue.remainingToday - entry.amount)
+        .clamp(0, balanceValue.dailyCap);
+    final level = LevelProgress.fromXp(total);
     balanceValue = XpBalance(
-      total: balanceValue.total + entry.amount,
-      today: balanceValue.today + (entry.amount > 0 ? entry.amount : 0),
+      total: total,
+      today: today,
       dailyCap: balanceValue.dailyCap,
-      remainingToday: (balanceValue.remainingToday - entry.amount)
-          .clamp(0, balanceValue.dailyCap),
+      remainingToday: remaining,
+      level: level.level,
+      xpIntoLevel: level.xpIntoLevel,
+      xpToNext: level.xpToNextLevel,
+      xpPerLevel: level.xpPerLevel,
     );
   }
 }

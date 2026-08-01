@@ -27,4 +27,4 @@ audited.
 ## Deferred
 
 Levels (XP-02), achievements (XP-03), missions (XP-04), streaks (XP-05),
-game XP (GME-05). Level display stays `LevelProgress.fromXp` at 250/level.
+game XP (GME-05).
