@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R6 Administration
-- **Current module:** ADM-02 School Creation, Codes, Status, and Administrator Control
+- **Current module:** ADM-03 Global User and Account Control
 - **Current status:** USER_TEST
-- **Current branch:** module/ADM-02-school-creation-codes-status
-- **Last completed module:** ADM-01
+- **Current branch:** module/ADM-03-global-user-account-control
+- **Last completed module:** ADM-02
 - **Application name:** Nano
 
 ## Releases
 
 - R1?R5: complete
-- R6 Administration: ADM-01 DONE; ADM-02 USER_TEST
+- R6 Administration: ADM-01 DONE; ADM-02 DONE; ADM-03 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/ADM-02/MANUAL_TEST.md`. Create a school, change status with a reason, and assign a first admin.
+Run `docs/modules/ADM-03/MANUAL_TEST.md`. Search a user, suspend/restore with a reason, replace a school admin, and revoke sessions.

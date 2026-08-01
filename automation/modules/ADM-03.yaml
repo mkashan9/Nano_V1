@@ -1,16 +1,29 @@
 id: ADM-03
 name: "Global User and Account Control"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
   - SEC-03
+dependency_notes: >
+  ADM-01 owns Platform overview; ADM-02 owns school create and first admin.
+  This module owns safe user search, profile suspend/restore with reason,
+  replace school admin, and platform session revoke. Password-reset email
+  waits on an approved server mail path.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-03/
@@ -19,27 +32,62 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "ADM-01 Global School and Account Operations — suspend, sessions, replace admin"
+  - "High-risk actions require explicit reason"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.profiles
+  - public.school_memberships
+  - public.device_sessions
+server_functions:
+  - "public.search_platform_users"
+  - "public.set_profile_status"
+  - "public.replace_school_admin"
+  - "public.admin_revoke_user_sessions"
 acceptance:
+  - Platform staff can search users without email/guardian/marks fields
+  - Suspend and restore require a non-empty reason and write audit events
+  - Replace school admin demotes the prior admin and assigns the new one with reason
+  - Platform staff can revoke another user's sessions with reason
+  - Learners cannot call these RPCs
+  - Users destination is wired in admin_web
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm03_user_control.sql
+  - packages/nano_domain/test/platform_user_ops_test.dart
+  - packages/nano_data/test/platform_user_repository_test.dart
+  - apps/admin_web/test/users_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - user_writes_platform_only
+  - privileged_actions_require_reason
+  - search_minimizes_pii
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Users, search a learner, suspend with a reason, then restore
+  - Replace a school admin with a reason
+  - Revoke sessions for a user and confirm they cannot stay signed in
+rollback_notes: >
+  Revert the branch and migration. Users destination disappears from the rail.
 requires_owner_test: true
+owner_decisions_locked:
+  search: >
+    Safe fields only: id, display_name, account_kind, status, school code/role
+    summaries. Never email, guardian, attendance, or marks.
+  suspend: >
+    set_profile_status only toggles active <-> suspended. Reason required.
+    Cannot suspend the acting platform admin's own account.
+  replace_admin: >
+    Prior active school_admin membership becomes left; new admin must be staff
+    account_kind. Reason required. Audit both sides.
+  sessions: >
+    admin_revoke_user_sessions revokes all active sessions for a user (or one
+    id). Reason required. Self-revoke remains STU-05 revoke_device_session.
+  deferred: >
+    Admin-triggered password reset email. Stronger step-up auth beyond reason.

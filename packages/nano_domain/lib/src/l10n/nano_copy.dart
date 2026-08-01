@@ -93,6 +93,33 @@ class NanoCopy {
   String get schoolsHasAdmin => isUrdu ? 'ایڈمن موجود' : 'Has admin';
   String get schoolsNeedsAdmin => isUrdu ? 'ایڈمن درکار' : 'Needs admin';
   String get cancelLabel => isUrdu ? 'منسوخ' : 'Cancel';
+  String get users => isUrdu ? 'صارفین' : 'Users';
+  String get usersPageTitle => isUrdu ? 'صارف کنٹرول' : 'Users';
+  String get usersPageSubtitle => isUrdu
+      ? 'تلاش، معطل/بحال، ایڈمن تبدیل، سیشن منسوخ — وجہ لازمی۔'
+      : 'Search, suspend/restore, replace admin, revoke sessions — reason required.';
+  String get usersSearchHint =>
+      isUrdu ? 'نام یا شناخت تلاش' : 'Search by name or id';
+  String get usersEmpty => isUrdu ? 'کوئی صارف نہیں ملا۔' : 'No users matched.';
+  String get usersReasonLabel => isUrdu ? 'وجہ' : 'Reason';
+  String get usersConfirmAction => isUrdu ? 'تصدیق' : 'Confirm';
+  String get usersSuspendTitle => isUrdu ? 'صارف معطل کریں' : 'Suspend user';
+  String get usersRestoreTitle => isUrdu ? 'صارف بحال کریں' : 'Restore user';
+  String get usersSuspendAction => isUrdu ? 'معطل' : 'Suspend';
+  String get usersRestoreAction => isUrdu ? 'بحال' : 'Restore';
+  String get usersRevokeSessionsTitle =>
+      isUrdu ? 'سیشن منسوخ کریں' : 'Revoke sessions';
+  String get usersRevokeAction => isUrdu ? 'سیشن' : 'Revoke';
+  String usersRevokedCount(int count) => isUrdu
+      ? '$count سیشن منسوخ'
+      : '$count session(s) revoked';
+  String usersSessionsLabel(int count) =>
+      isUrdu ? '$count فعال سیشن' : '$count active sessions';
+  String get usersReplaceAdminTitle =>
+      isUrdu ? 'اسکول ایڈمن تبدیل' : 'Replace school admin';
+  String get usersReplaceAdminAction => isUrdu ? 'تبدیل' : 'Replace admin';
+  String get usersNewAdminIdLabel =>
+      isUrdu ? 'نیا ایڈمن شناخت' : 'New admin user id';
   String get content => isUrdu ? 'مواد' : 'Content';
   String get moderation => isUrdu ? 'نگرانی' : 'Moderation';
   String get analytics => isUrdu ? 'تجزیات' : 'Analytics';
@@ -522,6 +549,7 @@ class NanoCopy {
         'settings' => settings,
         'platform' => platform,
         'schools' => schools,
+        'users' => users,
         'content' => content,
         'moderation' => moderation,
         'analytics' => analytics,

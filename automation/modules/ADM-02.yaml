@@ -1,7 +1,7 @@
 id: ADM-02
 name: "School Creation, Codes, Status, and Administrator Control"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - ADM-01
   - SEC-02
@@ -36,7 +36,7 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "ADM-01 Global School and Account Operations â€” school status and setup"
+  - "ADM-01 Global School and Account Operations Ã¢â‚¬â€ school status and setup"
   - "SCH-01 school codes immutable after create"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-02"
 ui_references: []
@@ -82,3 +82,5 @@ owner_decisions_locked:
   admin: >
     assign_first_school_admin only when the school has no active school_admin
     membership. Replace-admin waits on ADM-03.
+owner_test_result: approved
+owner_approved_at: "2026-08-02T02:25:00Z"

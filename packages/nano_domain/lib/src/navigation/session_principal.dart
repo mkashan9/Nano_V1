@@ -140,6 +140,7 @@ class SessionPrincipal {
         permissions: const {
           'platform.overview',
           'platform.schools',
+          'platform.users',
           'platform.content',
           'platform.moderation',
           'platform.analytics',

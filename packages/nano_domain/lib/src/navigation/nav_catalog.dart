@@ -197,6 +197,13 @@ abstract final class NavCatalog {
       requiredPermission: 'platform.schools',
     ),
     NavDestination(
+      id: 'users',
+      label: 'Users',
+      path: '/users',
+      iconName: 'badge',
+      requiredPermission: 'platform.users',
+    ),
+    NavDestination(
       id: 'content',
       label: 'Content',
       path: '/content',

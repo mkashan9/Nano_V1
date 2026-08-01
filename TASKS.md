@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-02 School Creation, Codes, Status, and Administrator Control
+- [ ] ADM-03 Global User and Account Control
 
 ## Completed
 
@@ -44,5 +44,5 @@
 - [x] XP-05 Streaks and Gentle Motivation
 - [x] XP-06 Shareable Achievement and Score Cards
 - [x] ADM-01 Superadmin Dashboard
-- [ ] ADM-02 School Creation, Codes, Status, and Administrator Control
+- [x] ADM-02 School Creation, Codes, Status, and Administrator Control
 - [ ] ADM-03 Global User and Account Control
