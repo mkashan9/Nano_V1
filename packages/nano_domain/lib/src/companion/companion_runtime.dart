@@ -74,6 +74,7 @@ class CompanionRuntime {
     this.companionName = 'Nori',
     this.manifest = CompanionAssetManifest.defaults,
     this.clipsAvailable = false,
+    this.clipSlots = const {},
     this.reaction,
     this.lastShownAt = const {},
     this.shownThisSession = 0,
@@ -86,6 +87,7 @@ class CompanionRuntime {
     String companionName = 'Nori',
     CompanionAssetManifest manifest = CompanionAssetManifest.defaults,
     bool clipsAvailable = false,
+    Set<String> clipSlots = const {},
   }) {
     return CompanionRuntime(
       policy: junior ? CompanionPolicy.junior : CompanionPolicy.senior,
@@ -95,6 +97,7 @@ class CompanionRuntime {
       companionName: companionName,
       manifest: manifest,
       clipsAvailable: clipsAvailable,
+      clipSlots: clipSlots,
     );
   }
 
@@ -110,6 +113,12 @@ class CompanionRuntime {
   /// Generated clips are an enhancement; false is the normal case.
   final bool clipsAvailable;
 
+  /// Which reaction slots actually have a clip (MED-04). Empty is the normal
+  /// case, and it is also MED-02's coarser answer: a library nobody has filled
+  /// in and one that has not been listed slot by slot look the same here, which
+  /// is why [clipsAvailable] still decides when this is empty.
+  final Set<String> clipSlots;
+
   /// What the surface should be showing, or null for nothing.
   final CompanionReaction? reaction;
   final Map<CompanionEvent, DateTime> lastShownAt;
@@ -123,6 +132,14 @@ class CompanionRuntime {
 
   CompanionMode modeFor(CompanionEvent event) =>
       CompanionMode.resolve(surface: surface, event: event);
+
+  /// Whether a clip exists for one reaction slot (MED-04).
+  ///
+  /// Authoring a celebration clip must not make the greeting promise one, so
+  /// this is a per-slot question. When no slot list has arrived it falls back to
+  /// [clipsAvailable], which keeps MED-02's single boolean meaning what it did.
+  bool hasClipFor(String slot) =>
+      clipSlots.isEmpty ? clipsAvailable : clipSlots.contains(slot);
 
   /// Why [event] would be skipped at [now], or null when it may appear.
   CompanionSkipReason? skipReason(CompanionEvent event, DateTime now) {
@@ -154,6 +171,15 @@ class CompanionRuntime {
   }) {
     if (isSuppressed(event, now)) return this;
     final mood = CompanionMood.forEvent(event);
+    final mode = modeFor(event);
+    // The mode is half of the slot, so it has to be settled before the tier can
+    // be: whether a clip exists is a question about one reaction, and Quiz Coach
+    // celebrating is not the same reaction as Celebration Nori celebrating.
+    final clipSlot = CompanionReaction.slotKey(
+      mode: mode,
+      mood: mood,
+      tier: CompanionAssetTier.shortClip,
+    );
     final next = CompanionReaction(
       event: event,
       mood: mood,
@@ -161,9 +187,9 @@ class CompanionRuntime {
       tier: manifest.resolve(
         mood,
         reducedMotion: preferences.effectiveReducedMotion,
-        clipsAvailable: clipsAvailable,
+        clipAvailable: hasClipFor(clipSlot),
       ),
-      mode: modeFor(event),
+      mode: mode,
       presentation: rules.presentationFor(surface: surface, event: event),
       companionName: companionName,
       speaks: preferences.effectiveSoundEnabled,
@@ -221,6 +247,20 @@ class CompanionRuntime {
           ? this
           : _copyWith(clipsAvailable: clipsAvailable);
 
+  /// Learns which reactions have a clip (MED-04).
+  ///
+  /// The same rules as [withClipsAvailable] — nothing on screen moves — with a
+  /// finer answer: one authored reaction promises a clip for that reaction only.
+  CompanionRuntime withClipSlots(Set<String> slots) {
+    if (slots.length == clipSlots.length && slots.containsAll(clipSlots)) {
+      return this;
+    }
+    return _copyWith(
+      clipSlots: Set.unmodifiable(slots),
+      clipsAvailable: slots.isNotEmpty,
+    );
+  }
+
   /// A fresh session: the budget and the cooldowns start over.
   CompanionRuntime newSession() => _copyWith(
         clearReaction: true,
@@ -239,6 +279,7 @@ class CompanionRuntime {
     Map<CompanionEvent, DateTime>? lastShownAt,
     int? shownThisSession,
     bool? clipsAvailable,
+    Set<String>? clipSlots,
   }) {
     return CompanionRuntime(
       policy: policy ?? this.policy,
@@ -248,6 +289,7 @@ class CompanionRuntime {
       companionName: companionName ?? this.companionName,
       manifest: manifest,
       clipsAvailable: clipsAvailable ?? this.clipsAvailable,
+      clipSlots: clipSlots ?? this.clipSlots,
       reaction: clearReaction ? null : (reaction ?? this.reaction),
       lastShownAt: lastShownAt ?? this.lastShownAt,
       shownThisSession: shownThisSession ?? this.shownThisSession,

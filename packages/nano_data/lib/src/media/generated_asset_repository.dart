@@ -198,7 +198,7 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
   static String _defaultProviderFor(GeneratedAssetKind kind) => switch (kind) {
         GeneratedAssetKind.image => 'pollinations_image',
         GeneratedAssetKind.voice => 'gemini_voice_aoede',
-        GeneratedAssetKind.video => 'configured_video',
+        GeneratedAssetKind.video => 'gemini_veo_video',
       };
 
   static const _missing = GeneratedAsset(

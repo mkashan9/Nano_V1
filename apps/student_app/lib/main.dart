@@ -69,6 +69,7 @@ class NanoStudentApp extends StatefulWidget {
     this.assetRepository,
     this.narrationRepository,
     this.voicePlayer,
+    this.clipPlayer,
     this.syncController,
     this.requireAuth = false,
   });
@@ -102,6 +103,10 @@ class NanoStudentApp extends StatefulWidget {
   /// MED-03: who plays a recording. Null — the state today — means the listen
   /// control never appears, because a control that cannot work should not exist.
   final NanoVoicePlayer? voicePlayer;
+
+  /// MED-04: who plays a reaction clip. Null — also the state today — means the
+  /// play affordance never appears, and every reaction keeps local art.
+  final NanoClipPlayer? clipPlayer;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -285,7 +290,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     );
   }
 
-  /// MED-02: find out once whether any clip has been published.
+  /// MED-02 / MED-04: find out once which reaction clips have been published.
   ///
   /// Deliberately unawaited and deliberately not guarded: the cache swallows a
   /// failure and answers with an empty catalog, which is the same thing a device
@@ -295,6 +300,12 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     await _assetCache.load();
     if (!mounted) return;
     _companion.setClipsAvailable(_assetCache.clipsAvailable);
+    _companion.setClipSlots(_assetCache.current.clipSlots);
+    _companion.attachClips(
+      catalog: _assetCache.current,
+      player: widget.clipPlayer,
+      resolveUrl: _assetCache.urlFor,
+    );
   }
 
   CompanionController _createCompanion() {
@@ -306,6 +317,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       // A renamed companion or a changed experience builds a new controller, and
       // it should not have to ask the server again what it already knows.
       clipsAvailable: _assetCache.clipsAvailable,
+      clipSlots: _assetCache.current.clipSlots,
     );
   }
 
@@ -328,6 +340,11 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       catalog: _narrationCache.current,
       player: widget.voicePlayer,
       resolveUrl: _narrationCache.urlFor,
+    );
+    _companion.attachClips(
+      catalog: _assetCache.current,
+      player: widget.clipPlayer,
+      resolveUrl: _assetCache.urlFor,
     );
     // Let the rebuild detach listeners before the old controller goes away.
     WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());

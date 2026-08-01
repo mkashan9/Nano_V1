@@ -86,6 +86,10 @@ class _CompanionSurfaceStageState extends State<CompanionSurfaceStage> {
         onDismiss: widget.dismissible ? controller.dismiss : null,
         // Only when a recording of these exact words exists and sound is allowed.
         onListen: controller.canSpeak ? controller.speak : null,
+        // Only when an approved clip exists for this reaction and a player is
+        // attached. Autoplay is forbidden: the learner asks, like Listen.
+        clipAvailable: controller.canShowClip,
+        onPlayClip: controller.canShowClip ? controller.playClip : null,
       ),
     );
   }

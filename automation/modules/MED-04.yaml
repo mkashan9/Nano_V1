@@ -1,19 +1,25 @@
 id: MED-04
 name: "Video Generation and Reusable Reaction Library"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - MED-02
   - CMP-02
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
   - supabase
   - docs
   - automation
 allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_media/
+  - packages/nano_design_system/
+  - apps/student_app/
   - docs/
   - automation/
   - docs/modules/MED-04/
@@ -28,21 +34,78 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "10.2 Companion asset ladder: a generated clip is never required"
+  - "10.4 Reusable reaction library: author a reaction once, reuse it everywhere"
+  - "10.5 Generation quota controls: clips are the expensive kind"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-04"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - reaction_clips
+  - reaction_clip_versions
+  - generated_assets (claim expiry, provider job fields)
+  - generation_providers (gemini_veo_video)
+server_functions:
+  - create_reaction_clip_draft
+  - publish_reaction_clip_version
+  - request_reaction_clip
+  - list_reaction_clips
+  - record_generated_asset_progress
+  - list_pending_generated_assets
+  - nano_internal.reaction_clip_slot
+  - nano_internal.reaction_clip_guard
+  - nano_internal.release_stale_generation
+  - "edge: generate-asset (gemini_veo adapter, clip_slug, resume)"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - A reaction clip is authored once against a reaction slot and reused by every surface that reaches that reaction
+  - Published clip wording and motion are immutable; new direction is a new version that retires the old
+  - The same reaction, language, and shape is generated once and reused; a different shape is a different clip
+  - A clip is charged against the MED-02 video budget, and a reuse is charged nothing
+  - Availability is per reaction slot, so authoring one clip does not promise clips for every mood
+  - A long job survives the invocation that started it, and a crashed job is reclaimed instead of poisoning the reuse hash forever
+  - A reclaimed job never double-charges and never orphans an approved file
+  - Reduced motion never receives a clip, even when an approved one exists
+  - A missing, unapproved, wrong-kind, or unplayable clip falls to local art with no error and no layout shift
+  - Learners can read published clip direction, cannot author it, and cannot see a clip until it is approved
+  - Every companion surface is complete with no clip, no player, and no network
+  - The provider key exists only in the Edge Function environment
+  - Module documentation complete, including what still has never run
+  - Owner manual test steps provided and runnable without Docker
 required_tests:
-  - documentation_review
+  - supabase/tests/med04_video_reaction_library.sql
+  - packages/nano_domain/test/reaction_clip_test.dart
+  - packages/nano_media/test/companion_asset_catalog_test.dart
+  - packages/nano_media/test/clip_library_test.dart
+  - packages/nano_data/test/reaction_clip_repository_test.dart
+  - packages/nano_design_system/test/companion_clip_test.dart
+  - apps/student_app/test/companion_asset_availability_test.dart
+  - supabase/functions/generate-asset/adapters/gemini_veo_test.ts
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_provider_keys_in_clients
+  - rls_on_every_new_table
+  - clip_tables_not_writable_by_authenticated
+  - unapproved_clips_not_readable_by_learners
+  - signed_urls_not_logged
+  - supabase_advisors_no_new_errors
+accessibility_checks:
+  - reduced_motion_never_receives_a_clip
+  - a_clip_never_replaces_a_caption
+  - clips_are_silent_and_never_seize_audio
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Confirm the seeded reaction clip library and one default video provider
+  - Ask for the same reaction clip twice and confirm one charge
+  - Ask for a different shape and confirm a second, separate clip
+  - Confirm an unauthored reaction slot is refused
+  - Simulate a crashed job and confirm the slot can be asked for again
+  - Confirm a learner sees direction but no clip rows
+  - Run the student app and confirm local companion art everywhere and no error
+rollback_notes: >
+  Revert module branch commits. Database rollback: drop public.request_reaction_clip,
+  list_reaction_clips, create_reaction_clip_draft, publish_reaction_clip_version,
+  record_generated_asset_progress, list_pending_generated_assets,
+  nano_internal.reaction_clip_slot, reaction_clip_guard, release_stale_generation,
+  the reaction_clip_versions and reaction_clips tables, the claim_expires_at,
+  provider_job_id and poll_after columns on generated_assets, and the
+  gemini_veo_video provider row; restore the MED-03 request_generated_asset.
+  No clip is approved, so no learner loses anything; every reaction keeps local art.
 requires_owner_test: true

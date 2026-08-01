@@ -69,6 +69,10 @@ void main() {
     );
 
     expect(companionOf(tester).clipsAvailable, isTrue);
+    expect(
+      companionOf(tester).clipSlots,
+      contains('celebration_celebration_shortClip'),
+    );
     // The catalog arrived behind a screen that was already up, and nothing on it
     // was interrupted to make room for the news.
     expect(companionOf(tester).reaction, isNotNull);

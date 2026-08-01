@@ -25,6 +25,8 @@ class CompanionStage extends StatelessWidget {
     this.placement,
     this.onDismiss,
     this.onListen,
+    this.onPlayClip,
+    this.clipAvailable = false,
     this.action,
   });
 
@@ -46,6 +48,17 @@ class CompanionStage extends StatelessWidget {
   /// of these exact words exists, or sound is off, and the caption is the whole
   /// experience. Nothing here ever plays on its own.
   final VoidCallback? onListen;
+
+  /// Play the approved clip for this reaction (MED-04). Null — the ordinary
+  /// state — means no clip exists, no player is attached, or motion was
+  /// declined, and local art is the whole experience. Nothing here ever plays
+  /// on its own either: a clip starts only when the learner asks.
+  final VoidCallback? onPlayClip;
+
+  /// Whether art should wear the "clip is available" badge even when [onPlayClip]
+  /// is null. Useful for goldens; the surface stage drives both from the same
+  /// controller answer.
+  final bool clipAvailable;
 
   /// Optional primary action for a story card ("Start", "See it", …).
   final Widget? action;
@@ -103,6 +116,8 @@ class CompanionStage extends StatelessWidget {
                 artSize: artSize,
                 onDismiss: onDismiss,
                 onListen: onListen,
+                onPlayClip: onPlayClip,
+                clipAvailable: clipAvailable,
                 action: action,
               )
             : _InlineStage(
@@ -113,6 +128,8 @@ class CompanionStage extends StatelessWidget {
                 artSize: artSize,
                 onDismiss: onDismiss,
                 onListen: onListen,
+                onPlayClip: onPlayClip,
+                clipAvailable: clipAvailable,
               ),
       ),
     );
@@ -128,6 +145,8 @@ class _InlineStage extends StatelessWidget {
     required this.artSize,
     required this.onDismiss,
     required this.onListen,
+    required this.onPlayClip,
+    required this.clipAvailable,
   });
 
   final CompanionReaction reaction;
@@ -137,6 +156,8 @@ class _InlineStage extends StatelessWidget {
   final double artSize;
   final VoidCallback? onDismiss;
   final VoidCallback? onListen;
+  final VoidCallback? onPlayClip;
+  final bool clipAvailable;
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +168,9 @@ class _InlineStage extends StatelessWidget {
           reaction: reaction,
           size: artSize,
           companionName: companionName,
+          copy: copy,
+          clipAvailable: clipAvailable,
+          onPlayClip: onPlayClip,
         ),
         if (reaction.showsCaption && caption.isNotEmpty) ...[
           const SizedBox(width: NanoSpacing.sm),
@@ -181,6 +205,8 @@ class _StoryCard extends StatelessWidget {
     required this.artSize,
     required this.onDismiss,
     required this.onListen,
+    required this.onPlayClip,
+    required this.clipAvailable,
     required this.action,
   });
 
@@ -191,6 +217,8 @@ class _StoryCard extends StatelessWidget {
   final double artSize;
   final VoidCallback? onDismiss;
   final VoidCallback? onListen;
+  final VoidCallback? onPlayClip;
+  final bool clipAvailable;
   final Widget? action;
 
   @override
@@ -230,6 +258,9 @@ class _StoryCard extends StatelessWidget {
                 reaction: reaction,
                 size: artSize,
                 companionName: companionName,
+                copy: copy,
+                clipAvailable: clipAvailable,
+                onPlayClip: onPlayClip,
               ),
               if (reaction.showsCaption && caption.isNotEmpty) ...[
                 const SizedBox(height: NanoSpacing.md),
@@ -364,11 +395,17 @@ class _CompanionArt extends StatelessWidget {
     required this.reaction,
     required this.size,
     required this.companionName,
+    required this.copy,
+    required this.clipAvailable,
+    required this.onPlayClip,
   });
 
   final CompanionReaction reaction;
   final double size;
   final String companionName;
+  final NanoCopy copy;
+  final bool clipAvailable;
+  final VoidCallback? onPlayClip;
 
   IconData get _moodIcon => switch (reaction.mood) {
         CompanionMood.greeting => Icons.waving_hand_rounded,
@@ -384,21 +421,58 @@ class _CompanionArt extends StatelessWidget {
     final theme = Theme.of(context);
     final mode = CompanionModeTheme.of(reaction.mode);
     // Master art stands in for the asset ladder until MED-01 lands real files.
-    // The mode ring is the shared frame every variant wears; the resolved tier
-    // travels with the widget so a surface (and a golden) can tell static art
-    // from a moving variant.
+    // The mode ring is the shared frame every variant wears; a clip badge is the
+    // only visual difference today, because Nano ships no video plugin yet and a
+    // silent placard is still enough to prove the slot was filled (MED-04).
+    final art = DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        shape: BoxShape.circle,
+        border: Border.all(color: mode.accent, width: 2),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(child: Icon(_moodIcon, size: size / 2, color: mode.accent)),
+          if (clipAvailable)
+            Positioned(
+              right: size * 0.06,
+              bottom: size * 0.06,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: mode.accent,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(size * 0.06),
+                  child: Icon(
+                    Icons.play_arrow_rounded,
+                    size: size * 0.22,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+
     return CompanionSlot(
-      key: ValueKey(reaction.assetKey),
+      key: ValueKey(
+        '${reaction.assetKey}|clip:${clipAvailable ? 'yes' : 'no'}',
+      ),
       size: size,
       semanticLabel: companionName,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest,
-          shape: BoxShape.circle,
-          border: Border.all(color: mode.accent, width: 2),
-        ),
-        child: Center(child: Icon(_moodIcon, size: size / 2, color: mode.accent)),
-      ),
+      child: onPlayClip == null
+          ? art
+          : Semantics(
+              button: true,
+              label: copy.companionPlayClipLabel,
+              child: GestureDetector(
+                onTap: onPlayClip,
+                child: art,
+              ),
+            ),
     );
   }
 }

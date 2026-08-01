@@ -19,6 +19,14 @@ export interface AssetRequest {
   /// The provider's own name for the voice, resolved from the registry (MED-03).
   /// Absent for anything that is not a recording.
   readonly voiceName?: string;
+  /// A job this provider already started (MED-04). When present the adapter
+  /// collects that job rather than starting a second one, which is what stops a
+  /// clip being paid for twice because the first invocation ended before the
+  /// provider did.
+  readonly providerJobId?: string;
+  /// How long the authored clip runs. Only a hint: a provider that fixes its own
+  /// length ignores it.
+  readonly durationSeconds?: number;
 }
 
 export interface GeneratedBytes {
@@ -30,10 +38,30 @@ export interface GeneratedBytes {
   readonly costMicros: number;
 }
 
+/// What an adapter has to say when asked (MED-04). Bytes, or a job to come back
+/// for. Kept separate from `GeneratedBytes` so an image or a recording — which
+/// are always one and never the other — needs no unwrapping.
+export type GenerateOutcome =
+  | { readonly status: 'ready'; readonly bytes: GeneratedBytes }
+  | {
+    readonly status: 'pending';
+    readonly providerJobId: string;
+    /// How long to leave the job alone. Polling a clip every second spends a
+    /// quota on questions rather than on clips.
+    readonly pollAfterSeconds: number;
+  };
+
 export interface ProviderAdapter {
   readonly id: string;
   readonly kind: GeneratedAssetKind;
   generate(request: AssetRequest, fetchImpl?: typeof fetch): Promise<GeneratedBytes>;
+  /// Implemented only by providers whose work outlives one invocation. The
+  /// caller prefers this when it exists and falls back to `generate` otherwise,
+  /// so a synchronous adapter never had to learn about jobs.
+  generateOrPending?(
+    request: AssetRequest,
+    fetchImpl?: typeof fetch,
+  ): Promise<GenerateOutcome>;
 }
 
 /// A failure a caller may be told about, by code. The message stays for logs and
@@ -49,9 +77,11 @@ export class ProviderError extends Error {
   }
 }
 
-/// Ten megabytes: enough for a short clip, small enough that a runaway provider
-/// response cannot fill a bucket.
-export const maxAssetBytes = 10 * 1024 * 1024;
+/// Twenty-five megabytes. Ten was sized for a picture; a few seconds of encoded
+/// video is comfortably larger than that (MED-04), and a ceiling that rejects
+/// every real clip is the same as having no video at all. Still small enough
+/// that a runaway provider response cannot fill a bucket.
+export const maxAssetBytes = 25 * 1024 * 1024;
 
 /// Aspect ratio to pixels, so a provider that wants dimensions gets them from the
 /// same string the hash was built from.

@@ -364,6 +364,10 @@ class NanoCopy {
   /// line on screen exists.
   String get companionListenLabel => isUrdu ? 'سنیں' : 'Listen';
 
+  /// MED-04. Also a control rather than a promise: it appears only when an
+  /// approved clip exists for this exact reaction and motion is welcome.
+  String get companionPlayClipLabel => isUrdu ? 'ویڈیو چلائیں' : 'Play clip';
+
   String get onboardingReadyTitle => isUrdu ? 'سب تیار ہے' : 'You are all set';
   String get onboardingResumed =>
       isUrdu ? 'ہم نے آپ کی جگہ محفوظ رکھی' : 'We saved your place';

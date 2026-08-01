@@ -196,6 +196,39 @@ void main() {
       expect(enriched.tier, CompanionAssetTier.shortClip);
     });
 
+    test('authoring one clip does not promise clips for every mood', () {
+      // A greeting clip exists; celebrating must still fall to local art.
+      final runtime = CompanionRuntime.forExperience(
+        junior: true,
+        clipSlots: {'guide_greeting_shortClip'},
+      );
+
+      final celebration = runtime
+          .notify(CompanionEvent.resultPassed, now: t0)
+          .reaction!;
+      expect(celebration.tier, CompanionAssetTier.localAnimation);
+
+      final greeting = CompanionRuntime.forExperience(
+        junior: true,
+        clipSlots: {'guide_greeting_shortClip'},
+      ).notify(CompanionEvent.appOpen, now: t0).reaction!;
+      // Greeting's best tier is localAnimation, not shortClip — so even with a
+      // greeting clip published, the resolved tier stays local. The clipSlots
+      // answer only unlocks moods the manifest already treats as clip-worthy.
+      expect(greeting.tier, CompanionAssetTier.localAnimation);
+    });
+
+    test('a clip slot for the celebrating mode unlocks the short clip', () {
+      final reaction = CompanionRuntime.forExperience(
+        junior: true,
+        clipSlots: {'celebration_celebration_shortClip'},
+      ).notify(CompanionEvent.levelUp, now: t0).reaction!;
+
+      expect(reaction.mode, CompanionMode.celebration);
+      expect(reaction.tier, CompanionAssetTier.shortClip);
+      expect(reaction.assetKey, 'celebration_celebration_shortClip');
+    });
+
     test('an empty manifest still resolves to something showable', () {
       final reaction = CompanionRuntime.forExperience(
         junior: true,
