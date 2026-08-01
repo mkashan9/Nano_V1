@@ -218,6 +218,13 @@ abstract final class NavCatalog {
       requiredPermission: 'platform.gamification',
     ),
     NavDestination(
+      id: 'gameAdmin',
+      label: 'Games',
+      path: '/game-admin',
+      iconName: 'sports_esports',
+      requiredPermission: 'platform.games',
+    ),
+    NavDestination(
       id: 'moderation',
       label: 'Moderation',
       path: '/moderation',

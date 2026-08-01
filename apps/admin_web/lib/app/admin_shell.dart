@@ -1,4 +1,5 @@
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
+import 'package:admin_web/features/games/presentation/game_admin_page.dart';
 import 'package:admin_web/features/gamification/presentation/gamification_admin_page.dart';
 import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
@@ -24,6 +25,7 @@ class AdminShell extends StatelessWidget {
     this.topicQuizRepository,
     this.learningContentRepository,
     this.gamificationAdminRepository,
+    this.gameAdminRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
@@ -41,6 +43,7 @@ class AdminShell extends StatelessWidget {
   final TopicQuizRepository? topicQuizRepository;
   final LearningContentRepository? learningContentRepository;
   final GamificationAdminRepository? gamificationAdminRepository;
+  final GameAdminRepository? gameAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
@@ -155,6 +158,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.topicQuizRepository,
     this.learningContentRepository,
     this.gamificationAdminRepository,
+    this.gameAdminRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
@@ -167,6 +171,7 @@ class AdminDestinationPage extends StatelessWidget {
   final TopicQuizRepository? topicQuizRepository;
   final LearningContentRepository? learningContentRepository;
   final GamificationAdminRepository? gamificationAdminRepository;
+  final GameAdminRepository? gameAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
@@ -214,6 +219,12 @@ class AdminDestinationPage extends StatelessWidget {
       return GamificationAdminPage(
         repository: gamificationAdminRepository!,
       );
+    }
+
+    if (destination.id == 'gameAdmin' &&
+        principal.role == AppRole.superadmin &&
+        gameAdminRepository != null) {
+      return GameAdminPage(repository: gameAdminRepository!);
     }
 
     // MED-05. The role check is a courtesy for the preview shell; the server

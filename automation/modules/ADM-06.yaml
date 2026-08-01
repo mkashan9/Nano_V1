@@ -1,24 +1,37 @@
 id: ADM-06
 name: "Game Administration"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
+dependency_notes: >
+  ADM-01 owns the admin shell. This module bootstraps games / game_versions and
+  a Games hub. Student play, sessions, score verify, and GME-07 kill-switch UX
+  stay deferred; enabled=false is the seed flag.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-06/
   - automation/modules/ADM-06.yaml
+  - automation/modules/ADM-05.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -26,19 +39,42 @@ forbidden_paths:
 handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-06"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.games
+  - public.game_versions
+server_functions:
+  - "public.list_games_admin"
+  - "public.create_game_draft"
+  - "public.publish_game_version"
+  - "public.disable_game_version"
 acceptance:
+  - Platform staff can list seeded games and create drafts
+  - Platform staff can publish a draft version
+  - Platform staff can disable a version with a non-empty reason
+  - Learners cannot call game admin RPCs
+  - Games destination is wired in admin_web
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm06_game_admin.sql
+  - packages/nano_domain/test/game_admin_ops_test.dart
+  - packages/nano_data/test/game_admin_repository_test.dart
+  - apps/admin_web/test/game_admin_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - platform_admin_only_rpcs
+  - disable_requires_reason
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Games, confirm Number Rush and Shape Sort
+  - Publish Shape Sort
+  - Create a new draft and publish
+  - Disable a published game with a reason
+rollback_notes: >
+  Revert the branch and migration. Games destination disappears.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Catalog draft/publish/disable only. No student play host or score verify.
+  kill_switch: >
+    enabled=false plus audit reason; GME-07 productizes learner-facing behavior.
+  deferred: >
+    GME-01.. play path, assets, sessions, rich editors.

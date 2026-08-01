@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-05 Gamification Administration
+- [ ] ADM-06 Game Administration
 
 ## Completed
 
@@ -47,5 +47,6 @@
 - [x] ADM-02 School Creation, Codes, Status, and Administrator Control
 - [x] ADM-03 Global User and Account Control
 - [x] ADM-04 Learning Stack Content Administration
-- [ ] ADM-05 Gamification Administration
+- [x] ADM-05 Gamification Administration
 - [ ] ADM-06 Game Administration
+- [ ] ADM-07 Notification Administration
