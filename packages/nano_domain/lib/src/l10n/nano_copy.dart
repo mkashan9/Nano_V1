@@ -300,6 +300,46 @@ class NanoCopy {
       isUrdu ? 'موضوع کے کوئز' : 'Topic quizzes';
   String get learningCatalogTitle =>
       isUrdu ? 'کیٹلاگ' : 'Catalog';
+  String get gamification => isUrdu ? 'گیمیفیکیشن' : 'Gamification';
+  String get gamificationPageTitle =>
+      isUrdu ? 'گیمیفیکیشن انتظام' : 'Gamification';
+  String get gamificationPageSubtitle => isUrdu
+      ? 'پالیسی، سطحیں، کامیابیاں، مشن، دستی ایڈجسٹ۔'
+      : 'Policy, levels, achievements, missions, and manual adjust.';
+  String get gamificationPolicyTab => isUrdu ? 'پالیسی' : 'Policy';
+  String get gamificationLevelsTab => isUrdu ? 'سطحیں' : 'Levels';
+  String get gamificationCatalogTab => isUrdu ? 'کیٹلاگ' : 'Catalog';
+  String get gamificationAdjustTab => isUrdu ? 'ایڈجسٹ' : 'Adjust';
+  String get gamificationDailyCap =>
+      isUrdu ? 'روزانہ حد' : 'Daily XP cap';
+  String get gamificationSaveCap =>
+      isUrdu ? 'حد محفوظ کریں' : 'Save cap';
+  String get gamificationAwardRules =>
+      isUrdu ? 'ایوارڈ قواعد' : 'Award rules';
+  String get gamificationEditAward => isUrdu ? 'تبدیل' : 'Edit';
+  String get gamificationSaveAward => isUrdu ? 'محفوظ' : 'Save';
+  String get gamificationLevelStep =>
+      isUrdu ? 'سطح کا قدم' : 'Level step';
+  String get gamificationXpPerLevel =>
+      isUrdu ? 'فی سطح ایکس پی' : 'XP per level';
+  String get gamificationSaveLevels =>
+      isUrdu ? 'سطحیں محفوظ کریں' : 'Save levels';
+  String get gamificationLevel => isUrdu ? 'سطح' : 'Level';
+  String gamificationMoreLevels(int count) =>
+      isUrdu ? '+$count مزید سطحیں' : '+$count more levels';
+  String get gamificationAchievements =>
+      isUrdu ? 'کامیابیاں' : 'Achievements';
+  String get gamificationMissions => isUrdu ? 'مشن' : 'Missions';
+  String get gamificationAdjustTitle =>
+      isUrdu ? 'دستی ایکس پی' : 'Manual XP adjust';
+  String get gamificationUserId => isUrdu ? 'صارف شناخت' : 'User id';
+  String get gamificationAmount => isUrdu ? 'رقم' : 'Amount';
+  String get gamificationReason => isUrdu ? 'وجہ' : 'Reason';
+  String get gamificationSubmitAdjust =>
+      isUrdu ? 'ایڈجسٹ کریں' : 'Apply adjustment';
+  String gamificationAdjusted(int amount) => isUrdu
+      ? '$amount ایکس پی محفوظ'
+      : '$amount XP recorded';
   String get authoringSearchHint =>
       isUrdu ? 'مضمون تلاش' : 'Search subjects';
   String get authoringNewSubject =>
@@ -582,6 +622,7 @@ class NanoCopy {
         'schools' => schools,
         'users' => users,
         'content' => content,
+        'gamification' => gamification,
         'moderation' => moderation,
         'analytics' => analytics,
         'audit' => audit,

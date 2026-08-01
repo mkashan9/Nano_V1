@@ -19,6 +19,7 @@ IconData nanoNavIcon(String name) => switch (name) {
       'dns' => Icons.dns_outlined,
       'apartment' => Icons.apartment_outlined,
       'library_books' => Icons.library_books_outlined,
+      'emoji_events' => Icons.emoji_events_outlined,
       'gavel' => Icons.gavel_outlined,
       'insights' => Icons.insights_outlined,
       'history' => Icons.history_outlined,

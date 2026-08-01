@@ -1,16 +1,28 @@
 id: ADM-05
 name: "Gamification Administration"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
   - XP-02
+dependency_notes: >
+  ADM-01 owns the admin shell. XP-01..XP-04 own ledger, levels, achievements,
+  and missions. This module adds platform write RPCs and a Gamification hub.
+  Streaks, leagues, and game XP stay deferred.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-05/
@@ -19,27 +31,63 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions — admin half"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-05"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.xp_policy
+  - public.xp_award_rules
+  - public.level_rules
+  - public.achievement_definitions
+  - public.missions
+  - public.xp_ledger
+server_functions:
+  - "public.list_gamification_admin"
+  - "public.set_xp_daily_cap"
+  - "public.set_xp_award_amount"
+  - "public.set_level_step"
+  - "public.set_achievement_active"
+  - "public.set_mission_active"
+  - "public.set_mission_rewards"
+  - "public.admin_adjust_xp"
 acceptance:
+  - Platform staff can edit daily XP cap and editable award amounts
+  - Platform staff can reshape the flat level curve and refresh progress
+  - Platform staff can activate/deactivate achievements and missions
+  - Manual XP adjust requires a non-empty reason and writes the ledger
+  - Learners cannot call gamification admin RPCs
+  - Gamification destination is wired in admin_web
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm05_gamification_admin.sql
+  - packages/nano_domain/test/gamification_ops_test.dart
+  - packages/nano_data/test/gamification_admin_repository_test.dart
+  - apps/admin_web/test/gamification_admin_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - user_writes_platform_only
+  - manual_adjust_requires_reason
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Gamification, change daily cap and an award amount
+  - Change XP per level and confirm levels update
+  - Toggle an achievement and a mission
+  - Apply a manual XP adjust with a reason
+rollback_notes: >
+  Revert the branch and migration. Gamification destination disappears.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Policy, levels, achievement/mission activation, and manual adjust. No
+    streak repair, league admin, or game catalog in this module.
+  levels: >
+    Flat curve via set_level_step; refreshes xp_progress for ledger users.
+  adjust: >
+    admin_adjust_xp wraps adjust_xp and requires a non-empty reason.
+  deferred: >
+    Streak admin, league/game admin, bulk CSV, rich achievement editors.

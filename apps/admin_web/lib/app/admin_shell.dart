@@ -1,4 +1,5 @@
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
+import 'package:admin_web/features/gamification/presentation/gamification_admin_page.dart';
 import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
 import 'package:admin_web/features/schools/presentation/schools_page.dart';
@@ -22,6 +23,7 @@ class AdminShell extends StatelessWidget {
     this.questionBankRepository,
     this.topicQuizRepository,
     this.learningContentRepository,
+    this.gamificationAdminRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
@@ -38,6 +40,7 @@ class AdminShell extends StatelessWidget {
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
   final LearningContentRepository? learningContentRepository;
+  final GamificationAdminRepository? gamificationAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
@@ -151,6 +154,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.questionBankRepository,
     this.topicQuizRepository,
     this.learningContentRepository,
+    this.gamificationAdminRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
@@ -162,6 +166,7 @@ class AdminDestinationPage extends StatelessWidget {
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
   final LearningContentRepository? learningContentRepository;
+  final GamificationAdminRepository? gamificationAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
@@ -200,6 +205,14 @@ class AdminDestinationPage extends StatelessWidget {
         questionBankRepository: questionBankRepository!,
         topicQuizRepository: topicQuizRepository!,
         learningContentRepository: learningContentRepository!,
+      );
+    }
+
+    if (destination.id == 'gamification' &&
+        principal.role == AppRole.superadmin &&
+        gamificationAdminRepository != null) {
+      return GamificationAdminPage(
+        repository: gamificationAdminRepository!,
       );
     }
 

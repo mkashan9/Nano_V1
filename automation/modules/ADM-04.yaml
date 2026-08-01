@@ -1,7 +1,7 @@
 id: ADM-04
 name: "Learning Stack Content Administration"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - ADM-01
   - LRN-01

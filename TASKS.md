@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-04 Learning Stack Content Administration
+- [ ] ADM-05 Gamification Administration
 
 ## Completed
 
@@ -46,5 +46,6 @@
 - [x] ADM-01 Superadmin Dashboard
 - [x] ADM-02 School Creation, Codes, Status, and Administrator Control
 - [x] ADM-03 Global User and Account Control
-- [ ] ADM-04 Learning Stack Content Administration
+- [x] ADM-04 Learning Stack Content Administration
 - [ ] ADM-05 Gamification Administration
+- [ ] ADM-06 Game Administration
