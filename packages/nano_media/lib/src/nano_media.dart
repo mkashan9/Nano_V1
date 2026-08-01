@@ -1,4 +1,1 @@
-/// Package placeholder for nano_media.
-class NanoMedia {
-  const NanoMedia();
-}
+export 'companion_asset_catalog.dart';

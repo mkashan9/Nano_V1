@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- MED-01: server-side generated asset pipeline — a provider registry the database owns, hash-deduplicated requests that only a superadmin can make, single-flight claims and worker-only results, the first Edge Function with keyless image generation and key-holding voice/video adapters, and a client path that sees approved files with no prompt, provider, or cost
+
 - CMP-03: Nori placed on the real learner screens at Junior and Senior density from one placement table, owned by a single session controller so cooldowns and the appearance budget survive navigation, only the surface in front speaks, and a held-back reaction costs no layout height
 
 - CMP-02: controlled Nori variants (guide, explorer, quiz coach, builder, celebration) inside one shared frame, plus reaction rules — story cards for rare moments, priority for colliding moments, a per-session appearance budget, and Classroom Mode holding back everything non-essential

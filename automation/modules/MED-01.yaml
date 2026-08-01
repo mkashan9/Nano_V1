@@ -1,18 +1,22 @@
 id: MED-01
 name: "Generated Asset Provider Adapters"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-01
+  - CMP-01
 applications:
-  - student_app
-  - teacher_app
-  - admin_web
   - packages
   - supabase
   - docs
   - automation
 allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_media/
   - docs/
   - automation/
   - docs/modules/MED-01/
@@ -27,21 +31,62 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "10.1 Companion strategy: generated media is reserved, never routine"
+  - "10.2 Companion asset ladder (Tier 0-3)"
+  - "10.5 Generation quota controls: hashing, provenance, local fallback"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - generation_providers
+  - generated_assets
+  - generation_attempts
+  - generated_asset_catalog
+  - storage bucket generated-assets
+server_functions:
+  - request_generated_asset
+  - claim_generated_asset
+  - record_generated_asset_result
+  - record_generated_asset_failure
+  - list_generated_assets
+  - nano_internal.generated_asset_hash
+  - nano_internal.is_generation_worker
+  - "edge: generate-asset"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - No provider key exists in any client; adapters read keys from Edge Function env only
+  - Only a platform admin can request generation; no learner-facing entry point
+  - Only the service role can claim a job or record a result or failure
+  - An identical ask is deduplicated by hash and calls no provider
+  - A claim is single flight and a duplicated result cannot double the cost
+  - Ready assets stay unpublished until approved; clients read approved rows only
+  - A client read path exposes no prompt, provider, or cost
+  - A failed or missing generated asset drops a rung and never breaks a screen
+  - Module documentation complete, including what is deliberately not deployed
+  - Owner manual test steps provided and runnable without Docker
 required_tests:
-  - documentation_review
+  - supabase/tests/med01_generated_asset_adapters.sql
+  - packages/nano_domain/test/generated_asset_test.dart
+  - packages/nano_data/test/generated_asset_repository_test.dart
+  - packages/nano_media/test/companion_asset_catalog_test.dart
+  - supabase/functions/generate-asset/adapters/adapters_test.ts
 security_checks:
   - no_secrets_in_diff
+  - no_provider_keys_in_clients
+  - rls_on_every_new_table
+  - worker_rpcs_not_executable_by_authenticated
+  - supabase_advisors_no_new_errors
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Confirm schema, seeded providers, and the private storage bucket
+  - Run the learner isolation query and expect zeros
+  - Run the request query twice and expect reuse the second time
+  - Confirm no provider key appears in apps or packages
+  - Confirm the student app still shows local companion art
+rollback_notes: >
+  Revert module branch commits. Database rollback: drop
+  public.request_generated_asset, claim_generated_asset,
+  record_generated_asset_result, record_generated_asset_failure,
+  list_generated_assets, the generated_asset_catalog view, the
+  generation_attempts, generated_assets, and generation_providers tables, the
+  generated_asset_* enums, and the generated-assets bucket. Nothing else depends
+  on them, and no client reads them yet.
 requires_owner_test: true

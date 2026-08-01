@@ -7,6 +7,7 @@ export 'quiz/question_bank_repository.dart';
 export 'quiz/quiz_attempt_repository.dart';
 export 'quiz/topic_quiz_repository.dart';
 export 'learning/learning_progress_repository.dart';
+export 'media/generated_asset_repository.dart';
 export 'onboarding/onboarding_repository.dart';
 export 'profile/student_profile_repository.dart';
 export 'preferences/student_preferences_repository.dart';

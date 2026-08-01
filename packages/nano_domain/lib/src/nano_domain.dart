@@ -7,6 +7,7 @@ export 'companion/companion_mode.dart';
 export 'companion/companion_placement.dart';
 export 'companion/companion_reaction.dart';
 export 'companion/companion_runtime.dart';
+export 'media/generated_asset.dart';
 export 'home/student_home_summary.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';

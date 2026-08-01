@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] CMP-03 owner manual test
+- [ ] MED-01 owner manual test
 
 ## Completed
 
@@ -32,7 +32,9 @@
 - [x] QZ-06
 - [x] CMP-01
 - [x] CMP-02
+- [x] CMP-03
 
 ## Upcoming
 
-- [ ] CMP-03 Junior and Senior Companion Placement
+- [ ] MED-01 Generated Asset Provider Adapters
+- [ ] MED-02 Asset Caching, Hashing, Quotas, and Fallback
