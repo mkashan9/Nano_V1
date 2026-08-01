@@ -24,6 +24,7 @@ class CompanionStage extends StatelessWidget {
     this.size,
     this.placement,
     this.onDismiss,
+    this.onListen,
     this.action,
   });
 
@@ -40,6 +41,11 @@ class CompanionStage extends StatelessWidget {
   /// hidden placement renders nothing at all.
   final CompanionPlacement? placement;
   final VoidCallback? onDismiss;
+
+  /// Play this line aloud (MED-03). Null — the ordinary state — means no recording
+  /// of these exact words exists, or sound is off, and the caption is the whole
+  /// experience. Nothing here ever plays on its own.
+  final VoidCallback? onListen;
 
   /// Optional primary action for a story card ("Start", "See it", …).
   final Widget? action;
@@ -96,6 +102,7 @@ class CompanionStage extends StatelessWidget {
                 caption: caption,
                 artSize: artSize,
                 onDismiss: onDismiss,
+                onListen: onListen,
                 action: action,
               )
             : _InlineStage(
@@ -105,6 +112,7 @@ class CompanionStage extends StatelessWidget {
                 caption: caption,
                 artSize: artSize,
                 onDismiss: onDismiss,
+                onListen: onListen,
               ),
       ),
     );
@@ -119,6 +127,7 @@ class _InlineStage extends StatelessWidget {
     required this.caption,
     required this.artSize,
     required this.onDismiss,
+    required this.onListen,
   });
 
   final CompanionReaction reaction;
@@ -127,6 +136,7 @@ class _InlineStage extends StatelessWidget {
   final String caption;
   final double artSize;
   final VoidCallback? onDismiss;
+  final VoidCallback? onListen;
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +156,7 @@ class _InlineStage extends StatelessWidget {
               copy: copy,
               companionName: companionName,
               caption: caption,
+              onListen: onListen,
             ),
           ),
         ],
@@ -169,6 +180,7 @@ class _StoryCard extends StatelessWidget {
     required this.caption,
     required this.artSize,
     required this.onDismiss,
+    required this.onListen,
     required this.action,
   });
 
@@ -178,6 +190,7 @@ class _StoryCard extends StatelessWidget {
   final String caption;
   final double artSize;
   final VoidCallback? onDismiss;
+  final VoidCallback? onListen;
   final Widget? action;
 
   @override
@@ -202,6 +215,8 @@ class _StoryCard extends StatelessWidget {
                 children: [
                   _ModeBadge(reaction: reaction, copy: copy, name: companionName),
                   const Spacer(),
+                  if (onListen != null)
+                    _ListenButton(copy: copy, onListen: onListen!),
                   if (onDismiss != null)
                     IconButton(
                       onPressed: onDismiss,
@@ -242,12 +257,14 @@ class _CaptionBubble extends StatelessWidget {
     required this.copy,
     required this.companionName,
     required this.caption,
+    this.onListen,
   });
 
   final CompanionReaction reaction;
   final NanoCopy copy;
   final String companionName;
   final String caption;
+  final VoidCallback? onListen;
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +283,15 @@ class _CaptionBubble extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ModeBadge(reaction: reaction, copy: copy, name: companionName),
+              Row(
+                children: [
+                  _ModeBadge(reaction: reaction, copy: copy, name: companionName),
+                  if (onListen != null) ...[
+                    const Spacer(),
+                    _ListenButton(copy: copy, onListen: onListen!),
+                  ],
+                ],
+              ),
               const SizedBox(height: NanoSpacing.xs),
               Text(
                 caption,
@@ -278,6 +303,28 @@ class _CaptionBubble extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Hear the line (MED-03). Present only when a recording of these exact words
+/// exists and sound is allowed, so it is never a control that does nothing.
+class _ListenButton extends StatelessWidget {
+  const _ListenButton({required this.copy, required this.onListen});
+
+  final NanoCopy copy;
+  final VoidCallback onListen;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onListen,
+      icon: const Icon(Icons.volume_up_rounded),
+      iconSize: NanoSpacing.lg,
+      tooltip: copy.companionListenLabel,
+      // The caption is already read by a screen reader as a live region; this is
+      // the control, and it says what it does rather than repeating the line.
+      visualDensity: VisualDensity.compact,
     );
   }
 }

@@ -33,6 +33,11 @@ interface RequestBody {
   provider_id?: string;
   feature?: string;
   school_id?: string;
+  /// MED-03: ask for a recording of an authored line instead of a prompt. The
+  /// words, the version, and the voice then come from the database, so a caller
+  /// cannot have the Learning Guide say something nobody published.
+  narration_slug?: string;
+  voice_id?: string;
 }
 
 Deno.serve(async (request) => {
@@ -55,14 +60,15 @@ Deno.serve(async (request) => {
     return errorResponse('BAD_REQUEST', 'Body must be JSON.');
   }
 
-  const kind = body.kind;
+  const narrationSlug = body.narration_slug?.trim();
+  const kind = narrationSlug ? 'voice' : body.kind;
   if (kind !== 'image' && kind !== 'voice' && kind !== 'video') {
     return errorResponse('BAD_REQUEST', 'kind must be image, voice, or video.');
   }
-  if (!body.slot || !body.prompt || !body.prompt_version) {
+  if (!narrationSlug && (!body.slot || !body.prompt || !body.prompt_version)) {
     return errorResponse(
       'BAD_REQUEST',
-      'slot, prompt, and prompt_version are required.',
+      'Send narration_slug, or slot, prompt, and prompt_version.',
     );
   }
 
@@ -84,23 +90,36 @@ Deno.serve(async (request) => {
   const worker = createClient(supabaseUrl, serviceKey);
 
   // Step 1: the caller's own permissions decide whether this request exists.
-  const requested = await caller.rpc('request_generated_asset', {
-    p_kind: kind,
-    p_slot: body.slot,
-    p_prompt: body.prompt,
-    p_prompt_version: body.prompt_version,
-    p_locale: body.locale ?? 'en',
-    p_aspect_ratio: body.aspect_ratio ?? '1:1',
-    p_provider_id: body.provider_id ?? null,
-    p_feature: body.feature ?? 'companion',
-    p_school_id: body.school_id ?? null,
-  });
+  const requested = narrationSlug
+    ? await caller.rpc('request_narration_line', {
+      p_slug: narrationSlug,
+      p_locale: body.locale ?? 'en',
+      p_voice_id: body.voice_id ?? null,
+    })
+    : await caller.rpc('request_generated_asset', {
+      p_kind: kind,
+      p_slot: body.slot,
+      p_prompt: body.prompt,
+      p_prompt_version: body.prompt_version,
+      p_locale: body.locale ?? 'en',
+      p_aspect_ratio: body.aspect_ratio ?? '1:1',
+      p_provider_id: body.provider_id ?? null,
+      p_feature: body.feature ?? 'companion',
+      p_school_id: body.school_id ?? null,
+      p_voice_id: body.voice_id ?? null,
+    });
 
   if (requested.error) {
     // A spent budget is its own answer: nothing is broken and retrying today
     // cannot help, so it is not dressed up as a generic refusal.
     if (requested.error.code === 'NM006') {
       return errorResponse('QUOTA_EXCEEDED', requested.error.message, 429);
+    }
+    // A line that cannot be recorded — no wording in this language, or a name
+    // placeholder that belongs to the learner — is a settled answer too. The
+    // message explains which, because a curator can act on it.
+    if (requested.error.code === 'NM007') {
+      return errorResponse('NOT_RECORDABLE', requested.error.message, 422);
     }
     const code = requested.error.code === 'NM001' ? 'FORBIDDEN' : 'REQUEST_REFUSED';
     const status = requested.error.code === 'NM001' ? 403 : 400;
@@ -119,6 +138,24 @@ Deno.serve(async (request) => {
   const locale = asset.asset.locale as string;
   const aspectRatio = asset.asset.aspect_ratio as string;
   const slot = asset.asset.slot as string;
+  // The prompt is read back from the row rather than from the body: for an
+  // authored line the database chose the words, and for anything else the row is
+  // what the hash was built from.
+  const prompt = asset.asset.prompt as string;
+  const promptVersion = asset.asset.prompt_version as string;
+  const voiceId = asset.asset.voice_id as string | null;
+
+  // A registered voice becomes a provider-side voice name here, where the service
+  // role can read the registry. An adapter never guesses one.
+  let voiceName: string | undefined;
+  if (voiceId) {
+    const voice = await worker
+      .from('narration_voices')
+      .select('provider_voice_name')
+      .eq('id', voiceId)
+      .maybeSingle();
+    voiceName = voice.data?.provider_voice_name as string | undefined;
+  }
 
   // Step 2: claim it, so a retried invocation cannot start a second provider call.
   const claim = await worker.rpc('claim_generated_asset', { p_asset_id: assetId });
@@ -132,10 +169,11 @@ Deno.serve(async (request) => {
     const generated = await adapter.generate({
       kind,
       slot,
-      prompt: body.prompt,
+      prompt,
       locale,
       aspectRatio,
       promptHash,
+      voiceName,
     });
 
     const path = `${kind}/${slot}/${locale}/${promptHash}.${generated.extension}`;
@@ -164,9 +202,12 @@ Deno.serve(async (request) => {
       p_rights: 'platform-owned',
       p_provenance: {
         provider_id: providerId,
-        prompt_version: body.prompt_version,
+        prompt_version: promptVersion,
         aspect_ratio: aspectRatio,
         locale,
+        voice_id: voiceId,
+        voice_name: voiceName ?? null,
+        narration_slug: narrationSlug ?? null,
         generated_at: new Date().toISOString(),
       },
     });

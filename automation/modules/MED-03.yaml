@@ -1,19 +1,25 @@
 id: MED-03
 name: "Voice Generation and Aoede Learning Guide"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - MED-02
   - CMP-01
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
   - supabase
   - docs
   - automation
 allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_media/
+  - packages/nano_design_system/
+  - apps/student_app/
   - docs/
   - automation/
   - docs/modules/MED-03/
@@ -28,21 +34,79 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "10.1 The Learning Guide speaks with one voice"
+  - "10.3 Voice generation: authored lines, one voice, cached recordings"
+  - "10.5 Generation quota controls: a recording is charged like any other asset"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - narration_voices
+  - narration_lines
+  - narration_line_versions
+  - generated_assets.voice_id
+  - generation_providers (gemini_voice_aoede)
+server_functions:
+  - create_narration_line_draft
+  - publish_narration_line_version
+  - request_narration_line
+  - list_narration_lines
+  - request_generated_asset (voice-aware)
+  - nano_internal.generated_asset_hash (voice-aware)
+  - nano_internal.narration_slot
+  - nano_internal.narration_version_guard
+  - "edge: generate-asset (gemini_voice adapter)"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - The Guide speaks in one registered voice; a request names a voice from the registry or takes the default, never a provider voice string
+  - Wording is authored and versioned, and a published version cannot be edited in place
+  - The same sentence in the same language and voice is recorded once and reused
+  - The same sentence in another language or another voice is a different recording
+  - New wording never plays under the old recording, and old wording is never offered under a new caption
+  - A line naming the learner's companion is caption-only and cannot be recorded
+  - A voice that does not speak the requested language is refused before any provider is reached
+  - A recording is charged against the same MED-02 budgets as any other asset, and a reuse is charged nothing
+  - Learners can read published wording, cannot author it, and cannot see a recording until it is approved
+  - Nothing speaks unasked; a learner taps to listen, and a muted or Classroom Mode learner is offered nothing to tap
+  - Every line is complete as a caption with no recording, no player, and no network
+  - The provider key exists only in the Edge Function environment
+  - Module documentation complete, including what still has never run
+  - Owner manual test steps provided and runnable without Docker
 required_tests:
-  - documentation_review
+  - supabase/tests/med03_voice_narration.sql
+  - packages/nano_domain/test/narration_line_test.dart
+  - packages/nano_media/test/narration_catalog_test.dart
+  - packages/nano_media/test/narration_cache_test.dart
+  - packages/nano_data/test/narration_repository_test.dart
+  - packages/nano_design_system/test/companion_narration_test.dart
+  - supabase/functions/generate-asset/adapters/gemini_voice_test.ts
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_provider_keys_in_clients
+  - rls_on_every_new_table
+  - narration_tables_not_writable_by_authenticated
+  - unapproved_recordings_not_readable_by_learners
+  - signed_urls_not_logged
+  - supabase_advisors_no_new_errors
+accessibility_checks:
+  - captions_are_never_replaced_by_audio
+  - muted_and_classroom_mode_are_offered_no_listen_control
+  - audio_is_user_triggered_only
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Confirm the voice registry has one default voice and it speaks both languages
+  - Confirm the nine companion lines are published in English and Urdu
+  - Ask for the same line twice and confirm one charge and one recording
+  - Ask for the same line in Urdu and confirm a second, separate recording
+  - Ask for the personalised greeting and confirm it is refused as not recordable
+  - Publish new wording and confirm the old recording is no longer offered
+  - Confirm a learner sees captions and no recording rows
+  - Run the student app and confirm captions everywhere and no listen control
+rollback_notes: >
+  Revert module branch commits. Database rollback: restore the MED-02
+  six-argument nano_internal.generated_asset_hash and the MED-02
+  request_generated_asset signature, drop public.request_narration_line,
+  list_narration_lines, create_narration_line_draft,
+  publish_narration_line_version, nano_internal.narration_slot,
+  narration_version_guard, the narration_line_versions, narration_lines and
+  narration_voices tables, the voice_id column on generated_assets, and the
+  gemini_voice_aoede provider row. No recording has been approved, so no learner
+  loses audio; every line stays a caption.
 requires_owner_test: true

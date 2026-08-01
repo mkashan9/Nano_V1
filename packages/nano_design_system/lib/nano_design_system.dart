@@ -23,6 +23,7 @@ export 'src/components/companion_mode_theme.dart';
 export 'src/components/companion_stage.dart';
 export 'src/companion/companion_controller.dart';
 export 'src/companion/companion_surface_stage.dart';
+export 'src/companion/nano_voice_player.dart';
 export 'src/components/nano_avatar.dart';
 export 'src/components/xp_chip.dart';
 export 'src/components/environment_badge.dart';

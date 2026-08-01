@@ -100,12 +100,22 @@ class CompanionScript {
   final String? textUr;
 
   String textFor(NanoAppLocale locale, {String companionName = 'Nori'}) {
-    final template =
-        locale == NanoAppLocale.ur && (textUr?.isNotEmpty ?? false)
-            ? textUr!
-            : text;
-    return template.replaceAll('{name}', companionName);
+    return templateFor(locale).replaceAll('{name}', companionName);
   }
+
+  /// The line before any name is filled in.
+  String templateFor(NanoAppLocale locale) =>
+      locale == NanoAppLocale.ur && (textUr?.isNotEmpty ?? false)
+          ? textUr!
+          : text;
+
+  /// Whether the line names the learner's companion (MED-03).
+  ///
+  /// A personalised line can never be pre-recorded: the recording would say one
+  /// child's companion name to every other child. Checked across both languages,
+  /// because a line is one line and it is either personal or it is not.
+  bool get isPersonalised =>
+      text.contains('{') || (textUr?.contains('{') ?? false);
 }
 
 /// Local script book. Each mood has an ordered list, and selection is by index

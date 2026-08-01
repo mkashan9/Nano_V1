@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-02 owner manual test
+- [ ] MED-03 owner manual test
 
 ## Completed
 
@@ -34,9 +34,9 @@
 - [x] CMP-02
 - [x] CMP-03
 - [x] MED-01
+- [x] MED-02
 
 ## Upcoming
 
-- [ ] MED-03 Voice Generation and Aoede Learning Guide
 - [ ] MED-04 Video Generation and Reusable Reaction Library
 - [ ] MED-05 Superadmin Asset Review and Publication

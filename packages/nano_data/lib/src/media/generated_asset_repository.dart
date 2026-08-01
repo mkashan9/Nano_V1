@@ -197,7 +197,7 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
 
   static String _defaultProviderFor(GeneratedAssetKind kind) => switch (kind) {
         GeneratedAssetKind.image => 'pollinations_image',
-        GeneratedAssetKind.voice => 'configured_voice',
+        GeneratedAssetKind.voice => 'gemini_voice_aoede',
         GeneratedAssetKind.video => 'configured_video',
       };
 
