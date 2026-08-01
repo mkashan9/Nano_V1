@@ -168,6 +168,10 @@ class _JuniorHomeContent extends StatelessWidget {
                 const SizedBox(height: NanoSpacing.md),
                 NanoOfflineBanner(message: copy.accessWarning),
               ],
+              if (summary.notice == HomeNoticeKind.streakGentle) ...[
+                const SizedBox(height: NanoSpacing.md),
+                NanoOfflineBanner(message: copy.streakWelcomeBack),
+              ],
               const SizedBox(height: NanoSpacing.lg),
               if (continueItem != null)
                 JuniorActionCard(

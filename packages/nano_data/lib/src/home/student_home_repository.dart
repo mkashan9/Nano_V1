@@ -1,6 +1,7 @@
 import 'package:nano_domain/nano_domain.dart';
 
 import '../xp/mission_repository.dart';
+import '../xp/streak_repository.dart';
 import '../xp/xp_ledger_repository.dart';
 
 /// Aggregates the student home in one read.
@@ -31,7 +32,9 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     this.includeUpdate = true,
     this.xpLedger,
     this.missionRepository,
+    this.streakRepository,
     this.fixtureXp = 560,
+    this.fixtureStreak = 7,
   });
 
   bool failOnce;
@@ -52,7 +55,11 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
 
   /// XP-04: when set, Home plan comes from live missions.
   final MissionRepository? missionRepository;
+
+  /// XP-05: when set, streak count (and gentle notice) come from the server.
+  final StreakRepository? streakRepository;
   final int fixtureXp;
+  final int fixtureStreak;
 
   var loadCount = 0;
 
@@ -79,6 +86,8 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     final XpBalance? balance =
         xpLedger == null ? null : await xpLedger!.balance();
     final xp = balance?.total ?? fixtureXp;
+    final StreakSnapshot? streak =
+        streakRepository == null ? null : await streakRepository!.current();
     final List<HomePlanItem> plan;
     if (failed.contains(HomeSection.missions)) {
       plan = const [];
@@ -90,6 +99,12 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     } else {
       plan = missions;
     }
+    var resolvedNotice = notice;
+    if (streak != null &&
+        streak.hasGentleNotice &&
+        resolvedNotice == HomeNoticeKind.none) {
+      resolvedNotice = HomeNoticeKind.streakGentle;
+    }
     return StudentHomeSummary(
       learnerName: learnerName,
       companionName: companionName,
@@ -97,9 +112,9 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
       fromCache: servesCache,
       xp: xp,
       levelProgress: balance?.levelProgress,
-      streakDays: 7,
+      streakDays: streak?.current ?? fixtureStreak,
       unreadNotifications: 2,
-      notice: notice,
+      notice: resolvedNotice,
       failedSections: failed,
       continueItem: failed.contains(HomeSection.continueLearning)
           ? null
@@ -111,8 +126,6 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
             ),
       missions: plan,
       subjects: failed.contains(HomeSection.subjects) ? const [] : subjects,
-      // Flex is a server-side entitlement; the fake honours the caller's
-      // eligibility rather than letting the UI decide.
       flex: !flexEligible || failed.contains(HomeSection.flex)
           ? null
           : const FlexSummary(openTasks: 3, nextDueLabel: 'Due Friday'),
