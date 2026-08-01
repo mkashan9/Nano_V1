@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R6 Administration
-- **Current module:** SCH-05 Teacher Assignment Matrix
+- **Current module:** SCH-06 Marks and Result Policies
 - **Current status:** USER_TEST
-- **Current branch:** module/SCH-05-teacher-assignment-matrix
-- **Last completed module:** SCH-04
+- **Current branch:** module/SCH-06-marks-result-policies
+- **Last completed module:** SCH-05
 - **Application name:** Nano
 
 ## Releases
 
 - R1?R5: complete
-- R6 Administration: ADM-01?ADM-08 DONE; SCH-01?SCH-04 DONE; SCH-05 USER_TEST
+- R6 Administration: ADM-01?ADM-08 DONE; SCH-01?SCH-05 DONE; SCH-06 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/SCH-05/MANUAL_TEST.md`. Open Assignments as school admin.
+Run `docs/modules/SCH-06/MANUAL_TEST.md`. Open Settings ? Policies as school admin.

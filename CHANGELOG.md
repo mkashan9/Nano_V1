@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SCH-06: school admins configure marks/result policies and result periods in Settings
 - SCH-05: school admins assign teachers to class/section/subject with coverage and workload
 - SCH-04: school admins manage students (create, suspend, enroll) and CSV import from Students
 - SCH-03: school admins manage teachers (create, suspend) and CSV import from Teachers

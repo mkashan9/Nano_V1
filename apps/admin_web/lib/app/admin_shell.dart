@@ -8,6 +8,7 @@ import 'package:admin_web/features/platform/presentation/platform_dashboard_page
 import 'package:admin_web/features/school/presentation/academic_structure_page.dart';
 import 'package:admin_web/features/school/presentation/school_branding_settings_page.dart';
 import 'package:admin_web/features/school/presentation/school_overview_page.dart';
+import 'package:admin_web/features/school/presentation/school_settings_page.dart';
 import 'package:admin_web/features/school/presentation/school_students_page.dart';
 import 'package:admin_web/features/school/presentation/school_teachers_page.dart';
 import 'package:admin_web/features/school/presentation/teacher_assignments_page.dart';
@@ -43,6 +44,7 @@ class AdminShell extends StatelessWidget {
     this.schoolTeacherRepository,
     this.schoolStudentRepository,
     this.teacherAssignmentRepository,
+    this.schoolMarksPolicyRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -68,6 +70,7 @@ class AdminShell extends StatelessWidget {
   final SchoolTeacherRepository? schoolTeacherRepository;
   final SchoolStudentRepository? schoolStudentRepository;
   final TeacherAssignmentRepository? teacherAssignmentRepository;
+  final SchoolMarksPolicyRepository? schoolMarksPolicyRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -190,6 +193,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.schoolTeacherRepository,
     this.schoolStudentRepository,
     this.teacherAssignmentRepository,
+    this.schoolMarksPolicyRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -210,6 +214,7 @@ class AdminDestinationPage extends StatelessWidget {
   final SchoolTeacherRepository? schoolTeacherRepository;
   final SchoolStudentRepository? schoolStudentRepository;
   final TeacherAssignmentRepository? teacherAssignmentRepository;
+  final SchoolMarksPolicyRepository? schoolMarksPolicyRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -219,6 +224,16 @@ class AdminDestinationPage extends StatelessWidget {
         principal.role == AppRole.schoolAdmin &&
         schoolDashboardRepository != null) {
       return SchoolOverviewPage(repository: schoolDashboardRepository!);
+    }
+
+    if (destination.id == 'settings' &&
+        principal.role == AppRole.schoolAdmin &&
+        schoolDashboardRepository != null &&
+        schoolMarksPolicyRepository != null) {
+      return SchoolSettingsPage(
+        dashboardRepository: schoolDashboardRepository!,
+        marksPolicyRepository: schoolMarksPolicyRepository!,
+      );
     }
 
     if (destination.id == 'settings' &&

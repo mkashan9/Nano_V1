@@ -85,6 +85,44 @@ class NanoCopy {
       isUrdu ? 'سیٹ اپ مکمل' : 'Mark setup complete';
   String get schoolBrandingSaved =>
       isUrdu ? 'برانڈنگ محفوظ ہو گئی' : 'Branding saved';
+  String get schoolSettingsBrandingTab => isUrdu ? 'برانڈنگ' : 'Branding';
+  String get schoolSettingsPoliciesTab => isUrdu ? 'پالیسیاں' : 'Policies';
+  String get policiesPageTitle =>
+      isUrdu ? 'نمبر اور نتائج کی پالیسیاں' : 'Marks and result policies';
+  String get policiesPageSubtitle => isUrdu
+      ? 'حاضری موڈ، پاس فیصد، رپورٹ کارڈ، اور نتیجہ ادوار۔'
+      : 'Attendance mode, passing percent, report cards, and result periods.';
+  String get policiesAttendanceLabel =>
+      isUrdu ? 'حاضری موڈ' : 'Attendance mode';
+  String get policiesAttendanceDaily => isUrdu ? 'روزانہ' : 'Daily';
+  String get policiesAttendanceSession => isUrdu ? 'سیشن' : 'Session';
+  String get policiesPassingLabel =>
+      isUrdu ? 'پاس فیصد' : 'Passing percent';
+  String get policiesReportFormatLabel =>
+      isUrdu ? 'رپورٹ کارڈ فارمیٹ' : 'Report card format';
+  String get policiesFormatPercent => isUrdu ? 'فیصد' : 'Percent';
+  String get policiesFormatGrade => isUrdu ? 'گریڈ' : 'Grade';
+  String get policiesFormatBoth => isUrdu ? 'دونوں' : 'Both';
+  String get policiesAllowBonusLabel =>
+      isUrdu ? 'بونس نمبر اجازت' : 'Allow bonus marks';
+  String get policiesGradeBandsTitle =>
+      isUrdu ? 'گریڈ بینڈز' : 'Grade bands';
+  String get policiesSaveAction => isUrdu ? 'محفوظ' : 'Save policy';
+  String get policiesSaved =>
+      isUrdu ? 'پالیسی محفوظ ہو گئی۔' : 'Policy saved.';
+  String get policiesPeriodsTitle =>
+      isUrdu ? 'نتیجہ ادوار' : 'Result periods';
+  String get policiesPeriodsEmpty =>
+      isUrdu ? 'ابھی کوئی دور نہیں۔' : 'No result periods yet.';
+  String get policiesCreatePeriodTitle =>
+      isUrdu ? 'نیا نتیجہ دور' : 'Create result period';
+  String get policiesCreatePeriodAction => isUrdu ? 'نیا دور' : 'Add period';
+  String get policiesPeriodNameLabel => isUrdu ? 'نام' : 'Period name';
+  String get policiesClosePeriodTitle =>
+      isUrdu ? 'دور بند کریں' : 'Close period';
+  String get policiesClosePeriodAction => isUrdu ? 'بند' : 'Close';
+  String get policiesReasonLabel => isUrdu ? 'وجہ' : 'Reason';
+  String get policiesConfirmAction => isUrdu ? 'تصدیق' : 'Confirm';
   String get schoolEditBranding =>
       isUrdu ? 'برانڈنگ تبدیل' : 'Edit branding';
   String get schoolYearMissing =>
