@@ -1,7 +1,7 @@
 id: SCH-02
 name: "Classes, Grades, Sections, and Subjects"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - SCH-01
 dependency_notes: >

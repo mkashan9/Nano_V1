@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SCH-03: school admins manage teachers (create, suspend) and CSV import from Teachers
 - SCH-02: school admins manage grades, classes, sections, and school subjects from Classes
 - SCH-01: school admins get Overview metrics/setup progress and Settings branding edits
 - ADM-08: platform staff can open Analytics for privacy-safe health, catalog, and 7-day activity aggregates

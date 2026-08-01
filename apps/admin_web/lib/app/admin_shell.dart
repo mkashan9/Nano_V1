@@ -8,6 +8,7 @@ import 'package:admin_web/features/platform/presentation/platform_dashboard_page
 import 'package:admin_web/features/school/presentation/academic_structure_page.dart';
 import 'package:admin_web/features/school/presentation/school_branding_settings_page.dart';
 import 'package:admin_web/features/school/presentation/school_overview_page.dart';
+import 'package:admin_web/features/school/presentation/school_teachers_page.dart';
 import 'package:admin_web/features/schools/presentation/schools_page.dart';
 import 'package:admin_web/features/users/presentation/users_page.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class AdminShell extends StatelessWidget {
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
     this.academicStructureRepository,
+    this.schoolTeacherRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -59,6 +61,7 @@ class AdminShell extends StatelessWidget {
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
   final AcademicStructureRepository? academicStructureRepository;
+  final SchoolTeacherRepository? schoolTeacherRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -178,6 +181,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
     this.academicStructureRepository,
+    this.schoolTeacherRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -195,6 +199,7 @@ class AdminDestinationPage extends StatelessWidget {
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
   final AcademicStructureRepository? academicStructureRepository;
+  final SchoolTeacherRepository? schoolTeacherRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -220,6 +225,12 @@ class AdminDestinationPage extends StatelessWidget {
       return AcademicStructurePage(
         repository: academicStructureRepository!,
       );
+    }
+
+    if (destination.id == 'teachers' &&
+        principal.role == AppRole.schoolAdmin &&
+        schoolTeacherRepository != null) {
+      return SchoolTeachersPage(repository: schoolTeacherRepository!);
     }
 
     // ADM-01: Platform home absorbs the previous stub without replacing

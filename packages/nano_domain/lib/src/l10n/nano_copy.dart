@@ -129,6 +129,38 @@ class NanoCopy {
   String get classesGradesHeading => isUrdu ? 'گریڈز' : 'Grades';
   String get classesClassesHeading => isUrdu ? 'کلاسز' : 'Classes';
   String get classesSubjectsHeading => isUrdu ? 'مضامین' : 'Subjects';
+  String get teachersPageTitle => isUrdu ? 'اساتذہ' : 'Teachers';
+  String get teachersPageSubtitle => isUrdu
+      ? 'فہرست، نیا استاد، معطل، CSV درآمد۔'
+      : 'List, create, suspend, and CSV import teachers.';
+  String get teachersEmpty =>
+      isUrdu ? 'ابھی کوئی استاد نہیں۔' : 'No teachers yet.';
+  String get teachersCreateTitle => isUrdu ? 'نیا استاد' : 'Add teacher';
+  String get teachersCreateAction => isUrdu ? 'بنائیں' : 'Create';
+  String get teachersNameLabel => isUrdu ? 'نام' : 'Display name';
+  String get teachersEmailLabel => isUrdu ? 'ای میل' : 'Email';
+  String get teachersSearchHint =>
+      isUrdu ? 'نام یا ای میل' : 'Search name or email';
+  String get teachersSuspendTitle => isUrdu ? 'معطل' : 'Suspend';
+  String get teachersRestoreTitle => isUrdu ? 'بحال' : 'Restore';
+  String get teachersReasonLabel => isUrdu ? 'وجہ' : 'Reason';
+  String get teachersConfirmAction => isUrdu ? 'تصدیق' : 'Confirm';
+  String get teachersTempPasswordTitle =>
+      isUrdu ? 'عارضی پاس ورڈ' : 'Temporary password';
+  String get teachersCopyPassword =>
+      isUrdu ? 'کاپی کریں' : 'Copy password';
+  String get teachersImportTitle =>
+      isUrdu ? 'CSV درآمد' : 'CSV import';
+  String get teachersImportSubtitle => isUrdu
+      ? 'کالم: display_name,email — ناکام قطاریں کچھ نہیں لکھتیں۔'
+      : 'Columns: display_name,email — failed rows write nothing.';
+  String get teachersPreviewImport => isUrdu ? 'پیش منظر' : 'Preview';
+  String get teachersCommitImport => isUrdu ? 'محفوظ درآمد' : 'Commit import';
+  String get teachersLoadTemplate =>
+      isUrdu ? 'سانچہ' : 'Load template';
+  String teachersImportPreviewSummary(int ok, int fail) => isUrdu
+      ? '$ok ٹھیک، $fail ناکام'
+      : '$ok ready, $fail failed';
   String get platform => isUrdu ? 'پلیٹ فارم' : 'Platform';
   String get platformDashboardTitle =>
       isUrdu ? 'پلیٹ فارم ڈیش بورڈ' : 'Platform dashboard';
