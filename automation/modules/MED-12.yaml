@@ -1,0 +1,77 @@
+id: MED-12
+name: "Nori Everywhere and Companion Coverage Gate"
+release: R4
+status: BACKLOG
+dependencies:
+  - MED-10
+  - MED-11
+dependency_notes: >
+  The capstone of the avatar arc. CMP-03 placed the companion on four
+  student surfaces; onboarding and quiz results build their own throwaway
+  runtimes instead of using the session controller, and no surface mounts
+  game, social, or settings. This module finishes placement, makes presence
+  consistent, and adds the gate that keeps it complete as the app grows.
+applications:
+  - student_app
+  - packages
+  - admin_web
+  - docs
+  - automation
+allowed_paths:
+  - apps/student_app/
+  - apps/admin_web/lib/features/media/
+  - packages/nano_design_system/
+  - packages/nano_domain/
+  - packages/nano_media/
+  - docs/
+  - automation/
+  - docs/modules/MED-12/
+  - automation/modules/MED-12.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
+forbidden_paths:
+  - supabase/migrations/
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "10.3 Reaction state machine"
+  - "10.5 Companion presence rules"
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-12"
+ui_references:
+  - UI_reference/manifest.yaml
+database_scope: []
+server_functions: []
+acceptance:
+  - Every student surface the placement policy says should show Nori actually shows Nori
+  - Onboarding and quiz results use the session companion controller instead of building a throwaway runtime, so cooldowns and the session budget apply everywhere
+  - Error, empty, and offline states carry the companion without ever blocking the recovery action
+  - A coverage test enumerates every reachable reaction and fails the build when one cannot resolve an asset at its tier or below
+  - Moderation shows the owner which companion slots are still missing art, so the gap is visible without reading a test log
+  - Presence still obeys cooldowns, the session budget, quiet events, and Classroom Mode; more coverage does not mean more interruption
+  - Senior stays restrained and Junior stays warm, exactly as the policies already declare
+  - Module documentation complete
+required_tests:
+  - packages/nano_domain/test/companion_coverage_test.dart
+  - apps/student_app/test/companion_surface_coverage_test.dart
+  - apps/admin_web/test/asset_review_page_test.dart
+security_checks:
+  - no_secrets_in_diff
+  - companion_never_blocks_a_recovery_action
+manual_test_steps:
+  - Walk every student screen and confirm Nori is present where the policy says and absent where it does not
+  - Confirm Nori never covers a button you need to press
+  - Kill the network mid-session and confirm the companion degrades without breaking the screen
+  - Open Moderation and confirm the missing-slot report matches what you saw
+rollback_notes: >
+  Revert the branch. Placement returns to the four CMP-03 surfaces.
+requires_owner_test: true
+owner_decisions_locked:
+  target: >
+    Owner asked that leaving the MED arc means the avatar is about ninety
+    percent implemented. The remaining tenth is deliberately out of scope
+    here: the game surface waits on GME-01, celebration hooks for levels and
+    achievements wait on XP-02 and XP-03, and Tier 3 personalised clips stay
+    feature-flagged and unbuilt.

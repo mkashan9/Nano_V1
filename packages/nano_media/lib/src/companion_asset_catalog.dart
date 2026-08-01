@@ -9,18 +9,30 @@ class CompanionArtChoice {
   const CompanionArtChoice({
     required this.tier,
     this.generated,
+    this.still,
     this.fallback = CompanionArtFallback.none,
   });
 
   final CompanionAssetTier tier;
 
-  /// Non-null only when a published, approved file is being used.
+  /// Non-null only when a published, approved clip is being used.
   final GeneratedAsset? generated;
+
+  /// The approved picture for this reaction, when one is published (MED-08).
+  ///
+  /// Present at every tier, including alongside [generated]: a clip needs a
+  /// still to sit under it before it starts and after it ends, and a
+  /// reduced-motion learner sees only this.
+  final GeneratedAsset? still;
 
   /// Why the asked-for tier was not used, for the rare case a caller cares.
   final CompanionArtFallback fallback;
 
   bool get usesGeneratedClip => generated != null;
+
+  /// Whether a published picture can be drawn, rather than the placeholder art
+  /// the design system falls back to.
+  bool get hasStill => still != null;
 
   bool get didFallBack => fallback != CompanionArtFallback.none;
 }
@@ -114,14 +126,16 @@ class CompanionAssetCatalog {
     NanoAppLocale locale = NanoAppLocale.en,
     bool reducedMotion = false,
   }) {
+    final still = _stillFor(reaction, locale: locale);
     if (reducedMotion) {
-      return const CompanionArtChoice(
+      return CompanionArtChoice(
         tier: CompanionAssetTier.staticArt,
+        still: still,
         fallback: CompanionArtFallback.reducedMotion,
       );
     }
     if (reaction.tier != CompanionAssetTier.shortClip) {
-      return CompanionArtChoice(tier: reaction.tier);
+      return CompanionArtChoice(tier: reaction.tier, still: still);
     }
     final asset = lookup(slot: reaction.assetKey, locale: locale);
     if (asset == null || asset.kind != GeneratedAssetKind.video) {
@@ -129,6 +143,7 @@ class CompanionAssetCatalog {
       // next rung down and it always ships with the app.
       return CompanionArtChoice(
         tier: CompanionAssetTier.localAnimation,
+        still: still,
         fallback: asset == null
             ? CompanionArtFallback.notGenerated
             : CompanionArtFallback.wrongKind,
@@ -137,6 +152,29 @@ class CompanionAssetCatalog {
     return CompanionArtChoice(
       tier: CompanionAssetTier.shortClip,
       generated: asset,
+      still: still,
     );
+  }
+
+  /// The approved picture for this reaction (MED-08).
+  ///
+  /// Its own tier first, then the static-art slot for the same mode and mood,
+  /// because static art is the floor under every tier: a mood that animates or
+  /// plays a clip still needs a picture to rest on. Anything that is not an
+  /// image is ignored rather than drawn.
+  GeneratedAsset? _stillFor(
+    CompanionReaction reaction, {
+    required NanoAppLocale locale,
+  }) {
+    for (final tier in {reaction.tier, CompanionAssetTier.staticArt}) {
+      final slot = CompanionReaction.slotKey(
+        mode: reaction.mode,
+        mood: reaction.mood,
+        tier: tier,
+      );
+      final asset = lookup(slot: slot, locale: locale);
+      if (asset != null && asset.kind == GeneratedAssetKind.image) return asset;
+    }
+    return null;
   }
 }

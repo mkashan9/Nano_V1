@@ -27,6 +27,8 @@ class CompanionStage extends StatelessWidget {
     this.onListen,
     this.onPlayClip,
     this.clipAvailable = false,
+    this.artUrl,
+    this.clipView,
     this.action,
   });
 
@@ -59,6 +61,15 @@ class CompanionStage extends StatelessWidget {
   /// is null. Useful for goldens; the surface stage drives both from the same
   /// controller answer.
   final bool clipAvailable;
+
+  /// The approved picture for this reaction (MED-08). Null — still the ordinary
+  /// state for most slots — means the placeholder is drawn instead, which is
+  /// what every reaction looked like before any art was published.
+  final String? artUrl;
+
+  /// The clip playing right now, from the player the controller holds. Null
+  /// whenever nothing is playing, which is nearly always.
+  final Widget? clipView;
 
   /// Optional primary action for a story card ("Start", "See it", …).
   final Widget? action;
@@ -118,6 +129,8 @@ class CompanionStage extends StatelessWidget {
                 onListen: onListen,
                 onPlayClip: onPlayClip,
                 clipAvailable: clipAvailable,
+                artUrl: artUrl,
+                clipView: clipView,
                 action: action,
               )
             : _InlineStage(
@@ -130,6 +143,8 @@ class CompanionStage extends StatelessWidget {
                 onListen: onListen,
                 onPlayClip: onPlayClip,
                 clipAvailable: clipAvailable,
+                artUrl: artUrl,
+                clipView: clipView,
               ),
       ),
     );
@@ -147,6 +162,8 @@ class _InlineStage extends StatelessWidget {
     required this.onListen,
     required this.onPlayClip,
     required this.clipAvailable,
+    required this.artUrl,
+    required this.clipView,
   });
 
   final CompanionReaction reaction;
@@ -158,6 +175,8 @@ class _InlineStage extends StatelessWidget {
   final VoidCallback? onListen;
   final VoidCallback? onPlayClip;
   final bool clipAvailable;
+  final String? artUrl;
+  final Widget? clipView;
 
   @override
   Widget build(BuildContext context) {
@@ -171,6 +190,8 @@ class _InlineStage extends StatelessWidget {
           copy: copy,
           clipAvailable: clipAvailable,
           onPlayClip: onPlayClip,
+          artUrl: artUrl,
+          clipView: clipView,
         ),
         if (reaction.showsCaption && caption.isNotEmpty) ...[
           const SizedBox(width: NanoSpacing.sm),
@@ -207,6 +228,8 @@ class _StoryCard extends StatelessWidget {
     required this.onListen,
     required this.onPlayClip,
     required this.clipAvailable,
+    required this.artUrl,
+    required this.clipView,
     required this.action,
   });
 
@@ -219,6 +242,8 @@ class _StoryCard extends StatelessWidget {
   final VoidCallback? onListen;
   final VoidCallback? onPlayClip;
   final bool clipAvailable;
+  final String? artUrl;
+  final Widget? clipView;
   final Widget? action;
 
   @override
@@ -261,6 +286,8 @@ class _StoryCard extends StatelessWidget {
                 copy: copy,
                 clipAvailable: clipAvailable,
                 onPlayClip: onPlayClip,
+                artUrl: artUrl,
+                clipView: clipView,
               ),
               if (reaction.showsCaption && caption.isNotEmpty) ...[
                 const SizedBox(height: NanoSpacing.md),
@@ -398,6 +425,8 @@ class _CompanionArt extends StatelessWidget {
     required this.copy,
     required this.clipAvailable,
     required this.onPlayClip,
+    this.artUrl,
+    this.clipView,
   });
 
   final CompanionReaction reaction;
@@ -406,6 +435,12 @@ class _CompanionArt extends StatelessWidget {
   final NanoCopy copy;
   final bool clipAvailable;
   final VoidCallback? onPlayClip;
+
+  /// The approved picture, when one has been published and resolved (MED-08).
+  final String? artUrl;
+
+  /// The clip playing right now, if any.
+  final Widget? clipView;
 
   IconData get _moodIcon => switch (reaction.mood) {
         CompanionMood.greeting => Icons.waving_hand_rounded,
@@ -416,14 +451,45 @@ class _CompanionArt extends StatelessWidget {
         CompanionMood.celebration => Icons.celebration_rounded,
       };
 
+  /// What sits inside the mode ring, best first (MED-08).
+  ///
+  /// A clip while one is playing, the approved picture the rest of the time,
+  /// and the mood icon when nothing has been published for this slot. Every
+  /// rung is a complete picture on its own, so the stage is never empty and a
+  /// learner never sees a broken frame — an image that fails to decode falls
+  /// through to the icon rather than to a grey box.
+  Widget _inner(BuildContext context, Color accent) {
+    final playing = clipView;
+    if (playing != null) {
+      return SizedBox.expand(
+        child: FittedBox(fit: BoxFit.cover, child: playing),
+      );
+    }
+    final url = artUrl;
+    if (url != null) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: size,
+        height: size,
+        // A half-loaded picture would pop; the icon holds the same space.
+        frameBuilder: (context, child, frame, wasSynchronous) =>
+            frame == null && !wasSynchronous ? _icon(accent) : child,
+        errorBuilder: (context, error, stack) => _icon(accent),
+      );
+    }
+    return _icon(accent);
+  }
+
+  Widget _icon(Color accent) =>
+      Center(child: Icon(_moodIcon, size: size / 2, color: accent));
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final mode = CompanionModeTheme.of(reaction.mode);
-    // Master art stands in for the asset ladder until MED-01 lands real files.
-    // The mode ring is the shared frame every variant wears; a clip badge is the
-    // only visual difference today, because Nano ships no video plugin yet and a
-    // silent placard is still enough to prove the slot was filled (MED-04).
+    // The mode ring is the shared frame every variant wears, whatever is inside
+    // it: icon, approved picture, or the clip playing now.
     final art = DecoratedBox(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
@@ -433,8 +499,14 @@ class _CompanionArt extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Center(child: Icon(_moodIcon, size: size / 2, color: mode.accent)),
-          if (clipAvailable)
+          ClipOval(
+            child: SizedBox(
+              width: size,
+              height: size,
+              child: _inner(context, mode.accent),
+            ),
+          ),
+          if (clipAvailable && clipView == null)
             Positioned(
               right: size * 0.06,
               bottom: size * 0.06,

@@ -3,10 +3,10 @@
 ## Current state
 
 - **Current release:** R4 Companion
-- **Current module:** MED-07 Wan 2.2 Character Animation with Compose Fallback
-- **Current status:** USER_TEST
-- **Current branch:** module/MED-07-wan-character-animation
-- **Last completed module:** MED-06
+- **Current module:** MED-09 Nori Character Sheet and Static Pose Pack
+- **Current status:** ACTIVE
+- **Current branch:** module/MED-09-character-sheet-and-poses
+- **Last completed module:** MED-08
 - **Application name:** Nano
 
 ## Releases
@@ -14,40 +14,45 @@
 - R1 Identity: complete
 - R2 Student Core: complete (STU-03 through STU-05 DONE)
 - R3 Learning: complete (LRN-01–LRN-05, QZ-01–QZ-06 DONE)
-- R4 Companion: CMP-01–CMP-03 and MED-01–MED-06 DONE; MED-07 in USER_TEST
+- R4 Companion: CMP-01–CMP-03 and MED-01–MED-08 DONE; MED-09 through MED-12
+  are the rest of the avatar arc
 
-## Owner decision waiting
+## The avatar arc
 
-Open admin_web → Moderation and decide the Wan clip waiting there:
+MED-01 through MED-07 built a complete pipeline — generate, budget, review,
+publish, deliver — and none of it reaches a child. These five modules close
+that gap and end with the companion roughly ninety percent implemented.
 
-1. `guide_greeting_shortClip` (MP4, `provider_id = wan_i2v_space`, provenance
-   shows `motion = driftIn` and the approved picture it was made from)
+| Module | What it delivers | Status |
+|--------|------------------|--------|
+| MED-08 | The app can finally show an image and play a voice or a clip | DONE |
+| MED-09 | One canonical Nori, static art for all 25 reachable reactions, bundled offline floor | ACTIVE |
+| MED-10 | Free local motion: breathing, blink, a bounce that reads as the mood | BACKLOG |
+| MED-11 | A recorded line for every moment, a clip for every celebration | BACKLOG |
+| MED-12 | Presence on every surface, plus a build gate that fails when a reaction has no art | BACKLOG |
 
-Approving publishes it. Rejecting frees the slot. Until you decide it stays
-invisible — that is MED-05 working.
-
-The live Wan render against `nano_v1` has already passed (~27s warm, 164 KB,
-Nori waves). The compose gate (`NM011` without approved art) and the one-hop
-fallback to json2video are covered by automated tests; the fallback path can
-also be exercised manually by pointing `VIDEO_SPACE_URL` at a dead host.
+The remaining tenth is deliberately deferred: the game surface waits on
+GME-01, level and achievement celebrations wait on XP-02 and XP-03, and Tier 3
+personalised clips stay feature-flagged and unbuilt.
 
 ## What a learner can actually see and hear
 
-Still nothing generated reaches a child: no player exists outside admin_web.
-Approved media sits in the catalog. Every companion moment in the student app
-is a caption over local art.
+On the Junior home: the approved picture of Nori, a Listen button that reads
+the caption in the cast guide voice, and a play badge that runs the Wan clip
+silently. Everywhere else, still the mood icon and a caption — the delivery
+path is finished, the art pack is not.
 
 ## Content coverage
 
 | Surface | Authored | Approved |
 |---------|----------|----------|
-| Narration lines | 6 slugs × en/ur | 1 (`greeting-2` en) |
-| Reaction clips | 3 slugs | 0 (one Wan clip waiting) |
+| Narration lines | 6 slugs × en/ur | 2 (`greeting-2` en, guide voice) |
+| Reaction clips | 3 slugs | 1 (`guide_greeting` Wan clip) |
 | Companion art | 1 slot | 1 (`guide_greeting` 1:1) |
+| Reachable reactions needing art | 25 | 1 |
 
-## Next after MED-07 DONE
+## Owner decision waiting
 
-A learner-facing player module is the highest-value remaining gap in R4 — without
-it no approved voice or clip reaches a child. XP-01 is also eligible (its only
-dependencies finished in R0/R1). ADM-01 should absorb the borrowed Moderation
-destination and is the natural home for a curated-upload screen.
+None. MED-08 was approved. MED-09 is in progress and will return for a manual
+test — the pose pack is reviewed one pose at a time, so expect a Moderation
+queue rather than a single yes or no.

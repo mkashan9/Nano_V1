@@ -1,0 +1,80 @@
+id: MED-11
+name: "Full Narration and Celebration Clip Pack"
+release: R4
+status: BACKLOG
+dependencies:
+  - MED-09
+dependency_notes: >
+  MED-03 built narration and MED-06 cast the guide voice; only a handful of
+  lines are recorded. MED-07 built character animation and rendered one
+  clip. CompanionAssetManifest promotes only the celebration mood to
+  shortClip, so the generated clip pack is a bounded set rather than one
+  clip per surface. Clips are composed from approved art, so MED-09 must
+  land first.
+applications:
+  - supabase
+  - packages
+  - docs
+  - automation
+allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/generate-asset/
+  - packages/nano_media/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - docs/
+  - automation/
+  - docs/modules/MED-11/
+  - automation/modules/MED-11.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "10.2 Companion asset ladder"
+  - "10.3 Reaction state machine"
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-11"
+ui_references: []
+database_scope:
+  - narration_lines and narration_line_versions (a line for every reachable event)
+  - reaction_clips and reaction_clip_versions (the celebration set)
+  - generated_assets
+server_functions:
+  - "reuse generate-asset with wan_i2v_space and fish_audio_voice"
+acceptance:
+  - Every reachable companion event has a recorded line in English and in Urdu
+  - Every line is spoken by the cast guide voice, and personalised lines stay caption-only as ADR-0008 requires
+  - Urdu never falls back to English audio; a missing Urdu recording shows the caption instead
+  - Every celebration mode has an approved clip, and clips stay silent so they never fight the narration
+  - Clip and voice generation stay inside the existing budgets and quotas
+  - Every asset passes the MED-05 review gate before a learner can reach it
+  - Module documentation complete
+required_tests:
+  - supabase/tests/med11_narration_coverage.sql
+  - packages/nano_media/test/narration_catalog_test.dart
+  - packages/nano_data/test/narration_repository_test.dart
+security_checks:
+  - no_secrets_in_diff
+  - provider_keys_stay_server_side
+  - strict_locale_match_for_audio
+manual_test_steps:
+  - Listen to a sample of lines in English and confirm the voice is the one cast
+  - Switch the app to Urdu and confirm Urdu lines play and untranslated ones stay silent with a caption
+  - Watch each celebration clip in Moderation and decide it
+  - Confirm the generation spend stayed inside the quota
+rollback_notes: >
+  Revert the branch and reject the generated rows. Recorded lines are
+  additive; rejecting them returns the companion to caption-only.
+requires_owner_test: true
+owner_decisions_locked:
+  voice: "guide_educational, per ADR-0008. Clips remain silent."
+  scope: >
+    Clips are generated only for the celebration tier, which is the only
+    tier CompanionAssetManifest promotes to shortClip. Generating a clip per
+    surface was considered and rejected as cost and battery with no gain.

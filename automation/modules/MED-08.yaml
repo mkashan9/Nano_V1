@@ -1,0 +1,97 @@
+id: MED-08
+name: "Real Playback and Companion Art Rendering"
+release: R4
+status: DONE
+dependencies:
+  - MED-07
+  - FND-07
+dependency_notes: >
+  MED-01 through MED-07 built a complete generation, review, and delivery
+  pipeline. Nothing in it reaches a learner. Nori is drawn as a Material
+  pets icon in a circle, the repository contains no art files and no
+  assets: block, no pubspec declares an audio or video plugin, and both
+  player seams (NanoVoicePlayer, NanoClipPlayer) are null in main.dart, so
+  Listen and Play clip never render. CompanionStage also has no code path
+  that can display a remote image even if one arrived. This module closes
+  the last mile so every later module in the arc has something to fill.
+applications:
+  - student_app
+  - packages
+  - docs
+  - automation
+allowed_paths:
+  - apps/student_app/
+  - packages/nano_design_system/
+  - packages/nano_media/
+  - packages/nano_domain/
+  - docs/
+  - automation/
+  - docs/modules/MED-08/
+  - automation/modules/MED-08.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+  - supabase/migrations/
+handbook_sections:
+  - "10.2 Companion asset ladder"
+  - "10.3 Reaction state machine"
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-08"
+ui_references: []
+database_scope: []
+server_functions: []
+acceptance:
+  - A learner can see an approved companion image on screen, not an icon
+  - A learner can tap Listen and hear the approved narration for the exact caption shown
+  - A learner can tap Play and watch an approved reaction clip, silently
+  - Nothing plays unasked; every playback starts from a learner tap
+  - Sound off, Classroom Mode, and reduced motion each degrade the surface rather than disable the moment
+  - A slow, missing, refused, or unsupported asset falls back down the ladder and never leaves a blank frame
+  - No plugin call can throw into the widget tree; both players honour the never-throw contract
+  - TopicPlayerPage drives the existing heartbeat contract from real playback when a topic has a playable source, and keeps the fixture clock when it does not
+  - The server contract for watch credit is unchanged
+  - Module documentation complete
+required_tests:
+  - packages/nano_design_system/test/companion_art_test.dart
+  - packages/nano_design_system/test/nano_media_players_test.dart
+  - apps/student_app/test/companion_playback_test.dart
+  - apps/student_app/test/topic_player_page_test.dart
+security_checks:
+  - no_secrets_in_diff
+  - only_approved_assets_rendered
+  - signed_urls_never_logged
+manual_test_steps:
+  - Run student_app against the development project and sign in as a junior learner
+  - Confirm Nori on the Junior home is the approved artwork, not the pets icon
+  - Tap Listen and confirm the guide voice reads the caption shown
+  - Tap Play and confirm the Wan greeting clip plays silently and returns to the still
+  - Turn sound off and confirm Listen disappears while the caption stays
+  - Turn on reduced motion and confirm the clip control disappears and the still remains
+  - Turn on Classroom Mode and confirm no audio is possible and optional prompts stay silent
+  - Open a topic and confirm playback still credits watch time exactly as before
+rollback_notes: >
+  Revert the module branch. Removing the two plugin dependencies and passing
+  null players again returns the app to caption-only behaviour with no
+  schema or server change to undo.
+requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Owner asked to correct playback before designing the rest of the avatar
+    arc, on 2026-08-01.
+  lesson_video: >
+    Every topic_version currently carries video_provider = 'fixture' and no
+    real media reference, so there is no lesson video to play. The real
+    engine is built and wired behind the same seam, and fixture topics keep
+    the deterministic one-second clock so LRN-03 and LRN-04 tests stay
+    honest. Sourcing real lesson video is content administration, not this
+    module.
+  ladder: >
+    Owner accepted that "animation everywhere" is delivered as static art
+    everywhere plus cheap local motion, with generated clips reserved for
+    special moments. Video on every surface would break offline use,
+    small devices, and reduced motion.

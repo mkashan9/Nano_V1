@@ -40,6 +40,12 @@ class CompanionSurfaceStage extends StatefulWidget {
 class _CompanionSurfaceStageState extends State<CompanionSurfaceStage> {
   var _announced = false;
 
+  /// The controller we last announced to. Replacing the session companion
+  /// (a Junior/Senior flip, a rename) builds a fresh controller with no
+  /// reaction; without noticing the identity change the stage would stay
+  /// silent forever because [_announced] is already true.
+  CompanionController? _announcedTo;
+
   CompanionPlacement get _placement => CompanionPlacementPolicy.resolve(
         surface: widget.surface,
         junior: widget.junior,
@@ -48,14 +54,15 @@ class _CompanionSurfaceStageState extends State<CompanionSurfaceStage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_announced || !_placement.isVisible) return;
     final controller = NanoCompanionScope.maybeOf(context);
-    if (controller == null) return;
+    if (controller == null || !_placement.isVisible) return;
+    if (_announced && identical(controller, _announcedTo)) return;
     _announced = true;
+    _announcedTo = controller;
     // After this frame: entering a surface notifies listeners, and this one is
     // still building.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+      if (!mounted || !identical(controller, _announcedTo)) return;
       final event = widget.entryEvent;
       if (event == null) {
         controller.enterSurface(widget.surface);
@@ -90,6 +97,10 @@ class _CompanionSurfaceStageState extends State<CompanionSurfaceStage> {
         // attached. Autoplay is forbidden: the learner asks, like Listen.
         clipAvailable: controller.canShowClip,
         onPlayClip: controller.canShowClip ? controller.playClip : null,
+        // The approved picture when one has been published for this slot, and
+        // the clip only while it is actually playing (MED-08).
+        artUrl: controller.artUrl,
+        clipView: controller.clipView,
       ),
     );
   }

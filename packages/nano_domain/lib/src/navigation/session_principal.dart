@@ -1,3 +1,4 @@
+import '../onboarding/onboarding_models.dart';
 import 'app_role.dart';
 
 /// Fixture/session identity used by client route guards.
@@ -12,6 +13,7 @@ class SessionPrincipal {
     this.userId,
     this.schoolId,
     this.isAuthenticated = false,
+    this.experienceTrack,
   });
 
   final AppRole role;
@@ -22,6 +24,27 @@ class SessionPrincipal {
   final String? userId;
   final String? schoolId;
   final bool isAuthenticated;
+
+  /// Which experience this learner is on, once onboarding has decided.
+  ///
+  /// Separate from [role] because the two answer different questions: the role
+  /// is what a learner is entitled to, the track is how it should look. An
+  /// independent learner can be six years old, and role alone cannot say so —
+  /// every independent account is [AppRole.independentStudent] whatever their
+  /// grade. Null means nobody has decided yet, and the role is the best guess
+  /// available.
+  final ExperienceTrack? experienceTrack;
+
+  /// Whether this learner sees the Junior experience.
+  ///
+  /// The track wins when it is known, because it is the answer onboarding
+  /// actually recorded; the role is the fallback for a session that has not
+  /// loaded it yet.
+  bool get usesJuniorPresentation => switch (experienceTrack) {
+        ExperienceTrack.junior => true,
+        ExperienceTrack.senior => false,
+        null => role.usesJuniorPresentation,
+      };
 
   bool hasPermission(String permission) => permissions.contains(permission);
 
@@ -38,6 +61,7 @@ class SessionPrincipal {
     String? userId,
     String? schoolId,
     bool? isAuthenticated,
+    ExperienceTrack? experienceTrack,
   }) {
     return SessionPrincipal(
       role: role ?? this.role,
@@ -48,6 +72,7 @@ class SessionPrincipal {
       userId: userId ?? this.userId,
       schoolId: schoolId ?? this.schoolId,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      experienceTrack: experienceTrack ?? this.experienceTrack,
     );
   }
 

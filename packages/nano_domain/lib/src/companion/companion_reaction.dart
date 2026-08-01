@@ -220,6 +220,13 @@ class CompanionAssetManifest {
   /// [clipAvailable] is about *this* reaction's slot, not the library as a whole
   /// (MED-04): authoring one clip promises a clip for that reaction and for
   /// nothing else.
+  ///
+  /// The map is the floor the app can always reach without a network. An
+  /// approved clip may lift a mood one rung above that floor and no further
+  /// (MED-08), so a mood that already animates locally can become a clip while
+  /// the routine moods stay still art however much is published. Which moods
+  /// can carry a clip is therefore a curation decision — somebody has to author
+  /// and approve one — rather than a promise made here.
   CompanionAssetTier resolve(
     CompanionMood mood, {
     bool reducedMotion = false,
@@ -227,8 +234,13 @@ class CompanionAssetManifest {
   }) {
     final best = tiers[mood] ?? CompanionAssetTier.staticArt;
     if (reducedMotion) return CompanionAssetTier.staticArt;
-    if (best == CompanionAssetTier.shortClip && !clipAvailable) {
-      return CompanionAssetTier.localAnimation;
+    if (best == CompanionAssetTier.shortClip) {
+      return clipAvailable
+          ? CompanionAssetTier.shortClip
+          : CompanionAssetTier.localAnimation;
+    }
+    if (best == CompanionAssetTier.localAnimation && clipAvailable) {
+      return CompanionAssetTier.shortClip;
     }
     return best;
   }

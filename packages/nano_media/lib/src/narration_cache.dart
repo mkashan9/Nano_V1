@@ -87,9 +87,10 @@ class NarrationCache {
     } catch (error) {
       _lastError = error;
       // Keep the last good answer for this language, or stay empty. Either way
-      // the captions on screen are unaffected, because they never came from here.
+      // the captions on screen are unaffected, because they never came from
+      // here. Do not stamp [_fetchedAt] on a failure: a fetch that failed
+      // before sign-in must not lock the session into "nothing recorded".
       _loadedLocale = locale;
-      _fetchedAt ??= _clock();
       return _catalog;
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -6,10 +8,13 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_media/nano_media.dart';
+import 'package:student_app/app/playback/nano_audio_voice_player.dart';
+import 'package:student_app/app/playback/nano_video_clip_player.dart';
 import 'package:student_app/app/student_router.dart';
 import 'package:student_app/features/home/fixtures/student_home_fixtures.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
   OnboardingRepository? onboardingRepository;
@@ -42,6 +47,10 @@ void main() {
       preferencesRepository: preferencesRepository,
       assetRepository: assetRepository,
       narrationRepository: narrationRepository,
+      // Built here rather than inside the app state so a widget test keeps the
+      // recording doubles and never reaches for a platform plugin (MED-08).
+      voicePlayer: NanoAudioVoicePlayer(),
+      clipPlayer: NanoVideoClipPlayer(),
       requireAuth: requireAuth,
     ),
   );
@@ -100,12 +109,13 @@ class NanoStudentApp extends StatefulWidget {
   /// the experience, and a recording is the extra.
   final NarrationRepository? narrationRepository;
 
-  /// MED-03: who plays a recording. Null — the state today — means the listen
-  /// control never appears, because a control that cannot work should not exist.
+  /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
+  /// means the listen control never appears, because a control that cannot work
+  /// should not exist, and that is what a widget test gets by default.
   final NanoVoicePlayer? voicePlayer;
 
-  /// MED-04: who plays a reaction clip. Null — also the state today — means the
-  /// play affordance never appears, and every reaction keeps local art.
+  /// MED-04: who plays a reaction clip. Same shape as [voicePlayer]: real in
+  /// `main`, null in a test, and null means every reaction keeps its still art.
   final NanoClipPlayer? clipPlayer;
   final NanoSyncController? syncController;
   final bool requireAuth;
@@ -172,7 +182,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
         );
     _catalogRepository = widget.catalogRepository ??
         FakeLearningCatalogRepository(
-          seniorEligible: !_principal.role.usesJuniorPresentation,
+          seniorEligible: !_principal.usesJuniorPresentation,
         );
     _progressRepository =
         widget.progressRepository ?? FakeLearningProgressRepository();
@@ -192,10 +202,14 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     WidgetsBinding.instance.addObserver(this);
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
+      // Catalogs wait for a session: an anonymous fetch fails closed and used
+      // to be cached as empty for the whole TTL, so the approved art that
+      // exists after sign-in was never asked for again (MED-08).
       _restore();
+    } else {
+      _loadCompanionAssets();
+      _loadNarration();
     }
-    _loadCompanionAssets();
-    _loadNarration();
   }
 
   @override
@@ -222,10 +236,17 @@ class _NanoStudentAppState extends State<NanoStudentApp>
         _principal = restored.principal;
         _router = _createRouter();
       });
-      await _loadOnboarding(restored.principal);
+      await _afterSignedIn(restored.principal);
     } finally {
       if (mounted) setState(() => _restoring = false);
     }
+  }
+
+  Future<void> _afterSignedIn(SessionPrincipal principal) async {
+    await _loadOnboarding(principal);
+    if (!mounted) return;
+    await _loadCompanionAssets(force: true);
+    await _loadNarration(force: true);
   }
 
   Future<void> _loadOnboarding(SessionPrincipal principal) async {
@@ -237,6 +258,16 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     if (!mounted) return;
     setState(() {
       _onboarding = progress;
+      // The track a learner settled on during onboarding decides how the app
+      // looks on every later sign-in too. Sign-in cannot know it — the auth
+      // bootstrap reads `profiles`, and the track lives in
+      // `student_onboarding` — so applying it here is what stops a returning
+      // Junior learner from being handed the Senior experience.
+      final track = progress.experienceTrack;
+      if (track != null && track != _principal.experienceTrack) {
+        _principal = _principal.copyWith(experienceTrack: track);
+        _syncCompanion();
+      }
       if (prefs != null) {
         _applyPreferences(prefs);
       }
@@ -280,8 +311,8 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   /// empty catalog on failure, and an empty catalog is indistinguishable from a
   /// library nobody has recorded yet — which is the resting state until MED-05
   /// approves something. Either way the captions on screen are already correct.
-  Future<void> _loadNarration() async {
-    await _narrationCache.load(_locale);
+  Future<void> _loadNarration({bool force = false}) async {
+    await _narrationCache.load(_locale, force: force);
     if (!mounted) return;
     _companion.attachNarration(
       catalog: _narrationCache.current,
@@ -295,9 +326,10 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   /// Deliberately unawaited and deliberately not guarded: the cache swallows a
   /// failure and answers with an empty catalog, which is the same thing a device
   /// with nothing published has. Until a curator approves a clip this changes
-  /// nothing on screen, and that is the intended resting state.
-  Future<void> _loadCompanionAssets() async {
-    await _assetCache.load();
+  /// nothing on screen, and that is the intended resting state. Call with
+  /// [force] after sign-in so a failed anonymous probe cannot win.
+  Future<void> _loadCompanionAssets({bool force = false}) async {
+    await _assetCache.load(force: force);
     if (!mounted) return;
     _companion.setClipsAvailable(_assetCache.clipsAvailable);
     _companion.setClipSlots(_assetCache.current.clipSlots);
@@ -310,7 +342,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
 
   CompanionController _createCompanion() {
     return CompanionController(
-      junior: _principal.role.usesJuniorPresentation,
+      junior: _principal.usesJuniorPresentation,
       preferences: _a11y,
       companionName:
           _preferences?.companionName ?? CompanionNamePolicy.defaultName,
@@ -324,7 +356,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   /// Accessibility changes reach the live controller; a renamed companion or a
   /// changed experience needs a new one, which also starts a fresh session.
   void _syncCompanion() {
-    final junior = _principal.role.usesJuniorPresentation;
+    final junior = _principal.usesJuniorPresentation;
     final name =
         _preferences?.companionName ?? CompanionNamePolicy.defaultName;
     final sameExperience = _companion.runtime.policy ==
@@ -371,6 +403,9 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       userId: _principal.userId,
       schoolId: _principal.schoolId,
       isAuthenticated: _principal.isAuthenticated,
+      // An independent learner keeps one role whatever their age, so the track
+      // is the only thing that can tell a six-year-old from a sixteen-year-old.
+      experienceTrack: track,
     );
     setState(() {
       _onboarding = progress;
@@ -398,7 +433,11 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           _principal = bootstrap.principal;
           _router = _createRouter();
         });
-        _loadOnboarding(bootstrap.principal);
+        // Track first, then catalogs: the home greeting is announced against
+        // whichever experience the track selects, and the picture for it has
+        // to be asked for with a live session rather than the anonymous one
+        // that was probing before the form submitted.
+        unawaited(_afterSignedIn(bootstrap.principal));
       },
       onSignedOut: _signOut,
       onboardingRepository: widget.onboardingRepository,
@@ -454,7 +493,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       _syncCompanion();
       if (widget.catalogRepository == null) {
         _catalogRepository = FakeLearningCatalogRepository(
-          seniorEligible: !next.role.usesJuniorPresentation,
+          seniorEligible: !next.usesJuniorPresentation,
         );
       }
       _router = _createRouter();
@@ -499,7 +538,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   @override
   Widget build(BuildContext context) {
     final copy = NanoCopy(_locale);
-    final theme = _principal.role.usesJuniorPresentation
+    final theme = _principal.usesJuniorPresentation
         ? NanoTheme.junior(localeTag: _locale.tag)
         : NanoTheme.senior(localeTag: _locale.tag);
     final flutterLocale = Locale(_locale.languageCode);
@@ -521,7 +560,9 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           controller: _companion,
           child: MaterialApp.router(
             key: ValueKey(
-              '${_principal.role}-${_principal.isAuthenticated}-'
+              '${_principal.role}-'
+              '${_principal.experienceTrack?.name ?? 'unset'}-'
+              '${_principal.isAuthenticated}-'
               '${_onboarding?.isComplete ?? false}-'
               '${_locale.tag}-${_a11y.reducedMotion}-'
               '${_a11y.classroomMode}-${_a11y.textScale}',

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Fix: approved companion art reaches a learner after sign-in — the app used to ask for the published catalog before anyone was authenticated, cache the anonymous failure as an empty answer for six hours, and never ask again, so a reviewer-approved Nori stayed invisible while the icon and caption still rendered; catalogs now load only with a live session, and a failed fetch no longer locks the TTL
+
+- Fix: a learner's experience follows the track they chose, not the account kind they signed up with — onboarding recorded junior or senior in `student_onboarding`, sign-in reads `profiles` and never saw it, and the app loaded the track on every launch and then dropped it, applying it only in the session where onboarding happened to finish; a returning Junior was handed the Senior experience, which is quiet on home, so the companion never appeared at all. `SessionPrincipal` now carries the track and presentation follows it, because an independent learner keeps one role at every age and a role alone cannot tell a six-year-old from a sixteen-year-old
+
+- MED-08: the media finally reaches a child — seven modules generated, budgeted, reviewed, published, and delivered companion assets that nothing on screen could display, so Nori was a paw icon and the Listen and Play controls could never appear; the app now draws the approved picture, plays the recording in the voice that was cast, and plays the Wan clip silently, and every failure below that — an expired URL, a dead link, a codec that will not open, no plugin at all — falls to a picture or an icon and a caption rather than an error or an empty frame
+
+- MED-08: a published clip may lift a mood one rung and no further — the tier map is the floor the app reaches offline, so a mood that already animates locally can become a clip while routine moods stay still art however much is published, which is what made the approved greeting clip reachable at all and what keeps video off ordinary moments
+
+- MED-08: lesson playback is real where there is anything to play — a topic whose reference parses as a URL is decoded, resume, seek clamping, checkpoints, heartbeats, and completion all run from the frames actually shown, and the deterministic one-second clock stays for the `fixture` topics that are the entire catalog today, because watch credit should be provable without a codec
+
 - MED-07: character animation instead of a camera pan — Wan 2.2 image-to-video is the default clip provider, animates approved Nori art rather than inventing it, falls back in one hop to json2video when the public Space is unusable, records the swap so a reviewer sees who actually made the file, and holds the connection for the whole render because the Space is not resumable
 
 - MED-06: Fish Audio narration and composed reaction clips — Fish is the default voice (MP3, stock until a reference_id is picked), json2video is the default video provider and animates only companion art a reviewer has already approved, a closed motion set replaces free-form generative prompts, unapproved or wrong-shaped art is refused before any money is spent, and a missing key still fails closed so every caption and every local reaction keeps working

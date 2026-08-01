@@ -1,0 +1,72 @@
+id: MED-10
+name: "Idle Life and Local Animation Tier"
+release: R4
+status: BACKLOG
+dependencies:
+  - MED-09
+dependency_notes: >
+  CompanionAssetManifest already maps the greeting mood to
+  CompanionAssetTier.localAnimation, and nothing implements that tier, so it
+  silently resolves down to static art. Tier 1 in the handbook is bundled
+  and reusable: blink, wave, bounce, subtle idle. This is the tier that
+  makes an avatar feel alive, and it costs nothing, needs no network, and
+  cannot fail in the field.
+applications:
+  - packages
+  - student_app
+  - docs
+  - automation
+allowed_paths:
+  - packages/nano_design_system/
+  - packages/nano_domain/
+  - apps/student_app/
+  - docs/
+  - automation/
+  - docs/modules/MED-10/
+  - automation/modules/MED-10.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
+forbidden_paths:
+  - supabase/
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "10.2 Companion asset ladder"
+  - "10.3 Reaction state machine"
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-10"
+ui_references: []
+database_scope: []
+server_functions: []
+acceptance:
+  - Nori breathes when nothing is happening, so a still screen does not look frozen
+  - Each mood carries motion that reads as that mood without a caption
+  - Every animation is procedural over approved static art, so it needs no render spend and no network
+  - Reduced motion and Classroom Mode collapse all of it to a still frame through NanoMotion, never by a hand-rolled branch
+  - Motion pauses when the companion is off screen or the app is backgrounded, so it costs no battery when unseen
+  - The tier works offline and on the smallest supported device
+  - Nothing in this tier can delay or block a learner's next tap
+  - Module documentation complete
+required_tests:
+  - packages/nano_design_system/test/companion_local_animation_test.dart
+  - packages/nano_design_system/test/companion_reduced_motion_test.dart
+  - apps/student_app/test/companion_playback_test.dart
+security_checks:
+  - no_secrets_in_diff
+  - reduced_motion_is_authoritative
+manual_test_steps:
+  - Sit on the Junior home for a minute and confirm Nori looks alive but not distracting
+  - Trigger a wrong answer and confirm the retry motion reads as gentle, not punishing
+  - Turn on reduced motion and confirm every surface goes still immediately
+  - Background the app and return, confirming motion resumes cleanly
+rollback_notes: >
+  Revert the branch. The tier degrades to static art, which is the current
+  behaviour.
+requires_owner_test: true
+owner_decisions_locked:
+  tier_strategy: >
+    Owner accepted on 2026-08-01 that "animations everywhere" is delivered
+    mostly here, in free local motion, rather than by generating a clip for
+    every surface.

@@ -54,7 +54,7 @@ class StudentShell extends StatelessWidget {
     final destinations = NavCatalog.visibleFor(principal);
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
         NanoCopy(NanoAppLocale.en);
-    final junior = principal.role.usesJuniorPresentation;
+    final junior = principal.usesJuniorPresentation;
     final items = [
       for (final d in destinations)
         NanoBottomNavItem(
@@ -318,7 +318,7 @@ class StudentLearningTab extends StatelessWidget {
           learnerQuizRepository: learnerQuizRepository,
           quizAttemptRepository: quizAttemptRepository,
           companionName: companionName,
-          junior: principal.role.usesJuniorPresentation,
+          junior: principal.usesJuniorPresentation,
         ),
       ),
     );
@@ -330,7 +330,7 @@ class StudentLearningTab extends StatelessWidget {
   Future<void> _continueLearning(BuildContext context) async {
     final insights = insightsRepository;
     if (insights == null) return;
-    final junior = principal.role.usesJuniorPresentation;
+    final junior = principal.usesJuniorPresentation;
     NextUpSuggestion? suggestion;
     try {
       suggestion = (await insights.loadInsights()).recommendation;
@@ -383,7 +383,7 @@ class StudentLearningTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repository = homeRepository;
-    if (!principal.role.usesJuniorPresentation) {
+    if (!principal.usesJuniorPresentation) {
       if (repository == null) {
         return const SeniorHomeFoundation();
       }
@@ -514,7 +514,7 @@ class StudentProfileTab extends StatelessWidget {
                 MaterialPageRoute<void>(
                   builder: (_) => LearningProgressPage(
                     repository: insightsRepository!,
-                    junior: principal.role.usesJuniorPresentation,
+                    junior: principal.usesJuniorPresentation,
                   ),
                 ),
               );

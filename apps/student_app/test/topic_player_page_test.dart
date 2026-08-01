@@ -4,6 +4,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/learning/presentation/topic_player_page.dart';
+import 'package:video_player/video_player.dart';
 
 const _counting = CatalogTopic(
   topicId: 'topic-counting',
@@ -27,6 +28,21 @@ const _counting = CatalogTopic(
   ]),
 );
 
+/// The same lesson, delivered as something a device can actually fetch. No
+/// topic in the catalog looks like this yet (MED-08).
+const _streamed = CatalogTopic(
+  topicId: 'topic-counting',
+  topicVersionId: 'tv-counting-1',
+  slug: 'counting',
+  title: 'Counting to 20',
+  order: 1,
+  estimatedMinutes: 12,
+  durationSeconds: 120,
+  completionThreshold: 0.9,
+  videoProvider: 'direct',
+  videoRef: 'https://videos.test/counting.mp4',
+);
+
 Future<void> _pump(
   WidgetTester tester, {
   CatalogTopic topic = _counting,
@@ -34,6 +50,7 @@ Future<void> _pump(
   NanoAppLocale locale = NanoAppLocale.en,
   AccessibilityPreferences? accessibility,
   ValueChanged<CatalogTopic>? onProgress,
+  VideoPlayerController Function(Uri url)? openVideo,
 }) async {
   tester.view.physicalSize = const Size(900, 2600);
   tester.view.devicePixelRatio = 1;
@@ -57,6 +74,7 @@ Future<void> _pump(
             progressRepository: progress,
             tick: const Duration(milliseconds: 1),
             onProgress: onProgress,
+            openVideo: openVideo,
           ),
         ),
       ),
@@ -220,5 +238,61 @@ void main() {
       tester.widget<IconButton>(find.byType(IconButton)).onPressed,
       isNull,
     );
+  });
+
+  // MED-08: real playback, and the fixture clock that still has to work.
+  testWidgets('a fixture topic never reaches for a decoder', (tester) async {
+    var opened = 0;
+    await _pump(
+      tester,
+      progress: FakeLearningProgressRepository(),
+      openVideo: (url) {
+        opened++;
+        return VideoPlayerController.networkUrl(url);
+      },
+    );
+    await tester.pump();
+
+    // `video_ref` here is the slug `counting-to-20`. Nothing to fetch, so
+    // nothing is opened and the deterministic clock runs the session.
+    expect(opened, 0);
+  });
+
+  testWidgets('a topic with a real URL opens it', (tester) async {
+    Uri? requested;
+    await _pump(
+      tester,
+      topic: _streamed,
+      progress: FakeLearningProgressRepository(),
+      openVideo: (url) {
+        requested = url;
+        return VideoPlayerController.networkUrl(url);
+      },
+    );
+    await tester.pumpAndSettle();
+
+    expect(requested, Uri.parse('https://videos.test/counting.mp4'));
+  });
+
+  testWidgets('a video that will not open still credits watch time',
+      (tester) async {
+    // There is no codec in a widget test, so `initialize` fails here exactly as
+    // it would on a device with a dead link — and the session has to carry on.
+    final progress = FakeLearningProgressRepository();
+    await _pump(
+      tester,
+      topic: _streamed,
+      progress: progress,
+      openVideo: VideoPlayerController.networkUrl,
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.play_arrow));
+    await tester.pump(const Duration(milliseconds: 10));
+    await tester.tap(find.byIcon(Icons.pause));
+    await tester.pumpAndSettle();
+
+    expect(progress.positions, isNotEmpty);
+    expect(tester.takeException(), isNull);
   });
 }

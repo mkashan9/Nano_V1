@@ -212,10 +212,39 @@ void main() {
         junior: true,
         clipSlots: {'guide_greeting_shortClip'},
       ).notify(CompanionEvent.appOpen, now: t0).reaction!;
-      // Greeting's best tier is localAnimation, not shortClip — so even with a
-      // greeting clip published, the resolved tier stays local. The clipSlots
-      // answer only unlocks moods the manifest already treats as clip-worthy.
-      expect(greeting.tier, CompanionAssetTier.localAnimation);
+      // Greeting animates locally, so an approved greeting clip lifts it one
+      // rung (MED-08). The promise is still per slot: the celebration above
+      // stayed local because nobody approved a clip for it.
+      expect(greeting.tier, CompanionAssetTier.shortClip);
+    });
+
+    test('a routine mood never becomes a clip, however much is published', () {
+      // Idle, point, thinking, and gentle retry are still art by design. A clip
+      // on every ordinary moment would be motion nobody asked for, a render
+      // bill, and a screen that needs the network to look right — so publishing
+      // one for these slots must not lift them (MED-08).
+      final runtime = CompanionRuntime.forExperience(
+        junior: true,
+        clipSlots: {
+          'explorer_point_shortClip',
+          'quizCoach_thinking_shortClip',
+          'quizCoach_gentleRetry_shortClip',
+        },
+      );
+
+      final point = runtime
+          .withSurface(CompanionSurface.learning)
+          .notify(CompanionEvent.learningEntry, now: t0)
+          .reaction!;
+      expect(point.mood, CompanionMood.point);
+      expect(point.tier, CompanionAssetTier.staticArt);
+
+      final retry = runtime
+          .withSurface(CompanionSurface.quiz)
+          .notify(CompanionEvent.resultNeedsReview, now: t0)
+          .reaction!;
+      expect(retry.mood, CompanionMood.gentleRetry);
+      expect(retry.tier, CompanionAssetTier.staticArt);
     });
 
     test('a clip slot for the celebrating mode unlocks the short clip', () {
