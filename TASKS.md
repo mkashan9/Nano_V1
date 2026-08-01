@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-07 owner manual test
+- [ ] MED-08 Real Playback and Companion Art Rendering
 
 ## Completed
 
@@ -39,8 +39,13 @@
 - [x] MED-04
 - [x] MED-05
 - [x] MED-06
+- [x] MED-07
 
 ## Upcoming
 
+- [ ] MED-09 Nori Character Sheet and Static Pose Pack
+- [ ] MED-10 Idle Life and Local Animation Tier
+- [ ] MED-11 Full Narration and Celebration Clip Pack
+- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger
