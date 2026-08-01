@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+import '../companion/nori_living_art.dart';
 import '../companion/nori_pose_pack.dart';
 import '../l10n/nano_locale_scope.dart';
 import '../tokens/nano_motion.dart';
@@ -518,7 +519,16 @@ class _CompanionArt extends StatelessWidget {
             child: SizedBox(
               width: size,
               height: size,
-              child: _inner(context, mode.accent),
+              // Motion lives inside the mask (MED-10). The ring, the emblem,
+              // and the play badge stay exactly where they are, so a learner
+              // aiming at the badge is not aiming at a moving target — and the
+              // frame around Nori reads as a frame rather than as part of her.
+              child: NoriLivingArt(
+                mood: reaction.mood,
+                // A clip brings its own motion and does not want ours on it.
+                enabled: clipView == null,
+                child: _inner(context, mode.accent),
+              ),
             ),
           ),
           if (clipAvailable && clipView == null)

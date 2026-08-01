@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-10 Idle Life and Local Animation Tier
+- [ ] MED-11 Full Narration and Celebration Clip Pack
 
 ## Completed
 
@@ -42,11 +42,10 @@
 - [x] MED-07
 - [x] MED-08
 - [x] MED-09
+- [x] MED-10
 
 ## Upcoming
 
-- [ ] MED-10 Idle Life and Local Animation Tier
-- [ ] MED-11 Full Narration and Celebration Clip Pack
 - [ ] MED-12 Nori Everywhere and Companion Coverage Gate
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger
