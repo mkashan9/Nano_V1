@@ -2,8 +2,10 @@ import {
   configuredVideoAdapter,
   configuredVoiceAdapter,
 } from './configured_provider.ts';
+import { fishAudioVoiceAdapter } from './fish_audio_voice.ts';
 import { geminiVeoAdapter } from './gemini_veo.ts';
 import { geminiVoiceAdapter } from './gemini_voice.ts';
+import { json2VideoComposeAdapter } from './json2video_compose.ts';
 import { PollinationsImageAdapter } from './pollinations_image.ts';
 import { GeneratedAssetKind, ProviderAdapter, ProviderError } from './types.ts';
 
@@ -15,13 +17,15 @@ import { GeneratedAssetKind, ProviderAdapter, ProviderError } from './types.ts';
 export function adapters(): ProviderAdapter[] {
   return [
     new PollinationsImageAdapter(),
-    // The Learning Guide's voice (MED-03). The generic voice adapter stays
-    // registered so a project pointed at a different service keeps working.
+    // The Learning Guide's voice (MED-06). The adapters it replaced stay
+    // registered: the database decides which provider a request uses, and a
+    // provider row that is switched back should not also need a redeploy.
+    fishAudioVoiceAdapter(),
     geminiVoiceAdapter(),
     configuredVoiceAdapter(),
-    // Companion clips (MED-04). Listed before the generic video adapter so the
-    // asynchronous one wins its own provider id; the stub stays for a project
-    // pointed at a service that answers in one call.
+    // Companion clips (MED-06), composed from approved art rather than
+    // generated from a description. Same reasoning for the ones below it.
+    json2VideoComposeAdapter(),
     geminiVeoAdapter(),
     configuredVideoAdapter(),
   ];

@@ -198,7 +198,7 @@ export class GeminiVeoAdapter implements ProviderAdapter {
     uri: string,
     key: string,
     fetchImpl: typeof fetch,
-  ): Promise<Uint8Array> {
+  ): Promise<Uint8Array<ArrayBuffer>> {
     const response = await this.call(fetchImpl, uri, {
       method: 'GET',
       headers: { 'x-goog-api-key': key },

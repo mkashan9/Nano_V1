@@ -114,7 +114,7 @@ void main() {
         ),
       );
 
-      expect(outcome.asset.providerId, 'gemini_veo_video');
+      expect(outcome.asset.providerId, 'json2video_compose');
     });
   });
 }

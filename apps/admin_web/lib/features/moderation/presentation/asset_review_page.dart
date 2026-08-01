@@ -3,6 +3,8 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+import 'media_element_view.dart';
+
 /// MED-05 superadmin publication surface.
 ///
 /// This is the only screen in Nano that can make generated media visible to a
@@ -406,10 +408,15 @@ class _ReviewDetail extends StatelessWidget {
 
 /// The file, as far as a web reviewer can see it.
 ///
-/// Images render. Voice and video resolve to a signed URL and show their
-/// identity, because MED-03 and MED-04 deliberately stopped short of adding
-/// playback plugins. A reviewer approving a clip today is approving its
-/// provenance and checksum, which is stated rather than implied.
+/// Images render, and in a browser so do voice and video: admin_web is the one
+/// app that only ever runs on the web, so it can hand an MP3 or an MP4 straight
+/// to the element that already knows how to play it. Asking somebody to decide
+/// whether a child should see a clip, while showing them a checksum, was not a
+/// review.
+///
+/// Anywhere without a DOM — the widget tests — falls back to describing the
+/// file, because a reviewer who cannot play it can still reject it, and
+/// rejecting is the safe direction.
 class _Preview extends StatelessWidget {
   const _Preview({
     required this.item,
@@ -464,9 +471,22 @@ class _Preview extends StatelessWidget {
           );
         }
 
+        final isVideo = item.kind == GeneratedAssetKind.video;
+        final player = mediaElementView(url: url, isVideo: isVideo);
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (player != null) ...[
+              SizedBox(
+                // A clip gets room to be looked at; a waveform-less audio bar
+                // needs only its own height.
+                height: isVideo ? 280 : 54,
+                width: double.infinity,
+                child: player,
+              ),
+              const SizedBox(height: NanoSpacing.sm),
+            ],
             Text(
               '${item.contentType ?? item.kind.name} · '
               '${_size(item.byteSize)}',

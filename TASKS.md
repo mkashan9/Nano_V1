@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-06 Fish Audio Narration and Composed Reaction Clips
+- [ ] MED-07 Wan 2.2 Character Animation with Compose Fallback
 
 ## Completed
 
@@ -38,6 +38,7 @@
 - [x] MED-03
 - [x] MED-04
 - [x] MED-05
+- [x] MED-06
 
 ## Upcoming
 

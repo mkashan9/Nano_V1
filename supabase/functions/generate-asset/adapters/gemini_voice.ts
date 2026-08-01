@@ -204,7 +204,7 @@ export function wavFromPcm16(
   pcm: Uint8Array,
   sampleRate: number,
   channels = 1,
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const bitsPerSample = 16;
   const blockAlign = (channels * bitsPerSample) / 8;
   const out = new Uint8Array(44 + pcm.byteLength);

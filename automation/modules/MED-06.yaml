@@ -1,25 +1,36 @@
 id: MED-06
 name: "Fish Audio Narration and Composed Reaction Clips"
 release: R4
-status: BACKLOG
+status: DONE
 dependencies:
   - MED-03
   - MED-04
   - MED-05
 dependency_notes: >
   Owner approved the provider switch after MED-05 was already in USER_TEST, and
-  asked that MED-05 finish first. Do not start this module until MED-05 is DONE.
-  The keys themselves are not in this file — they live only as Supabase Edge
-  Function secrets once the owner pastes them.
+  asked that MED-05 finish first. Keys live only as Supabase Edge Function
+  secrets once the owner pastes them — never in this file, never in git.
 applications:
   - packages
   - supabase
+  - admin_web
   - docs
   - automation
+scope_amendments:
+  - >
+    admin_web was added on 2026-08-01, during USER_TEST, after the owner reached
+    the Moderation queue and found the MP4 and MP3 unplayable. MED-05 previewed
+    images and described everything else by checksum, which turns a review into
+    a signature. The fix is confined to the review screen's preview and touches
+    no learner-facing app.
 allowed_paths:
+  - apps/admin_web/lib/features/moderation/
+  - apps/admin_web/pubspec.yaml
   - supabase/migrations/
   - supabase/tests/
   - supabase/functions/generate-asset/
+  - supabase/functions/_shared/
+  - supabase/functions/.env.example
   - packages/nano_domain/
   - packages/nano_data/
   - packages/nano_media/
@@ -31,6 +42,7 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -39,26 +51,41 @@ handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-06"
 ui_references: []
 database_scope:
-  - generation_providers (fish_audio_voice, json2video_compose)
-  - narration_voices (Fish reference_id as provider_voice_name)
-  - reaction_clip_versions (direction becomes a movie specification, not a prompt)
+  - generation_providers (fish_audio_voice, json2video_compose, curated_upload, composes_from_art)
+  - narration_voices (guide_fish_stock)
+  - reaction_clip_versions (motion)
+  - storage.objects (generated_assets_bucket_write_curated)
 server_functions:
   - "adapter: FishAudioVoiceAdapter"
   - "adapter: Json2VideoComposeAdapter"
-  - "replaced: gemini_voice_aoede is no longer the default"
-  - "replaced: gemini_veo_video is no longer the default"
+  - "nano_internal.approved_companion_art"
+  - "nano_internal.companion_art_slot"
+  - reaction_clip_composition
+  - register_curated_asset
+  - "replaced: request_reaction_clip (NM011 compose gate)"
+  - "replaced: create_reaction_clip_draft (motion argument)"
+  - "replaced: gemini_voice_aoede / gemini_veo_video are no longer default"
 acceptance:
   - Fish Audio is the default voice provider; a recording of an authored line lands in storage as MP3
   - A missing VOICE_PROVIDER_API_KEY still fails closed with PROVIDER_UNCONFIGURED and never breaks a caption
-  - The Learning Guide's voice is identified by a Fish reference_id stored in narration_voices, defaulting to Fish's stock voice until the owner picks one
+  - The Learning Guide's voice is identified by a Fish reference_id stored in narration_voices, defaulting to the stock sentinel until the owner picks one
   - json2video is the default video provider; a reaction clip is composed from approved companion art, not invented from a prompt
   - A missing VIDEO_PROVIDER_API_KEY still fails closed with PROVIDER_UNCONFIGURED and every reaction keeps its local art
-  - A clip direction is a movie specification a curator authors; an unauthored shape is still refused with NM009
+  - Unapproved or wrong-shaped art is refused with NM011 before any money is spent
+  - A person can supply companion art when no provider can draw it, and that art faces the same reviewer, is unreadable by learners until approved, and cannot be registered without recorded rights
+  - Motion is a closed authored set; an unknown motion is refused with NM009 and a published motion cannot be edited (NM008)
   - Neither key ever appears in a Flutter client, a git commit, or a log
   - Daily budgets still refuse before a provider is reached
+  - A reviewer can play a voice recording and a reaction clip inside the Moderation queue, and a preview that fails to load still leaves Reject available
+  - No player or web-only dependency reaches student_app or teacher_app
+  - The default Learning Guide voice is guide_educational (Fish Educational Guide), a female teacher register per ADR-0008
   - Module documentation complete, including what the Gemini adapters become once they are no longer default
+  - Owner manual test steps provided and runnable without Docker
 required_tests:
   - supabase/tests/med06_fish_and_json2video.sql
+  - supabase/tests/med06_curated_companion_art.sql
+  - supabase/tests/med06_composition_provenance.sql
+  - supabase/tests/med06_guide_educational_voice.sql
   - supabase/functions/generate-asset/adapters/fish_audio_test.ts
   - supabase/functions/generate-asset/adapters/json2video_test.ts
 security_checks:
@@ -68,28 +95,49 @@ security_checks:
   - supabase_advisors_no_new_errors
 manual_test_steps:
   - Set VOICE_PROVIDER_API_KEY and VIDEO_PROVIDER_API_KEY as Edge Function secrets (owner paste; never commit)
-  - Record one authored narration line and confirm an MP3 lands in generated-assets and is unreviewed
-  - Compose one reaction clip from the already-approved companion image and confirm an MP4 lands unreviewed
   - Confirm a missing key still fails closed without breaking captions or local art
-  - Confirm neither key appears in a client bundle
+  - Record one authored narration line and confirm an MP3 lands in generated-assets and is unreviewed
+  - Approve companion art for a reaction, then compose a clip and confirm an MP4 lands unreviewed
+  - Confirm a clip without approved art is refused with NM011 and creates no asset row
+  - Play the MP4 and the MP3 in the Moderation queue and decide each on what you see and hear
+  - Confirm neither key appears in a client bundle or in git
+  - Confirm the default voice is guide_educational and that greeting-2 recorded in that voice
 rollback_notes: >
   Revert the module branch. Restore gemini_voice_aoede and gemini_veo_video as
-  the defaults. Remove the Fish and json2video provider rows. Secrets can be
-  deleted from Studio independently; rolling back the code without removing the
-  secrets leaves them unused.
+  the defaults and re-enable aoede. Drop composes_from_art, motion, the Fish and
+  json2video provider rows, guide_fish_stock, guide_educational,
+  approved_companion_art, companion_art_slot, and reaction_clip_composition;
+  restore the MED-04 request_reaction_clip and the five-argument
+  create_reaction_clip_draft. Secrets can be deleted from Studio independently;
+  rolling back the code without removing the secrets leaves them unused.
 requires_owner_test: true
 owner_decisions_locked:
   sequencing: "After MED-05 DONE. One module ACTIVE."
   voice: >
-    Fish Audio. Build the adapter; default to Fish's stock voice until the
-    owner picks a reference_id. Keys validated live against /v1/tts on
-    2026-08-01; do not re-paste into chat.
+    Fish Audio. Cast as Educational Guide
+    (reference_id = 2c408095b1294de896376eff6a638d90, registry id
+    guide_educational) on 2026-08-01 after the owner listened to five
+    candidates. ADR-0008: female teacher register, background guidance, not
+    the mascot speaking. Keys validated live against /v1/tts; do not re-paste
+    into chat.
   video: >
     json2video as a composer over approved Nori art, not as a generative
     substitute for Veo. Keys validated live against /v2/movies on 2026-08-01;
-    do not re-paste into chat. This is a design change to MED-04's direction
-    field, not a config change.
+    do not re-paste into chat. Motion is a closed set rather than free-form
+    movie JSON in direction. The owner later rejected the first composed clip
+    as looking fake; character animation via Wan 2.2 image-to-video is MED-07
+    and waits for this module to finish.
   cost: >
     Correct VIDEO_COST_MICROS_PER_CLIP to the real per-clip figure once the
     json2video credit cost of a short reaction is known. The $3/day video
     budget and the 20-requests-per-day ceiling both stay.
+  image: >
+    Owner rejected the generated companion image on 2026-08-01. Pollinations
+    serves only sana without a token and it cannot draw a mascot, so companion
+    art is supplied by hand through register_curated_asset until an image
+    provider that can draw is bought. pollinations_image stays the default;
+    curated_upload is never the default.
+  next_module: >
+    MED-07 Wan 2.2 image-to-video, with the public Hugging Face Space as the
+    default provider and json2video kept as an automatic fallback when the
+    Space is down. Sequence: finish MED-06 first.

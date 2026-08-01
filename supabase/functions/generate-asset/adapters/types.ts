@@ -27,10 +27,23 @@ export interface AssetRequest {
   /// How long the authored clip runs. Only a hint: a provider that fixes its own
   /// length ignores it.
   readonly durationSeconds?: number;
+  /// A picture for a composing provider to animate (MED-06), as a URL that
+  /// provider can fetch. Present only when the database has confirmed a reviewer
+  /// approved that picture, so an adapter never has to decide whether art is
+  /// safe to send.
+  readonly sourceImageUrl?: string;
+  /// The authored movement to apply to that picture. One of a closed set the
+  /// database enforces; an adapter that does not recognise it refuses rather
+  /// than picking something.
+  readonly motion?: string;
 }
 
 export interface GeneratedBytes {
-  readonly bytes: Uint8Array;
+  /// The buffer is spelled out because a plain `Uint8Array` also admits one
+  /// backed by a `SharedArrayBuffer`, which neither WebCrypto nor the storage
+  /// client accepts. Every adapter already produces an ordinary array; this only
+  /// makes that checkable at the boundary instead of at runtime.
+  readonly bytes: Uint8Array<ArrayBuffer>;
   readonly contentType: string;
   readonly extension: string;
   readonly providerReference?: string;
@@ -115,7 +128,7 @@ export function seedFrom(promptHash: string): number {
 export async function readBody(
   response: Response,
   providerId: string,
-): Promise<Uint8Array> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const buffer = new Uint8Array(await response.arrayBuffer());
   if (buffer.byteLength === 0) {
     throw new ProviderError(

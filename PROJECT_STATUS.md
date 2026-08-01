@@ -3,10 +3,10 @@
 ## Current state
 
 - **Current release:** R4 Companion
-- **Current module:** MED-05 Superadmin Asset Review and Publication
-- **Current status:** USER_TEST
-- **Current branch:** module/MED-05-asset-review-publication
-- **Last completed module:** MED-04
+- **Current module:** MED-07 Wan 2.2 Character Animation with Compose Fallback
+- **Current status:** ACTIVE
+- **Current branch:** module/MED-07-wan-character-animation
+- **Last completed module:** MED-06
 - **Application name:** Nano
 
 ## Releases
@@ -14,38 +14,49 @@
 - R1 Identity: complete
 - R2 Student Core: complete (STU-03 through STU-05 DONE)
 - R3 Learning: complete (LRN-01–LRN-05, QZ-01–QZ-06 DONE)
-- R4 Companion: CMP-01–CMP-03 and MED-01–MED-04 DONE; MED-05 in USER_TEST
+- R4 Companion: CMP-01–CMP-03 and MED-01–MED-06 DONE; MED-07 ACTIVE
+
+## What a learner can actually see and hear
+
+Nothing generated, yet — and that is not a defect in any single module.
+
+- One picture is approved (`guide_greeting_staticArt`, 1:1, curated).
+- One narration line is approved (`greeting-2`, en, Educational Guide voice).
+- No reaction clip is approved; the only two ever made were rejected.
+
+**No player exists outside admin_web.** MED-03 and MED-04 deliberately stopped
+before attaching one, so `student_app` has no audio or video playback at all.
+The approved MP3 is published in the catalog and still nothing plays it. Every
+companion moment is a caption over local art today.
+
+## Content coverage
+
+| Surface | Authored | Approved |
+|---------|----------|----------|
+| Narration lines | 6 slugs × en/ur | 1 (`greeting-2` en) |
+| Reaction clips | 3 slugs (`guide_greeting`, `celebration_celebration`, `quizCoach_celebration`) | 0 |
+| Companion art | 1 slot | 1 (`guide_greeting` 1:1) |
+
+Animation composes only from approved art, so MED-07 can animate exactly one
+reaction until more art exists — and Pollinations `sana` still cannot draw a
+mascot. Art for the remaining reactions is either a purchased image provider or
+more curated uploads, and it is an owner decision, not a module.
 
 ## Owner decision waiting
 
-`generate-asset` is **deployed** (owner approved, 2026-08-01). Images work end to
-end and cost nothing: one real companion image has been generated and is sitting
-unreviewed, ready for the MED-05 manual test.
+Nothing blocking MED-07.
 
-Voice and video keys have been chosen (Fish Audio and json2video) and validated
-live, but they are not set as Edge Function secrets yet and the adapters that
-speak those APIs do not exist. That work is MED-06 and waits for MED-05 DONE.
-Until then both kinds fail closed with `PROVIDER_UNCONFIGURED`, which is the
-correct undeployed state: every caption and every reaction keeps its local art.
+Open, not urgent:
 
-MED-05 was also built on the admin shell QZ-01 and QZ-02 shipped, because ADM-01
-is still BACKLOG. ADM-01 should absorb the Moderation screen rather than replace
-it.
+1. **An image provider that can draw.** Blocks art for every reaction except
+   greeting, which in turn caps how many clips MED-07 can produce.
+2. **A learner-facing player.** Needs its own module; without it no approved
+   voice or clip reaches a child.
+3. **Real cost figures** for Fish and json2video once invoices exist.
 
-## Next after MED-05 DONE
+## Next after MED-07 DONE
 
-MED-06 Fish Audio Narration and Composed Reaction Clips. The owner approved a
-provider switch after MED-05 was already in USER_TEST and asked that MED-05
-finish first:
-
-- Voice moves from Gemini TTS to Fish Audio. The adapter is new; the default
-  voice is Fish's stock voice until a `reference_id` is picked.
-- Video moves from generative Veo to json2video composing short clips from
-  approved Nori art. That is a design change to MED-04's direction field — a
-  clip is no longer invented from a prompt, it is motion over art a reviewer
-  already signed off.
-- Both keys have been validated live and must be pasted into Supabase Edge
-  Function secrets by the owner; they are not in git and must never be.
-
-R5 (XP-01) and ADM-01 stay available after MED-06. ADM-01 should still absorb
-the borrowed Moderation destination rather than replace it.
+A player module (so approved media actually reaches a learner) is the highest
+value remaining in R4. ADM-01 and R5 (XP-01) stay available; ADM-01 should
+absorb the borrowed Moderation destination and is the natural home for a
+curated-upload screen.

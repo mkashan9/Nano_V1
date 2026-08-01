@@ -79,7 +79,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Nori voice Aoede; no privileged calc | MED-03,CMP-01 | edge+app | narration lines, Aoede registry, caption-first Listen | narration_voices,narration_lines,narration_line_versions,generated_assets | SQL+unit+widget | DONE |
 | Reusable reaction clips; silent optional motion | MED-04,CMP-02 | edge+app | reaction clip library, async Veo, per-slot availability | reaction_clips,reaction_clip_versions,generated_assets | SQL+unit+widget | DONE |
 | Generated assets reviewed before a learner sees them; publication is a named decision | MED-05 | admin_web | Moderation queue, preview, approve/reject, history | asset_review_events,generated_assets | SQL+unit+widget | DONE |
-| Narration and reaction clips through the chosen providers | MED-06 | edge+packages | none (server module) | generation_providers,narration_voices,reaction_clip_versions | SQL+Deno | ACTIVE |
+| Narration and reaction clips through the chosen providers | MED-06 | edge+packages+admin_web | Moderation plays voice and video | generation_providers,narration_voices,reaction_clip_versions | SQL+Deno+widget | DONE |
+| Character animation of approved companion art | MED-07 | edge+packages | none yet | generation_providers | SQL+Deno | ACTIVE |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
 | School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |
