@@ -1,4 +1,4 @@
-import 'package:admin_web/features/content/presentation/question_bank_page.dart';
+import 'package:admin_web/features/content/presentation/content_hub_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_design_system/nano_design_system.dart';
@@ -16,6 +16,7 @@ class AdminShell extends StatelessWidget {
     this.onSignOut,
     this.liveAuth = false,
     this.questionBankRepository,
+    this.topicQuizRepository,
   });
 
   final EnvironmentConfig config;
@@ -26,6 +27,7 @@ class AdminShell extends StatelessWidget {
   final VoidCallback? onSignOut;
   final bool liveAuth;
   final QuestionBankRepository? questionBankRepository;
+  final TopicQuizRepository? topicQuizRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -133,18 +135,24 @@ class AdminDestinationPage extends StatelessWidget {
     required this.destination,
     required this.principal,
     this.questionBankRepository,
+    this.topicQuizRepository,
   });
 
   final NavDestination destination;
   final SessionPrincipal principal;
   final QuestionBankRepository? questionBankRepository;
+  final TopicQuizRepository? topicQuizRepository;
 
   @override
   Widget build(BuildContext context) {
     if (destination.id == 'content' &&
         principal.role == AppRole.superadmin &&
-        questionBankRepository != null) {
-      return QuestionBankPage(repository: questionBankRepository!);
+        questionBankRepository != null &&
+        topicQuizRepository != null) {
+      return ContentHubPage(
+        questionBankRepository: questionBankRepository!,
+        topicQuizRepository: topicQuizRepository!,
+      );
     }
 
     final authLine = principal.isAuthenticated

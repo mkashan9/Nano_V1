@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- QZ-02: topic-attached ordered quiz versions with immutable publish, learner-safe projection, and Junior/Senior curator preview
+
 - QZ-01: platform-admin question bank with immutable published versions, duplicate-stem warnings, and Junior/Senior curator preview
 
 - LRN-05: per-subject progress summary and server-ranked next-up recommendations that can only name topics the learner may already open

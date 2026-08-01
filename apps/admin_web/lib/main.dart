@@ -38,6 +38,7 @@ class NanoAdminApp extends StatefulWidget {
     this.authRepository,
     this.requireAuth = false,
     this.questionBankRepository,
+    this.topicQuizRepository,
   });
 
   final EnvironmentConfig config;
@@ -47,6 +48,7 @@ class NanoAdminApp extends StatefulWidget {
   final AuthRepository? authRepository;
   final bool requireAuth;
   final QuestionBankRepository? questionBankRepository;
+  final TopicQuizRepository? topicQuizRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -57,6 +59,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late GoRouter _router;
   late NanoAppLocale _locale;
   late final QuestionBankRepository _questionBankRepository;
+  late final TopicQuizRepository _topicQuizRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -70,6 +73,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
     _locale = widget.initialLocale;
     _questionBankRepository =
         widget.questionBankRepository ?? FakeQuestionBankRepository();
+    _topicQuizRepository =
+        widget.topicQuizRepository ?? FakeTopicQuizRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -116,6 +121,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       },
       onSignedOut: _signOut,
       questionBankRepository: _questionBankRepository,
+      topicQuizRepository: _topicQuizRepository,
     );
   }
 

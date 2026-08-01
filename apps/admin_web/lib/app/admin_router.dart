@@ -19,6 +19,7 @@ GoRouter createAdminRouter({
   ValueChanged<AuthBootstrap>? onAuthBootstrap,
   VoidCallback? onSignedOut,
   QuestionBankRepository? questionBankRepository,
+  TopicQuizRepository? topicQuizRepository,
 }) {
   final visible = NavCatalog.visibleFor(principal);
   final destinations = visible.isNotEmpty
@@ -112,6 +113,7 @@ GoRouter createAdminRouter({
             onSignOut: onSignedOut,
             liveAuth: requireAuth,
             questionBankRepository: questionBankRepository,
+            topicQuizRepository: topicQuizRepository,
           );
         },
         branches: [
@@ -125,6 +127,7 @@ GoRouter createAdminRouter({
                     destination: dest,
                     principal: principal,
                     questionBankRepository: questionBankRepository,
+                    topicQuizRepository: topicQuizRepository,
                   ),
                 ),
               ],

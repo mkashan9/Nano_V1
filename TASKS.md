@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] QZ-01 owner manual test
+- [ ] QZ-02 owner manual test
 
 ## Completed
 
@@ -24,7 +24,8 @@
 - [x] LRN-03
 - [x] LRN-04
 - [x] LRN-05
+- [x] QZ-01
 
 ## Upcoming
 
-- [ ] QZ-02 Video-Specific Ordered Quiz Authoring
+- [ ] QZ-03 Junior Quiz Experience
