@@ -55,6 +55,32 @@ therefore always showed the one greeting the Guide can never say aloud. Home
 now seeds the second variant, so the voice is reachable in the ordinary path
 rather than only in a contrived one.
 
+## Presentation follows the track, not the role (defect found in USER_TEST)
+
+The owner reported the same UI whether they signed in as a Junior or a Senior
+account. Two faults met.
+
+`ExperiencePolicy.roleFor` returns `AppRole.independentStudent` for every
+independent learner whatever their track, and `usesJuniorPresentation` was
+`role == juniorStudent`. So the role could not express "independent and six
+years old"; both test accounts are independent, so both rendered Senior.
+
+Separately, the track lives in `student_onboarding` and the auth bootstrap
+reads `profiles`, so sign-in could never know it. `_loadOnboarding` did read
+it — and then used it for nothing. Only `_onOnboardingCompleted` upgraded the
+principal, so the track applied in the session onboarding finished in, and was
+dropped on every launch after that.
+
+`SessionPrincipal` now carries `experienceTrack`, presentation prefers it and
+falls back to the role when it is unknown, and `_loadOnboarding` applies it. A
+role still decides entitlement — what a learner may reach — while the track
+decides presentation. Keeping them separate is the point: merging them would
+mean promoting a child to a different role to change how a screen looks.
+
+This also matters beyond layout. Senior treats `home` as a quiet event, so a
+Junior wrongly rendered as Senior gets no companion on the one screen every
+session starts on — which is what made MED-08 look like it had shipped nothing.
+
 ## Lesson video is built but idle
 
 Every `topic_versions` row carries `video_provider = 'fixture'` and a slug, so

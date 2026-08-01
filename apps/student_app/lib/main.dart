@@ -180,7 +180,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
         );
     _catalogRepository = widget.catalogRepository ??
         FakeLearningCatalogRepository(
-          seniorEligible: !_principal.role.usesJuniorPresentation,
+          seniorEligible: !_principal.usesJuniorPresentation,
         );
     _progressRepository =
         widget.progressRepository ?? FakeLearningProgressRepository();
@@ -245,6 +245,16 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     if (!mounted) return;
     setState(() {
       _onboarding = progress;
+      // The track a learner settled on during onboarding decides how the app
+      // looks on every later sign-in too. Sign-in cannot know it — the auth
+      // bootstrap reads `profiles`, and the track lives in
+      // `student_onboarding` — so applying it here is what stops a returning
+      // Junior learner from being handed the Senior experience.
+      final track = progress.experienceTrack;
+      if (track != null && track != _principal.experienceTrack) {
+        _principal = _principal.copyWith(experienceTrack: track);
+        _syncCompanion();
+      }
       if (prefs != null) {
         _applyPreferences(prefs);
       }
@@ -318,7 +328,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
 
   CompanionController _createCompanion() {
     return CompanionController(
-      junior: _principal.role.usesJuniorPresentation,
+      junior: _principal.usesJuniorPresentation,
       preferences: _a11y,
       companionName:
           _preferences?.companionName ?? CompanionNamePolicy.defaultName,
@@ -332,7 +342,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   /// Accessibility changes reach the live controller; a renamed companion or a
   /// changed experience needs a new one, which also starts a fresh session.
   void _syncCompanion() {
-    final junior = _principal.role.usesJuniorPresentation;
+    final junior = _principal.usesJuniorPresentation;
     final name =
         _preferences?.companionName ?? CompanionNamePolicy.defaultName;
     final sameExperience = _companion.runtime.policy ==
@@ -379,6 +389,9 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       userId: _principal.userId,
       schoolId: _principal.schoolId,
       isAuthenticated: _principal.isAuthenticated,
+      // An independent learner keeps one role whatever their age, so the track
+      // is the only thing that can tell a six-year-old from a sixteen-year-old.
+      experienceTrack: track,
     );
     setState(() {
       _onboarding = progress;
@@ -462,7 +475,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       _syncCompanion();
       if (widget.catalogRepository == null) {
         _catalogRepository = FakeLearningCatalogRepository(
-          seniorEligible: !next.role.usesJuniorPresentation,
+          seniorEligible: !next.usesJuniorPresentation,
         );
       }
       _router = _createRouter();
@@ -507,7 +520,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   @override
   Widget build(BuildContext context) {
     final copy = NanoCopy(_locale);
-    final theme = _principal.role.usesJuniorPresentation
+    final theme = _principal.usesJuniorPresentation
         ? NanoTheme.junior(localeTag: _locale.tag)
         : NanoTheme.senior(localeTag: _locale.tag);
     final flutterLocale = Locale(_locale.languageCode);
