@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] XP-01 owner manual test
+- [ ] ADM-01 Superadmin Dashboard
 
 ## Completed
 
@@ -42,5 +42,6 @@
 - [x] XP-03 Achievements and Stickers
 - [x] XP-04 Daily and Weekly Missions
 - [x] XP-05 Streaks and Gentle Motivation
-- [ ] XP-06 Shareable Achievement and Score Cards
-- [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
+- [x] XP-06 Shareable Achievement and Score Cards
+- [ ] ADM-01 Superadmin Dashboard
+- [ ] ADM-02 School Creation, Codes, Status, and Administrator Control

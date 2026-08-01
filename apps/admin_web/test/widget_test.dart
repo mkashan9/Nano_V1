@@ -38,8 +38,9 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Schools'), findsOneWidget);
-    expect(find.text('Moderation'), findsOneWidget);
-    expect(find.text('Audit'), findsOneWidget);
+    expect(find.text('Platform'), findsWidgets);
+    expect(find.text('Platform dashboard'), findsOneWidget);
+    expect(find.text('Moderation'), findsWidgets);
+    expect(find.text('Audit'), findsWidgets);
   });
 }

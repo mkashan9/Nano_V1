@@ -47,6 +47,31 @@ class NanoCopy {
   String get reports => isUrdu ? 'رپورٹس' : 'Reports';
   String get settings => isUrdu ? 'ترتیبات' : 'Settings';
   String get platform => isUrdu ? 'پلیٹ فارم' : 'Platform';
+  String get platformDashboardTitle =>
+      isUrdu ? 'پلیٹ فارم ڈیش بورڈ' : 'Platform dashboard';
+  String get platformDashboardSubtitle => isUrdu
+      ? 'محفوظ خلاصے — ذاتی رابطے یہاں نہیں دکھتے۔'
+      : 'Safe operational summaries — personal contact details stay off this screen.';
+  String get platformMetricSchools => isUrdu ? 'اسکول' : 'Schools';
+  String get platformMetricActiveSchools =>
+      isUrdu ? 'فعال اسکول' : 'Active schools';
+  String get platformMetricLearners => isUrdu ? 'طلبہ' : 'Learners';
+  String get platformMetricStaff => isUrdu ? 'عملہ' : 'Staff';
+  String get platformMetricSuspended =>
+      isUrdu ? 'معطل پروفائلز' : 'Suspended profiles';
+  String get platformMetricIncidents =>
+      isUrdu ? 'کھلے واقعات' : 'Open incidents';
+  String get platformShortcutsTitle => isUrdu ? 'مختصر راستے' : 'Shortcuts';
+  String get platformSchoolsTitle =>
+      isUrdu ? 'اسکول ڈائریکٹری' : 'School directory';
+  String get platformSchoolSearchHint =>
+      isUrdu ? 'نام یا کوڈ سے تلاش' : 'Search by name or code';
+  String get platformSchoolsEmpty =>
+      isUrdu ? 'کوئی اسکول نہیں ملا۔' : 'No schools matched.';
+  String get platformAuditTitle =>
+      isUrdu ? 'حالیہ آڈٹ' : 'Recent audit';
+  String get platformAuditEmpty =>
+      isUrdu ? 'ابھی کوئی آڈٹ نہیں۔' : 'No recent audit events.';
   String get schools => isUrdu ? 'اسکول' : 'Schools';
   String get content => isUrdu ? 'مواد' : 'Content';
   String get moderation => isUrdu ? 'نگرانی' : 'Moderation';
