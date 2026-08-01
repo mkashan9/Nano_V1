@@ -56,6 +56,7 @@ class NanoStudentApp extends StatefulWidget {
     this.catalogRepository,
     this.progressRepository,
     this.checkpointRepository,
+    this.insightsRepository,
     this.syncController,
     this.requireAuth = false,
   });
@@ -73,6 +74,7 @@ class NanoStudentApp extends StatefulWidget {
   final LearningCatalogRepository? catalogRepository;
   final LearningProgressRepository? progressRepository;
   final CheckpointRepository? checkpointRepository;
+  final LearningInsightsRepository? insightsRepository;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -94,6 +96,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
   late LearningCatalogRepository _catalogRepository;
   late final LearningProgressRepository _progressRepository;
   late final CheckpointRepository _checkpointRepository;
+  late final LearningInsightsRepository _insightsRepository;
   late final NanoSyncController _syncController;
   var _restoring = false;
 
@@ -137,6 +140,8 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
         widget.progressRepository ?? FakeLearningProgressRepository();
     _checkpointRepository =
         widget.checkpointRepository ?? FakeCheckpointRepository();
+    _insightsRepository =
+        widget.insightsRepository ?? FakeLearningInsightsRepository();
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
     _router = _createRouter();
@@ -251,6 +256,7 @@ class _NanoStudentAppState extends State<NanoStudentApp> {
       catalogRepository: _catalogRepository,
       progressRepository: _progressRepository,
       checkpointRepository: _checkpointRepository,
+      insightsRepository: _insightsRepository,
       syncController: _syncController,
     );
   }

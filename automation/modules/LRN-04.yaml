@@ -1,7 +1,7 @@
 id: LRN-04
 name: "Long-Video Checkpoints and Refresh Interactions"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - LRN-03
 applications:

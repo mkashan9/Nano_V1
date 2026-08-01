@@ -1,7 +1,7 @@
 id: LRN-05
 name: "Learning Progress and Recommendations"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - LRN-03
 applications:
@@ -9,6 +9,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -19,26 +20,54 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LRN-05"
+  - "LRN-01 Learning Stack Catalog: progress and next recommendations"
+  - "PRF-01 Profiles: learning progress, strengths, improvement areas, recommended next activity"
+  - "STU-01 Student Home: Continue Learning"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.learning_catalog
+  - public.learning_progress_summary
+  - public.learning_next_up
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Progress summary reports totals per subject for the calling learner only
+  - A recommendation never includes a locked, unpublished, or ineligible topic
+  - Resume outranks a new topic, and a finished topic is never recommended
+  - Ranking is deterministic and explained in the UI by a reason
+  - Strengths and focus areas are derived from credited progress, not guesses
+  - Empty and error states are handled without a blank screen
+  - No client-side filtering stands in for server enforcement
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/learning_insights_test.dart
+  - packages/nano_data/test/learning_insights_repository_test.dart
+  - apps/student_app/test/learning_progress_page_test.dart
+  - supabase/tests/lrn05_progress_recommendations.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - summary_is_owner_scoped
+  - recommendations_respect_locks_and_eligibility
+  - views_are_security_invoker
+accessibility_checks:
+  - progress_bars_have_text_equivalents
+  - recommendation_reason_is_readable
+  - junior_and_senior_presentation_both_render
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open the learning tab and tap Your progress
+  - Confirm the recommendation is the topic you last left unfinished
+  - Finish that topic and confirm the recommendation moves to the next unlocked topic
+  - Confirm locked topics never appear as a recommendation
+  - Switch to Urdu and confirm titles, reasons, and totals read correctly
+rollback_notes: "Revert module branch commits; the module adds read-only views only"
 requires_owner_test: true

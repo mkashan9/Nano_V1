@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/learning/presentation/learning_progress_page.dart';
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
+import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
 
 /// LRN-01 catalog browse: illustration-led worlds for Junior, searchable list
 /// for Senior. Both shells read the same underlying version IDs.
@@ -12,6 +14,7 @@ class LearningCatalogPage extends StatefulWidget {
     required this.repository,
     this.progressRepository,
     this.checkpointRepository,
+    this.insightsRepository,
     this.junior = true,
     this.onTopicOpen,
   });
@@ -19,6 +22,7 @@ class LearningCatalogPage extends StatefulWidget {
   final LearningCatalogRepository repository;
   final LearningProgressRepository? progressRepository;
   final CheckpointRepository? checkpointRepository;
+  final LearningInsightsRepository? insightsRepository;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -86,6 +90,46 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
     );
   }
 
+  void _openProgress() {
+    final insights = widget.insightsRepository;
+    if (insights == null) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LearningProgressPage(
+          repository: insights,
+          junior: widget.junior,
+          onOpenSuggestion: _openSuggestion,
+        ),
+      ),
+    );
+  }
+
+  /// Suggestions carry a topic version id; the catalog we already loaded holds
+  /// the rest of the topic. A stale catalog simply reloads instead of guessing.
+  Future<void> _openSuggestion(NextUpSuggestion suggestion) async {
+    final progress = widget.progressRepository;
+    final topic = _catalog?.subjects
+        .expand((subject) => subject.topics)
+        .where((item) => item.topicVersionId == suggestion.topicVersionId)
+        .firstOrNull;
+    if (topic == null || progress == null) {
+      await _load();
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TopicDetailPage(
+          topic: topic,
+          progressRepository: progress,
+          checkpointRepository: widget.checkpointRepository,
+          junior: widget.junior,
+          onOpened: widget.onTopicOpen,
+        ),
+      ),
+    );
+    await _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -118,9 +162,22 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
                         NanoSpacing.xxl,
                       ),
                       children: [
-                        Text(
-                          copy.catalogTitle,
-                          style: Theme.of(context).textTheme.headlineSmall,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                copy.catalogTitle,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              ),
+                            ),
+                            if (widget.insightsRepository != null)
+                              TextButton.icon(
+                                onPressed: _openProgress,
+                                icon: const Icon(Icons.trending_up),
+                                label: Text(copy.progressTitle),
+                              ),
+                          ],
                         ),
                         if (!widget.junior) ...[
                           const SizedBox(height: NanoSpacing.md),

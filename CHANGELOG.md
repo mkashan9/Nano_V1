@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- LRN-05: per-subject progress summary and server-ranked next-up recommendations that can only name topics the learner may already open
+
 - LRN-04: long-video refresh checkpoints at safe chapter boundaries, a server-enforced required-checkpoint credit gate, and content-configured seeking
 
 - LRN-03: server-credited watch time, resume, captions, and audited one-time topic completion

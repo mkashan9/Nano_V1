@@ -18,7 +18,9 @@ import 'package:student_app/features/home/presentation/junior_home_page.dart';
 import 'package:student_app/features/home/presentation/responsive_preview_page.dart';
 import 'package:student_app/features/home/presentation/senior_home_foundation.dart';
 import 'package:student_app/features/home/presentation/senior_home_page.dart';
+import 'package:student_app/features/learning/presentation/learning_progress_page.dart';
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
+import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 
 class StudentShell extends StatelessWidget {
@@ -285,6 +287,7 @@ class StudentLearningTab extends StatelessWidget {
     this.catalogRepository,
     this.progressRepository,
     this.checkpointRepository,
+    this.insightsRepository,
     this.companionName,
     this.onOpenFlex,
   });
@@ -294,6 +297,7 @@ class StudentLearningTab extends StatelessWidget {
   final LearningCatalogRepository? catalogRepository;
   final LearningProgressRepository? progressRepository;
   final CheckpointRepository? checkpointRepository;
+  final LearningInsightsRepository? insightsRepository;
   final String? companionName;
   final VoidCallback? onOpenFlex;
 
@@ -308,6 +312,59 @@ class StudentLearningTab extends StatelessWidget {
           progressRepository: progressRepository,
           checkpointRepository: checkpointRepository,
           junior: principal.role.usesJuniorPresentation,
+        ),
+      ),
+    );
+  }
+
+  /// Continue Learning follows the server's own recommendation rather than a
+  /// client guess, and falls back to the progress screen when the suggested
+  /// topic cannot be resolved from the catalog.
+  Future<void> _continueLearning(BuildContext context) async {
+    final insights = insightsRepository;
+    if (insights == null) return;
+    final junior = principal.role.usesJuniorPresentation;
+    NextUpSuggestion? suggestion;
+    try {
+      suggestion = (await insights.loadInsights()).recommendation;
+    } catch (_) {
+      suggestion = null;
+    }
+    if (!context.mounted) return;
+
+    final catalog = catalogRepository;
+    final progress = progressRepository;
+    if (suggestion != null && catalog != null && progress != null) {
+      try {
+        final loaded = await catalog.loadCatalog();
+        final topic = loaded.subjects
+            .expand((subject) => subject.topics)
+            .where((item) => item.topicVersionId == suggestion!.topicVersionId)
+            .firstOrNull;
+        if (!context.mounted) return;
+        if (topic != null) {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => TopicDetailPage(
+                topic: topic,
+                progressRepository: progress,
+                checkpointRepository: checkpointRepository,
+                junior: junior,
+              ),
+            ),
+          );
+          return;
+        }
+      } catch (_) {
+        // Fall through to the progress screen below.
+      }
+    }
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LearningProgressPage(
+          repository: insights,
+          junior: junior,
         ),
       ),
     );
@@ -331,7 +388,7 @@ class StudentLearningTab extends StatelessWidget {
             .any((dest) => dest.id == 'flex'),
         onOpenFlex: onOpenFlex,
         onSubjectTap: (subject) => _openSubject(context, subject),
-        onContinue: (_) {},
+        onContinue: (_) => _continueLearning(context),
         onOpenUpdate: () {},
         onNotifications: () {},
       );
@@ -348,7 +405,7 @@ class StudentLearningTab extends StatelessWidget {
       userId: principal.userId ?? 'local',
       companionName: companionName ?? 'Nori',
       onSubjectTap: (subject) => _openSubject(context, subject),
-      onContinue: (_) {},
+      onContinue: (_) => _continueLearning(context),
       onNotifications: () {},
     );
   }
@@ -389,6 +446,7 @@ class StudentProfileTab extends StatelessWidget {
     super.key,
     required this.principal,
     this.profileRepository,
+    this.insightsRepository,
     this.preferences,
     this.onPreferencesChanged,
     this.onAccessibilityChanged,
@@ -398,6 +456,7 @@ class StudentProfileTab extends StatelessWidget {
 
   final SessionPrincipal principal;
   final StudentProfileRepository? profileRepository;
+  final LearningInsightsRepository? insightsRepository;
   final StudentPreferences? preferences;
   final ValueChanged<StudentPreferences>? onPreferencesChanged;
   final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
@@ -434,6 +493,18 @@ class StudentProfileTab extends StatelessWidget {
                 MaterialPageRoute<void>(
                   builder: (_) => AccessibilitySettingsPage(
                     onChanged: onAccessibilityChanged!,
+                  ),
+                ),
+              );
+            },
+      onOpenProgress: insightsRepository == null
+          ? null
+          : () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => LearningProgressPage(
+                    repository: insightsRepository!,
+                    junior: principal.role.usesJuniorPresentation,
                   ),
                 ),
               );
