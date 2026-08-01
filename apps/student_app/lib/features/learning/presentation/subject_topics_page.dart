@@ -17,6 +17,8 @@ class SubjectTopicsPage extends StatefulWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.companionName,
+    this.learnerDisplayName,
+    this.shareCards,
     this.junior = true,
     this.onTopicOpen,
   });
@@ -28,6 +30,8 @@ class SubjectTopicsPage extends StatefulWidget {
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -110,6 +114,8 @@ class _SubjectTopicsPageState extends State<SubjectTopicsPage> {
           learnerQuizRepository: widget.learnerQuizRepository,
           quizAttemptRepository: widget.quizAttemptRepository,
           companionName: widget.companionName,
+          learnerDisplayName: widget.learnerDisplayName,
+          shareCards: widget.shareCards,
           junior: widget.junior,
           onOpened: (_) => _load(),
         ),

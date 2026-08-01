@@ -55,11 +55,13 @@ class ProfileAchievement {
     required this.earnedAt,
     this.kind = AchievementKind.achievement,
     this.slug = '',
+    this.isFeatured = false,
   });
 
   factory ProfileAchievement.fromAward(
     AchievementAward award, {
     required bool urdu,
+    bool isFeatured = false,
   }) {
     return ProfileAchievement(
       id: award.awardId,
@@ -67,6 +69,7 @@ class ProfileAchievement {
       earnedAt: award.awardedAt,
       kind: award.kind,
       slug: award.slug,
+      isFeatured: isFeatured,
     );
   }
 
@@ -76,7 +79,21 @@ class ProfileAchievement {
   final AchievementKind kind;
   final String slug;
 
+  /// XP-06: pinned on Me (max three).
+  final bool isFeatured;
+
   bool get isSticker => kind == AchievementKind.sticker;
+
+  ProfileAchievement copyWith({bool? isFeatured}) {
+    return ProfileAchievement(
+      id: id,
+      title: title,
+      earnedAt: earnedAt,
+      kind: kind,
+      slug: slug,
+      isFeatured: isFeatured ?? this.isFeatured,
+    );
+  }
 }
 
 /// The owner's view of their own profile. Includes private data that must

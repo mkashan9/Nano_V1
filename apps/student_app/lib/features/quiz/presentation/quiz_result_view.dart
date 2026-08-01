@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
@@ -7,6 +9,8 @@ import 'package:nano_domain/nano_domain.dart';
 ///
 /// Junior and Senior share the data and differ only in density and warmth,
 /// so a learner cannot see a different verdict depending on the shell.
+///
+/// XP-06 adds an optional privacy-safe score share card (clipboard).
 class QuizResultView extends StatelessWidget {
   const QuizResultView({
     super.key,
@@ -18,6 +22,8 @@ class QuizResultView extends StatelessWidget {
     this.retaking = false,
     this.onRetake,
     this.onDone,
+    this.learnerDisplayName,
+    this.shareCards,
   });
 
   final AttemptResult result;
@@ -29,9 +35,49 @@ class QuizResultView extends StatelessWidget {
   final VoidCallback? onRetake;
   final VoidCallback? onDone;
 
+  /// XP-06: used to build a first-name-only score card.
+  final String? learnerDisplayName;
+
+  /// When set, prefers the server `build_share_card` path.
+  final ShareCardRepository? shareCards;
+
+  Future<void> _shareScore(BuildContext context) async {
+    final name = learnerDisplayName?.trim();
+    if (name == null || name.isEmpty) return;
+    try {
+      final ShareCard card;
+      if (shareCards != null) {
+        card = await shareCards!.forQuizScore(
+          scorePercent: result.scorePercent,
+          passed: result.passed,
+        );
+      } else {
+        card = ShareCard.quizScore(
+          displayName: name,
+          scorePercent: result.scorePercent,
+          passed: result.passed,
+        );
+      }
+      await Clipboard.setData(
+        ClipboardData(text: card.shareTextFor(urdu: copy.isUrdu)),
+      );
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(copy.shareCopiedSnack)),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not build share card')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final canShare =
+        learnerDisplayName != null && learnerDisplayName!.trim().isNotEmpty;
     return ListView(
       children: [
         // MED-12: the session companion, so cooldowns and the session budget
@@ -94,6 +140,17 @@ class QuizResultView extends StatelessWidget {
           style: theme.textTheme.bodyMedium,
           textAlign: junior ? TextAlign.center : TextAlign.start,
         ),
+        if (canShare) ...[
+          const SizedBox(height: NanoSpacing.sm),
+          Align(
+            alignment: junior ? Alignment.center : Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: () => _shareScore(context),
+              icon: const Icon(Icons.ios_share_outlined),
+              label: Text(copy.shareScoreLabel),
+            ),
+          ),
+        ],
         const SizedBox(height: NanoSpacing.lg),
         Text(
           copy.quizReviewAnswersTitle,

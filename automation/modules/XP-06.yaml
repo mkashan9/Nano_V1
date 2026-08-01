@@ -1,15 +1,26 @@
-id: XP-06
+d: XP-06
 name: "Shareable Achievement and Score Cards"
 release: R5
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - XP-03
+dependency_notes: >
+  Achievements exist on Me. This module owns privacy-safe share card payloads
+  for achievements and quiz scores, plus featured achievement pins (max 3).
+  Image generation and social share targets remain SOC-04 / SOC-01.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/XP-06/
@@ -18,27 +29,52 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions, and Streaks"
+  - "PRF-01 featured_achievements"
+  - "SOC-01 Share cards use privacy-safe names"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for XP-06"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.featured_achievements
+server_functions:
+  - "public.my_featured_achievements"
+  - "public.set_featured_achievements"
+  - "public.build_share_card"
 acceptance:
+  - Share cards expose only a privacy-safe first name plus achievement or quiz score
+  - Cards never include school name, email, guardian, attendance, or marks
+  - Featured pins are max 3, own awards only, and learners cannot invent awards
+  - Me can pin/unpin and copy an achievement share card
+  - Quiz results can copy a score share card from the server payload
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/xp06_share_cards.sql
+  - packages/nano_domain/test/share_card_test.dart
+  - packages/nano_data/test/share_card_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - share_card_privacy_safe
+  - featured_own_awards_only
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - On Me, pin up to three achievements and confirm Featured shows them
+  - Copy an achievement share card and confirm no school or email text
+  - After a quiz, copy a score card and confirm only name + percent
+rollback_notes: >
+  Revert the branch and migration. Me loses pin/share actions; awards remain.
 requires_owner_test: true
+owner_decisions_locked:
+  privacy: >
+    First token of display_name only. No topic titles on quiz cards. No school
+    records. Owner clipboard share is allowed even when show_achievements is off
+    for the public projection — sharing is an explicit action.
+  featured: >
+    Max three pins. set_featured_achievements replaces the set atomically.
+    Pins reference achievement_awards rows the learner already owns.
+  deferred: >
+    Rendered share images and WhatsApp/Communities targets wait on SOC-04.

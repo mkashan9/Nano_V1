@@ -1,10 +1,12 @@
-# CHANGELOG
+ï»¿# CHANGELOG
 
 ## Unreleased
 
-- XP-05: streaks are consecutive learning days, not a fixture — topic complete and quiz pass extend a UTC-day streak once, a gap pauses it with welcome-back copy instead of blame, and Home/Me read my_streak when Supabase is wired
+- XP-06: privacy-safe achievement and quiz score share cards (clipboard), plus featured pins (max 3) on Me; school records stay off the card
 
-- XP-04: Home's plan is finally real missions — daily lesson/quiz and weekly lesson/quiz targets track period progress, award bonus XP once through the ledger, and replace the fixture trio when Supabase is wired
+- XP-05: streaks are consecutive learning days, not a fixture ï¿½ topic complete and quiz pass extend a UTC-day streak once, a gap pauses it with welcome-back copy instead of blame, and Home/Me read my_streak when Supabase is wired
+
+- XP-04: Home's plan is finally real missions ï¿½ daily lesson/quiz and weekly lesson/quiz targets track period progress, award bonus XP once through the ledger, and replace the fixture trio when Supabase is wired
 
 - XP-03: Me shows real badges and stickers â€” First Steps, Quiz Rookie, Rising Star, and Level Climber unlock from topic completions, quiz passes, and level bands, unique so a replay cannot grant twice, and stickers are a kind on the same catalog rather than a second grant path
 

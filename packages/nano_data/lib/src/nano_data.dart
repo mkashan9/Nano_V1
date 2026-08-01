@@ -18,5 +18,6 @@ export 'supabase/nano_supabase.dart';
 export 'sync/sync_store.dart';
 export 'xp/achievement_repository.dart';
 export 'xp/mission_repository.dart';
+export 'xp/share_card_repository.dart';
 export 'xp/streak_repository.dart';
 export 'xp/xp_ledger_repository.dart';

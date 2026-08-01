@@ -56,8 +56,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | XP-02 | Levels and Thresholds | R5 | DONE | XP-01 |
 | XP-03 | Achievements and Stickers | R5 | DONE | XP-02 |
 | XP-04 | Daily and Weekly Missions | R5 | DONE | XP-01 |
-| XP-05 | Streaks and Gentle Motivation | R5 | USER_TEST | XP-01, CMP-02 |
-| XP-06 | Shareable Achievement and Score Cards | R5 | BACKLOG | XP-03 |
+| XP-05 | Streaks and Gentle Motivation | R5 | DONE | XP-01, CMP-02 |
+| XP-06 | Shareable Achievement and Score Cards | R5 | USER_TEST | XP-03 |
 | ADM-01 | Superadmin Dashboard | R6 | BACKLOG | AUTH-03, FND-04 |
 | ADM-02 | School Creation, Codes, Status, and Administrator Control | R6 | BACKLOG | ADM-01, SEC-02 |
 | ADM-03 | Global User and Account Control | R6 | BACKLOG | ADM-01, SEC-03 |

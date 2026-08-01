@@ -15,6 +15,8 @@ class JuniorQuizPage extends StatefulWidget {
     this.attemptRepository,
     this.companionName = 'Nori',
     this.topicTitle,
+    this.learnerDisplayName,
+    this.shareCards,
   });
 
   final String topicVersionId;
@@ -22,6 +24,8 @@ class JuniorQuizPage extends StatefulWidget {
   final QuizAttemptRepository? attemptRepository;
   final String companionName;
   final String? topicTitle;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
 
   @override
   State<JuniorQuizPage> createState() => _JuniorQuizPageState();
@@ -167,6 +171,8 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
                           companionName: widget.companionName,
                           retaking: _submitting,
                           onRetake: _load,
+                          learnerDisplayName: widget.learnerDisplayName,
+                          shareCards: widget.shareCards,
                         )
                       : flow.finished || _score != null
                           ? _FinishedPane(

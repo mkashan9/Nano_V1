@@ -25,6 +25,7 @@ void main() {
   AchievementRepository? achievementRepository;
   MissionRepository? missionRepository;
   StreakRepository? streakRepository;
+  ShareCardRepository? shareCardRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -45,6 +46,7 @@ void main() {
     achievementRepository = SupabaseAchievementRepository(client);
     missionRepository = SupabaseMissionRepository(client);
     streakRepository = SupabaseStreakRepository(client);
+    shareCardRepository = SupabaseShareCardRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -59,6 +61,7 @@ void main() {
       achievementRepository: achievementRepository,
       missionRepository: missionRepository,
       streakRepository: streakRepository,
+      shareCardRepository: shareCardRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -93,6 +96,7 @@ class NanoStudentApp extends StatefulWidget {
     this.achievementRepository,
     this.missionRepository,
     this.streakRepository,
+    this.shareCardRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -141,6 +145,10 @@ class NanoStudentApp extends StatefulWidget {
   /// seven-day streak remains.
   final StreakRepository? streakRepository;
 
+  /// XP-06: featured pins and privacy-safe share cards. Optional — without it
+  /// Me keeps fixture awards without pin/share actions.
+  final ShareCardRepository? shareCardRepository;
+
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
   /// should not exist, and that is what a widget test gets by default.
@@ -168,6 +176,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   StudentPreferences? _preferences;
   late final StudentHomeRepository _homeRepository;
   late final StudentProfileRepository _profileRepository;
+  late final ShareCardRepository _shareCardRepository;
   late LearningCatalogRepository _catalogRepository;
   late final LearningProgressRepository _progressRepository;
   late final CheckpointRepository _checkpointRepository;
@@ -190,11 +199,33 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
     // Home and profile still use fixtures for subjects; live repos replace XP,
-    // achievements, missions, and streaks when Supabase is wired.
+    // achievements, missions, streaks, and share cards when Supabase is wired.
     final xpLedger = widget.xpLedgerRepository;
     final achievementRepo = widget.achievementRepository;
     final missionRepo = widget.missionRepository;
     final streakRepo = widget.streakRepository;
+    final shareCards = widget.shareCardRepository ??
+        FakeShareCardRepository(
+          awards: [
+            AchievementAward(
+              awardId: 'a1',
+              slug: 'quiz_rookie',
+              kind: AchievementKind.achievement,
+              titleEn: 'First quiz cleared',
+              titleUr: 'First quiz cleared',
+              awardedAt: DateTime.utc(2026, 7, 20),
+            ),
+            AchievementAward(
+              awardId: 'a2',
+              slug: 'streak_seven',
+              kind: AchievementKind.achievement,
+              titleEn: '7 day streak',
+              titleUr: '7 day streak',
+              awardedAt: DateTime.utc(2026, 7, 30),
+            ),
+          ],
+        );
+    _shareCardRepository = shareCards;
     _homeRepository = widget.homeRepository ??
         FakeStudentHomeRepository(
           subjects: StudentHomeFixtures.subjects,
@@ -208,6 +239,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           xpLedger: xpLedger,
           achievements: achievementRepo,
           streakRepository: streakRepo,
+          shareCards: shareCards,
           sessions: [
             SecurityFixtures.activeSession.copyWith(isCurrent: true),
             SecurityFixtures.revokedSession,
@@ -501,6 +533,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       learnerQuizRepository: _learnerQuizRepository,
       quizAttemptRepository: _quizAttemptRepository,
       syncController: _syncController,
+      shareCards: _shareCardRepository,
     );
   }
 

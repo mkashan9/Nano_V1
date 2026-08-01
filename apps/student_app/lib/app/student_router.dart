@@ -43,6 +43,7 @@ GoRouter createStudentRouter({
   LearnerQuizRepository? learnerQuizRepository,
   QuizAttemptRepository? quizAttemptRepository,
   NanoSyncController? syncController,
+  ShareCardRepository? shareCards,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -219,6 +220,7 @@ GoRouter createStudentRouter({
                     onAccessibilityChanged: onAccessibilityChanged,
                     onSignOut: onSignedOut,
                     syncController: syncController,
+                    shareCards: shareCards,
                   ),
                 ),
               ],
@@ -247,6 +249,7 @@ Widget _pageFor(
   ValueChanged<AccessibilityPreferences>? onAccessibilityChanged,
   VoidCallback? onSignOut,
   NanoSyncController? syncController,
+  ShareCardRepository? shareCards,
 }) {
   return switch (id) {
     'home' || 'learning' => StudentLearningTab(
@@ -259,6 +262,8 @@ Widget _pageFor(
         learnerQuizRepository: learnerQuizRepository,
         quizAttemptRepository: quizAttemptRepository,
         companionName: companionName,
+        learnerDisplayName: principal.displayName,
+        shareCards: shareCards,
         // Home cards deep-link through the resolver, so an ineligible learner
         // lands somewhere valid instead of on a dead route.
         onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
@@ -275,6 +280,7 @@ Widget _pageFor(
         onAccessibilityChanged: onAccessibilityChanged,
         onSignOut: onSignOut,
         syncController: syncController,
+        shareCards: shareCards,
       ),
     _ => Center(child: Text('Unknown tab: $id')),
   };

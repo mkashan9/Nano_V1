@@ -27,6 +27,8 @@ class TopicPlayerPage extends StatefulWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.companionName,
+    this.learnerDisplayName,
+    this.shareCards,
     this.junior = true,
     this.captionsEnabled,
     this.reducedMotion,
@@ -44,6 +46,8 @@ class TopicPlayerPage extends StatefulWidget {
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
   final bool junior;
 
   /// Overrides for tests. Left null, these follow the learner's saved
@@ -550,12 +554,16 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                               attemptRepository: widget.quizAttemptRepository,
                               companionName: widget.companionName ?? 'Nori',
                               topicTitle: title,
+                              learnerDisplayName: widget.learnerDisplayName,
+                              shareCards: widget.shareCards,
                             )
                           : SeniorQuizPage(
                               topicVersionId: _topic.topicVersionId,
                               repository: repo,
                               attemptRepository: widget.quizAttemptRepository,
                               topicTitle: title,
+                              learnerDisplayName: widget.learnerDisplayName,
+                              shareCards: widget.shareCards,
                             ),
                     ),
                   );

@@ -291,6 +291,8 @@ class StudentLearningTab extends StatelessWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.companionName,
+    this.learnerDisplayName,
+    this.shareCards,
     this.onOpenFlex,
   });
 
@@ -303,6 +305,8 @@ class StudentLearningTab extends StatelessWidget {
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
   final VoidCallback? onOpenFlex;
 
   void _openSubject(BuildContext context, LearningSubject subject) {
@@ -318,6 +322,8 @@ class StudentLearningTab extends StatelessWidget {
           learnerQuizRepository: learnerQuizRepository,
           quizAttemptRepository: quizAttemptRepository,
           companionName: companionName,
+          learnerDisplayName: learnerDisplayName ?? principal.displayName,
+          shareCards: shareCards,
           junior: principal.usesJuniorPresentation,
         ),
       ),
@@ -359,6 +365,8 @@ class StudentLearningTab extends StatelessWidget {
                 learnerQuizRepository: learnerQuizRepository,
                 quizAttemptRepository: quizAttemptRepository,
                 companionName: companionName,
+                learnerDisplayName: learnerDisplayName ?? principal.displayName,
+                shareCards: shareCards,
                 junior: junior,
               ),
             ),
@@ -462,6 +470,7 @@ class StudentProfileTab extends StatelessWidget {
     this.onAccessibilityChanged,
     this.onSignOut,
     this.syncController,
+    this.shareCards,
   });
 
   final SessionPrincipal principal;
@@ -472,6 +481,7 @@ class StudentProfileTab extends StatelessWidget {
   final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
   final VoidCallback? onSignOut;
   final NanoSyncController? syncController;
+  final ShareCardRepository? shareCards;
 
   @override
   Widget build(BuildContext context) {
@@ -496,6 +506,7 @@ class StudentProfileTab extends StatelessWidget {
       preferences: preferences ??
           StudentPreferences(userId: principalForProfile.userId!),
       onPreferencesChanged: onPreferencesChanged,
+      shareCards: shareCards,
       onOpenAccessibility: onAccessibilityChanged == null
           ? null
           : () {

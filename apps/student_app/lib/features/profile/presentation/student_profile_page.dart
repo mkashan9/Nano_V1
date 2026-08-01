@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
 /// STU-05 owner profile: identity, progress, privacy, settings, devices,
 /// and a sign-out that clears private local caches.
+///
+/// XP-06 adds featured pins and privacy-safe achievement share cards.
 class StudentProfilePage extends StatefulWidget {
   const StudentProfilePage({
     super.key,
@@ -17,6 +20,7 @@ class StudentProfilePage extends StatefulWidget {
     this.onOpenProgress,
     this.onSignOut,
     this.syncController,
+    this.shareCards,
   });
 
   final StudentProfileRepository repository;
@@ -33,6 +37,9 @@ class StudentProfilePage extends StatefulWidget {
   /// Cleared on sign-out so private drafts and cache never survive logout.
   final NanoSyncController? syncController;
 
+  /// XP-06: featured pins and share-card builder. Optional in previews.
+  final ShareCardRepository? shareCards;
+
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
 }
@@ -44,6 +51,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   List<DeviceSession> _sessions = const [];
   var _signingOut = false;
   String? _revokingId;
+  String? _busyAwardId;
 
   @override
   void initState() {
@@ -98,6 +106,70 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
         const SnackBar(content: Text('Could not save privacy settings')),
       );
       await _load();
+    }
+  }
+
+  Future<void> _toggleFeatured(ProfileAchievement achievement) async {
+    final share = widget.shareCards;
+    final profile = _profile;
+    if (share == null || profile == null || _busyAwardId != null) return;
+
+    final current = [
+      for (final item in profile.achievements)
+        if (item.isFeatured) item.id,
+    ];
+    final next = [...current];
+    if (achievement.isFeatured) {
+      next.remove(achievement.id);
+    } else {
+      if (next.length >= kMaxFeaturedAchievements) {
+        final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+            const NanoCopy(NanoAppLocale.en);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(copy.featuredLimitHint)),
+        );
+        return;
+      }
+      next.add(achievement.id);
+    }
+
+    setState(() => _busyAwardId = achievement.id);
+    try {
+      await share.setFeatured(next);
+      if (!mounted) return;
+      await _load();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not update featured achievements')),
+      );
+    } finally {
+      if (mounted) setState(() => _busyAwardId = null);
+    }
+  }
+
+  Future<void> _shareAchievement(ProfileAchievement achievement) async {
+    final share = widget.shareCards;
+    if (share == null || _busyAwardId != null) return;
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    setState(() => _busyAwardId = achievement.id);
+    try {
+      final card = await share.forAchievement(achievement.id);
+      await Clipboard.setData(
+        ClipboardData(text: card.shareTextFor(urdu: copy.isUrdu)),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(copy.shareCopiedSnack)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not build share card')),
+      );
+    } finally {
+      if (mounted) setState(() => _busyAwardId = null);
     }
   }
 
@@ -161,6 +233,14 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               revokingId: _revokingId,
               onSignOut: widget.onSignOut == null ? null : _signOut,
               signingOut: _signingOut,
+              canShare: widget.shareCards != null,
+              busyAwardId: _busyAwardId,
+              onToggleFeatured: widget.shareCards == null
+                  ? null
+                  : _toggleFeatured,
+              onShareAchievement: widget.shareCards == null
+                  ? null
+                  : _shareAchievement,
             ),
     );
   }
@@ -181,6 +261,10 @@ class _ProfileBody extends StatelessWidget {
     this.revokingId,
     this.onSignOut,
     this.signingOut = false,
+    this.canShare = false,
+    this.busyAwardId,
+    this.onToggleFeatured,
+    this.onShareAchievement,
   });
 
   final StudentProfileView profile;
@@ -196,11 +280,19 @@ class _ProfileBody extends StatelessWidget {
   final String? revokingId;
   final Future<void> Function()? onSignOut;
   final bool signingOut;
+  final bool canShare;
+  final String? busyAwardId;
+  final ValueChanged<ProfileAchievement>? onToggleFeatured;
+  final ValueChanged<ProfileAchievement>? onShareAchievement;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final level = profile.level;
+    final featured = [
+      for (final achievement in profile.achievements)
+        if (achievement.isFeatured) achievement,
+    ];
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         NanoSpacing.md,
@@ -269,6 +361,17 @@ class _ProfileBody extends StatelessWidget {
             title: Text(copy.nextUpLabel),
             subtitle: Text(profile.recommendedNext!),
           ),
+        if (featured.isNotEmpty) ...[
+          const SizedBox(height: NanoSpacing.md),
+          Text(copy.featuredAchievementsLabel, style: theme.textTheme.titleLarge),
+          const SizedBox(height: NanoSpacing.sm),
+          for (final achievement in featured)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.star),
+              title: Text(achievement.title),
+            ),
+        ],
         if (profile.achievements.isNotEmpty) ...[
           const SizedBox(height: NanoSpacing.md),
           Text(copy.achievementsLabel, style: theme.textTheme.titleLarge),
@@ -282,6 +385,35 @@ class _ProfileBody extends StatelessWidget {
                     : Icons.emoji_events_outlined,
               ),
               title: Text(achievement.title),
+              trailing: canShare
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: achievement.isFeatured
+                              ? copy.unpinAchievementLabel
+                              : copy.pinAchievementLabel,
+                          onPressed: busyAwardId == achievement.id ||
+                                  onToggleFeatured == null
+                              ? null
+                              : () => onToggleFeatured!(achievement),
+                          icon: Icon(
+                            achievement.isFeatured
+                                ? Icons.star
+                                : Icons.star_border,
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: copy.shareAchievementLabel,
+                          onPressed: busyAwardId == achievement.id ||
+                                  onShareAchievement == null
+                              ? null
+                              : () => onShareAchievement!(achievement),
+                          icon: const Icon(Icons.ios_share_outlined),
+                        ),
+                      ],
+                    )
+                  : null,
             ),
         ],
         const SizedBox(height: NanoSpacing.md),

@@ -19,6 +19,8 @@ class TopicDetailPage extends StatefulWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.companionName,
+    this.learnerDisplayName,
+    this.shareCards,
     this.junior = true,
     this.openPlayer = true,
     this.onOpened,
@@ -30,6 +32,8 @@ class TopicDetailPage extends StatefulWidget {
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
   final bool junior;
 
   /// Whether a successful start pushes the player. Off in tests that only
@@ -93,6 +97,8 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
           learnerQuizRepository: widget.learnerQuizRepository,
           quizAttemptRepository: widget.quizAttemptRepository,
           companionName: widget.companionName,
+          learnerDisplayName: widget.learnerDisplayName,
+          shareCards: widget.shareCards,
           junior: widget.junior,
           onProgress: (updated) {
             if (!mounted) return;
@@ -119,12 +125,16 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                 attemptRepository: widget.quizAttemptRepository,
                 companionName: widget.companionName ?? 'Nori',
                 topicTitle: title,
+                learnerDisplayName: widget.learnerDisplayName,
+                shareCards: widget.shareCards,
               )
             : SeniorQuizPage(
                 topicVersionId: _topic.topicVersionId,
                 repository: repo,
                 attemptRepository: widget.quizAttemptRepository,
                 topicTitle: title,
+                learnerDisplayName: widget.learnerDisplayName,
+                shareCards: widget.shareCards,
               ),
       ),
     );
