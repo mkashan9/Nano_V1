@@ -1,7 +1,7 @@
 id: SCH-01
 name: "School Dashboard and Branding"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - AUTH-03
   - SEC-02

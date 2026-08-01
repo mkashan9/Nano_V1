@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] SCH-01 School Dashboard and Branding
+- [ ] SCH-02 Classes, Grades, Sections, and Subjects
 
 ## Completed
 
@@ -51,5 +51,5 @@
 - [x] ADM-06 Game Administration
 - [x] ADM-07 Notification Administration
 - [x] ADM-08 Platform Analytics
-- [ ] SCH-01 School Dashboard and Branding
+- [x] SCH-01 School Dashboard and Branding
 - [ ] SCH-02 Classes, Grades, Sections, and Subjects

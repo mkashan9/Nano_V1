@@ -88,6 +88,47 @@ class NanoCopy {
       isUrdu ? 'برانڈنگ تبدیل' : 'Edit branding';
   String get schoolYearMissing =>
       isUrdu ? 'تعلیمی سال نہیں' : 'No academic year yet';
+  String get classesPageTitle => isUrdu ? 'کلاسز' : 'Classes';
+  String get classesPageSubtitle => isUrdu
+      ? 'گریڈ، کلاس، سیکشن اور مضامین — محفوظ محفوظ کریں، حذف نہ کریں۔'
+      : 'Grades, classes, sections, and subjects — archive instead of delete.';
+  String get classesEmpty =>
+      isUrdu ? 'ابھی کوئی گریڈ یا کلاس نہیں۔' : 'No grades or classes yet.';
+  String get classesLoadError =>
+      isUrdu ? 'ساخت لوڈ نہیں ہو سکی۔' : 'Could not load academic structure.';
+  String get classesCreateGradeTitle =>
+      isUrdu ? 'نیا گریڈ' : 'Add grade';
+  String get classesCreateClassTitle =>
+      isUrdu ? 'نئی کلاس' : 'Add class';
+  String get classesCreateSectionTitle =>
+      isUrdu ? 'نیا سیکشن' : 'Add section';
+  String get classesCreateSubjectTitle =>
+      isUrdu ? 'نیا مضمون' : 'Add subject';
+  String get classesAssignSubjectTitle =>
+      isUrdu ? 'مضمون تفویض' : 'Assign subject';
+  String get classesCreateAction => isUrdu ? 'بنائیں' : 'Create';
+  String get classesAssignAction => isUrdu ? 'تفویض' : 'Assign';
+  String get classesArchiveAction => isUrdu ? 'محفوظ' : 'Archive';
+  String get classesGradeNameLabel => isUrdu ? 'گریڈ نام' : 'Grade name';
+  String get classesClassNameLabel => isUrdu ? 'کلاس نام' : 'Class name';
+  String get classesSectionNameLabel =>
+      isUrdu ? 'سیکشن نام' : 'Section name';
+  String get classesSubjectNameLabel =>
+      isUrdu ? 'مضمون نام' : 'Subject name';
+  String get classesSubjectCodeLabel =>
+      isUrdu ? 'مضمون کوڈ' : 'Subject code';
+  String get classesNeedGradeFirst =>
+      isUrdu ? 'پہلے گریڈ بنائیں۔' : 'Create a grade first.';
+  String get classesNeedSubjectFirst =>
+      isUrdu ? 'پہلے مضمون بنائیں۔' : 'Create a subject first.';
+  String get classesMappingIssuesTitle =>
+      isUrdu ? 'نقشہ مسائل' : 'Mapping issues';
+  String classesMissingSubjects(String className) => isUrdu
+      ? '$className میں کوئی فعال مضمون نہیں۔'
+      : '$className has no active subjects.';
+  String get classesGradesHeading => isUrdu ? 'گریڈز' : 'Grades';
+  String get classesClassesHeading => isUrdu ? 'کلاسز' : 'Classes';
+  String get classesSubjectsHeading => isUrdu ? 'مضامین' : 'Subjects';
   String get platform => isUrdu ? 'پلیٹ فارم' : 'Platform';
   String get platformDashboardTitle =>
       isUrdu ? 'پلیٹ فارم ڈیش بورڈ' : 'Platform dashboard';
