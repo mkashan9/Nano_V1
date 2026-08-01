@@ -215,6 +215,19 @@ class NanoCopy {
   String get fixedOrderLabel =>
       isUrdu ? 'ترتیب محفوظ ہے' : 'Order is preserved';
   String quizItemNumber(int n) => isUrdu ? 'سوال $n' : 'Question $n';
+  String get takeQuizLabel => isUrdu ? 'کوئز لیں' : 'Take quiz';
+  String get quizNextLabel => isUrdu ? 'اگلا' : 'Next';
+  String get quizFinishLabel => isUrdu ? 'ختم کریں' : 'Finish';
+  String get quizDoneTitle => isUrdu ? 'آپ نے کوئز مکمل کیا!' : 'You finished the quiz!';
+  String get quizScoreLaterNotice => isUrdu
+      ? 'اسکور بعد میں محفوظ ہوگا — ابھی صرف مشق ہے۔'
+      : 'Your score will be saved later — this is practice for now.';
+  String get quizDoneButtonLabel => isUrdu ? 'واپس' : 'Done';
+  String get quizUnavailableLabel =>
+      isUrdu ? 'اس ٹاپک کا کوئز ابھی نہیں ہے۔' : 'No quiz for this topic yet.';
+  String quizProgressLabel(int current, int total) => isUrdu
+      ? 'سوال $current از $total'
+      : 'Question $current of $total';
   String get newQuestionLabel => isUrdu ? 'نیا سوال' : 'New question';
   String get publishQuestionLabel => isUrdu ? 'شائع کریں' : 'Publish';
   String get retireQuestionLabel => isUrdu ? 'ریٹائر کریں' : 'Retire';

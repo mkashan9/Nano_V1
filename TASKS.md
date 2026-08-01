@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] QZ-02 owner manual test
+- [ ] QZ-03 owner manual test
 
 ## Completed
 
@@ -25,7 +25,8 @@
 - [x] LRN-04
 - [x] LRN-05
 - [x] QZ-01
+- [x] QZ-02
 
 ## Upcoming
 
-- [ ] QZ-03 Junior Quiz Experience
+- [ ] QZ-04 Senior Quiz Experience

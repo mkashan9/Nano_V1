@@ -40,6 +40,7 @@ GoRouter createStudentRouter({
   LearningProgressRepository? progressRepository,
   CheckpointRepository? checkpointRepository,
   LearningInsightsRepository? insightsRepository,
+  LearnerQuizRepository? learnerQuizRepository,
   NanoSyncController? syncController,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
@@ -209,6 +210,7 @@ GoRouter createStudentRouter({
                     progressRepository: progressRepository,
                     checkpointRepository: checkpointRepository,
                     insightsRepository: insightsRepository,
+                    learnerQuizRepository: learnerQuizRepository,
                     profileRepository: profileRepository,
                     preferences: preferences,
                     onPreferencesChanged: onPreferencesChanged,
@@ -235,6 +237,7 @@ Widget _pageFor(
   LearningProgressRepository? progressRepository,
   CheckpointRepository? checkpointRepository,
   LearningInsightsRepository? insightsRepository,
+  LearnerQuizRepository? learnerQuizRepository,
   StudentProfileRepository? profileRepository,
   StudentPreferences? preferences,
   ValueChanged<StudentPreferences>? onPreferencesChanged,
@@ -250,6 +253,7 @@ Widget _pageFor(
         progressRepository: progressRepository,
         checkpointRepository: checkpointRepository,
         insightsRepository: insightsRepository,
+        learnerQuizRepository: learnerQuizRepository,
         companionName: companionName,
         // Home cards deep-link through the resolver, so an ineligible learner
         // lands somewhere valid instead of on a dead route.

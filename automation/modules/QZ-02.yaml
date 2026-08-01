@@ -1,7 +1,7 @@
 id: QZ-02
 name: "Video-Specific Ordered Quiz Authoring"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - QZ-01
   - LRN-02
