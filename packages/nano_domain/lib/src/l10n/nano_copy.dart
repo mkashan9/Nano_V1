@@ -73,6 +73,26 @@ class NanoCopy {
   String get platformAuditEmpty =>
       isUrdu ? 'ابھی کوئی آڈٹ نہیں۔' : 'No recent audit events.';
   String get schools => isUrdu ? 'اسکول' : 'Schools';
+  String get schoolsPageTitle => isUrdu ? 'اسکول انتظام' : 'Schools';
+  String get schoolsPageSubtitle => isUrdu
+      ? 'نیا اسکول بنائیں، حیثیت بدلیں، پہلا ایڈمن تفویض کریں۔'
+      : 'Create schools, change status with a reason, and assign the first admin.';
+  String get schoolsCreateTitle => isUrdu ? 'نیا اسکول' : 'Create school';
+  String get schoolsCreateAction => isUrdu ? 'بنائیں' : 'Create';
+  String get schoolsCodeLabel => isUrdu ? 'کوڈ' : 'Code';
+  String get schoolsNameLabel => isUrdu ? 'نام' : 'Name';
+  String get schoolsStatusTitle => isUrdu ? 'حیثیت بدلیں' : 'Change status';
+  String get schoolsStatusAction => isUrdu ? 'حیثیت' : 'Status';
+  String get schoolsSaveStatusAction => isUrdu ? 'محفوظ کریں' : 'Save status';
+  String get schoolsReasonLabel => isUrdu ? 'وجہ' : 'Reason';
+  String get schoolsAssignAdminTitle =>
+      isUrdu ? 'پہلا ایڈمن' : 'Assign first admin';
+  String get schoolsAssignAdminAction => isUrdu ? 'ایڈمن' : 'Assign admin';
+  String get schoolsAdminUserIdLabel =>
+      isUrdu ? 'صارف شناخت' : 'User id';
+  String get schoolsHasAdmin => isUrdu ? 'ایڈمن موجود' : 'Has admin';
+  String get schoolsNeedsAdmin => isUrdu ? 'ایڈمن درکار' : 'Needs admin';
+  String get cancelLabel => isUrdu ? 'منسوخ' : 'Cancel';
   String get content => isUrdu ? 'مواد' : 'Content';
   String get moderation => isUrdu ? 'نگرانی' : 'Moderation';
   String get analytics => isUrdu ? 'تجزیات' : 'Analytics';

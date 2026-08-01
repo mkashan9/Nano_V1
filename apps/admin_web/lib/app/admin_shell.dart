@@ -1,6 +1,7 @@
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
 import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
+import 'package:admin_web/features/schools/presentation/schools_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_design_system/nano_design_system.dart';
@@ -21,6 +22,7 @@ class AdminShell extends StatelessWidget {
     this.topicQuizRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
+    this.schoolAdminRepository,
   });
 
   final EnvironmentConfig config;
@@ -34,6 +36,7 @@ class AdminShell extends StatelessWidget {
   final TopicQuizRepository? topicQuizRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
+  final SchoolAdminRepository? schoolAdminRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +147,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.topicQuizRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
+    this.schoolAdminRepository,
   });
 
   final NavDestination destination;
@@ -152,6 +156,7 @@ class AdminDestinationPage extends StatelessWidget {
   final TopicQuizRepository? topicQuizRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
+  final SchoolAdminRepository? schoolAdminRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -163,6 +168,12 @@ class AdminDestinationPage extends StatelessWidget {
       return PlatformDashboardPage(
         repository: platformDashboardRepository!,
       );
+    }
+
+    if (destination.id == 'schools' &&
+        principal.role == AppRole.superadmin &&
+        schoolAdminRepository != null) {
+      return SchoolsPage(repository: schoolAdminRepository!);
     }
 
     if (destination.id == 'content' &&
