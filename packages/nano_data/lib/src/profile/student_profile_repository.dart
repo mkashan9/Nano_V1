@@ -1,6 +1,8 @@
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
+import '../xp/xp_ledger_repository.dart';
+
 /// Profile, privacy, and device sessions for the signed-in learner.
 abstract class StudentProfileRepository {
   Future<StudentProfileView> loadProfile({
@@ -26,11 +28,15 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     this.alwaysFail = false,
     this.revokeFails = false,
     this.progress = const (xp: 560, streak: 7, topics: 12),
+    this.xpLedger,
   }) : _sessions = [...?sessions];
 
   final bool alwaysFail;
   final bool revokeFails;
   final ({int xp, int streak, int topics}) progress;
+
+  /// XP-01: when set, profile XP comes from the ledger.
+  final XpLedgerRepository? xpLedger;
 
   final List<DeviceSession> _sessions;
   PrivacySettings? _privacy;
@@ -46,6 +52,9 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
   }) async {
     if (alwaysFail) throw StateError('Profile unavailable');
     final schoolLinked = role != AppRole.independentStudent;
+    final xp = xpLedger == null
+        ? progress.xp
+        : (await xpLedger!.balance()).total;
     return StudentProfileView(
       userId: userId,
       displayName: displayName,
@@ -56,7 +65,7 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
       guardianContact: 'guardian@example.dev',
       attendanceLabel: '94% this term',
       latestMarkLabel: 'Fractions quiz 8/10',
-      xp: progress.xp,
+      xp: xp,
       streakDays: progress.streak,
       completedTopics: progress.topics,
       recommendedNext: 'Fractions: equal parts',

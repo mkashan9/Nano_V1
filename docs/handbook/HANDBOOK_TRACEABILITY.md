@@ -21,7 +21,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | 5.x Repository organization / feature folders | FND-01 | apps/packages | structure | N/A | structure check | BACKLOG |
 | 6.1 Identity model | AUTH-01,AUTH-02,AUTH-03,AUTH-04 | nano_auth | session | auth.users,profiles | auth tests | USER_TEST |
 | 6.2 Multi-school security | SEC-02 | supabase | RLS | school_id | two-school RLS | USER_TEST |
-| 6.3 Trusted operations (scores, XP, publish) | QZ-05,XP-01,MRK-04,GME-05 | edge functions | scoring | ledgers | function tests | BACKLOG |
+| 6.3 Trusted operations (scores, XP, publish) | QZ-05,XP-01,MRK-04,GME-05 | edge functions | scoring | ledgers | function tests | USER_TEST |
 | 6.4 Versioning and history | SEC-03,MRK-04,ATT-03 | supabase | audit | audit_logs | history tests | BACKLOG |
 | 7.x Reuse-first engineering | AUD-01 | docs/provenance | registry | N/A | docs | IN_PROGRESS |
 | 8.1–8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
@@ -71,7 +71,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook MED-01 Media asset delivery | MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | PARTIAL |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |
 | Handbook PAR-01 Guardian guidance | PAR-01,PAR-02,PAR-03,FBK-01 | student+admin | Parent card | guidance | guardian | BACKLOG |
-| XP rules — video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
+| XP rules — video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | USER_TEST |
 | Junior must not see Communities | COM-01,SAFE-04,STU-03 | student_app | nav guard | roles | junior nav test | BACKLOG |
 | Independent students — natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
 | English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | USER_TEST |
