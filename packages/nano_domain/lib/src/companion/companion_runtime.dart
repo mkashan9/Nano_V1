@@ -211,6 +211,16 @@ class CompanionRuntime {
   CompanionRuntime withPreferences(AccessibilityPreferences preferences) =>
       _copyWith(preferences: preferences);
 
+  /// Learns whether generated clips exist (MED-02).
+  ///
+  /// The answer arrives after the first screens are already up, so it must not
+  /// disturb what is on them: the current reaction, the cooldowns, and the
+  /// session budget all survive. Only the tier of a *future* reaction changes.
+  CompanionRuntime withClipsAvailable(bool clipsAvailable) =>
+      clipsAvailable == this.clipsAvailable
+          ? this
+          : _copyWith(clipsAvailable: clipsAvailable);
+
   /// A fresh session: the budget and the cooldowns start over.
   CompanionRuntime newSession() => _copyWith(
         clearReaction: true,
@@ -228,6 +238,7 @@ class CompanionRuntime {
     bool clearReaction = false,
     Map<CompanionEvent, DateTime>? lastShownAt,
     int? shownThisSession,
+    bool? clipsAvailable,
   }) {
     return CompanionRuntime(
       policy: policy ?? this.policy,
@@ -236,7 +247,7 @@ class CompanionRuntime {
       preferences: preferences ?? this.preferences,
       companionName: companionName ?? this.companionName,
       manifest: manifest,
-      clipsAvailable: clipsAvailable,
+      clipsAvailable: clipsAvailable ?? this.clipsAvailable,
       reaction: clearReaction ? null : (reaction ?? this.reaction),
       lastShownAt: lastShownAt ?? this.lastShownAt,
       shownThisSession: shownThisSession ?? this.shownThisSession,

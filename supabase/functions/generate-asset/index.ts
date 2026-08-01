@@ -31,6 +31,8 @@ interface RequestBody {
   locale?: string;
   aspect_ratio?: string;
   provider_id?: string;
+  feature?: string;
+  school_id?: string;
 }
 
 Deno.serve(async (request) => {
@@ -90,9 +92,16 @@ Deno.serve(async (request) => {
     p_locale: body.locale ?? 'en',
     p_aspect_ratio: body.aspect_ratio ?? '1:1',
     p_provider_id: body.provider_id ?? null,
+    p_feature: body.feature ?? 'companion',
+    p_school_id: body.school_id ?? null,
   });
 
   if (requested.error) {
+    // A spent budget is its own answer: nothing is broken and retrying today
+    // cannot help, so it is not dressed up as a generic refusal.
+    if (requested.error.code === 'NM006') {
+      return errorResponse('QUOTA_EXCEEDED', requested.error.message, 429);
+    }
     const code = requested.error.code === 'NM001' ? 'FORBIDDEN' : 'REQUEST_REFUSED';
     const status = requested.error.code === 'NM001' ? 403 : 400;
     return errorResponse(code, requested.error.message, status);
@@ -130,10 +139,14 @@ Deno.serve(async (request) => {
     });
 
     const path = `${kind}/${slot}/${locale}/${promptHash}.${generated.extension}`;
-    const upload = await worker.storage.from(bucket).upload(path, generated.bytes, {
-      contentType: generated.contentType,
-      upsert: true,
-    });
+      const upload = await worker.storage.from(bucket).upload(path, generated.bytes, {
+        contentType: generated.contentType,
+        upsert: true,
+        // The path contains the request hash, so these bytes never change under
+        // this name: a year is safe, and it is what keeps a clip from being
+        // fetched twice on the same device.
+        cacheControl: '31536000',
+      });
     if (upload.error) {
       throw new ProviderError('STORAGE_WRITE_FAILED', upload.error.message, true);
     }

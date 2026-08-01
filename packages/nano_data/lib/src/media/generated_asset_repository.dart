@@ -21,7 +21,14 @@ abstract class GeneratedAssetRepository {
 
   /// Ask for an asset. Returns the existing one when the same ask already exists,
   /// in which case no provider was called.
+  ///
+  /// Throws [GenerationQuotaExceeded] when the day's allowance is spent (MED-02).
+  /// That is a limit, not a fault: a caller should say so rather than retry.
   Future<GeneratedAssetOutcome> request(GeneratedAssetRequest request);
+
+  /// Today's allowances and spend. Empty for anyone who is not a platform admin,
+  /// because the server returns them nothing rather than refusing them (MED-02).
+  Future<List<GenerationBudget>> budgets();
 
   /// A time-limited URL for a private file, for review and for playback.
   Future<String> signedUrl(GeneratedAsset asset, {Duration expiresIn});
@@ -31,6 +38,7 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
   FakeGeneratedAssetRepository({
     this.alwaysFail = false,
     this.providerUnconfigured = false,
+    this.dailyRequestLimit,
     List<GeneratedAsset>? seed,
   }) : _items = [...?seed, if (seed == null) ..._defaultSeed];
 
@@ -40,8 +48,15 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
   /// the request is recorded and fails, and the caller falls back to local art.
   final bool providerUnconfigured;
 
+  /// Stands in for the server's budget (MED-02). Null means unlimited, which is
+  /// what most tests want; set it to exercise the refusal path.
+  final int? dailyRequestLimit;
+
   final List<GeneratedAsset> _items;
   var requestCount = 0;
+
+  /// Requests that actually created something, which is what a budget counts.
+  var chargedCount = 0;
 
   static final _defaultSeed = <GeneratedAsset>[
     GeneratedAsset(
@@ -108,8 +123,18 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
       orElse: () => _missing,
     );
     if (existing != _missing) {
+      // Reuse before the budget, the same order the server uses: an ask that
+      // costs nothing is never refused for being over a limit.
       return GeneratedAssetOutcome(reused: true, asset: existing);
     }
+
+    final limit = dailyRequestLimit;
+    if (limit != null && chargedCount >= limit) {
+      throw const GenerationQuotaExceeded(
+        'Daily generation limit reached for platform budget all.',
+      );
+    }
+    chargedCount++;
 
     final created = GeneratedAsset(
       id: 'fake-${_items.length + 1}',
@@ -133,6 +158,32 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
     );
     _items.add(created);
     return GeneratedAssetOutcome(reused: false, asset: created);
+  }
+
+  @override
+  Future<List<GenerationBudget>> budgets() async {
+    if (alwaysFail) throw StateError('budgets unavailable');
+    final limit = dailyRequestLimit ?? 200;
+    return [
+      GenerationBudget(
+        scope: GenerationQuotaScope.platform,
+        scopeKey: '',
+        kind: null,
+        maxRequestsPerDay: limit,
+        requestsUsed: chargedCount,
+        maxCostMicrosPerDay: 5000000,
+        costMicrosUsed: 0,
+      ),
+      GenerationBudget(
+        scope: GenerationQuotaScope.feature,
+        scopeKey: 'companion',
+        kind: null,
+        maxRequestsPerDay: limit,
+        requestsUsed: chargedCount,
+        maxCostMicrosPerDay: 3000000,
+        costMicrosUsed: 0,
+      ),
+    ];
   }
 
   @override
@@ -196,23 +247,51 @@ class SupabaseGeneratedAssetRepository implements GeneratedAssetRepository {
     // The Edge Function is the only caller of a provider, so a client asks it
     // rather than asking a provider. It forwards the caller's token, which is what
     // keeps the permission check on the server.
-    final response = await _client.functions.invoke(
-      'generate-asset',
-      body: {
-        'kind': request.kind.name,
-        'slot': request.slot,
-        'prompt': request.prompt,
-        'prompt_version': request.promptVersion,
-        'locale': request.locale.name,
-        'aspect_ratio': request.aspectRatio,
-        if (request.providerId != null) 'provider_id': request.providerId,
-      },
-    );
+    final FunctionResponse response;
+    try {
+      response = await _client.functions.invoke(
+        'generate-asset',
+        body: {
+          'kind': request.kind.name,
+          'slot': request.slot,
+          'prompt': request.prompt,
+          'prompt_version': request.promptVersion,
+          'locale': request.locale.name,
+          'aspect_ratio': request.aspectRatio,
+          'feature': request.feature,
+          if (request.providerId != null) 'provider_id': request.providerId,
+          if (request.schoolId != null) 'school_id': request.schoolId,
+        },
+      );
+    } on FunctionException catch (error) {
+      // A spent budget is a limit, not a fault. It becomes a named domain answer
+      // so a caller can say "not today" instead of offering a pointless retry.
+      final details = error.details;
+      final body = details is Map ? details['error'] : null;
+      if (body is Map && body['code'] == 'QUOTA_EXCEEDED') {
+        throw GenerationQuotaExceeded(
+          body['message'] as String? ?? 'Daily generation limit reached.',
+        );
+      }
+      rethrow;
+    }
+
     final data = response.data;
     if (data is! Map) {
       throw StateError('generate-asset returned ${response.status}');
     }
     return GeneratedAssetOutcome.fromJson(Map<String, dynamic>.from(data));
+  }
+
+  @override
+  Future<List<GenerationBudget>> budgets() async {
+    final rows = await _client.rpc('generation_budget_status');
+    return (rows as List)
+        .map(
+          (row) =>
+              GenerationBudget.fromRow(Map<String, dynamic>.from(row as Map)),
+        )
+        .toList(growable: false);
   }
 
   @override

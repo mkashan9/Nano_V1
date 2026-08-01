@@ -1,7 +1,7 @@
 id: MED-01
 name: "Generated Asset Provider Adapters"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - SEC-01
   - CMP-01

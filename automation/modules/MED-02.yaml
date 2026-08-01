@@ -1,18 +1,24 @@
 id: MED-02
 name: "Asset Caching, Hashing, Quotas, and Fallback"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - MED-01
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
   - supabase
   - docs
   - automation
 allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_media/
+  - packages/nano_design_system/
+  - apps/student_app/
   - docs/
   - automation/
   - docs/modules/MED-02/
@@ -27,21 +33,67 @@ forbidden_paths:
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "10.2 Companion asset ladder: a generated extra is never required"
+  - "10.5 Generation quota controls: hashing, budgets, local fallback"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - generation_quotas
+  - generation_usage
+  - generated_assets
+  - storage bucket generated-assets
+server_functions:
+  - request_generated_asset
+  - record_generated_asset_result
+  - generation_budget_status
+  - nano_internal.generation_scopes
+  - nano_internal.assert_generation_quota
+  - nano_internal.record_generation_usage
+  - nano_internal.asset_object_is_published
+  - "edge: generate-asset"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - A reused ask consumes no budget and calls no provider
+  - A new ask is charged to the platform, feature, and school budgets that apply
+  - A spent budget refuses before any provider is reached and creates no row
+  - The refusal names the scope that ran out
+  - One spent budget or kind does not stop the others
+  - Real cost is charged once when the worker reports it; a duplicated callback cannot charge again
+  - Only a ready and approved file is readable by a signed-in client
+  - Budgets and usage are visible to platform admins only, and empty rather than refused for others
+  - A failed or stale catalog fetch never reaches a learner as an error
+  - Signed URLs are reused until nearly expired, re-signed when the file changes, and cleared on sign-out
+  - Learning that clips exist does not disturb a reaction, a cooldown, or the session budget
+  - Module documentation complete, including what still has never run
+  - Owner manual test steps provided and runnable without Docker
 required_tests:
-  - documentation_review
+  - supabase/tests/med02_quotas_caching_fallback.sql
+  - packages/nano_domain/test/generation_budget_test.dart
+  - packages/nano_data/test/generated_asset_repository_test.dart
+  - packages/nano_media/test/companion_asset_cache_test.dart
+  - apps/student_app/test/companion_asset_availability_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_provider_keys_in_clients
+  - rls_on_every_new_table
+  - quota_tables_not_writable_by_authenticated
+  - unapproved_assets_not_readable_by_learners
+  - supabase_advisors_no_new_errors
+accessibility_checks:
+  - reduced_motion_never_receives_a_clip
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Confirm the four seeded budgets and an empty usage table
+  - Confirm a curator sees budgets and a learner sees none
+  - Ask twice and confirm one charge
+  - Zero a budget and confirm the refusal names it and creates no row
+  - Confirm an unknown or unapproved file is not deliverable
+  - Run the student app and confirm local companion art and no error
+rollback_notes: >
+  Revert module branch commits. Database rollback: restore the MED-01 seven-argument
+  request_generated_asset, drop public.generation_budget_status,
+  nano_internal.assert_generation_quota, record_generation_usage,
+  generation_scopes, asset_object_is_published, the
+  generated_assets_bucket_read_published storage policy, the generation_usage and
+  generation_quotas tables, the generation_quota_scope enum, and the feature and
+  school_id columns on generated_assets. Nothing publishes assets yet, so no client
+  loses anything.
 requires_owner_test: true

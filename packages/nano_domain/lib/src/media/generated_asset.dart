@@ -150,6 +150,8 @@ class GeneratedAssetRequest {
     this.locale = NanoAppLocale.en,
     this.aspectRatio = '1:1',
     this.providerId,
+    this.feature = 'companion',
+    this.schoolId,
   });
 
   final GeneratedAssetKind kind;
@@ -162,6 +164,13 @@ class GeneratedAssetRequest {
   /// Null means the registry's default provider for [kind] decides.
   final String? providerId;
 
+  /// Which part of the product is asking (MED-02). A budget dimension, not part
+  /// of the reuse hash: two features asking for one output still pay once.
+  final String feature;
+
+  /// The school a request is made on behalf of, or null for platform-wide work.
+  final String? schoolId;
+
   /// A companion request whose slot always matches what the runtime will look up.
   factory GeneratedAssetRequest.forReaction(
     CompanionReaction reaction, {
@@ -170,6 +179,7 @@ class GeneratedAssetRequest {
     NanoAppLocale locale = NanoAppLocale.en,
     String aspectRatio = '1:1',
     GeneratedAssetKind kind = GeneratedAssetKind.image,
+    String? schoolId,
   }) {
     return GeneratedAssetRequest(
       kind: kind,
@@ -178,6 +188,7 @@ class GeneratedAssetRequest {
       promptVersion: promptVersion,
       locale: locale,
       aspectRatio: aspectRatio,
+      schoolId: schoolId,
     );
   }
 
@@ -189,6 +200,8 @@ class GeneratedAssetRequest {
         'p_locale': locale.name,
         'p_aspect_ratio': aspectRatio,
         'p_provider_id': providerId,
+        'p_feature': feature,
+        'p_school_id': schoolId,
       };
 }
 

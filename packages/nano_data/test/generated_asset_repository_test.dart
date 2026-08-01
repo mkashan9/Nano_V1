@@ -99,6 +99,90 @@ void main() {
       );
     });
 
+    test('a spent budget refuses a new ask but still reuses an old one', () async {
+      final repository = FakeGeneratedAssetRepository(dailyRequestLimit: 1);
+
+      await repository.request(
+        const GeneratedAssetRequest(
+          kind: GeneratedAssetKind.image,
+          slot: 'first_slot',
+          prompt: 'a companion waving',
+          promptVersion: 'v1',
+        ),
+      );
+
+      expect(
+        repository.request(
+          const GeneratedAssetRequest(
+            kind: GeneratedAssetKind.image,
+            slot: 'second_slot',
+            prompt: 'a companion reading',
+            promptVersion: 'v1',
+          ),
+        ),
+        throwsA(isA<GenerationQuotaExceeded>()),
+      );
+
+      // The whole point of the ordering: a client that asks for something it
+      // already has is never turned away for being over a limit.
+      final reused = await repository.request(
+        const GeneratedAssetRequest(
+          kind: GeneratedAssetKind.image,
+          slot: 'first_slot',
+          prompt: 'a companion waving',
+          promptVersion: 'v1',
+        ),
+      );
+      expect(reused.reused, isTrue);
+      expect(repository.chargedCount, 1);
+    });
+
+    test('budgets report what is left and when they are exhausted', () async {
+      final repository = FakeGeneratedAssetRepository(dailyRequestLimit: 2);
+
+      final before = await repository.budgets();
+      expect(before.first.requestsRemaining, 2);
+      expect(before.every((budget) => budget.isExhausted), isFalse);
+
+      await repository.request(
+        const GeneratedAssetRequest(
+          kind: GeneratedAssetKind.image,
+          slot: 'a_slot',
+          prompt: 'a companion',
+          promptVersion: 'v1',
+        ),
+      );
+      await repository.request(
+        const GeneratedAssetRequest(
+          kind: GeneratedAssetKind.image,
+          slot: 'b_slot',
+          prompt: 'a companion again',
+          promptVersion: 'v1',
+        ),
+      );
+
+      final after = await repository.budgets();
+      expect(after.first.requestsRemaining, 0);
+      expect(after.every((budget) => budget.isExhausted), isTrue);
+      expect(after.map((budget) => budget.label), containsAll(['platform', 'companion']));
+    });
+
+    test('a request carries its budget dimensions to the server', () {
+      const request = GeneratedAssetRequest(
+        kind: GeneratedAssetKind.video,
+        slot: 'celebration_celebration_shortClip',
+        prompt: 'a short celebration',
+        promptVersion: 'v2',
+        feature: 'onboarding',
+        schoolId: '11111111-1111-1111-1111-111111111111',
+      );
+
+      final params = request.toParams();
+
+      expect(params['p_feature'], 'onboarding');
+      expect(params['p_school_id'], '11111111-1111-1111-1111-111111111111');
+    });
+
     test('a signed URL is per asset and time limited', () async {
       final repository = FakeGeneratedAssetRepository();
       final asset = (await repository.listPublished()).first;
