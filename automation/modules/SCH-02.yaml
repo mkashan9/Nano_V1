@@ -1,44 +1,84 @@
 id: SCH-02
 name: "Classes, Grades, Sections, and Subjects"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SCH-01
+dependency_notes: >
+  SCH-01 owns Overview/branding and school-admin RPC helper. This module owns
+  academic structure under Classes. Policies stay SCH-06.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-02/
   - automation/modules/SCH-02.yaml
+  - automation/modules/SCH-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook SCH-02 Academic structure"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.grade_levels
+  - public.classes
+  - public.sections
+  - public.school_subjects
+  - public.class_subjects
+server_functions:
+  - "public.list_academic_structure"
+  - "public.create_grade_level"
+  - "public.create_class"
+  - "public.create_section"
+  - "public.create_school_subject"
+  - "public.assign_class_subject"
+  - "public.archive_academic_structure"
 acceptance:
+  - School admin Classes hub lists grades, classes, sections, subjects
+  - Create and archive structure without hard delete
+  - Assign subjects to classes; surface missing-subject mapping issues
+  - Overview class_count reflects active classes
+  - Non-school-admins cannot call structure RPCs
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch02_academic_structure.sql
+  - packages/nano_domain/test/academic_structure_test.dart
+  - packages/nano_data/test/academic_structure_repository_test.dart
+  - apps/admin_web/test/academic_structure_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
+  - archive_not_delete
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Classes as school admin
+  - Create grade, class, section, subject; assign subject
+  - Archive a class; confirm Overview class count
+rollback_notes: >
+  Revert the branch and migration. Classes returns to stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Grades, classes, sections, school subjects, class-subject maps for
+    schoolAdmin. No attendance/grading policies.
+  deferred: >
+    SCH-06 policies; SCH-05 teacher assignment FKs; terms table.

@@ -5,6 +5,7 @@ import 'package:admin_web/features/gamification/presentation/gamification_admin_
 import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
 import 'package:admin_web/features/notifications/presentation/notification_admin_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
+import 'package:admin_web/features/school/presentation/academic_structure_page.dart';
 import 'package:admin_web/features/school/presentation/school_branding_settings_page.dart';
 import 'package:admin_web/features/school/presentation/school_overview_page.dart';
 import 'package:admin_web/features/schools/presentation/schools_page.dart';
@@ -35,6 +36,7 @@ class AdminShell extends StatelessWidget {
     this.platformDashboardRepository,
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
+    this.academicStructureRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -56,6 +58,7 @@ class AdminShell extends StatelessWidget {
   final PlatformDashboardRepository? platformDashboardRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
+  final AcademicStructureRepository? academicStructureRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -174,6 +177,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.platformDashboardRepository,
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
+    this.academicStructureRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -190,6 +194,7 @@ class AdminDestinationPage extends StatelessWidget {
   final PlatformDashboardRepository? platformDashboardRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
+  final AcademicStructureRepository? academicStructureRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -206,6 +211,14 @@ class AdminDestinationPage extends StatelessWidget {
         schoolDashboardRepository != null) {
       return SchoolBrandingSettingsPage(
         repository: schoolDashboardRepository!,
+      );
+    }
+
+    if (destination.id == 'classes' &&
+        principal.role == AppRole.schoolAdmin &&
+        academicStructureRepository != null) {
+      return AcademicStructurePage(
+        repository: academicStructureRepository!,
       );
     }
 

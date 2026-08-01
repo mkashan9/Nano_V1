@@ -20,6 +20,7 @@ void main() {
   NotificationAdminRepository? notificationAdminRepository;
   PlatformAnalyticsRepository? platformAnalyticsRepository;
   SchoolDashboardRepository? schoolDashboardRepository;
+  AcademicStructureRepository? academicStructureRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     // One client, so the review calls carry the signed-in reviewer's token.
@@ -41,6 +42,7 @@ void main() {
     notificationAdminRepository = SupabaseNotificationAdminRepository(client);
     platformAnalyticsRepository = SupabasePlatformAnalyticsRepository(client);
     schoolDashboardRepository = SupabaseSchoolDashboardRepository(client);
+    academicStructureRepository = SupabaseAcademicStructureRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -57,6 +59,7 @@ void main() {
       notificationAdminRepository: notificationAdminRepository,
       platformAnalyticsRepository: platformAnalyticsRepository,
       schoolDashboardRepository: schoolDashboardRepository,
+      academicStructureRepository: academicStructureRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -83,6 +86,7 @@ class NanoAdminApp extends StatefulWidget {
     this.notificationAdminRepository,
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
+    this.academicStructureRepository,
   });
 
   final EnvironmentConfig config;
@@ -103,6 +107,7 @@ class NanoAdminApp extends StatefulWidget {
   final NotificationAdminRepository? notificationAdminRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
+  final AcademicStructureRepository? academicStructureRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -124,6 +129,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late final NotificationAdminRepository _notificationAdminRepository;
   late final PlatformAnalyticsRepository _platformAnalyticsRepository;
   late final SchoolDashboardRepository _schoolDashboardRepository;
+  late final AcademicStructureRepository _academicStructureRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -161,6 +167,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         widget.platformAnalyticsRepository ?? FakePlatformAnalyticsRepository();
     _schoolDashboardRepository =
         widget.schoolDashboardRepository ?? FakeSchoolDashboardRepository();
+    _academicStructureRepository =
+        widget.academicStructureRepository ?? FakeAcademicStructureRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -218,6 +226,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       notificationAdminRepository: _notificationAdminRepository,
       platformAnalyticsRepository: _platformAnalyticsRepository,
       schoolDashboardRepository: _schoolDashboardRepository,
+      academicStructureRepository: _academicStructureRepository,
     );
   }
 
