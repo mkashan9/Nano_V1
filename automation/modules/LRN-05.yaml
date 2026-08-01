@@ -1,7 +1,7 @@
 id: LRN-05
 name: "Learning Progress and Recommendations"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - LRN-03
 applications:

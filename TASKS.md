@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] LRN-05 owner manual test
+- [ ] QZ-01 owner manual test
 
 ## Completed
 
@@ -23,7 +23,8 @@
 - [x] LRN-02
 - [x] LRN-03
 - [x] LRN-04
+- [x] LRN-05
 
 ## Upcoming
 
-- [ ] QZ-01 Superadmin Question Bank
+- [ ] QZ-02 Video-Specific Ordered Quiz Authoring

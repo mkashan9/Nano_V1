@@ -41,8 +41,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook LRN-01 topic order / prerequisites | LRN-02 | student_app | Topic detail + gates | topic_prerequisites,learning_progress,start_topic | unit+widget+SQL | DONE |
 | Handbook LRN-02 Video learning progress | LRN-03 | student_app | Topic player | topic_versions,learning_progress,topic_completions,record_playback_heartbeat,complete_topic | unit+widget+SQL | DONE |
 | Handbook LRN-02 refresh checkpoints | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events,rebuild_refresh_checkpoints,acknowledge_checkpoint | unit+widget+SQL | DONE |
-| Handbook LRN-01 progress + next recommendations | LRN-05 | student_app | Your progress + Continue Learning | learning_progress_summary,learning_next_up | unit+widget+SQL | USER_TEST |
-| Handbook QZ-01 Quiz authoring | QZ-01,QZ-02 | admin_web | question bank | questions | admin tests | BACKLOG |
+| Handbook LRN-01 progress + next recommendations | LRN-05 | student_app | Your progress + Continue Learning | learning_progress_summary,learning_next_up | unit+widget+SQL | DONE |
+| Handbook QZ-01 Quiz authoring | QZ-01 | admin_web | question bank | questions,question_versions,question_bank,create_question_draft,publish_question_version | unit+widget+SQL | USER_TEST |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | BACKLOG |
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
 | Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | BACKLOG |

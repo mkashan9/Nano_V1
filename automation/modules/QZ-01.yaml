@@ -1,14 +1,15 @@
 id: QZ-01
 name: "Superadmin Question Bank"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-03
 applications:
-  - student_app
+  - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -19,26 +20,58 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for QZ-01"
+  - "QZ-01 Quiz Authoring and Versioning: question bank, drafts, publication, preview"
+  - "6.4 Versioning and history"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.questions
+  - public.question_versions
+  - public.question_bank
+server_functions:
+  - public.create_question_draft
+  - public.publish_question_version
+  - public.retire_question_version
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Only platform admins can read or write the question bank
+  - Learners and school staff see no question rows
+  - Draft versions are mutable; published versions are immutable
+  - Publishing records the actor and timestamp
+  - Retiring a version does not delete it or rewrite history
+  - Duplicate-stem warnings surface before a draft is saved
+  - Junior and Senior previews render the same version id
+  - Correct answers never appear in a learner-facing projection (none yet)
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/question_bank_test.dart
+  - packages/nano_data/test/question_bank_repository_test.dart
+  - apps/admin_web/test/question_bank_page_test.dart
+  - supabase/tests/qz01_question_bank.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - question_bank_platform_admin_only
+  - published_versions_immutable
+  - learners_cannot_read_questions
+accessibility_checks:
+  - question_stem_readable
+  - option_labels_readable
+  - junior_and_senior_preview_both_render
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open admin_web as Superadmin and go to Content
+  - Confirm seeded questions appear with status and difficulty
+  - Create a draft, confirm a duplicate warning if the stem matches an existing one
+  - Publish the draft and confirm it can no longer be edited
+  - Preview as Junior and Senior and confirm the same version id
+  - Switch to School Admin shell and confirm Content still has no question write path
+rollback_notes: "Revert module branch commits; drop question_bank views and tables if needed"
 requires_owner_test: true

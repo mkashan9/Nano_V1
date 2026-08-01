@@ -1,10 +1,11 @@
+import 'package:admin_web/app/admin_shell.dart';
+import 'package:admin_web/features/auth/presentation/admin_sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
-import 'package:admin_web/app/admin_shell.dart';
-import 'package:admin_web/features/auth/presentation/admin_sign_in_page.dart';
 
 GoRouter createAdminRouter({
   required EnvironmentConfig config,
@@ -17,6 +18,7 @@ GoRouter createAdminRouter({
   AuthBootstrap? authBootstrap,
   ValueChanged<AuthBootstrap>? onAuthBootstrap,
   VoidCallback? onSignedOut,
+  QuestionBankRepository? questionBankRepository,
 }) {
   final visible = NavCatalog.visibleFor(principal);
   final destinations = visible.isNotEmpty
@@ -109,6 +111,7 @@ GoRouter createAdminRouter({
             copy: copy,
             onSignOut: onSignedOut,
             liveAuth: requireAuth,
+            questionBankRepository: questionBankRepository,
           );
         },
         branches: [
@@ -121,6 +124,7 @@ GoRouter createAdminRouter({
                   builder: (context, state) => AdminDestinationPage(
                     destination: dest,
                     principal: principal,
+                    questionBankRepository: questionBankRepository,
                   ),
                 ),
               ],
