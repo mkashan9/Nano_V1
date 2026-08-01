@@ -5,11 +5,12 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/quiz/presentation/junior_quiz_page.dart';
+import 'package:student_app/features/quiz/presentation/senior_quiz_page.dart';
 
 /// LRN-03/04 player: resumes where the learner stopped, reports position to the
 /// server on a heartbeat, shows captions, offers refresh moments at safe
 /// boundaries in long videos, and only offers completion once the server has
-/// credited enough watch time. QZ-03 adds Junior Take quiz after the video.
+/// credited enough watch time. QZ-03/QZ-04 add Take quiz by experience.
 ///
 /// The video surface itself is a placeholder until MED-01 lands approved
 /// provider playback; everything around it — accounting, resume, captions,
@@ -426,22 +427,28 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
               onPressed: canComplete && !_busy ? _complete : null,
               child: Text(copy.markCompleteLabel),
             ),
-            if (widget.junior &&
-                widget.learnerQuizRepository != null &&
-                !_topic.isLocked) ...[
+            if (widget.learnerQuizRepository != null && !_topic.isLocked) ...[
               const SizedBox(height: NanoSpacing.sm),
               OutlinedButton(
                 onPressed: () {
                   final locale = NanoLocaleScope.maybeOf(context)?.locale ??
                       NanoAppLocale.en;
+                  final title = _topic.titleFor(locale);
+                  final repo = widget.learnerQuizRepository!;
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => JuniorQuizPage(
-                        topicVersionId: _topic.topicVersionId,
-                        repository: widget.learnerQuizRepository!,
-                        companionName: widget.companionName ?? 'Nori',
-                        topicTitle: _topic.titleFor(locale),
-                      ),
+                      builder: (_) => widget.junior
+                          ? JuniorQuizPage(
+                              topicVersionId: _topic.topicVersionId,
+                              repository: repo,
+                              companionName: widget.companionName ?? 'Nori',
+                              topicTitle: title,
+                            )
+                          : SeniorQuizPage(
+                              topicVersionId: _topic.topicVersionId,
+                              repository: repo,
+                              topicTitle: title,
+                            ),
                     ),
                   );
                 },

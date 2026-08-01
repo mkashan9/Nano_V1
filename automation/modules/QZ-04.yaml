@@ -1,7 +1,7 @@
 id: QZ-04
 name: "Senior Quiz Experience"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - QZ-02
   - STU-04
@@ -20,26 +20,44 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for QZ-04"
+  - "QZ-02 Student Quiz: Senior navigation and review where policy allows"
+  - "Client never determines the final score"
 ui_references: []
-database_scope: []
+database_scope:
+  - public.learner_quiz
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Senior quiz allows jumping between questions via a navigator
+  - Senior can go previous and next without losing selections
+  - Review mode lists unanswered items before finish
+  - Finish requires every question answered
+  - Options never reveal is_correct from learner data
+  - Finishing does not invent a client-side score
+  - Junior shells keep using JuniorQuizPage; Senior uses SeniorQuizPage
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/senior_quiz_flow_test.dart
+  - apps/student_app/test/senior_quiz_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - learner_options_without_correctness
+  - no_client_side_final_score
+accessibility_checks:
+  - navigator_labeled
+  - review_list_readable
 manual_test_steps:
-  - Review module docs and status
+  - Open student_app as Senior and open Counting
+  - Tap Take quiz; jump between questions; leave one unanswered
+  - Open Review and confirm unanswered is flagged; answer all and Finish
+  - Confirm no numeric score; switch to Junior and confirm Junior one-question UI still works
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true
