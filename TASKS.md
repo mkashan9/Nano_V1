@@ -2,7 +2,8 @@
 
 ## Active
 
-- [ ] MED-11 Full Narration and Celebration Clip Pack
+- [x] MED-11
+- [ ] MED-12 Nori Everywhere and Companion Coverage Gate
 
 ## Completed
 
