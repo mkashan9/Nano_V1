@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-09 Nori Character Sheet and Static Pose Pack
+- [ ] MED-09 owner manual test
 
 ## Completed
 

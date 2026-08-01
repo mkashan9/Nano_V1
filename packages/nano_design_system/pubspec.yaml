@@ -22,3 +22,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # The offline floor for the companion (MED-09). One pose per mood, ~135 KB
+  # for the set, so Nori is never an icon even with no network and nothing
+  # approved. Declared here rather than per app so every app that draws the
+  # companion gets the same character.
+  assets:
+    - assets/companion/
