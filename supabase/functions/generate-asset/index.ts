@@ -8,7 +8,11 @@ import {
   sha256Hex,
 } from '../_shared/http.ts';
 import { adapterFor } from './adapters/registry.ts';
-import { ProviderError } from './adapters/types.ts';
+import {
+  type GenerateOutcome,
+  type ProviderAdapter,
+  ProviderError,
+} from './adapters/types.ts';
 
 // MED-01 generate-asset: the only place a provider is called.
 //
@@ -20,6 +24,11 @@ import { ProviderError } from './adapters/types.ts';
 //
 // An identical ask never reaches a provider: the database returns the existing
 // row and this function returns it unchanged.
+//
+// MED-04 adds an asynchronous path for clips. Veo answers with a job name, not
+// bytes, so a later ask for the same reaction collects that job rather than
+// starting a second one — which is what stops a clip being paid for twice
+// because the first invocation ended before the provider did.
 
 const bucket = 'generated-assets';
 
@@ -38,6 +47,10 @@ interface RequestBody {
   /// cannot have the Learning Guide say something nobody published.
   narration_slug?: string;
   voice_id?: string;
+  /// MED-04: ask for a clip of a published reaction instead of a prompt. The
+  /// direction and the allowed shapes come from the database, so a caller cannot
+  /// quietly generate a clip of something no curator approved.
+  clip_slug?: string;
 }
 
 Deno.serve(async (request) => {
@@ -60,15 +73,16 @@ Deno.serve(async (request) => {
     return errorResponse('BAD_REQUEST', 'Body must be JSON.');
   }
 
+  const clipSlug = body.clip_slug?.trim();
   const narrationSlug = body.narration_slug?.trim();
-  const kind = narrationSlug ? 'voice' : body.kind;
+  const kind = clipSlug ? 'video' : narrationSlug ? 'voice' : body.kind;
   if (kind !== 'image' && kind !== 'voice' && kind !== 'video') {
     return errorResponse('BAD_REQUEST', 'kind must be image, voice, or video.');
   }
-  if (!narrationSlug && (!body.slot || !body.prompt || !body.prompt_version)) {
+  if (!clipSlug && !narrationSlug && (!body.slot || !body.prompt || !body.prompt_version)) {
     return errorResponse(
       'BAD_REQUEST',
-      'Send narration_slug, or slot, prompt, and prompt_version.',
+      'Send clip_slug, narration_slug, or slot, prompt, and prompt_version.',
     );
   }
 
@@ -90,7 +104,12 @@ Deno.serve(async (request) => {
   const worker = createClient(supabaseUrl, serviceKey);
 
   // Step 1: the caller's own permissions decide whether this request exists.
-  const requested = narrationSlug
+  const requested = clipSlug
+    ? await caller.rpc('request_reaction_clip', {
+      p_slug: clipSlug,
+      p_aspect_ratio: body.aspect_ratio ?? '1:1',
+    })
+    : narrationSlug
     ? await caller.rpc('request_narration_line', {
       p_slug: narrationSlug,
       p_locale: body.locale ?? 'en',
@@ -121,14 +140,21 @@ Deno.serve(async (request) => {
     if (requested.error.code === 'NM007') {
       return errorResponse('NOT_RECORDABLE', requested.error.message, 422);
     }
+    // A reaction that has no direction for this shape is the same kind of
+    // settled answer: asking again will not invent an authored framing.
+    if (requested.error.code === 'NM009') {
+      return errorResponse('NOT_AUTHORABLE', requested.error.message, 422);
+    }
     const code = requested.error.code === 'NM001' ? 'FORBIDDEN' : 'REQUEST_REFUSED';
     const status = requested.error.code === 'NM001' ? 403 : 400;
     return errorResponse(code, requested.error.message, status);
   }
 
   const asset = (requested.data as { reused: boolean; asset: Record<string, unknown> });
-  if (asset.reused || asset.asset.status !== 'requested') {
-    // Already answered, or already in flight somewhere else. Nothing to pay for.
+  const status = asset.asset.status as string;
+
+  // Already answered. Nothing to pay for, and nothing left to collect.
+  if (status === 'ready' || status === 'failed') {
     return jsonResponse({ reused: asset.reused, asset: asset.asset });
   }
 
@@ -139,11 +165,20 @@ Deno.serve(async (request) => {
   const aspectRatio = asset.asset.aspect_ratio as string;
   const slot = asset.asset.slot as string;
   // The prompt is read back from the row rather than from the body: for an
-  // authored line the database chose the words, and for anything else the row is
-  // what the hash was built from.
+  // authored line or clip the database chose the words, and for anything else
+  // the row is what the hash was built from.
   const prompt = asset.asset.prompt as string;
   const promptVersion = asset.asset.prompt_version as string;
   const voiceId = asset.asset.voice_id as string | null;
+  // An in-flight clip carries the provider's handle on the row. Reading it here
+  // is what lets a later ask collect the job the first ask started (MED-04).
+  let providerJobId = (asset.asset.provider_job_id as string | null) ?? null;
+
+  // A generating row with no job yet is someone else's claim. Leaving it alone
+  // is what stops two workers from both paying for the same clip.
+  if (status === 'generating' && !providerJobId) {
+    return jsonResponse({ reused: true, asset: asset.asset });
+  }
 
   // A registered voice becomes a provider-side voice name here, where the service
   // role can read the registry. An adapter never guesses one.
@@ -157,16 +192,45 @@ Deno.serve(async (request) => {
     voiceName = voice.data?.provider_voice_name as string | undefined;
   }
 
-  // Step 2: claim it, so a retried invocation cannot start a second provider call.
-  const claim = await worker.rpc('claim_generated_asset', { p_asset_id: assetId });
-  if (claim.error) {
-    return jsonResponse({ reused: true, asset: asset.asset });
+  // Authored clip length, when this ask was for a reaction. Absent for every
+  // other path; the adapter then uses its own default.
+  let durationSeconds: number | undefined;
+  if (clipSlug) {
+    const clip = await worker
+      .from('reaction_clips')
+      .select('id')
+      .eq('slug', clipSlug)
+      .maybeSingle();
+    if (clip.data?.id) {
+      const version = await worker
+        .from('reaction_clip_versions')
+        .select('duration_seconds')
+        .eq('clip_id', clip.data.id)
+        .eq('status', 'published')
+        .maybeSingle();
+      const authored = Number(version.data?.duration_seconds);
+      if (Number.isFinite(authored) && authored > 0) durationSeconds = authored;
+    }
+  }
+
+  // Step 2: claim it when it is waiting. An already-generating job with a handle
+  // skips this — claiming would refuse, and the handle is enough to collect.
+  if (status === 'requested') {
+    const claim = await worker.rpc('claim_generated_asset', { p_asset_id: assetId });
+    if (claim.error) {
+      return jsonResponse({ reused: true, asset: asset.asset });
+    }
+    const claimed = claim.data as { asset?: Record<string, unknown> } | null;
+    // Prefer the claimed row's handle: a previous attempt may have left one, and
+    // that is cheaper than starting a second provider job.
+    const claimedJob = claimed?.asset?.provider_job_id as string | null | undefined;
+    if (claimedJob) providerJobId = claimedJob;
   }
 
   const startedAt = Date.now();
   try {
     const adapter = adapterFor(providerId, kind);
-    const generated = await adapter.generate({
+    const outcome = await runAdapter(adapter, {
       kind,
       slot,
       prompt,
@@ -174,17 +238,40 @@ Deno.serve(async (request) => {
       aspectRatio,
       promptHash,
       voiceName,
+      providerJobId: providerJobId ?? undefined,
+      durationSeconds,
     });
 
-    const path = `${kind}/${slot}/${locale}/${promptHash}.${generated.extension}`;
-      const upload = await worker.storage.from(bucket).upload(path, generated.bytes, {
-        contentType: generated.contentType,
-        upsert: true,
-        // The path contains the request hash, so these bytes never change under
-        // this name: a year is safe, and it is what keeps a clip from being
-        // fetched twice on the same device.
-        cacheControl: '31536000',
+    if (outcome.status === 'pending') {
+      // The job outlives this invocation. Recording the handle is what lets the
+      // next ask for the same reaction collect it instead of starting another.
+      const progress = await worker.rpc('record_generated_asset_progress', {
+        p_asset_id: assetId,
+        p_provider_job_id: outcome.providerJobId,
+        p_poll_after_seconds: outcome.pollAfterSeconds,
       });
+      if (progress.error) {
+        return errorResponse('RECORD_FAILED', progress.error.message, 500);
+      }
+      // 200 rather than 202: clients that only accept a success status still see
+      // the pending flag, and the asset row is the durable answer either way.
+      return jsonResponse({
+        reused: false,
+        pending: true,
+        asset: progress.data,
+      });
+    }
+
+    const generated = outcome.bytes;
+    const path = `${kind}/${slot}/${locale}/${promptHash}.${generated.extension}`;
+    const upload = await worker.storage.from(bucket).upload(path, generated.bytes, {
+      contentType: generated.contentType,
+      upsert: true,
+      // The path contains the request hash, so these bytes never change under
+      // this name: a year is safe, and it is what keeps a clip from being
+      // fetched twice on the same device.
+      cacheControl: '31536000',
+    });
     if (upload.error) {
       throw new ProviderError('STORAGE_WRITE_FAILED', upload.error.message, true);
     }
@@ -208,6 +295,8 @@ Deno.serve(async (request) => {
         voice_id: voiceId,
         voice_name: voiceName ?? null,
         narration_slug: narrationSlug ?? null,
+        clip_slug: clipSlug ?? null,
+        provider_job_id: providerJobId ?? generated.providerReference ?? null,
         generated_at: new Date().toISOString(),
       },
     });
@@ -237,3 +326,16 @@ Deno.serve(async (request) => {
     });
   }
 });
+
+/// Prefer the asynchronous contract when an adapter has one. Everything else
+/// remains a single call that returns bytes, wrapped so the rest of the function
+/// only has to understand one shape.
+async function runAdapter(
+  adapter: ProviderAdapter,
+  request: Parameters<ProviderAdapter['generate']>[0],
+): Promise<GenerateOutcome> {
+  if (adapter.generateOrPending) {
+    return await adapter.generateOrPending(request);
+  }
+  return { status: 'ready', bytes: await adapter.generate(request) };
+}

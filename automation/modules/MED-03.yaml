@@ -1,7 +1,7 @@
 id: MED-03
 name: "Voice Generation and Aoede Learning Guide"
 release: R4
-status: USER_TEST
+status: DONE
 dependencies:
   - MED-02
   - CMP-01

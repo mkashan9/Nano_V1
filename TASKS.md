@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-03 owner manual test
+- [ ] MED-04 owner manual test
 
 ## Completed
 
@@ -35,8 +35,8 @@
 - [x] CMP-03
 - [x] MED-01
 - [x] MED-02
+- [x] MED-03
 
 ## Upcoming
 
-- [ ] MED-04 Video Generation and Reusable Reaction Library
 - [ ] MED-05 Superadmin Asset Review and Publication

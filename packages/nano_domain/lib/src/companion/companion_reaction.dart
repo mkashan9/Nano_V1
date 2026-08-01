@@ -216,14 +216,18 @@ class CompanionAssetManifest {
 
   /// Highest tier available, dropped to static art when motion is reduced or a
   /// clip would need a remote asset that is not there.
+  ///
+  /// [clipAvailable] is about *this* reaction's slot, not the library as a whole
+  /// (MED-04): authoring one clip promises a clip for that reaction and for
+  /// nothing else.
   CompanionAssetTier resolve(
     CompanionMood mood, {
     bool reducedMotion = false,
-    bool clipsAvailable = false,
+    bool clipAvailable = false,
   }) {
     final best = tiers[mood] ?? CompanionAssetTier.staticArt;
     if (reducedMotion) return CompanionAssetTier.staticArt;
-    if (best == CompanionAssetTier.shortClip && !clipsAvailable) {
+    if (best == CompanionAssetTier.shortClip && !clipAvailable) {
       return CompanionAssetTier.localAnimation;
     }
     return best;
@@ -273,7 +277,17 @@ class CompanionReaction {
 
   /// Stable key for art lookup and for goldens. Mode is part of it because a
   /// mode is a different set of art for the same mood.
-  String get assetKey => '${mode.name}_${mood.name}_${tier.name}';
+  String get assetKey => slotKey(mode: mode, mood: mood, tier: tier);
+
+  /// The same key, built before a reaction exists to carry it. Clip
+  /// availability is decided per slot (MED-04), so the runtime has to name the
+  /// slot it is about to ask for while it is still deciding the tier.
+  static String slotKey({
+    required CompanionMode mode,
+    required CompanionMood mood,
+    required CompanionAssetTier tier,
+  }) =>
+      '${mode.name}_${mood.name}_${tier.name}';
 
   String captionFor(NanoAppLocale locale, {String? companionName}) =>
       script.textFor(

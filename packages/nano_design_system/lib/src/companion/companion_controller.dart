@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_media/nano_media.dart';
 
+import 'nano_clip_player.dart';
 import 'nano_voice_player.dart';
 
 /// Session-scoped owner of the companion runtime (CMP-03).
@@ -17,6 +18,7 @@ class CompanionController extends ChangeNotifier {
     CompanionSurface surface = CompanionSurface.home,
     DateTime Function()? clock,
     bool clipsAvailable = false,
+    Set<String> clipSlots = const {},
     this.inactivityGap = const Duration(minutes: 30),
   })  : _clock = clock ?? DateTime.now,
         _runtime = CompanionRuntime.forExperience(
@@ -24,7 +26,8 @@ class CompanionController extends ChangeNotifier {
           surface: surface,
           preferences: preferences,
           companionName: companionName,
-          clipsAvailable: clipsAvailable,
+          clipsAvailable: clipsAvailable || clipSlots.isNotEmpty,
+          clipSlots: clipSlots,
         );
 
   final DateTime Function() _clock;
@@ -83,12 +86,13 @@ class CompanionController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Stop any narration, without waiting for it. Called whenever the words on
-  /// screen change.
+  /// Stop any narration or clip, without waiting for either. Called whenever
+  /// the words or the art on screen change.
   void _silence() {
     final player = _player;
-    if (player == null || !player.isPlaying) return;
-    player.stop();
+    if (player != null && player.isPlaying) player.stop();
+    final clipPlayer = _clipPlayer;
+    if (clipPlayer != null && clipPlayer.isPlaying) clipPlayer.stop();
   }
 
   /// Whether any generated clip has been published (MED-02).
@@ -104,7 +108,20 @@ class CompanionController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Learns which reaction slots have a clip (MED-04).
+  ///
+  /// Same quiet arrival as [setClipsAvailable]: a reaction already on screen
+  /// stays, and only later reactions can reach for a clip of their own slot.
+  void setClipSlots(Set<String> slots) {
+    final next = _runtime.withClipSlots(slots);
+    if (next == _runtime) return;
+    _runtime = next;
+    notifyListeners();
+  }
+
   bool get clipsAvailable => _runtime.clipsAvailable;
+
+  Set<String> get clipSlots => _runtime.clipSlots;
 
   NarrationCatalog _narration = NarrationCatalog.empty;
   NanoVoicePlayer? _player;
@@ -164,6 +181,69 @@ class CompanionController extends ChangeNotifier {
   }
 
   Future<void> stopSpeaking() => _player?.stop() ?? Future.value();
+
+  CompanionAssetCatalog _artCatalog = CompanionAssetCatalog.empty;
+  NanoClipPlayer? _clipPlayer;
+  Future<String?> Function(GeneratedAsset asset)? _resolveClipUrl;
+
+  /// Give the companion a clip library (MED-04).
+  ///
+  /// Every argument is optional and the app is complete without any of them: no
+  /// catalog means no clip exists, no player means nothing can be played, and in
+  /// both cases the local art is what a learner gets. Like [attachNarration],
+  /// this arrives after screens are up and disturbs nothing.
+  void attachClips({
+    CompanionAssetCatalog? catalog,
+    NanoClipPlayer? player,
+    Future<String?> Function(GeneratedAsset asset)? resolveUrl,
+  }) {
+    final nextCatalog = catalog ?? _artCatalog;
+    final changed = nextCatalog != _artCatalog ||
+        (player != null && player != _clipPlayer) ||
+        (resolveUrl != null && resolveUrl != _resolveClipUrl);
+    _artCatalog = nextCatalog;
+    _clipPlayer ??= player;
+    _resolveClipUrl ??= resolveUrl;
+    if (changed) notifyListeners();
+  }
+
+  /// What art this reaction should actually use, after checking what is published.
+  ///
+  /// Null only when there is nothing on screen to decorate.
+  CompanionArtChoice? get art {
+    final current = _runtime.reaction;
+    if (current == null) return null;
+    return _artCatalog.choose(
+      current,
+      reducedMotion: _runtime.preferences.effectiveReducedMotion,
+    );
+  }
+
+  /// Whether a play-clip control should appear at all. False is the ordinary
+  /// state: no player, no clip for this slot, or reduced motion.
+  bool get canShowClip =>
+      _clipPlayer != null &&
+      _resolveClipUrl != null &&
+      (art?.usesGeneratedClip ?? false);
+
+  /// Play the clip for the reaction on screen, if one can be played.
+  ///
+  /// Nothing plays unasked in this module. A learner taps to watch, which keeps
+  /// a silent clip from surprising a classroom the way autoplay would, and means
+  /// reduced motion never has to fight a video that already started.
+  Future<void> playClip() async {
+    final asset = art?.generated;
+    final player = _clipPlayer;
+    final resolve = _resolveClipUrl;
+    if (asset == null || player == null || resolve == null) return;
+    final url = await resolve(asset);
+    // A URL that could not be minted is a fallback, not a failure: the local art
+    // stays exactly as it was.
+    if (url == null) return;
+    await player.play(url);
+  }
+
+  Future<void> stopClip() => _clipPlayer?.stop() ?? Future.value();
 
   void updatePreferences(AccessibilityPreferences preferences) {
     if (_runtime.preferences == preferences) return;

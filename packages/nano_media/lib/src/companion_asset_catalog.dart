@@ -74,6 +74,16 @@ class CompanionAssetCatalog {
         ),
       );
 
+  /// The reaction slots that actually have a clip (MED-04).
+  ///
+  /// This is what the runtime needs to decide per reaction rather than per app:
+  /// one authored celebration must not make the greeting reach for footage
+  /// nobody has filmed.
+  Set<String> get clipSlots => assets
+      .where((asset) => asset.kind == GeneratedAssetKind.video)
+      .map((asset) => asset.slot)
+      .toSet();
+
   int get length => _bySlot.values.fold(0, (sum, byLocale) => sum + byLocale.length);
 
   Iterable<GeneratedAsset> get assets =>
