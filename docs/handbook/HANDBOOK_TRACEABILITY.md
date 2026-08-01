@@ -67,15 +67,15 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook CMP-01 Nori companion | CMP-01 | student_app | Nori reactions on quiz results + gallery | CompanionRuntime,CompanionStage (no DB) | unit+widget | DONE |
 | Handbook 10.1 controlled variants and reaction rules | CMP-02 | student_app | Nori modes, story cards | CompanionMode,CompanionRules (no DB) | unit+widget | DONE |
 | Handbook CMP-01 companion placement and enrichment | CMP-03 | student_app | Nori on home, learning, progress at junior/senior density | CompanionPlacement,CompanionController (no DB) | unit+widget | DONE |
-| Handbook 10.2/10.5 generated asset adapters, hashing, provenance | MED-01 | edge+packages | none (server module) | generation_providers,generated_assets,generation_attempts | SQL+unit | USER_TEST |
-| Handbook MED-01 Media asset delivery | MED-02,MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | BACKLOG |
+| Handbook 10.2/10.5 generated asset adapters, hashing, provenance | MED-01 | edge+packages | none (server module) | generation_providers,generated_assets,generation_attempts | SQL+unit | DONE |
+| Handbook MED-01 Media asset delivery | MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | BACKLOG |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |
 | Handbook PAR-01 Guardian guidance | PAR-01,PAR-02,PAR-03,FBK-01 | student+admin | Parent card | guidance | guardian | BACKLOG |
 | XP rules â€” video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
 | Junior must not see Communities | COM-01,SAFE-04,STU-03 | student_app | nav guard | roles | junior nav test | BACKLOG |
 | Independent students â€” natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
 | English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | USER_TEST |
-| Generated media cost controls | MED-02 | edge | quotas | generation_* | dedupe/hash | BACKLOG |
+| Generated media cost controls | MED-02 | edge+student_app | budgets, cached delivery, local fallback | generation_quotas,generation_usage,generated_assets | SQL+unit+widget | USER_TEST |
 | Nori voice Aoede; no privileged calc | MED-03,CMP-01 | edge+app | voice/reactions | N/A | unit | BACKLOG |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
 | School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |

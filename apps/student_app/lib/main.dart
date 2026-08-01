@@ -5,6 +5,7 @@ import 'package:nano_auth/nano_auth.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:nano_media/nano_media.dart';
 import 'package:student_app/app/student_router.dart';
 import 'package:student_app/features/home/fixtures/student_home_fixtures.dart';
 
@@ -13,6 +14,7 @@ void main() {
   AuthRepository? authRepository;
   OnboardingRepository? onboardingRepository;
   StudentPreferencesRepository? preferencesRepository;
+  GeneratedAssetRepository? assetRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -27,6 +29,7 @@ void main() {
     );
     onboardingRepository = SupabaseOnboardingRepository(client);
     preferencesRepository = SupabaseStudentPreferencesRepository(client);
+    assetRepository = SupabaseGeneratedAssetRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -35,6 +38,7 @@ void main() {
       authRepository: authRepository,
       onboardingRepository: onboardingRepository,
       preferencesRepository: preferencesRepository,
+      assetRepository: assetRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -59,6 +63,7 @@ class NanoStudentApp extends StatefulWidget {
     this.insightsRepository,
     this.learnerQuizRepository,
     this.quizAttemptRepository,
+    this.assetRepository,
     this.syncController,
     this.requireAuth = false,
   });
@@ -79,6 +84,10 @@ class NanoStudentApp extends StatefulWidget {
   final LearningInsightsRepository? insightsRepository;
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
+
+  /// MED-02: where published companion art comes from. Optional, because the app
+  /// is complete without it — every companion moment has local art.
+  final GeneratedAssetRepository? assetRepository;
   final NanoSyncController? syncController;
   final bool requireAuth;
 
@@ -106,6 +115,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
   late final QuizAttemptRepository _quizAttemptRepository;
   late final NanoSyncController _syncController;
   late CompanionController _companion;
+  late final CompanionAssetCache _assetCache;
   var _restoring = false;
 
   @override
@@ -156,12 +166,14 @@ class _NanoStudentAppState extends State<NanoStudentApp>
         widget.quizAttemptRepository ?? FakeQuizAttemptRepository();
     _syncController = widget.syncController ?? NanoSyncController();
     _feedback = NanoFeedback(preferences: _a11y);
+    _assetCache = _createAssetCache();
     _companion = _createCompanion();
     WidgetsBinding.instance.addObserver(this);
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
     }
+    _loadCompanionAssets();
   }
 
   @override
@@ -219,12 +231,38 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     _syncCompanion();
   }
 
-  CompanionController _createCompanion() => CompanionController(
-        junior: _principal.role.usesJuniorPresentation,
-        preferences: _a11y,
-        companionName:
-            _preferences?.companionName ?? CompanionNamePolicy.defaultName,
-      );
+  CompanionAssetCache _createAssetCache() {
+    final repository = widget.assetRepository ?? FakeGeneratedAssetRepository();
+    return CompanionAssetCache(
+      fetch: () => repository.listPublished(),
+      sign: (asset, expiresIn) =>
+          repository.signedUrl(asset, expiresIn: expiresIn),
+    );
+  }
+
+  /// MED-02: find out once whether any clip has been published.
+  ///
+  /// Deliberately unawaited and deliberately not guarded: the cache swallows a
+  /// failure and answers with an empty catalog, which is the same thing a device
+  /// with nothing published has. Until a curator approves a clip this changes
+  /// nothing on screen, and that is the intended resting state.
+  Future<void> _loadCompanionAssets() async {
+    await _assetCache.load();
+    if (!mounted) return;
+    _companion.setClipsAvailable(_assetCache.clipsAvailable);
+  }
+
+  CompanionController _createCompanion() {
+    return CompanionController(
+      junior: _principal.role.usesJuniorPresentation,
+      preferences: _a11y,
+      companionName:
+          _preferences?.companionName ?? CompanionNamePolicy.defaultName,
+      // A renamed companion or a changed experience builds a new controller, and
+      // it should not have to ask the server again what it already knows.
+      clipsAvailable: _assetCache.clipsAvailable,
+    );
+  }
 
   /// Accessibility changes reach the live controller; a renamed companion or a
   /// changed experience needs a new one, which also starts a fresh session.
@@ -322,6 +360,9 @@ class _NanoStudentAppState extends State<NanoStudentApp>
     // for the next person on this device (handbook PRF-01).
     _syncController.cache.clear();
     _syncController.queue.clear();
+    // Signed URLs are personal, time-limited credentials, so they go with
+    // everything else rather than waiting for their own expiry (MED-02).
+    _assetCache.clear();
     await widget.authRepository?.signOut();
     if (!mounted) return;
     setState(() {

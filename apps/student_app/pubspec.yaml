@@ -41,6 +41,8 @@ dependencies:
     path: ../../packages/nano_data
   nano_auth:
     path: ../../packages/nano_auth
+  nano_media:
+    path: ../../packages/nano_media
   supabase: ^2.8.0
 
 

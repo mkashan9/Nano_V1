@@ -40,8 +40,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | CMP-01 | Nori Core Runtime | R4 | DONE | STU-02, FND-07 |
 | CMP-02 | Nori Modes and Reaction Rules | R4 | DONE | CMP-01 |
 | CMP-03 | Junior and Senior Companion Placement | R4 | DONE | CMP-02, STU-03, STU-04 |
-| MED-01 | Generated Asset Provider Adapters | R4 | USER_TEST | SEC-01, CMP-01 |
-| MED-02 | Asset Caching, Hashing, Quotas, and Fallback | R4 | BACKLOG | MED-01 |
+| MED-01 | Generated Asset Provider Adapters | R4 | DONE | SEC-01, CMP-01 |
+| MED-02 | Asset Caching, Hashing, Quotas, and Fallback | R4 | USER_TEST | MED-01 |
 | MED-03 | Voice Generation and Aoede Learning Guide | R4 | BACKLOG | MED-02, CMP-01 |
 | MED-04 | Video Generation and Reusable Reaction Library | R4 | BACKLOG | MED-02, CMP-02 |
 | MED-05 | Superadmin Asset Review and Publication | R4 | BACKLOG | MED-02, ADM-01 |

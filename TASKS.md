@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-01 owner manual test
+- [ ] MED-02 owner manual test
 
 ## Completed
 
@@ -33,8 +33,10 @@
 - [x] CMP-01
 - [x] CMP-02
 - [x] CMP-03
+- [x] MED-01
 
 ## Upcoming
 
-- [ ] MED-01 Generated Asset Provider Adapters
-- [ ] MED-02 Asset Caching, Hashing, Quotas, and Fallback
+- [ ] MED-03 Voice Generation and Aoede Learning Guide
+- [ ] MED-04 Video Generation and Reusable Reaction Library
+- [ ] MED-05 Superadmin Asset Review and Publication

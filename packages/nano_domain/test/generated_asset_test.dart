@@ -145,6 +145,10 @@ void main() {
         'p_locale': 'ur',
         'p_aspect_ratio': '9:16',
         'p_provider_id': 'pollinations_image',
+        // MED-02 budget dimensions travel with every ask; the companion is the
+        // default because it is the only feature that generates anything yet.
+        'p_feature': 'companion',
+        'p_school_id': null,
       });
     });
   });

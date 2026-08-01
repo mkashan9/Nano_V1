@@ -13,6 +13,7 @@ class CompanionController extends ChangeNotifier {
     String companionName = 'Nori',
     CompanionSurface surface = CompanionSurface.home,
     DateTime Function()? clock,
+    bool clipsAvailable = false,
     this.inactivityGap = const Duration(minutes: 30),
   })  : _clock = clock ?? DateTime.now,
         _runtime = CompanionRuntime.forExperience(
@@ -20,6 +21,7 @@ class CompanionController extends ChangeNotifier {
           surface: surface,
           preferences: preferences,
           companionName: companionName,
+          clipsAvailable: clipsAvailable,
         );
 
   final DateTime Function() _clock;
@@ -72,6 +74,21 @@ class CompanionController extends ChangeNotifier {
     _runtime = _runtime.dismiss();
     notifyListeners();
   }
+
+  /// Whether any generated clip has been published (MED-02).
+  ///
+  /// The answer arrives from the network, after screens are already up, so it is
+  /// applied without disturbing them: a reaction on screen stays, cooldowns and
+  /// the session budget carry on, and only later reactions can reach for a clip.
+  /// False is the normal state and the app is complete in it.
+  void setClipsAvailable(bool available) {
+    final next = _runtime.withClipsAvailable(available);
+    if (next == _runtime) return;
+    _runtime = next;
+    notifyListeners();
+  }
+
+  bool get clipsAvailable => _runtime.clipsAvailable;
 
   void updatePreferences(AccessibilityPreferences preferences) {
     if (_runtime.preferences == preferences) return;
