@@ -8,6 +8,7 @@ export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';
 export 'learning/learning_insights.dart';
 export 'learning/refresh_checkpoint.dart';
+export 'quiz/attempt_result.dart';
 export 'quiz/question_bank.dart';
 export 'quiz/junior_quiz_flow.dart';
 export 'quiz/quiz_attempt.dart';

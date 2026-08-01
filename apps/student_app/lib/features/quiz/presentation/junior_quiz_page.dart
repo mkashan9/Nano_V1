@@ -3,6 +3,8 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+import 'quiz_result_view.dart';
+
 /// QZ-03/QZ-05 Junior attempt: one question per screen; answers persist and
 /// finish submits for a server score.
 class JuniorQuizPage extends StatefulWidget {
@@ -30,6 +32,7 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
   JuniorQuizFlow? _flow;
   String? _attemptId;
   ScoreResult? _score;
+  AttemptResult? _result;
   var _submitting = false;
   late final QuizAttemptRepository _attempts =
       widget.attemptRepository ?? FakeQuizAttemptRepository();
@@ -59,6 +62,8 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
       if (!mounted) return;
       setState(() {
         _attemptId = session.attemptId;
+        _score = null;
+        _result = null;
         _flow = session.answers.isEmpty
             ? JuniorQuizFlow.start(quiz)
             : JuniorQuizFlow.resume(quiz, session.answers);
@@ -100,9 +105,18 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
     });
     try {
       final score = await _attempts.submit(_attemptId!);
+      // The review and explanations are a second server read, so a failure
+      // here still leaves the learner with the score they earned.
+      AttemptResult? result;
+      try {
+        result = await _attempts.result(score.attemptId);
+      } catch (_) {
+        result = null;
+      }
       if (!mounted) return;
       setState(() {
         _score = score;
+        _result = result;
         _submitting = false;
       });
     } catch (_) {
@@ -142,26 +156,36 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
                     NanoSpacing.md,
                     NanoSpacing.xxl,
                   ),
-                  child: flow.finished || _score != null
-                      ? _FinishedPane(
-                          copy: copy,
-                          companionName: widget.companionName,
-                          prompt: flow.promptFor(
-                            locale,
-                            companionName: widget.companionName,
-                          ),
-                          score: _score,
-                        )
-                      : _QuestionPane(
-                          flow: flow,
+                  child: _result != null
+                      ? QuizResultView(
+                          result: _result!,
                           copy: copy,
                           locale: locale,
+                          junior: true,
                           companionName: widget.companionName,
-                          theme: theme,
-                          submitting: _submitting,
-                          onSelect: _select,
-                          onAdvance: _advance,
-                        ),
+                          retaking: _submitting,
+                          onRetake: _load,
+                        )
+                      : flow.finished || _score != null
+                          ? _FinishedPane(
+                              copy: copy,
+                              companionName: widget.companionName,
+                              prompt: flow.promptFor(
+                                locale,
+                                companionName: widget.companionName,
+                              ),
+                              score: _score,
+                            )
+                          : _QuestionPane(
+                              flow: flow,
+                              copy: copy,
+                              locale: locale,
+                              companionName: widget.companionName,
+                              theme: theme,
+                              submitting: _submitting,
+                              onSelect: _select,
+                              onAdvance: _advance,
+                            ),
                 ),
               ),
       ),

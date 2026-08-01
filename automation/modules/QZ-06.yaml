@@ -1,7 +1,7 @@
 id: QZ-06
 name: "Quiz Results, Explanations, and Progress Update"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - QZ-05
 applications:
@@ -9,6 +9,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -19,26 +20,55 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for QZ-06"
+  - "QZ-02 Student Quiz: explanations, result, history, and recommendations"
+  - "Companion reactions for correct, wrong, retry, and completion"
+  - "Retakes follow the authored policy"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.topic_quiz_progress
+  - public.learner_quiz_history
+  - public.learning_next_up
+server_functions:
+  - public.get_attempt_result
+  - public.submit_quiz_attempt
+  - nano_internal.quiz_result_summary
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Explanations and correct answers are unreachable before submit
+  - Results show the server score, per-question review, and explanations
+  - Retake action follows quiz_policies.max_retakes on client and server
+  - Submit records the outcome in topic_quiz_progress with no client write path
+  - Learners read only their own results, history, and outcome rows
+  - An unpassed quiz keeps the topic recommended as review work
+  - Junior and Senior show the same verdict from the same payload
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/attempt_result_test.dart
+  - packages/nano_data/test/quiz_attempt_result_test.dart
+  - apps/student_app/test/quiz_result_test.dart
+  - supabase/tests/qz06_results_explanations.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - explanations_after_submit_only
+  - learner_own_results_only
+  - quiz_progress_rpc_only
+accessibility_checks:
+  - correctness_announced_in_words_not_colour
+  - server_score_announced
 manual_test_steps:
-  - Review module docs and status
+  - Confirm no correct answer or explanation is visible mid-quiz
+  - Finish wrongly and confirm score, review, correct answer, and explanation
+  - Retake and confirm a fresh attempt, then a clean review after passing
+  - As Senior, finish via review and see the same results screen
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

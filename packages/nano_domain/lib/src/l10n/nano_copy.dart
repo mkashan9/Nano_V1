@@ -175,6 +175,8 @@ class NanoCopy {
   String get recommendedTitle => isUrdu ? 'اگلا کام' : 'Up next';
   String get reasonResume =>
       isUrdu ? 'یہ ادھورا رہ گیا تھا' : 'You left this unfinished';
+  String get reasonReviewQuiz =>
+      isUrdu ? 'اس کوئز کا دوبارہ جائزہ لیں' : 'Worth another look';
   String get reasonNextInSubject =>
       isUrdu ? 'اس مضمون کا اگلا موضوع' : 'Next in this subject';
   String get reasonNewSubject =>
@@ -248,6 +250,31 @@ class NanoCopy {
   String quizAnsweredCount(int answered, int total) => isUrdu
       ? '$answered از $total جواب'
       : '$answered of $total answered';
+  String get quizResultsTitle => isUrdu ? 'آپ کے نتائج' : 'Your results';
+  String get quizReviewAnswersTitle =>
+      isUrdu ? 'آپ کے جوابات' : 'What you answered';
+  String get quizYourAnswerLabel => isUrdu ? 'آپ کا جواب' : 'Your answer';
+  String get quizWhyLabel => isUrdu ? 'وجہ' : 'Why';
+  String get quizJuniorReviewIntro => isUrdu
+      ? 'آئیے ان کو مل کر دیکھیں۔'
+      : 'Let us look at these together.';
+  String quizCorrectCountLabel(int correct, int total) => isUrdu
+      ? '$total میں سے $correct درست'
+      : '$correct of $total correct';
+  String quizPassMarkLabel(double percent) => isUrdu
+      ? 'پاسنگ نمبر: ${percent.toStringAsFixed(0)}٪'
+      : 'Pass mark: ${percent.toStringAsFixed(0)}%';
+  String quizAttemptNumberLabel(int attempt) =>
+      isUrdu ? 'کوشش $attempt' : 'Attempt $attempt';
+  String get quizRetakeLabel => isUrdu ? 'کوئز دوبارہ لیں' : 'Retake quiz';
+  String quizRetakesLeftLabel(int remaining) => isUrdu
+      ? '$remaining مواقع باقی'
+      : '$remaining ${remaining == 1 ? 'try' : 'tries'} left';
+  String get quizNoRetakesLeftLabel =>
+      isUrdu ? 'مزید مواقع نہیں' : 'No tries left';
+  String get quizUnlimitedRetakesLabel => isUrdu
+      ? 'آپ جب چاہیں دوبارہ کوشش کر سکتے ہیں۔'
+      : 'You can try again whenever you like.';
   String get newQuestionLabel => isUrdu ? 'نیا سوال' : 'New question';
   String get publishQuestionLabel => isUrdu ? 'شائع کریں' : 'Publish';
   String get retireQuestionLabel => isUrdu ? 'ریٹائر کریں' : 'Retire';
