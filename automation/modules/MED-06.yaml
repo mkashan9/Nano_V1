@@ -41,15 +41,17 @@ handbook_sections:
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-06"
 ui_references: []
 database_scope:
-  - generation_providers (fish_audio_voice, json2video_compose, composes_from_art)
+  - generation_providers (fish_audio_voice, json2video_compose, curated_upload, composes_from_art)
   - narration_voices (guide_fish_stock)
   - reaction_clip_versions (motion)
+  - storage.objects (generated_assets_bucket_write_curated)
 server_functions:
   - "adapter: FishAudioVoiceAdapter"
   - "adapter: Json2VideoComposeAdapter"
   - "nano_internal.approved_companion_art"
   - "nano_internal.companion_art_slot"
   - reaction_clip_composition
+  - register_curated_asset
   - "replaced: request_reaction_clip (NM011 compose gate)"
   - "replaced: create_reaction_clip_draft (motion argument)"
   - "replaced: gemini_voice_aoede / gemini_veo_video are no longer default"
@@ -60,6 +62,7 @@ acceptance:
   - json2video is the default video provider; a reaction clip is composed from approved companion art, not invented from a prompt
   - A missing VIDEO_PROVIDER_API_KEY still fails closed with PROVIDER_UNCONFIGURED and every reaction keeps its local art
   - Unapproved or wrong-shaped art is refused with NM011 before any money is spent
+  - A person can supply companion art when no provider can draw it, and that art faces the same reviewer, is unreadable by learners until approved, and cannot be registered without recorded rights
   - Motion is a closed authored set; an unknown motion is refused with NM009 and a published motion cannot be edited (NM008)
   - Neither key ever appears in a Flutter client, a git commit, or a log
   - Daily budgets still refuse before a provider is reached
@@ -67,6 +70,7 @@ acceptance:
   - Owner manual test steps provided and runnable without Docker
 required_tests:
   - supabase/tests/med06_fish_and_json2video.sql
+  - supabase/tests/med06_curated_companion_art.sql
   - supabase/functions/generate-asset/adapters/fish_audio_test.ts
   - supabase/functions/generate-asset/adapters/json2video_test.ts
 security_checks:
@@ -105,3 +109,9 @@ owner_decisions_locked:
     Correct VIDEO_COST_MICROS_PER_CLIP to the real per-clip figure once the
     json2video credit cost of a short reaction is known. The $3/day video
     budget and the 20-requests-per-day ceiling both stay.
+  image: >
+    Owner rejected the generated companion image on 2026-08-01. Pollinations
+    serves only sana without a token and it cannot draw a mascot, so companion
+    art is supplied by hand through register_curated_asset until an image
+    provider that can draw is bought. pollinations_image stays the default;
+    curated_upload is never the default.

@@ -40,9 +40,16 @@ As `platform@nano.dev`, call `generate-asset` with a published narration slug
 
 ### 3. Approve the companion picture first
 
-Open admin_web → Moderation. Approve the existing
-`guide_greeting_staticArt` image (or generate and approve a fresh one in `1:1`).
-A clip cannot be composed without this — that is the point of the module.
+Open admin_web → Moderation. A curated `guide_greeting_staticArt` picture is
+waiting there `unreviewed`, with `provider_id = curated_upload` and its rights
+recorded. Preview it and decide it on its merits — approving it is what a clip
+needs, and rejecting it frees the slot for a better one.
+
+The earlier generated picture is in the same slot marked `rejected`, with the
+reason you gave. Leave it; it is the record of why the curated one exists.
+
+A clip cannot be composed without an approved picture — that is the point of the
+module.
 
 ### 4. Compose one clip
 

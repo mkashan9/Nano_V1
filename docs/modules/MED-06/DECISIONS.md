@@ -37,6 +37,34 @@ The Gemini adapters remain registered and their provider rows remain in the
 table, disabled. A rollback is an `UPDATE`, not a redeploy and not a migration
 that has to invent the old rows again.
 
+## A person may supply a picture
+
+The compose gate needs approved companion art, and the only image provider Nano
+can reach without buying one cannot produce art worth approving. Rather than
+lower the gate, MED-06 added a way for a human to put a picture in:
+`register_curated_asset`, plus a storage policy that lets a platform admin place
+the file.
+
+The gate itself is untouched. Curated art is registered `ready` and
+`unreviewed`, joins the same queue, and is unreadable by every learner until a
+reviewer approves it — `asset_object_is_published` is a lookup from the object
+name to an approved row, so a file with no row, or a row nobody approved, is
+unreachable. Rights are mandatory, because a picture nobody can account for is
+one that cannot be defended when a school asks where it came from.
+
+This is not only a workaround. The handbook's asset ladder begins at Tier 0
+static art, and static art is drawn by a person far more often than it is
+generated, so Nano needed this door regardless of which provider it buys next.
+
+## A curated upload is a provider row
+
+Calling a human a "provider" is a small lie that buys a large simplicity:
+`provider_id` is already a foreign key, every reader already renders a provider,
+and a reviewer learns where a picture came from in the column they were reading
+anyway. `curated_upload` is enabled but never default — an unqualified request
+for an image is a request to *generate* one, and a default that cannot generate
+would turn every such request into a failure nobody asked for.
+
 ## Cost estimates are non-zero by default
 
 A cost budget that reads zero for every recording and every clip is a cost

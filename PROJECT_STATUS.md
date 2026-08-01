@@ -24,12 +24,22 @@ test. Neither key is in git and neither must ever be. Until they are set, every
 voice and every clip fails closed with `PROVIDER_UNCONFIGURED` — captions and
 local art keep working.
 
-The real companion image `guide_greeting_staticArt` is still `unreviewed`. A
-clip of that reaction will refuse with `NM011` until a reviewer approves it;
-that is the compose gate working.
+A curated `guide_greeting_staticArt` picture is waiting in Moderation,
+`unreviewed`. A clip of that reaction will refuse with `NM011` until a reviewer
+approves it; that is the compose gate working. The generated picture that
+preceded it is `rejected`, with the owner's reason recorded.
+
+**Nano has no usable image provider.** Pollinations serves only `sana` to
+callers without a token, and it cannot draw a mascot — eleven prompts across
+three art directions produced nothing approvable, including a photograph of a
+child. Buying an image provider that can draw is an open owner decision; the
+adapter would be small. Until then `pollinations_image` stays the default and
+companion art comes in by hand through `register_curated_asset`.
 
 ## Next after MED-06 DONE
 
 R5 (XP-01) and ADM-01 stay available. ADM-01 should absorb the borrowed
-Moderation destination rather than replace it. Picking a specific Fish
-`reference_id` is a small follow-up row once the owner chooses a voice.
+Moderation destination rather than replace it, and is the natural home for a
+curated-upload screen — today a curated picture is registered by calling the
+RPC, with no admin UI behind it. Picking a specific Fish `reference_id` is a
+small follow-up row once the owner chooses a voice.

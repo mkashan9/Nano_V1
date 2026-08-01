@@ -4,6 +4,8 @@
 
 - MED-06: Fish Audio narration and composed reaction clips — Fish is the default voice (MP3, stock until a reference_id is picked), json2video is the default video provider and animates only companion art a reviewer has already approved, a closed motion set replaces free-form generative prompts, unapproved or wrong-shaped art is refused before any money is spent, and a missing key still fails closed so every caption and every local reaction keeps working
 
+- MED-06: art a person supplied — the only image model Nano can reach without buying one cannot draw a mascot, so rather than lower the gate a curator may now place a picture in the bucket and register it, with rights required and provenance recorded; curated art enters `ready` and `unreviewed` exactly like generated art, stays unreadable by every learner until a reviewer approves it, and a file nobody registered is unreachable by anyone
+
 - MED-05: publication as a superadmin decision — a review queue that shows the reviewer the prompt, provider, cost, and file that a learner never sees, approval as the only thing that makes generated media visible, rejection that un-publishes from catalog and storage in the same statement and frees the slot for a better attempt, an append-only record of who decided what and when, and refusals with reasons for everyone else
 
 - MED-04: reusable reaction clip library — authored silent clips keyed by mode+mood, async Veo generation with recoverable claims, per-slot availability so one clip does not promise every mood, and a caption-safe companion play badge that only appears when a matching approved clip and a player both exist
