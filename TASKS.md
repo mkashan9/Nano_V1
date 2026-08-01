@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] SCH-05 Teacher Assignment Matrix
+- [ ] SCH-06 Marks and Result Policies
 
 ## Completed
 
@@ -55,6 +55,6 @@
 - [x] SCH-02 Classes, Grades, Sections, and Subjects
 - [x] SCH-03 Teacher Management and Excel Import
 - [x] SCH-04 Student Management and Excel Import
-- [ ] SCH-05 Teacher Assignment Matrix
+- [x] SCH-05 Teacher Assignment Matrix
 - [ ] SCH-06 Marks and Result Policies
 - [ ] SCH-07 School Reports

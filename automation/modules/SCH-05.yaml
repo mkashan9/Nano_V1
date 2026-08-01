@@ -1,7 +1,7 @@
 id: SCH-05
 name: "Teacher Assignment Matrix"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - SCH-03
   - SCH-04

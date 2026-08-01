@@ -32,6 +32,7 @@ GoRouter createAdminRouter({
   SchoolTeacherRepository? schoolTeacherRepository,
   SchoolStudentRepository? schoolStudentRepository,
   TeacherAssignmentRepository? teacherAssignmentRepository,
+  SchoolMarksPolicyRepository? schoolMarksPolicyRepository,
   SchoolAdminRepository? schoolAdminRepository,
   PlatformUserRepository? platformUserRepository,
 }) {
@@ -140,6 +141,7 @@ GoRouter createAdminRouter({
             schoolTeacherRepository: schoolTeacherRepository,
             schoolStudentRepository: schoolStudentRepository,
             teacherAssignmentRepository: teacherAssignmentRepository,
+            schoolMarksPolicyRepository: schoolMarksPolicyRepository,
             schoolAdminRepository: schoolAdminRepository,
             platformUserRepository: platformUserRepository,
           );
@@ -168,6 +170,7 @@ GoRouter createAdminRouter({
                     schoolTeacherRepository: schoolTeacherRepository,
                     schoolStudentRepository: schoolStudentRepository,
                     teacherAssignmentRepository: teacherAssignmentRepository,
+                    schoolMarksPolicyRepository: schoolMarksPolicyRepository,
                     schoolAdminRepository: schoolAdminRepository,
                     platformUserRepository: platformUserRepository,
                   ),

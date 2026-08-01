@@ -1,44 +1,72 @@
 id: SCH-06
 name: "Marks and Result Policies"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SCH-01
+dependency_notes: >
+  SCH-01 owns Settings branding. This module adds Policies tab for marks/result
+  configuration deferred from SCH-02. Marks entry stays MRK; reports stay SCH-07.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-06/
   - automation/modules/SCH-06.yaml
+  - automation/modules/SCH-05.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook SCH-02 Academic Structure (policies slice)"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-06"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.school_marks_policies
+  - public.result_periods
+server_functions:
+  - "public.get_school_marks_policy"
+  - "public.upsert_school_marks_policy"
+  - "public.create_result_period"
+  - "public.close_result_period"
 acceptance:
+  - Settings Policies tab loads and saves school marks policy
+  - Result periods can be created and closed with reason
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch06_marks_result_policies.sql
+  - packages/nano_domain/test/school_marks_policy_test.dart
+  - packages/nano_data/test/school_marks_policy_repository_test.dart
+  - apps/admin_web/test/school_marks_policies_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Settings Policies as school admin
+  - Save policy and close a result period
+rollback_notes: >
+  Revert the branch and migration. Settings returns to branding-only.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Policy config + result periods only. No marks entry or report PDFs.
+  deferred: >
+    Band editor UI; MRK corrections; SCH-07 reports.
