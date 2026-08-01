@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- MED-05: publication as a superadmin decision — a review queue that shows the reviewer the prompt, provider, cost, and file that a learner never sees, approval as the only thing that makes generated media visible, rejection that un-publishes from catalog and storage in the same statement and frees the slot for a better attempt, an append-only record of who decided what and when, and refusals with reasons for everyone else
+
 - MED-04: reusable reaction clip library — authored silent clips keyed by mode+mood, async Veo generation with recoverable claims, per-slot availability so one clip does not promise every mood, and a caption-safe companion play badge that only appears when a matching approved clip and a player both exist
 
 - MED-03: Aoede Learning Guide voice — authored bilingual narration lines with immutable publish, a voice registry and voice-aware reuse hash, Gemini TTS adapter that wraps PCM as WAV, and a caption-first companion path where Listen appears only when a matching recording exists and sound is allowed (no player attached yet, so every line stays a caption)

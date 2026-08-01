@@ -10,19 +10,26 @@ import 'package:nano_domain/nano_domain.dart';
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
+  AssetReviewRepository? assetReviewRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
+    // One client, so the review calls carry the signed-in reviewer's token.
+    // Publication is a named decision; an anonymous one would be worthless.
+    final client =
+        NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey);
     authRepository = SupabaseAuthRepository(
-      NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey),
+      client,
       allowedAccountKinds: const {'school_staff', 'platform'},
       appLabel: 'admins',
     );
+    assetReviewRepository = SupabaseAssetReviewRepository(client);
     requireAuth = true;
   }
   runApp(
     NanoAdminApp(
       config: config,
       authRepository: authRepository,
+      assetReviewRepository: assetReviewRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -39,6 +46,7 @@ class NanoAdminApp extends StatefulWidget {
     this.requireAuth = false,
     this.questionBankRepository,
     this.topicQuizRepository,
+    this.assetReviewRepository,
   });
 
   final EnvironmentConfig config;
@@ -49,6 +57,7 @@ class NanoAdminApp extends StatefulWidget {
   final bool requireAuth;
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
+  final AssetReviewRepository? assetReviewRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -60,6 +69,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late NanoAppLocale _locale;
   late final QuestionBankRepository _questionBankRepository;
   late final TopicQuizRepository _topicQuizRepository;
+  late final AssetReviewRepository _assetReviewRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -75,6 +85,10 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         widget.questionBankRepository ?? FakeQuestionBankRepository();
     _topicQuizRepository =
         widget.topicQuizRepository ?? FakeTopicQuizRepository();
+    // The preview shell gets a fake queue so the screen can be worked on
+    // without keys; nothing it approves leaves the process.
+    _assetReviewRepository =
+        widget.assetReviewRepository ?? FakeAssetReviewRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -122,6 +136,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       onSignedOut: _signOut,
       questionBankRepository: _questionBankRepository,
       topicQuizRepository: _topicQuizRepository,
+      assetReviewRepository: _assetReviewRepository,
     );
   }
 

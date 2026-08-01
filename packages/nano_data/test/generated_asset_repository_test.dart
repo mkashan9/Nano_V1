@@ -78,7 +78,7 @@ void main() {
       expect(outcome.asset.status, GeneratedAssetStatus.failed);
       expect(outcome.asset.errorCode, 'PROVIDER_UNCONFIGURED');
       expect(outcome.asset.storagePath, isNull);
-      expect(outcome.asset.providerId, 'configured_voice');
+      expect(outcome.asset.providerId, 'gemini_voice_aoede');
     });
 
     test('failures surface as errors rather than empty lists', () async {

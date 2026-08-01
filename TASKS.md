@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-04 owner manual test
+- [ ] MED-05 owner manual test
 
 ## Completed
 
@@ -36,7 +36,9 @@
 - [x] MED-01
 - [x] MED-02
 - [x] MED-03
+- [x] MED-04
 
 ## Upcoming
 
-- [ ] MED-05 Superadmin Asset Review and Publication
+- [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
+- [ ] XP-01 Trusted XP Ledger

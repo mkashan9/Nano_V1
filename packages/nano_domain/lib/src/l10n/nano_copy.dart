@@ -1,4 +1,5 @@
 import '../companion/companion_mode.dart';
+import '../media/generated_asset.dart';
 import 'nano_app_locale.dart';
 
 /// Foundation UI copy for English and Urdu.
@@ -367,6 +368,55 @@ class NanoCopy {
   /// MED-04. Also a control rather than a promise: it appears only when an
   /// approved clip exists for this exact reaction and motion is welcome.
   String get companionPlayClipLabel => isUrdu ? 'ویڈیو چلائیں' : 'Play clip';
+
+  /// MED-05. The superadmin publication surface. These are English-first
+  /// administration words; the Urdu is provided because the shell can be read in
+  /// Urdu, not because a learner ever sees them.
+  String get assetReviewTitle => isUrdu ? 'میڈیا کا جائزہ' : 'Media review';
+  String get assetReviewQueueEmptyTitle =>
+      isUrdu ? 'جائزے کے لیے کچھ نہیں' : 'Nothing to review';
+  String get assetReviewQueueEmptyBody => isUrdu
+      ? 'ہر تیار شدہ اثاثہ فیصلہ پا چکا ہے۔'
+      : 'Every generated asset has been decided.';
+  String get assetApproveLabel => isUrdu ? 'منظور کریں' : 'Approve';
+  String get assetRejectLabel => isUrdu ? 'مسترد کریں' : 'Reject';
+  String get assetReturnToQueueLabel =>
+      isUrdu ? 'قطار میں واپس' : 'Return to queue';
+  String get assetRejectReasonLabel => isUrdu ? 'وجہ' : 'Reason';
+  String get assetRejectReasonHint => isUrdu
+      ? 'اگلی کوشش بہتر بنانے کے لیے وجہ لکھیں'
+      : 'Say what to fix, so the next attempt is better';
+  String get assetReviewHistoryLabel => isUrdu ? 'فیصلوں کی تاریخ' : 'Decisions';
+  String get assetPreviewLabel => isUrdu ? 'پیش منظر' : 'Preview';
+  String get assetPromptLabel => isUrdu ? 'ہدایت' : 'Prompt';
+  String get assetPreviewUnavailable => isUrdu
+      ? 'اس اثاثے کی فائل ابھی موجود نہیں'
+      : 'This asset has no file yet';
+  String get assetNotDecidable => isUrdu
+      ? 'صرف تیار اثاثہ منظور ہو سکتا ہے'
+      : 'Only a ready asset can be approved';
+
+  String assetModerationLabel(GeneratedAssetModeration moderation) =>
+      switch (moderation) {
+        GeneratedAssetModeration.unreviewed =>
+          isUrdu ? 'زیرِ جائزہ' : 'Unreviewed',
+        GeneratedAssetModeration.approved => isUrdu ? 'شائع شدہ' : 'Published',
+        GeneratedAssetModeration.rejected => isUrdu ? 'مسترد' : 'Rejected',
+      };
+
+  String assetReviewCount(int reviewed, int unchanged) {
+    if (reviewed == 0) {
+      return isUrdu
+          ? 'پہلے ہی یہی فیصلہ نافذ تھا'
+          : 'That decision was already in force';
+    }
+    if (unchanged == 0) {
+      return isUrdu ? '$reviewed پر فیصلہ ہوا' : 'Decided $reviewed';
+    }
+    return isUrdu
+        ? '$reviewed پر فیصلہ ہوا، $unchanged پہلے سے ویسے ہی تھے'
+        : 'Decided $reviewed, $unchanged already were';
+  }
 
   String get onboardingReadyTitle => isUrdu ? 'سب تیار ہے' : 'You are all set';
   String get onboardingResumed =>
