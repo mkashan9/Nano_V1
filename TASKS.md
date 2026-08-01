@@ -1,8 +1,8 @@
-﻿# TASKS
+# TASKS
 
 ## Active
 
-- [ ] XP-01 Trusted XP Ledger
+- [ ] XP-01 owner manual test
 
 ## Completed
 

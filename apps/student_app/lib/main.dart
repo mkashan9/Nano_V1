@@ -21,6 +21,7 @@ void main() {
   StudentPreferencesRepository? preferencesRepository;
   GeneratedAssetRepository? assetRepository;
   NarrationRepository? narrationRepository;
+  XpLedgerRepository? xpLedgerRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -37,6 +38,7 @@ void main() {
     preferencesRepository = SupabaseStudentPreferencesRepository(client);
     assetRepository = SupabaseGeneratedAssetRepository(client);
     narrationRepository = SupabaseNarrationRepository(client);
+    xpLedgerRepository = SupabaseXpLedgerRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -47,6 +49,7 @@ void main() {
       preferencesRepository: preferencesRepository,
       assetRepository: assetRepository,
       narrationRepository: narrationRepository,
+      xpLedgerRepository: xpLedgerRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -77,6 +80,7 @@ class NanoStudentApp extends StatefulWidget {
     this.quizAttemptRepository,
     this.assetRepository,
     this.narrationRepository,
+    this.xpLedgerRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -108,6 +112,10 @@ class NanoStudentApp extends StatefulWidget {
   /// the same reason as [assetRepository]: the captions that ship with the app are
   /// the experience, and a recording is the extra.
   final NarrationRepository? narrationRepository;
+
+  /// XP-01: live ledger balance for Home and Me. Optional — without it the
+  /// fixtures keep their 560 XP stand-in.
+  final XpLedgerRepository? xpLedgerRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -157,15 +165,19 @@ class _NanoStudentAppState extends State<NanoStudentApp>
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
-    // Home content stays on fixtures until XP modules land; subjects share
-    // catalog IDs so a tap opens the LRN-01 topic list.
+    // Home and profile still use fixtures for missions and subjects; XP-01
+    // replaces only the XP number with the ledger total when a live repo is
+    // available.
+    final xpLedger = widget.xpLedgerRepository;
     _homeRepository = widget.homeRepository ??
         FakeStudentHomeRepository(
           subjects: StudentHomeFixtures.subjects,
           missions: StudentHomeFixtures.missions,
+          xpLedger: xpLedger,
         );
     _profileRepository = widget.profileRepository ??
         FakeStudentProfileRepository(
+          xpLedger: xpLedger,
           sessions: [
             SecurityFixtures.activeSession.copyWith(isCurrent: true),
             SecurityFixtures.revokedSession,

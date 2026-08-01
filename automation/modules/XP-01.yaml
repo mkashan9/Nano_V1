@@ -1,16 +1,28 @@
 id: XP-01
 name: "Trusted XP Ledger"
 release: R5
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-02
   - AUTH-01
+dependency_notes: >
+  LRN-03 topic_completions and QZ-05/06 score_results are the source events.
+  Neither awards XP today. This module owns the append-only ledger and the
+  only path that can credit XP. Levels, achievements, missions, and streaks
+  wait on XP-02 through XP-05.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/XP-01/
@@ -19,27 +31,59 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions, and Streaks"
+  - "11.4 XP policy example"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for XP-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.xp_ledger
+  - public.xp_award_rules
+server_functions:
+  - "nano_internal.award_xp"
+  - "public.my_xp_balance"
+  - "public.my_xp_ledger"
+  - "public.adjust_xp (platform admin)"
+  - "hooks from complete_topic and submit_quiz_attempt"
 acceptance:
+  - Append-only xp_ledger; learners can read their own rows and never write
+  - Video completion awards a small fixed amount once per topic version
+  - A passed quiz awards a medium amount once per quiz version; a failed attempt awards nothing
+  - Replay and duplicate source events cannot award twice
+  - Daily cap refuses further awards without failing the source action
+  - Attendance and school marks have no award path
+  - Manual adjustments require a platform admin and a reason, and are audited
+  - Home and profile XP come from the ledger balance, not a fixture constant
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/xp01_ledger_idempotency.sql
+  - packages/nano_domain/test/xp_ledger_test.dart
+  - packages/nano_data/test/xp_ledger_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - ledger_rpc_only
+  - award_idempotent
+  - learner_own_ledger_only
+  - no_client_xp_draft
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Complete a topic video as a learner and confirm XP rises once, not twice on repeat
+  - Pass a quiz and confirm XP rises once; fail a quiz and confirm XP does not rise
+  - Open Home and Me and confirm the XP chip matches the ledger total
+  - As platform admin, make a manual adjustment with a reason and confirm it appears
+rollback_notes: >
+  Revert the branch and the migration. Source events (completions, scores)
+  remain; only the ledger and its hooks disappear.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    XP-01 is the ledger and the award path for video and quiz only. Levels
+    stay client-derived at 250 XP until XP-02. Game XP waits on GME-05.
+  amounts: >
+    Video completion 10 XP. First quiz pass 30 XP. Failed quiz 0. Daily cap
+    200 XP. Numbers are server-owned in xp_award_rules so they can change
+    without a client release.

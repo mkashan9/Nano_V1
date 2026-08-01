@@ -1,5 +1,7 @@
 import 'package:nano_domain/nano_domain.dart';
 
+import '../xp/xp_ledger_repository.dart';
+
 /// Aggregates the student home in one read.
 ///
 /// Live data arrives with the LRN and XP modules; until then the app runs on
@@ -26,6 +28,8 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     this.missions = const [],
     this.failSections = const {},
     this.includeUpdate = true,
+    this.xpLedger,
+    this.fixtureXp = 560,
   });
 
   bool failOnce;
@@ -40,6 +44,10 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
   /// Sections that fail while the rest of the home still loads.
   final Set<HomeSection> failSections;
   final bool includeUpdate;
+
+  /// XP-01: when set, Home reads the ledger total instead of [fixtureXp].
+  final XpLedgerRepository? xpLedger;
+  final int fixtureXp;
 
   var loadCount = 0;
 
@@ -63,12 +71,15 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     }
     final now = DateTime.now().toUtc();
     final failed = failSections;
+    final xp = xpLedger == null
+        ? fixtureXp
+        : (await xpLedger!.balance()).total;
     return StudentHomeSummary(
       learnerName: learnerName,
       companionName: companionName,
       updatedAt: servesCache ? now.subtract(cacheAge) : now,
       fromCache: servesCache,
-      xp: 560,
+      xp: xp,
       streakDays: 7,
       unreadNotifications: 2,
       notice: notice,
