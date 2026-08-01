@@ -6,10 +6,13 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_media/nano_media.dart';
+import 'package:student_app/app/playback/nano_audio_voice_player.dart';
+import 'package:student_app/app/playback/nano_video_clip_player.dart';
 import 'package:student_app/app/student_router.dart';
 import 'package:student_app/features/home/fixtures/student_home_fixtures.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
   OnboardingRepository? onboardingRepository;
@@ -42,6 +45,10 @@ void main() {
       preferencesRepository: preferencesRepository,
       assetRepository: assetRepository,
       narrationRepository: narrationRepository,
+      // Built here rather than inside the app state so a widget test keeps the
+      // recording doubles and never reaches for a platform plugin (MED-08).
+      voicePlayer: NanoAudioVoicePlayer(),
+      clipPlayer: NanoVideoClipPlayer(),
       requireAuth: requireAuth,
     ),
   );
@@ -100,12 +107,13 @@ class NanoStudentApp extends StatefulWidget {
   /// the experience, and a recording is the extra.
   final NarrationRepository? narrationRepository;
 
-  /// MED-03: who plays a recording. Null — the state today — means the listen
-  /// control never appears, because a control that cannot work should not exist.
+  /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
+  /// means the listen control never appears, because a control that cannot work
+  /// should not exist, and that is what a widget test gets by default.
   final NanoVoicePlayer? voicePlayer;
 
-  /// MED-04: who plays a reaction clip. Null — also the state today — means the
-  /// play affordance never appears, and every reaction keeps local art.
+  /// MED-04: who plays a reaction clip. Same shape as [voicePlayer]: real in
+  /// `main`, null in a test, and null means every reaction keeps its still art.
   final NanoClipPlayer? clipPlayer;
   final NanoSyncController? syncController;
   final bool requireAuth;

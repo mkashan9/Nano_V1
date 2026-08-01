@@ -1,7 +1,7 @@
 id: MED-08
 name: "Real Playback and Companion Art Rendering"
 release: R4
-status: ACTIVE
+status: USER_TEST
 dependencies:
   - MED-07
   - FND-07

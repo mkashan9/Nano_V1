@@ -123,10 +123,16 @@ class _JuniorHomeContent extends StatelessWidget {
             children: [
               const SizedBox(height: NanoSpacing.md),
               // CMP-03: Junior leads with the companion above the greeting.
+              // Seed 1 is the greeting that names nobody. The first variant
+              // greets the learner using their chosen name for Nori, and a
+              // personalised line can never be recorded (ADR-0008) — so home,
+              // the one screen every session starts on, uses the greeting the
+              // Guide can actually say aloud.
               const CompanionSurfaceStage(
                 surface: CompanionSurface.home,
                 junior: true,
                 entryEvent: CompanionEvent.home,
+                seed: 1,
               ),
               Row(
                 children: [

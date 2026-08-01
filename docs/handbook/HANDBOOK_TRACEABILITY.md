@@ -81,7 +81,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Generated assets reviewed before a learner sees them; publication is a named decision | MED-05 | admin_web | Moderation queue, preview, approve/reject, history | asset_review_events,generated_assets | SQL+unit+widget | DONE |
 | Narration and reaction clips through the chosen providers | MED-06 | edge+packages+admin_web | Moderation plays voice and video | generation_providers,narration_voices,reaction_clip_versions | SQL+Deno+widget | DONE |
 | Character animation of approved companion art | MED-07 | edge+packages | Moderation reviews Wan clips | generation_providers | SQL+Deno | DONE |
-| Approved media finally reaches a child; nothing plays unasked | MED-08 | student_app+packages | companion art, Listen, Play clip, real topic playback | none | widget+unit | ACTIVE |
+| Approved media finally reaches a child; nothing plays unasked | MED-08 | student_app+packages | companion art, Listen, Play clip, real topic playback | none | widget+unit | USER_TEST |
 | Nori is one recognisable character in every pose | MED-09 | packages+student_app | bundled offline art, approved pose pack | generated_assets | SQL+widget | BACKLOG |
 | A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, blink, mood motion | none | widget | BACKLOG |
 | A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | BACKLOG |

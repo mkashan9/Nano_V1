@@ -1,19 +1,21 @@
-/// Plays one narration clip at a time (MED-03).
+import 'package:flutter/widgets.dart';
+
+/// Plays one narration clip at a time (MED-03, made real in MED-08).
 ///
-/// This is a seam, not a player. Nano ships no audio plugin yet, and there is
-/// nothing to play until a curator records and approves a line — so the app is
-/// built to the interface and the real implementation lands with the first
-/// approved recording. The consequence is deliberate: with no player attached, the
-/// listen affordance never appears and every line is read rather than heard, which
-/// is the same experience a muted learner already has.
+/// The interface stays in the design system and the plugin-backed
+/// implementation lives in the app, so a design system shared with admin_web
+/// never has to depend on an audio plugin.
 ///
-/// Two rules an implementation must keep:
+/// Three rules an implementation must keep:
 ///
 ///   * **One voice at a time.** Starting a clip stops the previous one. Handbook
 ///     10 gives the Guide a single voice, and two overlapping lines are noise.
 ///   * **Never throw at a caller.** A clip that will not play is a fallback, not
 ///     an error: the caption is already on screen.
-abstract class NanoVoicePlayer {
+///   * **Announce every change.** A line ends on its own, and a caller showing a
+///     stop control has to know, so an implementation notifies on start, on
+///     stop, and on reaching the end.
+abstract class NanoVoicePlayer implements Listenable {
   /// Play [url]. Returns when playback has started, not when it has finished, so
   /// a caller is never blocked waiting for a sentence to end.
   Future<void> play(String url);
@@ -28,9 +30,9 @@ abstract class NanoVoicePlayer {
 ///
 /// Used in tests, and as the honest default: it satisfies the contract without
 /// pretending to make sound. A screen driven by this behaves exactly as it will
-/// with a real player, which is what makes the wiring testable before the plugin
-/// exists.
-class NanoRecordingVoicePlayer implements NanoVoicePlayer {
+/// with a real player, which is what makes the wiring testable without a plugin.
+class NanoRecordingVoicePlayer extends ChangeNotifier
+    implements NanoVoicePlayer {
   final played = <String>[];
   var stopCount = 0;
   var _playing = false;
@@ -43,11 +45,13 @@ class NanoRecordingVoicePlayer implements NanoVoicePlayer {
     // Kept, not logged: a signed URL is a credential.
     played.add(url);
     _playing = true;
+    notifyListeners();
   }
 
   @override
   Future<void> stop() async {
     stopCount++;
     _playing = false;
+    notifyListeners();
   }
 }

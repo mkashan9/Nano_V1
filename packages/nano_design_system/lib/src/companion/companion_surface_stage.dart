@@ -90,6 +90,10 @@ class _CompanionSurfaceStageState extends State<CompanionSurfaceStage> {
         // attached. Autoplay is forbidden: the learner asks, like Listen.
         clipAvailable: controller.canShowClip,
         onPlayClip: controller.canShowClip ? controller.playClip : null,
+        // The approved picture when one has been published for this slot, and
+        // the clip only while it is actually playing (MED-08).
+        artUrl: controller.artUrl,
+        clipView: controller.clipView,
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_media/nano_media.dart';
@@ -54,7 +56,7 @@ class CompanionController extends ChangeNotifier {
     if (_runtime.surface == surface) return;
     _silence();
     _runtime = _runtime.withSurface(surface);
-    notifyListeners();
+    _publish();
   }
 
   /// Reports a moment. Suppressed moments are a no-op, so a screen may report
@@ -76,14 +78,44 @@ class CompanionController extends ChangeNotifier {
     // audible under it.
     _silence();
     _runtime = next;
-    notifyListeners();
+    _publish();
   }
 
   void dismiss() {
     if (_runtime.reaction == null) return;
     _silence();
     _runtime = _runtime.dismiss();
+    _publish();
+  }
+
+  var _disposed = false;
+
+  /// Announce a change, and re-resolve the picture while we are here.
+  ///
+  /// Art resolution is asynchronous — a signed URL has to be minted — so this
+  /// notifies immediately with what is already known and notifies again if a
+  /// URL lands. A caller therefore never waits on the network to see a
+  /// reaction; it sees the placeholder first and the picture a moment later.
+  void _publish() {
+    _syncArt();
+    if (_disposed) return;
     notifyListeners();
+  }
+
+  /// Whichever player just started, stopped, or reached the end. The stage
+  /// shows a clip while it plays and the still after it ends, so it has to be
+  /// told when playback finishes on its own.
+  void _onPlayerChanged() {
+    if (_disposed) return;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _player?.removeListener(_onPlayerChanged);
+    _clipPlayer?.removeListener(_onPlayerChanged);
+    super.dispose();
   }
 
   /// Stop any narration or clip, without waiting for either. Called whenever
@@ -105,7 +137,7 @@ class CompanionController extends ChangeNotifier {
     final next = _runtime.withClipsAvailable(available);
     if (next == _runtime) return;
     _runtime = next;
-    notifyListeners();
+    _publish();
   }
 
   /// Learns which reaction slots have a clip (MED-04).
@@ -116,7 +148,7 @@ class CompanionController extends ChangeNotifier {
     final next = _runtime.withClipSlots(slots);
     if (next == _runtime) return;
     _runtime = next;
-    notifyListeners();
+    _publish();
   }
 
   bool get clipsAvailable => _runtime.clipsAvailable;
@@ -144,9 +176,11 @@ class CompanionController extends ChangeNotifier {
         (player != null && player != _player) ||
         (resolveUrl != null && resolveUrl != _resolveUrl);
     _narration = nextCatalog;
-    _player ??= player;
+    if (_player == null && player != null) {
+      _player = player..addListener(_onPlayerChanged);
+    }
     _resolveUrl ??= resolveUrl;
-    if (changed) notifyListeners();
+    if (changed) _publish();
   }
 
   /// What to show and whether it can be heard, for the reaction on screen.
@@ -202,9 +236,14 @@ class CompanionController extends ChangeNotifier {
         (player != null && player != _clipPlayer) ||
         (resolveUrl != null && resolveUrl != _resolveClipUrl);
     _artCatalog = nextCatalog;
-    _clipPlayer ??= player;
+    if (_clipPlayer == null && player != null) {
+      _clipPlayer = player..addListener(_onPlayerChanged);
+    }
     _resolveClipUrl ??= resolveUrl;
-    if (changed) notifyListeners();
+    // Always: the catalog may be unchanged while the resolver that mints its
+    // URLs has only just arrived, and that is what turns art into a picture.
+    _syncArt();
+    if (changed) _publish();
   }
 
   /// What art this reaction should actually use, after checking what is published.
@@ -225,6 +264,56 @@ class CompanionController extends ChangeNotifier {
       _clipPlayer != null &&
       _resolveClipUrl != null &&
       (art?.usesGeneratedClip ?? false);
+
+  String? _artUrl;
+  String? _artAssetId;
+
+  /// A URL for the approved picture of the reaction on screen, once one has
+  /// been minted (MED-08). Null is ordinary and means the design system draws
+  /// its placeholder instead — no art is published for this slot, no resolver
+  /// is attached, or the URL has not arrived yet.
+  String? get artUrl => _artUrl;
+
+  /// The surface for the clip playing now, or null. Passed through rather than
+  /// interpreted: the controller does not know what decodes it.
+  Widget? get clipView => _clipPlayer?.view;
+
+  bool get isPlayingClip => _clipPlayer?.isPlaying ?? false;
+
+  bool get isSpeaking => _player?.isPlaying ?? false;
+
+  /// Mint a URL for the picture this reaction should show.
+  ///
+  /// Two things keep this cheap: an asset already resolved is not resolved
+  /// again, and the resolver behind it caches signed URLs by checksum. A
+  /// reaction that moves on before the URL lands discards it, so a slow mint
+  /// can never paint the previous picture over the current one.
+  void _syncArt() {
+    final asset = art?.still;
+    if (asset == null) {
+      _artUrl = null;
+      _artAssetId = null;
+      return;
+    }
+    if (asset.id == _artAssetId) return;
+    _artAssetId = asset.id;
+    _artUrl = null;
+    final resolve = _resolveClipUrl;
+    if (resolve == null) return;
+    unawaited(
+      resolve(asset).then(
+        (url) {
+          // The reaction moved on while the URL was being minted.
+          if (_disposed || url == null || _artAssetId != asset.id) return;
+          _artUrl = url;
+          notifyListeners();
+        },
+        // A URL that could not be minted is a fallback, not a failure: the
+        // placeholder stays and nothing is thrown at a widget.
+        onError: (_) {},
+      ),
+    );
+  }
 
   /// Play the clip for the reaction on screen, if one can be played.
   ///
@@ -248,7 +337,7 @@ class CompanionController extends ChangeNotifier {
   void updatePreferences(AccessibilityPreferences preferences) {
     if (_runtime.preferences == preferences) return;
     _runtime = _runtime.withPreferences(preferences);
-    notifyListeners();
+    _publish();
   }
 
   /// The app came back to the foreground. A long gap is greeted as a return; a
@@ -262,14 +351,14 @@ class CompanionController extends ChangeNotifier {
     final next = _runtime.notify(CompanionEvent.returnFromInactivity, now: now);
     if (next == _runtime) return;
     _runtime = next;
-    notifyListeners();
+    _publish();
   }
 
   /// A new session: the appearance budget and the cooldowns start over.
   void endSession() {
     _runtime = _runtime.newSession();
     _lastActivityAt = null;
-    notifyListeners();
+    _publish();
   }
 }
 

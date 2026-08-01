@@ -4,7 +4,7 @@
 
 - **Current release:** R4 Companion
 - **Current module:** MED-08 Real Playback and Companion Art Rendering
-- **Current status:** ACTIVE
+- **Current status:** USER_TEST
 - **Current branch:** module/MED-08-playback-and-companion-art
 - **Last completed module:** MED-07
 - **Application name:** Nano
@@ -25,7 +25,7 @@ that gap and end with the companion roughly ninety percent implemented.
 
 | Module | What it delivers | Status |
 |--------|------------------|--------|
-| MED-08 | The app can finally show an image and play a voice or a clip | ACTIVE |
+| MED-08 | The app can finally show an image and play a voice or a clip | USER_TEST |
 | MED-09 | One canonical Nori, static art for all 25 reachable reactions, bundled offline floor | BACKLOG |
 | MED-10 | Free local motion: breathing, blink, a bounce that reads as the mood | BACKLOG |
 | MED-11 | A recorded line for every moment, a clip for every celebration | BACKLOG |
@@ -37,10 +37,10 @@ personalised clips stay feature-flagged and unbuilt.
 
 ## What a learner can actually see and hear
 
-Still nothing generated reaches a child. Nori is a Material `pets` icon in a
-coloured circle; the repository contains no art files and no `assets:` block,
-no pubspec declares an audio or video plugin, and both player seams are null
-in `main.dart`, so Listen and Play never render. MED-08 is the correction.
+On the Junior home: the approved picture of Nori, a Listen button that reads
+the caption in the cast guide voice, and a play badge that runs the Wan clip
+silently. Everywhere else, still the mood icon and a caption — the delivery
+path is finished, the art pack is not.
 
 ## Content coverage
 
@@ -53,5 +53,5 @@ in `main.dart`, so Listen and Play never render. MED-08 is the correction.
 
 ## Owner decision waiting
 
-None. MED-07 was approved and merged. MED-08 is in progress and will return
-for a manual test.
+Run the MED-08 manual test in `docs/modules/MED-08/MANUAL_TEST.md`. Everything
+it needs is already approved, and the Junior home shows all three at once.

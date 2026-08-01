@@ -6,15 +6,18 @@ import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/quiz/presentation/junior_quiz_page.dart';
 import 'package:student_app/features/quiz/presentation/senior_quiz_page.dart';
+import 'package:video_player/video_player.dart';
 
 /// LRN-03/04 player: resumes where the learner stopped, reports position to the
 /// server on a heartbeat, shows captions, offers refresh moments at safe
 /// boundaries in long videos, and only offers completion once the server has
 /// credited enough watch time. QZ-03/QZ-04 add Take quiz by experience.
 ///
-/// The video surface itself is a placeholder until MED-01 lands approved
-/// provider playback; everything around it — accounting, resume, captions,
-/// checkpoints, completion — is the real path.
+/// MED-08 replaced the placeholder surface with a real decoder for any topic
+/// that carries a playable URL. Every topic in the catalog today is a `fixture`
+/// with a slug rather than a URL, so the deterministic one-second clock is
+/// still what most sessions run on — and it stays, because a test should not
+/// need a codec to prove that watch credit is accounted correctly.
 class TopicPlayerPage extends StatefulWidget {
   const TopicPlayerPage({
     super.key,
@@ -30,6 +33,7 @@ class TopicPlayerPage extends StatefulWidget {
     this.refreshPromptsEnabled,
     this.tick = const Duration(seconds: 1),
     this.onProgress,
+    this.openVideo,
   });
 
   final CatalogTopic topic;
@@ -51,6 +55,11 @@ class TopicPlayerPage extends StatefulWidget {
   /// Playback clock interval, shortened by tests.
   final Duration tick;
   final ValueChanged<CatalogTopic>? onProgress;
+
+  /// How a playable topic is opened (MED-08). Left null this is the real
+  /// decoder; a test that wants the video path without a codec supplies a
+  /// double. Topics with no playable URL never call it at all.
+  final VideoPlayerController Function(Uri url)? openVideo;
 
   @override
   State<TopicPlayerPage> createState() => _TopicPlayerPageState();
@@ -103,12 +112,78 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
   void initState() {
     super.initState();
     _loadCheckpoints();
+    unawaited(_openVideo());
   }
 
   @override
   void dispose() {
     _clock?.cancel();
+    _video?.removeListener(_onVideoChanged);
+    _video?.dispose();
     super.dispose();
+  }
+
+  VideoPlayerController? _video;
+
+  /// A URL this device can actually decode, or null (MED-08).
+  ///
+  /// Deliberately a question about the reference rather than about the provider
+  /// name: a `fixture` topic carries a slug, an embed-only provider carries an
+  /// id, and neither parses as something to fetch. Anything that does parse as
+  /// http is played.
+  Uri? get _playableUrl {
+    final ref = _topic.videoRef;
+    if (ref == null || ref.isEmpty) return null;
+    final uri = Uri.tryParse(ref);
+    if (uri == null || !uri.hasScheme) return null;
+    if (uri.scheme != 'http' && uri.scheme != 'https') return null;
+    return uri;
+  }
+
+  Future<void> _openVideo() async {
+    final url = _playableUrl;
+    if (url == null) return;
+    final open = widget.openVideo ?? VideoPlayerController.networkUrl;
+    VideoPlayerController? controller;
+    try {
+      controller = open(url);
+      _video = controller;
+      await controller.initialize();
+      if (!mounted || _video != controller) {
+        await controller.dispose();
+        return;
+      }
+      // Resume exactly where the server said the learner stopped.
+      if (_position > 0) {
+        await controller.seekTo(Duration(seconds: _position));
+      }
+      controller.addListener(_onVideoChanged);
+      setState(() {});
+    } catch (_) {
+      // A topic that will not decode falls back to the clock, which still
+      // credits watch time honestly. A learner sees the same controls either
+      // way, so nothing here needs an error message.
+      if (_video == controller) _video = null;
+      try {
+        await controller?.dispose();
+      } catch (_) {
+        // Never opened.
+      }
+    }
+  }
+
+  /// The decoder is the clock when there is one: position comes from the frames
+  /// actually shown, not from a timer that assumes they were.
+  void _onVideoChanged() {
+    final controller = _video;
+    if (!mounted || controller == null) return;
+    final value = controller.value;
+    if (!value.isInitialized) return;
+    if (value.isPlaying != _playing) {
+      setState(() => _playing = value.isPlaying);
+    }
+    final seconds = value.position.inSeconds;
+    if (seconds != _position) _applyPosition(seconds);
   }
 
   Future<void> _loadCheckpoints() async {
@@ -134,6 +209,13 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
       _playing = !_playing;
       _notice = null;
     });
+    final video = _video;
+    if (video != null) {
+      // The decoder reports its own position, so no timer runs beside it.
+      unawaited(_playing ? video.play() : video.pause());
+      if (!_playing) _sendHeartbeat();
+      return;
+    }
     if (_playing) {
       _clock = Timer.periodic(widget.tick, (_) => _advance());
     } else {
@@ -147,15 +229,22 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
     _clock = null;
   }
 
-  void _advance() {
+  void _advance() => _applyPosition(_position + 1);
+
+  /// One place decides what a new position means, whichever clock produced it:
+  /// the timer for fixture topics, the decoder for real ones. Checkpoints,
+  /// heartbeats, and completion therefore behave identically on both paths, and
+  /// the server contract never learns which one was running.
+  void _applyPosition(int next) {
     if (!mounted) return;
-    final next = _position + 1;
+    final previous = _position;
     setState(() {
-      _position = next >= _topic.durationSeconds ? _topic.durationSeconds : next;
-      _secondsSinceBeat++;
+      _position = next.clamp(0, _topic.durationSeconds);
+      _secondsSinceBeat += (_position - previous).abs();
     });
     if (_position >= _topic.durationSeconds) {
       _stopClock();
+      unawaited(_video?.pause() ?? Future.value());
       setState(() => _playing = false);
       _sendHeartbeat();
       return;
@@ -178,6 +267,7 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
   /// A refresh moment stops playback rather than talking over the video.
   void _pauseFor(RefreshCheckpoint checkpoint) {
     _stopClock();
+    unawaited(_video?.pause() ?? Future.value());
     setState(() {
       _playing = false;
       _pending = checkpoint;
@@ -304,6 +394,7 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
               junior: widget.junior,
               playing: _playing && !_reducedMotion,
               hasVideo: _topic.hasVideo,
+              video: _video,
               copy: copy,
             ),
             const SizedBox(height: NanoSpacing.sm),
@@ -325,12 +416,20 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                           .toDouble(),
                       max: _topic.durationSeconds.toDouble(),
                       onChanged: _topic.hasVideo && pending == null
-                          ? (value) => setState(
-                                // Content may forbid skipping ahead, so the
-                                // scrubber stops where the server would clamp.
-                                () => _position =
-                                    value.round().clamp(0, _seekCeiling),
-                              )
+                          ? (value) {
+                              // Content may forbid skipping ahead, so the
+                              // scrubber stops where the server would clamp.
+                              final target =
+                                  value.round().clamp(0, _seekCeiling);
+                              setState(() => _position = target);
+                              // The decoder follows the clamped position, never
+                              // the raw gesture, so no-skip-ahead holds on the
+                              // real path as well as the fixture one.
+                              unawaited(
+                                _video?.seekTo(Duration(seconds: target)) ??
+                                    Future.value(),
+                              );
+                            }
                           : null,
                       onChangeEnd: (_) => _sendHeartbeat(),
                     ),
@@ -566,34 +665,56 @@ class _PlayerSurface extends StatelessWidget {
     required this.junior,
     required this.playing,
     required this.hasVideo,
+    required this.video,
     required this.copy,
   });
 
   final bool junior;
   final bool playing;
   final bool hasVideo;
+
+  /// The decoder for a topic that carries a playable URL, or null for a fixture
+  /// topic, which is every topic in the catalog today.
+  final VideoPlayerController? video;
   final NanoCopy copy;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final controller = video;
+    final radius = BorderRadius.circular(
+      junior ? NanoRadii.junior : NanoRadii.senior,
+    );
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(
-            junior ? NanoRadii.junior : NanoRadii.senior,
-          ),
+          borderRadius: radius,
         ),
-        child: Center(
-          child: hasVideo
-              ? Icon(
-                  playing ? Icons.graphic_eq : Icons.movie_outlined,
-                  size: junior ? 56 : 44,
-                )
-              : Text(copy.videoUnavailable, style: theme.textTheme.bodyMedium),
-        ),
+        child: controller != null && controller.value.isInitialized
+            ? ClipRRect(
+                borderRadius: radius,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: SizedBox(
+                    width: controller.value.size.width,
+                    height: controller.value.size.height,
+                    child: VideoPlayer(controller),
+                  ),
+                ),
+              )
+            : Center(
+                child: hasVideo
+                    ? Icon(
+                        playing ? Icons.graphic_eq : Icons.movie_outlined,
+                        size: junior ? 56 : 44,
+                      )
+                    : Text(
+                        copy.videoUnavailable,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+              ),
       ),
     );
   }

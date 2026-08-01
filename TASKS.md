@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-08 Real Playback and Companion Art Rendering
+- [ ] MED-08 owner manual test
 
 ## Completed
 

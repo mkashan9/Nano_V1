@@ -151,10 +151,13 @@ class _SeniorHomeContent extends StatelessWidget {
             children: [
               const SizedBox(height: NanoSpacing.md),
               // CMP-03: Senior keeps the companion small and beside the header.
+              // Seed 1 for the same reason as Junior: the personalised greeting
+              // cannot be recorded, so home uses the one that can (ADR-0008).
               const CompanionSurfaceStage(
                 surface: CompanionSurface.home,
                 junior: false,
                 entryEvent: CompanionEvent.home,
+                seed: 1,
               ),
               Row(
                 children: [
