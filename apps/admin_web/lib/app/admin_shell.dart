@@ -1,3 +1,4 @@
+import 'package:admin_web/features/analytics/presentation/platform_analytics_page.dart';
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
 import 'package:admin_web/features/games/presentation/game_admin_page.dart';
 import 'package:admin_web/features/gamification/presentation/gamification_admin_page.dart';
@@ -30,6 +31,7 @@ class AdminShell extends StatelessWidget {
     this.notificationAdminRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
+    this.platformAnalyticsRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -49,6 +51,7 @@ class AdminShell extends StatelessWidget {
   final NotificationAdminRepository? notificationAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
+  final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -165,6 +168,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.notificationAdminRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
+    this.platformAnalyticsRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
   });
@@ -179,6 +183,7 @@ class AdminDestinationPage extends StatelessWidget {
   final NotificationAdminRepository? notificationAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
+  final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
 
@@ -237,6 +242,14 @@ class AdminDestinationPage extends StatelessWidget {
         notificationAdminRepository != null) {
       return NotificationAdminPage(
         repository: notificationAdminRepository!,
+      );
+    }
+
+    if (destination.id == 'analytics' &&
+        principal.role == AppRole.superadmin &&
+        platformAnalyticsRepository != null) {
+      return PlatformAnalyticsPage(
+        repository: platformAnalyticsRepository!,
       );
     }
 

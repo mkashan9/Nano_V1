@@ -123,6 +123,47 @@ class NanoCopy {
   String get content => isUrdu ? 'مواد' : 'Content';
   String get moderation => isUrdu ? 'نگرانی' : 'Moderation';
   String get analytics => isUrdu ? 'تجزیات' : 'Analytics';
+  String get analyticsPageTitle =>
+      isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
+  String get analyticsPageSubtitle => isUrdu
+      ? 'محفوظ مجموعی اعداد — کوئی ذاتی رابطہ یا نمبر نہیں۔'
+      : 'Safe aggregates only — no personal contact or marks.';
+  String get analyticsHealthTitle =>
+      isUrdu ? 'صحت' : 'Platform health';
+  String get analyticsCatalogTitle =>
+      isUrdu ? 'کیٹلاگ' : 'Catalog readiness';
+  String get analyticsActivityTitle =>
+      isUrdu ? '۷ دن کی سرگرمی' : 'Last 7 days';
+  String get analyticsActionsTitle =>
+      isUrdu ? 'آڈٹ اعمال' : 'Audit actions (7d)';
+  String get analyticsActionsEmpty =>
+      isUrdu ? 'ابھی کوئی آڈٹ نہیں۔' : 'No audit events yet.';
+  String get analyticsActiveSchools =>
+      isUrdu ? 'فعال اسکول' : 'Active schools';
+  String get analyticsSuspendedSchools =>
+      isUrdu ? 'معطل اسکول' : 'Suspended schools';
+  String get analyticsActiveLearners =>
+      isUrdu ? 'فعال طلبہ' : 'Active learners';
+  String get analyticsIndependentLearners =>
+      isUrdu ? 'آزاد طلبہ' : 'Independent learners';
+  String get analyticsOpenIncidents =>
+      isUrdu ? 'کھلے واقعات' : 'Open incidents';
+  String get analyticsAssetsReview =>
+      isUrdu ? 'جائزہ باقی' : 'Assets to review';
+  String get analyticsPublishedSubjects =>
+      isUrdu ? 'شائع مضامین' : 'Published subjects';
+  String get analyticsPublishedTopics =>
+      isUrdu ? 'شائع موضوعات' : 'Published topics';
+  String get analyticsLiveGames => isUrdu ? 'لائیو گیمز' : 'Live games';
+  String get analyticsLiveNotifications =>
+      isUrdu ? 'لائیو اطلاعات' : 'Live templates';
+  String get analyticsTopicCompletions =>
+      isUrdu ? 'مکمل موضوعات' : 'Topic completions';
+  String get analyticsXpAwards => isUrdu ? 'ایکس پی' : 'XP awards';
+  String get analyticsQuizPasses =>
+      isUrdu ? 'کوئز پاس' : 'Quiz passes';
+  String get analyticsAuditEvents =>
+      isUrdu ? 'آڈٹ واقعات' : 'Audit events';
   String get audit => isUrdu ? 'آڈٹ' : 'Audit';
 
   String get loading => isUrdu ? 'لوڈ ہو رہا ہے' : 'Loading';

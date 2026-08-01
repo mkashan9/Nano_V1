@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-07 Notification Administration
+- [ ] ADM-08 Platform Analytics
 
 ## Completed
 
@@ -49,5 +49,5 @@
 - [x] ADM-04 Learning Stack Content Administration
 - [x] ADM-05 Gamification Administration
 - [x] ADM-06 Game Administration
-- [ ] ADM-07 Notification Administration
+- [x] ADM-07 Notification Administration
 - [ ] ADM-08 Platform Analytics
