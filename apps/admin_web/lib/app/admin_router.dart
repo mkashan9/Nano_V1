@@ -21,6 +21,7 @@ GoRouter createAdminRouter({
   QuestionBankRepository? questionBankRepository,
   TopicQuizRepository? topicQuizRepository,
   AssetReviewRepository? assetReviewRepository,
+  PlatformDashboardRepository? platformDashboardRepository,
 }) {
   final visible = NavCatalog.visibleFor(principal);
   final destinations = visible.isNotEmpty
@@ -116,6 +117,7 @@ GoRouter createAdminRouter({
             questionBankRepository: questionBankRepository,
             topicQuizRepository: topicQuizRepository,
             assetReviewRepository: assetReviewRepository,
+            platformDashboardRepository: platformDashboardRepository,
           );
         },
         branches: [
@@ -131,6 +133,7 @@ GoRouter createAdminRouter({
                     questionBankRepository: questionBankRepository,
                     topicQuizRepository: topicQuizRepository,
                     assetReviewRepository: assetReviewRepository,
+                    platformDashboardRepository: platformDashboardRepository,
                   ),
                 ),
               ],

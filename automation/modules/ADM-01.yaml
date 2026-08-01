@@ -1,16 +1,29 @@
 id: ADM-01
 name: "Superadmin Dashboard"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - AUTH-03
   - FND-04
+dependency_notes: >
+  AUTH-03 and FND-04 already give platform staff a signed-in admin_web shell.
+  QZ and MED-05 filled Content and Moderation. This module owns the Platform
+  home: safe operational metrics, school directory search summaries, and recent
+  audit previews. School create/codes wait on ADM-02; suspend/replace-admin wait
+  on ADM-03. Content and Moderation destinations stay.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-01/
@@ -19,27 +32,49 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "ADM-01 Global School and Account Operations"
+  - "Search across schools with safe summaries"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-01"
 ui_references: []
 database_scope: []
-server_functions: []
+server_functions:
+  - "public.platform_dashboard"
 acceptance:
+  - Platform home shows safe aggregate metrics for superadmins only
+  - School search returns code, name, status, and counts â€” never email or guardian data
+  - Recent audit preview omits personal contact fields
+  - Content and Moderation destinations remain reachable unchanged
+  - Non-platform roles cannot execute platform_dashboard
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm01_platform_dashboard.sql
+  - packages/nano_domain/test/platform_dashboard_test.dart
+  - packages/nano_data/test/platform_dashboard_repository_test.dart
+  - apps/admin_web/test/platform_dashboard_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - platform_dashboard_superadmin_only
+  - school_summary_minimizes_pii
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Sign in as platform superadmin and open Platform
+  - Confirm metric cards and school search return safe summaries
+  - Confirm Content and Moderation still open
+  - Confirm school admin preview does not see Platform metrics
+rollback_notes: >
+  Revert the branch and migration. Platform falls back to the destination stub.
 requires_owner_test: true
+owner_decisions_locked:
+  split: >
+    ADM-01 is the operational dashboard and read-only school directory search.
+    ADM-02 owns school create/codes/status writes. ADM-03 owns suspend, session
+    revoke, and replace-admin with reason + stronger auth.
+  privacy: >
+    School summaries expose id, code, name, status, learner/staff counts only.
+    Audit preview exposes action, target_type, school code, and timestamp â€”
+    never email, guardian, marks, or attendance.

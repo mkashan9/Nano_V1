@@ -1,3 +1,4 @@
+export 'admin/platform_dashboard.dart';
 export 'environment/build_info.dart';
 export 'environment/environment_config.dart';
 export 'environment/feature_flag.dart';

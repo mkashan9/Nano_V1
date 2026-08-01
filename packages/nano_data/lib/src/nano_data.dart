@@ -1,3 +1,4 @@
+export 'admin/platform_dashboard_repository.dart';
 export 'home/student_home_repository.dart';
 export 'learning/checkpoint_repository.dart';
 export 'learning/learning_catalog_repository.dart';

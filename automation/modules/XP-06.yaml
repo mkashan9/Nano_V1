@@ -1,7 +1,7 @@
 d: XP-06
 name: "Shareable Achievement and Score Cards"
 release: R5
-status: USER_TEST
+status: DONE
 dependencies:
   - XP-03
 dependency_notes: >
@@ -72,9 +72,11 @@ owner_decisions_locked:
   privacy: >
     First token of display_name only. No topic titles on quiz cards. No school
     records. Owner clipboard share is allowed even when show_achievements is off
-    for the public projection — sharing is an explicit action.
+    for the public projection â€” sharing is an explicit action.
   featured: >
     Max three pins. set_featured_achievements replaces the set atomically.
     Pins reference achievement_awards rows the learner already owns.
   deferred: >
     Rendered share images and WhatsApp/Communities targets wait on SOC-04.
+owner_test_result: approved
+owner_approved_at: "2026-08-02T02:15:00Z"

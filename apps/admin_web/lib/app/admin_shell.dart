@@ -1,5 +1,6 @@
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
 import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
+import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_design_system/nano_design_system.dart';
@@ -19,6 +20,7 @@ class AdminShell extends StatelessWidget {
     this.questionBankRepository,
     this.topicQuizRepository,
     this.assetReviewRepository,
+    this.platformDashboardRepository,
   });
 
   final EnvironmentConfig config;
@@ -31,6 +33,7 @@ class AdminShell extends StatelessWidget {
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
   final AssetReviewRepository? assetReviewRepository;
+  final PlatformDashboardRepository? platformDashboardRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +143,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.questionBankRepository,
     this.topicQuizRepository,
     this.assetReviewRepository,
+    this.platformDashboardRepository,
   });
 
   final NavDestination destination;
@@ -147,9 +151,20 @@ class AdminDestinationPage extends StatelessWidget {
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
   final AssetReviewRepository? assetReviewRepository;
+  final PlatformDashboardRepository? platformDashboardRepository;
 
   @override
   Widget build(BuildContext context) {
+    // ADM-01: Platform home absorbs the previous stub without replacing
+    // Content or Moderation.
+    if (destination.id == 'platform' &&
+        principal.role == AppRole.superadmin &&
+        platformDashboardRepository != null) {
+      return PlatformDashboardPage(
+        repository: platformDashboardRepository!,
+      );
+    }
+
     if (destination.id == 'content' &&
         principal.role == AppRole.superadmin &&
         questionBankRepository != null &&
