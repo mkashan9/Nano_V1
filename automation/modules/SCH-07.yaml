@@ -1,45 +1,76 @@
 id: SCH-07
 name: "School Reports"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SCH-05
   - SCH-06
+dependency_notes: >
+  SCH-05 assignment coverage and SCH-06 periods/policies feed this report.
+  Marks PDFs and attendance completion rates stay deferred to MRK/ATT.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-07/
   - automation/modules/SCH-07.yaml
+  - automation/modules/SCH-06.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook ANL-01 school reports slice"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-07"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.school_memberships
+  - public.classes
+  - public.class_subjects
+  - public.teacher_assignments
+  - public.student_enrollments
+  - public.result_periods
+  - public.school_marks_policies
+server_functions:
+  - "public.school_reports_summary"
 acceptance:
+  - School admin Reports hub shows privacy-safe aggregates
+  - Coverage, enrollment, and workload sections visible
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch07_school_reports.sql
+  - packages/nano_domain/test/school_reports_test.dart
+  - packages/nano_data/test/school_reports_repository_test.dart
+  - apps/admin_web/test/school_reports_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
+  - privacy_safe_payload
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Reports as school admin
+  - Confirm counts and workload list
+rollback_notes: >
+  Revert the branch and migration. Reports returns to stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Aggregate operational reports only. No PDF/CSV. No learner contact fields.
+  deferred: >
+    Attendance/marks rates; report card PDFs; ANA-01 expansion.

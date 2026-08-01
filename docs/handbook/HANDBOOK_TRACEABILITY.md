@@ -55,7 +55,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | BACKLOG |
 | Handbook CLS-01 Classroom | CLS-01,CLS-02,CLS-03 | teacher_app | Classroom | announcements | ack tests | BACKLOG |
 | Handbook SCH-01 School setup branding | SCH-01 | admin_web | School dash | schools | branding | DONE |
-| Handbook SCH-02 Academic structure | SCH-02,SCH-06 | admin_web | Classes | classes | structure+policies | USER_TEST |
+| Handbook SCH-02 Academic structure | SCH-02,SCH-06 | admin_web | Classes | classes | structure+policies | DONE |
 | Handbook SCH-03 Users imports enrollment | SCH-03,SCH-04 | admin_web | Imports | users | excel import | DONE |
 | Handbook SCH-04 Teacher assignment | SCH-05 | admin_web | Assignment matrix | assignments | matrix | DONE |
 | Handbook ADM-01 Global school accounts | ADM-01,ADM-02,ADM-03 | admin_web | Superadmin | schools,users | admin | DONE |
@@ -91,7 +91,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | DONE |
 | Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | DONE |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
-| School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | BACKLOG |
+| School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | USER_TEST |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |
 | Offline / poor network | SYNC-01,QA-03,FND-05 | apps | offline states | queue | offline tests | USER_TEST |
 | Pilot release preparation | QA-06 | all | checklist | N/A | gate | BACKLOG |

@@ -1,7 +1,7 @@
 id: SCH-06
 name: "Marks and Result Policies"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - SCH-01
 dependency_notes: >

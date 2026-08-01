@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R6 Administration
-- **Current module:** SCH-06 Marks and Result Policies
+- **Current module:** SCH-07 School Reports
 - **Current status:** USER_TEST
-- **Current branch:** module/SCH-06-marks-result-policies
-- **Last completed module:** SCH-05
+- **Current branch:** module/SCH-07-school-reports
+- **Last completed module:** SCH-06
 - **Application name:** Nano
 
 ## Releases
 
 - R1?R5: complete
-- R6 Administration: ADM-01?ADM-08 DONE; SCH-01?SCH-05 DONE; SCH-06 USER_TEST
+- R6 Administration: ADM-01?ADM-08 DONE; SCH-01?SCH-06 DONE; SCH-07 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/SCH-06/MANUAL_TEST.md`. Open Settings ? Policies as school admin.
+Run `docs/modules/SCH-07/MANUAL_TEST.md`. Open Reports as school admin.

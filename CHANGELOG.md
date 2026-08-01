@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SCH-07: school admins open Reports for privacy-safe coverage, enrollment, and workload summaries
 - SCH-06: school admins configure marks/result policies and result periods in Settings
 - SCH-05: school admins assign teachers to class/section/subject with coverage and workload
 - SCH-04: school admins manage students (create, suspend, enroll) and CSV import from Students
