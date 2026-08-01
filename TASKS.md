@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] CMP-02 owner manual test
+- [ ] CMP-03 owner manual test
 
 ## Completed
 
@@ -31,6 +31,7 @@
 - [x] QZ-05
 - [x] QZ-06
 - [x] CMP-01
+- [x] CMP-02
 
 ## Upcoming
 

@@ -5,7 +5,8 @@ import 'package:student_app/main.dart';
 
 void main() {
   testWidgets('Urdu locale flips RTL and translates greeting', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(800, 900));
+    // Tall enough for the Junior home companion (CMP-03) plus the subjects grid.
+    await tester.binding.setSurfaceSize(const Size(800, 1100));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     const config = EnvironmentConfig(

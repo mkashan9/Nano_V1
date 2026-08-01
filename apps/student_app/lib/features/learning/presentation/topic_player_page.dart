@@ -252,6 +252,11 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
         _busy = false;
       });
       widget.onProgress?.call(_topic);
+      // CMP-03: completion is worth a word, and only once the server agreed.
+      NanoCompanionScope.maybeOf(context)?.report(
+        CompanionEvent.videoComplete,
+        surface: CompanionSurface.learning,
+      );
     } on TopicGateException catch (error) {
       if (!mounted) return;
       setState(() {
@@ -460,9 +465,12 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
               ),
             ],
             const SizedBox(height: NanoSpacing.lg),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: CompanionSlot(size: widget.junior ? 96 : 72),
+            // CMP-03: the learning surface makes this Explorer Nori, sized by
+            // placement rather than by this page.
+            CompanionSurfaceStage(
+              surface: CompanionSurface.learning,
+              junior: widget.junior,
+              entryEvent: CompanionEvent.videoStart,
             ),
           ],
         ),

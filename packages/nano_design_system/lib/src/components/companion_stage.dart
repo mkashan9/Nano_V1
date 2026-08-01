@@ -22,6 +22,7 @@ class CompanionStage extends StatelessWidget {
     this.companionName,
     this.locale,
     this.size,
+    this.placement,
     this.onDismiss,
     this.action,
   });
@@ -34,15 +35,39 @@ class CompanionStage extends StatelessWidget {
 
   /// Overrides the size the reaction's prominence would pick.
   final double? size;
+
+  /// Where this surface puts the companion (CMP-03). Sizing follows it, and a
+  /// hidden placement renders nothing at all.
+  final CompanionPlacement? placement;
   final VoidCallback? onDismiss;
 
   /// Optional primary action for a story card ("Start", "See it", …).
   final Widget? action;
 
+  /// Art size for this placement. Junior guidance leads; Senior stays beside
+  /// content that already speaks.
+  static double artSizeFor({
+    required CompanionPlacement? placement,
+    required bool prominent,
+    required bool storyCard,
+  }) {
+    return switch (placement) {
+      null || CompanionPlacement.inline => storyCard
+          ? (prominent ? 120 : 96)
+          : (prominent ? 96 : 56),
+      CompanionPlacement.hero =>
+        storyCard ? (prominent ? 140 : 104) : (prominent ? 120 : 96),
+      CompanionPlacement.aside =>
+        storyCard ? (prominent ? 96 : 72) : (prominent ? 64 : 48),
+      CompanionPlacement.hidden => 0,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final current = reaction;
     if (current == null) return const SizedBox.shrink();
+    if (placement == CompanionPlacement.hidden) return const SizedBox.shrink();
 
     final resolvedLocale =
         locale ?? NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
@@ -52,6 +77,12 @@ class CompanionStage extends StatelessWidget {
     final caption = current.captionFor(resolvedLocale, companionName: name);
     final storyCard =
         current.presentation == CompanionPresentation.storyCard;
+    final artSize = size ??
+        artSizeFor(
+          placement: placement,
+          prominent: current.prominent,
+          storyCard: storyCard,
+        );
 
     return AnimatedSwitcher(
       duration: NanoMotion.resolve(context, NanoMotion.normal),
@@ -63,7 +94,7 @@ class CompanionStage extends StatelessWidget {
                 copy: copy,
                 companionName: name,
                 caption: caption,
-                size: size,
+                artSize: artSize,
                 onDismiss: onDismiss,
                 action: action,
               )
@@ -72,7 +103,7 @@ class CompanionStage extends StatelessWidget {
                 copy: copy,
                 companionName: name,
                 caption: caption,
-                size: size,
+                artSize: artSize,
                 onDismiss: onDismiss,
               ),
       ),
@@ -86,7 +117,7 @@ class _InlineStage extends StatelessWidget {
     required this.copy,
     required this.companionName,
     required this.caption,
-    required this.size,
+    required this.artSize,
     required this.onDismiss,
   });
 
@@ -94,7 +125,7 @@ class _InlineStage extends StatelessWidget {
   final NanoCopy copy;
   final String companionName;
   final String caption;
-  final double? size;
+  final double artSize;
   final VoidCallback? onDismiss;
 
   @override
@@ -104,7 +135,7 @@ class _InlineStage extends StatelessWidget {
       children: [
         _CompanionArt(
           reaction: reaction,
-          size: size ?? (reaction.prominent ? 96 : 56),
+          size: artSize,
           companionName: companionName,
         ),
         if (reaction.showsCaption && caption.isNotEmpty) ...[
@@ -136,7 +167,7 @@ class _StoryCard extends StatelessWidget {
     required this.copy,
     required this.companionName,
     required this.caption,
-    required this.size,
+    required this.artSize,
     required this.onDismiss,
     required this.action,
   });
@@ -145,7 +176,7 @@ class _StoryCard extends StatelessWidget {
   final NanoCopy copy;
   final String companionName;
   final String caption;
-  final double? size;
+  final double artSize;
   final VoidCallback? onDismiss;
   final Widget? action;
 
@@ -182,7 +213,7 @@ class _StoryCard extends StatelessWidget {
               const SizedBox(height: NanoSpacing.sm),
               _CompanionArt(
                 reaction: reaction,
-                size: size ?? (reaction.prominent ? 140 : 104),
+                size: artSize,
                 companionName: companionName,
               ),
               if (reaction.showsCaption && caption.isNotEmpty) ...[

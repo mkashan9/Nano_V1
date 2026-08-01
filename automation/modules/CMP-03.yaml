@@ -1,7 +1,7 @@
 id: CMP-03
 name: "Junior and Senior Companion Placement"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - CMP-02
   - STU-03
@@ -21,26 +21,56 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_design_system/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for CMP-03"
-ui_references: []
+  - "CMP-01 business rules: Junior sees a larger, more frequent companion; Senior a smaller, contextual one"
+  - "Chapter 10 placement: the companion belongs to the surface it guides, one at a time"
+  - "Classroom Mode suppresses non-essential interruptions without shifting layout"
+ui_references:
+  - CompanionSlot
+  - CompanionStage
+  - JuniorHome
+  - SeniorHome
 database_scope: []
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - One placement table resolves every surface for both experiences
+  - Junior is never quieter than Senior on the same surface
+  - Social and settings carry no companion in either experience
+  - One session-scoped controller owns the runtime, so cooldowns and the appearance budget survive navigation
+  - Only the surface in front renders a reaction
+  - Screens report moments; the controller applies quiet lists, cooldowns, budget, and Classroom Mode
+  - A held-back reaction costs no layout height
+  - Time is injectable, so session behaviour is unit tested rather than waited for
+  - A resume after a long gap is greeted; a short gap is not
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/companion_placement_test.dart
+  - packages/nano_design_system/test/companion_controller_test.dart
+  - apps/student_app/test/companion_placement_wiring_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_provider_keys_in_flutter
+  - companion_cannot_author_scores
+accessibility_checks:
+  - layout_stable_when_companion_is_held_back
+  - caption_shown_when_voice_is_off
+  - static_art_under_reduced_motion
+  - companion_dismissible_on_every_surface
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Land on Junior home and confirm a large companion above the greeting, dismissible without shifting the page
+  - Navigate away and back and confirm the greeting does not repeat
+  - Open a topic and confirm the learning companion, then complete it and confirm the celebration follows the save
+  - Open Progress with nothing left to suggest and confirm the companion fills the panel
+  - Switch to Senior and confirm home is quiet and the learning companion is smaller
+  - Confirm settings shows no companion at either experience
+  - Enable Classroom Mode and confirm no ordinary guidance anywhere, with identical layout
+  - Rename the companion and confirm the home caption and badge follow
+rollback_notes: "Revert module branch commits; no database changes to undo"
 requires_owner_test: true
