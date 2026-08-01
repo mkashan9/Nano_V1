@@ -144,6 +144,7 @@ class SessionPrincipal {
           'platform.content',
           'platform.gamification',
           'platform.games',
+          'platform.notifications',
           'platform.moderation',
           'platform.analytics',
           'platform.audit',

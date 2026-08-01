@@ -63,8 +63,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | ADM-03 | Global User and Account Control | R6 | DONE | ADM-01, SEC-03 |
 | ADM-04 | Learning Stack Content Administration | R6 | DONE | ADM-01, LRN-01 |
 | ADM-05 | Gamification Administration | R6 | DONE | ADM-01, XP-02 |
-| ADM-06 | Game Administration | R6 | USER_TEST | ADM-01 |
-| ADM-07 | Notification Administration | R6 | BACKLOG | ADM-01 |
+| ADM-06 | Game Administration | R6 | DONE | ADM-01 |
+| ADM-07 | Notification Administration | R6 | USER_TEST | ADM-01 |
 | ADM-08 | Platform Analytics | R6 | BACKLOG | ADM-01 |
 | SCH-01 | School Dashboard and Branding | R6 | BACKLOG | AUTH-03, SEC-02 |
 | SCH-02 | Classes, Grades, Sections, and Subjects | R6 | BACKLOG | SCH-01 |

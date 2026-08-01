@@ -61,7 +61,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook ADM-01 Global school accounts | ADM-01,ADM-02,ADM-03 | admin_web | Superadmin | schools,users | admin | DONE |
 | Handbook ADM-02 Learning content admin | ADM-04 | admin_web | Content admin | content | admin | DONE |
 | Handbook GAM-01 admin ops | ADM-05 | admin_web | Superadmin | gamification | admin | DONE |
-| Handbook game catalog admin | ADM-06 | admin_web | Superadmin | games | admin | USER_TEST |
+| Handbook game catalog admin | ADM-06 | admin_web | Superadmin | games | admin | DONE |
+| Handbook notification templates admin | ADM-07 | admin_web | Superadmin | notifications | admin | USER_TEST |
 | Handbook GME-01 Games secure host | GME-01,GME-02,GME-05,GME-07 | student_app | Games | game_sessions | verify score | BACKLOG |
 | Handbook SOC-01 Friends challenges sharing | SOC-01,SOC-02,SOC-03,SOC-04,LGE-03 | student_app | Social | friends | social+block | BACKLOG |
 | Handbook COM-01 Senior Communities | COM-01..COM-06 | student_app | Communities | communities | junior exclusion | BACKLOG |

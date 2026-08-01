@@ -1,7 +1,7 @@
 id: ADM-06
 name: "Game Administration"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - ADM-01
 dependency_notes: >

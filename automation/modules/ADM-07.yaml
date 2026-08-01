@@ -1,44 +1,78 @@
 id: ADM-07
 name: "Notification Administration"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
+dependency_notes: >
+  ADM-01 owns the admin shell. This module bootstraps notification_templates and
+  a Notifications hub. Student inbox (STU-06), push (NOT-01), and quiet hours
+  (NOT-02) stay deferred.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-07/
   - automation/modules/ADM-07.yaml
+  - automation/modules/ADM-06.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook NOT-01 admin half — templates"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-07"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.notification_templates
+server_functions:
+  - "public.list_notification_templates_admin"
+  - "public.create_notification_template_draft"
+  - "public.publish_notification_template"
+  - "public.disable_notification_template"
 acceptance:
+  - Platform staff can list seeded templates and create drafts
+  - Platform staff can publish a draft template
+  - Platform staff can disable a template with a non-empty reason
+  - Learners cannot call notification admin RPCs
+  - Notifications destination is wired in admin_web
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm07_notification_admin.sql
+  - packages/nano_domain/test/notification_admin_ops_test.dart
+  - packages/nano_data/test/notification_admin_repository_test.dart
+  - apps/admin_web/test/notification_admin_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - platform_admin_only_rpcs
+  - disable_requires_reason
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Notifications, confirm seeded templates
+  - Publish Weekly digest
+  - Create a new draft and publish
+  - Disable a published template with a reason
+rollback_notes: >
+  Revert the branch and migration. Notifications destination disappears.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Template draft/publish/disable only. No inbox fan-out or push send.
+  deferred: >
+    STU-06 inbox, NOT-01 push/tokens, NOT-02 quiet hours and mutes.
