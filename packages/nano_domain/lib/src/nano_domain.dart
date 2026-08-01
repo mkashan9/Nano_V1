@@ -1,4 +1,5 @@
 export 'admin/platform_dashboard.dart';
+export 'admin/platform_user_ops.dart';
 export 'admin/school_admin_ops.dart';
 export 'environment/build_info.dart';
 export 'environment/environment_config.dart';

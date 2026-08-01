@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- ADM-03: platform staff can search users safely, suspend/restore with reason, replace school admin, and revoke sessions
 - ADM-02: platform staff can create schools with immutable codes, change status with an audited reason, and assign the first school admin
 
 - ADM-01: superadmin Platform home with safe metrics, school directory search, and audit preview; Content/Moderation stay on the existing shell
