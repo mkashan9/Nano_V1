@@ -11,6 +11,7 @@ export 'companion/companion_runtime.dart';
 export 'xp/achievement.dart';
 export 'xp/level_progress.dart';
 export 'xp/mission.dart';
+export 'xp/share_card.dart';
 export 'xp/streak.dart';
 export 'xp/xp_ledger.dart';
 export 'media/asset_review.dart';

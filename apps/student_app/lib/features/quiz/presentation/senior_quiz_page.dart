@@ -14,12 +14,16 @@ class SeniorQuizPage extends StatefulWidget {
     required this.repository,
     this.attemptRepository,
     this.topicTitle,
+    this.learnerDisplayName,
+    this.shareCards,
   });
 
   final String topicVersionId;
   final LearnerQuizRepository repository;
   final QuizAttemptRepository? attemptRepository;
   final String? topicTitle;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
 
   @override
   State<SeniorQuizPage> createState() => _SeniorQuizPageState();
@@ -161,6 +165,8 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
                           locale: locale,
                           retaking: _submitting,
                           onRetake: _load,
+                          learnerDisplayName: widget.learnerDisplayName,
+                          shareCards: widget.shareCards,
                         )
                       : flow.finished || _score != null
                           ? _FinishedPane(copy: copy, score: _score)

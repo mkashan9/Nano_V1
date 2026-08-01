@@ -18,6 +18,8 @@ class LearningCatalogPage extends StatefulWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.companionName,
+    this.learnerDisplayName,
+    this.shareCards,
     this.junior = true,
     this.onTopicOpen,
   });
@@ -29,6 +31,8 @@ class LearningCatalogPage extends StatefulWidget {
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
   final bool junior;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
@@ -92,6 +96,8 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
           learnerQuizRepository: widget.learnerQuizRepository,
           quizAttemptRepository: widget.quizAttemptRepository,
           companionName: widget.companionName,
+          learnerDisplayName: widget.learnerDisplayName,
+          shareCards: widget.shareCards,
           junior: widget.junior,
           onTopicOpen: widget.onTopicOpen,
         ),
@@ -134,6 +140,8 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
           learnerQuizRepository: widget.learnerQuizRepository,
           quizAttemptRepository: widget.quizAttemptRepository,
           companionName: widget.companionName,
+          learnerDisplayName: widget.learnerDisplayName,
+          shareCards: widget.shareCards,
           junior: widget.junior,
           onOpened: widget.onTopicOpen,
         ),

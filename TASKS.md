@@ -41,5 +41,6 @@
 - [x] XP-02 Levels and Thresholds
 - [x] XP-03 Achievements and Stickers
 - [x] XP-04 Daily and Weekly Missions
-- [ ] XP-05 Streaks and Gentle Motivation
+- [x] XP-05 Streaks and Gentle Motivation
+- [ ] XP-06 Shareable Achievement and Score Cards
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)

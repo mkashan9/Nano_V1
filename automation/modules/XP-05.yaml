@@ -1,7 +1,7 @@
 id: XP-05
 name: "Streaks and Gentle Motivation"
 release: R5
-status: USER_TEST
+status: DONE
 dependencies:
   - XP-01
   - CMP-02
@@ -74,3 +74,5 @@ owner_decisions_locked:
     Missing a full UTC day pauses the streak. On the next activity the count
     restarts at 1 with a welcome-back notice. Longest streak is preserved.
     No freeze / streak repair in this module.
+owner_test_result: approved
+owner_approved_at: "2026-08-02T01:10:00Z"

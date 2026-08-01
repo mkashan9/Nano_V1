@@ -112,6 +112,18 @@ class NanoCopy {
   String get topicsCompleted => isUrdu ? 'مکمل ٹاپکس' : 'Topics completed';
   String get nextUpLabel => isUrdu ? 'اگلا مرحلہ' : 'Next up';
   String get achievementsLabel => isUrdu ? 'اعزازات' : 'Achievements';
+  String get featuredAchievementsLabel =>
+      isUrdu ? 'نمایاں اعزازات' : 'Featured';
+  String get shareAchievementLabel => isUrdu ? 'شیئر کریں' : 'Share';
+  String get shareScoreLabel => isUrdu ? 'سکور شیئر کریں' : 'Share score';
+  String get shareCopiedSnack =>
+      isUrdu ? 'شیئر متن کاپی ہو گیا' : 'Share text copied';
+  String get pinAchievementLabel => isUrdu ? 'نمایاں کریں' : 'Feature';
+  String get unpinAchievementLabel =>
+      isUrdu ? 'نمایاں ہٹائیں' : 'Unfeature';
+  String get featuredLimitHint => isUrdu
+      ? 'زیادہ سے زیادہ تین اعزازات نمایاں کر سکتے ہیں۔'
+      : 'You can feature up to three achievements.';
   String get privacyLabel => isUrdu ? 'پرائیویسی' : 'Privacy';
   String get discoverableLabel =>
       isUrdu ? 'مجھے تلاش کیا جا سکتا ہے' : 'Let others find me';

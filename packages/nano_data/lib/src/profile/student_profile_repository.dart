@@ -2,6 +2,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
 import '../xp/achievement_repository.dart';
+import '../xp/share_card_repository.dart';
 import '../xp/streak_repository.dart';
 import '../xp/xp_ledger_repository.dart';
 
@@ -33,6 +34,7 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     this.xpLedger,
     this.achievements,
     this.streakRepository,
+    this.shareCards,
     List<ProfileAchievement>? fixtureAchievements,
   })  : _sessions = [...?sessions],
         fixtureAchievements = fixtureAchievements ??
@@ -64,6 +66,9 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
   /// XP-05: when set, Me reads the live streak count.
   final StreakRepository? streakRepository;
 
+  /// XP-06: featured pins for Me.
+  final ShareCardRepository? shareCards;
+
   final List<ProfileAchievement> fixtureAchievements;
 
   final List<DeviceSession> _sessions;
@@ -86,16 +91,34 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     final streak = streakRepository == null
         ? progress.streak
         : (await streakRepository!.current()).current;
+    final featured = shareCards == null
+        ? const <String>[]
+        : await shareCards!.featuredAwardIds();
     final List<ProfileAchievement> awards;
     if (achievements != null) {
       final mine = await achievements!.mine();
       awards = [
         for (final award in mine)
-          ProfileAchievement.fromAward(award, urdu: false),
+          ProfileAchievement.fromAward(
+            award,
+            urdu: false,
+            isFeatured: featured.contains(award.awardId),
+          ),
       ];
     } else {
-      awards = fixtureAchievements;
+      awards = [
+        for (final achievement in fixtureAchievements)
+          achievement.copyWith(
+            isFeatured: featured.contains(achievement.id),
+          ),
+      ];
     }
+    awards.sort((a, b) {
+      if (a.isFeatured != b.isFeatured) {
+        return a.isFeatured ? -1 : 1;
+      }
+      return b.earnedAt.compareTo(a.earnedAt);
+    });
     return StudentProfileView(
       userId: userId,
       displayName: displayName,
