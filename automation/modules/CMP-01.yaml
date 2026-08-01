@@ -1,7 +1,7 @@
 id: CMP-01
 name: "Nori Core Runtime"
 release: R4
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-02
   - FND-07
@@ -20,26 +20,50 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_design_system/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for CMP-01"
-ui_references: []
+  - "CMP-01 Nori Companion and Learning Guide: state machine, asset selection, cooldowns, voice scripts"
+  - "Chapter 10 companion asset ladder and controlled variants"
+  - "Nori never calculates marks, score, XP, rank, or eligibility"
+ui_references:
+  - CompanionSlot
 database_scope: []
 server_functions: []
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Reaction selection is deterministic for a given event and seed
+  - Every companion event resolves to a mood, a caption, and a local asset tier
+  - The runtime performs no scoring; outcomes arrive as a server-authored flag
+  - Cooldowns suppress ordinary moments and never block essential outcomes
+  - Junior guidance is prominent and frequent; Senior stays quiet on navigation
+  - Muted sound and Classroom Mode drop the voice and keep the caption
+  - Reduced motion or Classroom Mode forces static art
+  - The app is fully usable with every remote companion API unavailable
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/companion_runtime_test.dart
+  - packages/nano_design_system/test/companion_stage_test.dart
+  - apps/student_app/test/companion_reaction_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_provider_keys_in_flutter
+  - companion_cannot_author_scores
+accessibility_checks:
+  - caption_shown_when_voice_is_off
+  - static_art_under_reduced_motion
+  - companion_name_used_as_semantic_label
+  - layout_stable_when_companion_absent
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Finish a quiz correctly and confirm a celebration reaction with its line
+  - Finish a quiz wrongly and confirm a gentle retry rather than a scolding
+  - Mute sound and confirm the caption still carries the line
+  - Turn captions off and confirm the companion is still shown without layout shift
+  - Enable Classroom Mode and confirm the companion is static and quiet
+  - In the component gallery, compare Junior and Senior density
+rollback_notes: "Revert module branch commits; no database changes to undo"
 requires_owner_test: true

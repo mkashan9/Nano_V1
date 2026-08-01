@@ -29,15 +29,36 @@ class QuizResultView extends StatelessWidget {
   final VoidCallback? onRetake;
   final VoidCallback? onDone;
 
+  /// CMP-01: the companion reacts to the outcome the server reported, and to
+  /// nothing it worked out for itself. Seeding with the attempt number and
+  /// timing with `scoredAt` keeps the reaction reproducible.
+  CompanionReaction? _reaction(BuildContext context) {
+    final preferences = NanoAccessibilityScope.maybeOf(context)?.preferences ??
+        AccessibilityPreferences.defaults;
+    return CompanionRuntime.forExperience(
+      junior: junior,
+      preferences: preferences,
+      companionName: companionName,
+    )
+        .notify(
+          CompanionEvent.forOutcome(passed: result.passed),
+          now: result.scoredAt ?? DateTime.now(),
+          seed: result.attemptNumber - 1,
+        )
+        .reaction;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListView(
       children: [
-        if (junior) ...[
-          Center(child: CompanionSlot(size: 96, semanticLabel: companionName)),
-          const SizedBox(height: NanoSpacing.md),
-        ],
+        CompanionStage(
+          reaction: _reaction(context),
+          companionName: companionName,
+          locale: locale,
+        ),
+        const SizedBox(height: NanoSpacing.md),
         Text(
           // Junior keeps the celebration it earned; Senior leads with the data.
           junior ? copy.quizDoneTitle : copy.quizResultsTitle,

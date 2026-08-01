@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:nano_design_system/nano_design_system.dart';
+import 'package:nano_domain/nano_domain.dart';
+
+/// Fixed so the gallery shows every reaction instead of hiding some behind a
+/// cooldown.
+final _galleryClock = DateTime.utc(2026, 1, 1);
 
 class ComponentGalleryPage extends StatefulWidget {
   const ComponentGalleryPage({super.key});
@@ -37,6 +42,24 @@ class _ComponentGalleryPageState extends State<ComponentGalleryPage> {
             const XpChip(xp: 560),
             const SizedBox(height: NanoSpacing.md),
             const CompanionSlot(),
+            const SizedBox(height: NanoSpacing.md),
+            // CMP-01: every core reaction, at the density this experience uses.
+            for (final event in const [
+              CompanionEvent.home,
+              CompanionEvent.learningEntry,
+              CompanionEvent.quizQuestion,
+              CompanionEvent.resultNeedsReview,
+              CompanionEvent.resultPassed,
+              CompanionEvent.idle,
+            ])
+              Padding(
+                padding: const EdgeInsets.only(bottom: NanoSpacing.sm),
+                child: CompanionStage(
+                  reaction: CompanionRuntime.forExperience(junior: !senior)
+                      .notify(event, now: _galleryClock)
+                      .reaction,
+                ),
+              ),
             const SizedBox(height: NanoSpacing.md),
             if (!senior)
               JuniorActionCard(

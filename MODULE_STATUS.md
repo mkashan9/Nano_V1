@@ -36,8 +36,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | QZ-03 | Junior Quiz Experience | R3 | DONE | QZ-02, STU-03 |
 | QZ-04 | Senior Quiz Experience | R3 | DONE | QZ-02, STU-04 |
 | QZ-05 | Trusted Scoring, Attempts, Retakes, and Resume | R3 | DONE | QZ-03, QZ-04 |
-| QZ-06 | Quiz Results, Explanations, and Progress Update | R3 | USER_TEST | QZ-05 |
-| CMP-01 | Nori Core Runtime | R4 | BACKLOG | STU-02, FND-07 |
+| QZ-06 | Quiz Results, Explanations, and Progress Update | R3 | DONE | QZ-05 |
+| CMP-01 | Nori Core Runtime | R4 | USER_TEST | STU-02, FND-07 |
 | CMP-02 | Nori Modes and Reaction Rules | R4 | BACKLOG | CMP-01 |
 | CMP-03 | Junior and Senior Companion Placement | R4 | BACKLOG | CMP-02, STU-03, STU-04 |
 | MED-01 | Generated Asset Provider Adapters | R4 | BACKLOG | SEC-01 |
