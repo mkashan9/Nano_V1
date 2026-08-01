@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-06 Fish Audio Narration and Composed Reaction Clips
+- [ ] MED-06 owner manual test
 
 ## Completed
 

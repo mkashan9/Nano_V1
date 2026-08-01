@@ -195,10 +195,13 @@ class FakeGeneratedAssetRepository implements GeneratedAssetRepository {
     return 'https://fake.local/${asset.storagePath}?expires=${expiresIn.inSeconds}';
   }
 
+  /// Mirrors the `is_default` rows in `generation_providers`. The fake names a
+  /// provider so that a failure it reports reads like the one the real database
+  /// would have produced (MED-06).
   static String _defaultProviderFor(GeneratedAssetKind kind) => switch (kind) {
         GeneratedAssetKind.image => 'pollinations_image',
-        GeneratedAssetKind.voice => 'gemini_voice_aoede',
-        GeneratedAssetKind.video => 'gemini_veo_video',
+        GeneratedAssetKind.voice => 'fish_audio_voice',
+        GeneratedAssetKind.video => 'json2video_compose',
       };
 
   static const _missing = GeneratedAsset(

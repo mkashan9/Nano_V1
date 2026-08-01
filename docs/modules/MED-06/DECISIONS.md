@@ -1,0 +1,45 @@
+# MED-06 decisions
+
+## The clip is the picture, moving
+
+Veo was a generative substitute for a compositor. That meant a child could see a
+companion that was not Nano's companion, and nobody could say in advance what the
+frames would contain. json2video removes both problems: the only input is art a
+reviewer already signed off. The database knows which providers compose
+(`composes_from_art`) so the refusal lives where the money is committed, not
+inside TypeScript after a charge.
+
+## Motion is a closed set, not free-form movie JSON
+
+An earlier sketch stored a full movie specification in `direction`. That would
+have let a curator author anything the compositor accepted, including movements
+nobody had seen rendered. Five named motions — `hold`, `settle`, `driftIn`,
+`pushIn`, `dip` — are all a Ken Burns compositor can honestly do over one
+picture, and each one is distinct in the rendered movie. The prose `direction`
+stays for reviewers; it is never sent to json2video.
+
+## Stock is a sentinel, not a blank
+
+Fish identifies a voice by `reference_id`. The owner has not picked one, so the
+registry says `stock` and the adapter sends no reference at all. An empty column
+would have been refused by the check constraint and would have read as an
+oversight; a named sentinel is a decision.
+
+## A new voice row, not an edit of Aoede
+
+The voice id is part of the reuse hash (MED-03). Editing `aoede` in place would
+have handed Gemini recordings back for Fish requests. `guide_fish_stock` is a
+new row; `aoede` is disabled.
+
+## Gemini stays
+
+The Gemini adapters remain registered and their provider rows remain in the
+table, disabled. A rollback is an `UPDATE`, not a redeploy and not a migration
+that has to invent the old rows again.
+
+## Cost estimates are non-zero by default
+
+A cost budget that reads zero for every recording and every clip is a cost
+budget that never stops anything (MED-02). Both new adapters default to a
+conservative estimate; the owner corrects them against real invoices later.
+Urdu is billed by UTF-8 bytes, the way Fish counts it.

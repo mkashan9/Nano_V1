@@ -55,7 +55,7 @@ void main() {
         'moderation': 'unreviewed',
         'prompt': 'The companion hops once.',
         'prompt_version': 'v2',
-        'provider_id': 'gemini_veo_video',
+        'provider_id': 'json2video_compose',
         'feature': 'companion',
         'storage_bucket': 'generated-assets',
         'storage_path': 'video/celebration/en/hash.mp4',
@@ -66,7 +66,7 @@ void main() {
       });
 
       expect(item.prompt, 'The companion hops once.');
-      expect(item.providerId, 'gemini_veo_video');
+      expect(item.providerId, 'json2video_compose');
       expect(item.costMicros, 120000);
       expect(item.hasFile, isTrue);
       expect(item.isDecidable, isTrue);

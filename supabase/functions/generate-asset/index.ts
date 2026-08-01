@@ -25,10 +25,16 @@ import {
 // An identical ask never reaches a provider: the database returns the existing
 // row and this function returns it unchanged.
 //
-// MED-04 adds an asynchronous path for clips. Veo answers with a job name, not
-// bytes, so a later ask for the same reaction collects that job rather than
-// starting a second one — which is what stops a clip being paid for twice
-// because the first invocation ended before the provider did.
+// MED-04 adds an asynchronous path for clips. The provider answers with a job
+// handle, not bytes, so a later ask for the same reaction collects that job
+// rather than starting a second one — which is what stops a clip being paid for
+// twice because the first invocation ended before the provider did.
+//
+// MED-06 adds a composing path. A clip is no longer described to a model; it is
+// the companion's own approved picture, moving. This function never decides
+// whether a picture may be sent to a compositor — it asks the database for a
+// composition, and the database answers with nothing unless a reviewer approved
+// that picture in that shape.
 
 const bucket = 'generated-assets';
 
@@ -145,6 +151,11 @@ Deno.serve(async (request) => {
     if (requested.error.code === 'NM009') {
       return errorResponse('NOT_AUTHORABLE', requested.error.message, 422);
     }
+    // A composing provider with no approved art in this shape: the next step is
+    // the review queue, not another ask (MED-06).
+    if (requested.error.code === 'NM011') {
+      return errorResponse('NOT_COMPOSABLE', requested.error.message, 422);
+    }
     const code = requested.error.code === 'NM001' ? 'FORBIDDEN' : 'REQUEST_REFUSED';
     const status = requested.error.code === 'NM001' ? 403 : 400;
     return errorResponse(code, requested.error.message, status);
@@ -195,21 +206,75 @@ Deno.serve(async (request) => {
   // Authored clip length, when this ask was for a reaction. Absent for every
   // other path; the adapter then uses its own default.
   let durationSeconds: number | undefined;
+  // MED-06: a composing provider animates a picture rather than inventing one,
+  // so it needs the picture and the authored movement as well as the length.
+  let sourceImageUrl: string | undefined;
+  let motion: string | undefined;
+  // Which approved picture this clip was made of, recorded on the finished asset
+  // so a reviewer looking at a clip can find the art it came from.
+  let sourceAssetId: string | undefined;
+
   if (clipSlug) {
-    const clip = await worker
-      .from('reaction_clips')
-      .select('id')
-      .eq('slug', clipSlug)
+    const provider = await worker
+      .from('generation_providers')
+      .select('composes_from_art')
+      .eq('id', providerId)
       .maybeSingle();
-    if (clip.data?.id) {
-      const version = await worker
-        .from('reaction_clip_versions')
-        .select('duration_seconds')
-        .eq('clip_id', clip.data.id)
-        .eq('status', 'published')
-        .maybeSingle();
-      const authored = Number(version.data?.duration_seconds);
+
+    // Resolved only when a job is about to be started. Collecting a render that
+    // is already paid for should not fail because a reviewer changed their mind
+    // about the source art while it was in the queue; that is what the review
+    // queue is for once the clip arrives.
+    if (provider.data?.composes_from_art && !providerJobId) {
+      // The database, not this function, decides whether the art may be sent:
+      // this returns nothing at all unless a reviewer approved a picture for
+      // this reaction in this shape.
+      const composition = await worker.rpc('reaction_clip_composition', {
+        p_slug: clipSlug,
+        p_aspect_ratio: aspectRatio,
+      });
+      if (composition.error) {
+        return errorResponse('NOT_COMPOSABLE', composition.error.message, 422);
+      }
+      const plan = composition.data as {
+        motion?: string;
+        duration_seconds?: number;
+        source_bucket?: string;
+        source_path?: string;
+        source_asset_id?: string;
+      };
+
+      // A short-lived link, because the compositor fetches it once, minutes from
+      // now at the latest. The object is approved art, so this grants a third
+      // party nothing a learner could not already see.
+      const signed = await worker.storage
+        .from(plan.source_bucket ?? bucket)
+        .createSignedUrl(plan.source_path ?? '', 1800);
+      if (signed.error || !signed.data?.signedUrl) {
+        return errorResponse('COMPOSITION_SOURCE_UNREADABLE', 'Approved art could not be read', 500);
+      }
+
+      sourceImageUrl = signed.data.signedUrl;
+      motion = plan.motion;
+      sourceAssetId = plan.source_asset_id;
+      const authored = Number(plan.duration_seconds);
       if (Number.isFinite(authored) && authored > 0) durationSeconds = authored;
+    } else {
+      const clip = await worker
+        .from('reaction_clips')
+        .select('id')
+        .eq('slug', clipSlug)
+        .maybeSingle();
+      if (clip.data?.id) {
+        const version = await worker
+          .from('reaction_clip_versions')
+          .select('duration_seconds')
+          .eq('clip_id', clip.data.id)
+          .eq('status', 'published')
+          .maybeSingle();
+        const authored = Number(version.data?.duration_seconds);
+        if (Number.isFinite(authored) && authored > 0) durationSeconds = authored;
+      }
     }
   }
 
@@ -240,6 +305,8 @@ Deno.serve(async (request) => {
       voiceName,
       providerJobId: providerJobId ?? undefined,
       durationSeconds,
+      sourceImageUrl,
+      motion,
     });
 
     if (outcome.status === 'pending') {
@@ -296,6 +363,10 @@ Deno.serve(async (request) => {
         voice_name: voiceName ?? null,
         narration_slug: narrationSlug ?? null,
         clip_slug: clipSlug ?? null,
+        motion: motion ?? null,
+        // The signed link is deliberately not recorded: it expires, and the
+        // asset id is the durable way back to the picture.
+        composed_from_asset_id: sourceAssetId ?? null,
         provider_job_id: providerJobId ?? generated.providerReference ?? null,
         generated_at: new Date().toISOString(),
       },
