@@ -83,7 +83,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Character animation of approved companion art | MED-07 | edge+packages | Moderation reviews Wan clips | generation_providers | SQL+Deno | DONE |
 | Approved media finally reaches a child; nothing plays unasked | MED-08 | student_app+packages | companion art, Listen, Play clip, real topic playback | none | widget+unit | DONE |
 | Nori is one recognisable character in every pose | MED-09 | packages+student_app | bundled offline art, approved pose pack | generated_assets,companion_character_sheet | SQL+widget | DONE |
-| A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, blink, mood motion | none | widget | ACTIVE |
+| A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, bob, mood motion | none | widget | USER_TEST |
 | A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | BACKLOG |
 | Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | BACKLOG |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- MED-10: Nori breathes — a drawing that holds perfectly still reads as broken rather than calm, and `CompanionAssetTier.localAnimation` had been mapped to the greeting mood since CMP-01 with nothing implementing it, so it silently resolved down to static art; each of the six moods now carries its own breath, drift, and tilt, applied as arithmetic over art that already shipped, so the tier that makes a companion feel alive is also the only one that costs nothing to run
+
+- MED-10: motion is capped, framed, and free — nothing moves more than four percent and most under two, because a companion that moves enough to notice is competing with the lesson, and a test asserts the ceiling so a later "make it livelier" tweak cannot quietly raise it; the transform sits inside the circular mask so the ring and the play badge never move under a learner's finger, and the ticker comes from `TickerMode` so an off-screen or backgrounded companion burns nothing
+
+- MED-10: reduced motion and Classroom Mode stop it dead, not slow it down — the gate is `NanoMotion.resolve`, the single place both preferences and the platform's own setting are read, so no tier table can outvote a child's choice; the controller is stopped rather than merely ignored, and the drawing stays, because reduced motion is a request for calm rather than for less companion
+
+- MED-10: gentle retry is the one mood with no tilt at all, asserted by a test rather than remembered — a springy, waggling companion in front of a child who just got an answer wrong is the worst thing this tier could do, and it is exactly the kind of thing that arrives later as a one-line tweak
+
 - MED-09: Nori is a drawing everywhere instead of an icon — one approved picture existed and the other 24 reachable reactions fell back to a Material glyph in a circle, which mattered more than it sounds because reduced motion collapses every tier down to static art, so the floor under the whole companion was a placeholder; the app now ships a pose for each of the six moods, 135 KB for the set, beneath the published rung and above the icon, so the icon is unreachable without a corrupt install and a learner in airplane mode still has a companion
 
 - MED-09: six drawings cover twenty-five slots because a mode is a ring, not a character — CMP-02 defines Guide, Explorer, Quiz Coach, Builder, and Celebration as the same Nori with a different accent and framing, and the stage already draws both around the art, so one pose per mood renders every pair and the four modes cannot drift apart; generating four variants of each pose would have multiplied the exact failure this module exists to prevent, and the per-slot published path stays open for a curator who genuinely wants a different one

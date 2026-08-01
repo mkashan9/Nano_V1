@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-10 Idle Life and Local Animation Tier
+- [ ] MED-10 owner manual test
 
 ## Completed
 
@@ -45,7 +45,6 @@
 
 ## Upcoming
 
-- [ ] MED-10 Idle Life and Local Animation Tier
 - [ ] MED-11 Full Narration and Celebration Clip Pack
 - [ ] MED-12 Nori Everywhere and Companion Coverage Gate
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)

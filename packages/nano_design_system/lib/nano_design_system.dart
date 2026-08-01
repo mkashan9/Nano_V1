@@ -25,6 +25,8 @@ export 'src/companion/companion_controller.dart';
 export 'src/companion/companion_surface_stage.dart';
 export 'src/companion/nano_clip_player.dart';
 export 'src/companion/nano_voice_player.dart';
+export 'src/companion/companion_motion.dart';
+export 'src/companion/nori_living_art.dart';
 export 'src/companion/nori_pose_pack.dart';
 export 'src/components/nano_avatar.dart';
 export 'src/components/xp_chip.dart';
