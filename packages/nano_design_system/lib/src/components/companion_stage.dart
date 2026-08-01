@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+import '../companion/nori_pose_pack.dart';
 import '../l10n/nano_locale_scope.dart';
 import '../tokens/nano_motion.dart';
 import '../tokens/nano_radii.dart';
@@ -451,13 +452,16 @@ class _CompanionArt extends StatelessWidget {
         CompanionMood.celebration => Icons.celebration_rounded,
       };
 
-  /// What sits inside the mode ring, best first (MED-08).
+  /// What sits inside the mode ring, best first (MED-08, extended by MED-09).
   ///
-  /// A clip while one is playing, the approved picture the rest of the time,
-  /// and the mood icon when nothing has been published for this slot. Every
-  /// rung is a complete picture on its own, so the stage is never empty and a
-  /// learner never sees a broken frame — an image that fails to decode falls
-  /// through to the icon rather than to a grey box.
+  /// A clip while one is playing, then the approved picture, then the pose that
+  /// ships with the app, and the mood icon only if even that fails to decode.
+  /// Every rung is a complete picture on its own, so the stage is never empty
+  /// and a learner never sees a broken frame.
+  ///
+  /// The bundled pose is what makes the icon unreachable in practice: it needs
+  /// no network, no approval, and no session, so the only way down to the icon
+  /// is a corrupt bundle.
   Widget _inner(BuildContext context, Color accent) {
     final playing = clipView;
     if (playing != null) {
@@ -472,14 +476,25 @@ class _CompanionArt extends StatelessWidget {
         fit: BoxFit.cover,
         width: size,
         height: size,
-        // A half-loaded picture would pop; the icon holds the same space.
+        // A half-loaded picture would pop; the bundled pose holds the same
+        // space, and it is the same character in the same mood.
         frameBuilder: (context, child, frame, wasSynchronous) =>
-            frame == null && !wasSynchronous ? _icon(accent) : child,
-        errorBuilder: (context, error, stack) => _icon(accent),
+            frame == null && !wasSynchronous ? _bundled(accent) : child,
+        errorBuilder: (context, error, stack) => _bundled(accent),
       );
     }
-    return _icon(accent);
+    return _bundled(accent);
   }
+
+  /// The pose that ships with the app (MED-09).
+  Widget _bundled(Color accent) => Image.asset(
+        NoriPosePack.assetFor(reaction.mood),
+        package: NoriPosePack.package,
+        fit: BoxFit.cover,
+        width: size,
+        height: size,
+        errorBuilder: (context, error, stack) => _icon(accent),
+      );
 
   Widget _icon(Color accent) =>
       Center(child: Icon(_moodIcon, size: size / 2, color: accent));

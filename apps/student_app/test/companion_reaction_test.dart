@@ -55,13 +55,28 @@ Future<void> _finishJunior(
   await tester.pumpAndSettle();
 }
 
+/// Which pose Nori is wearing (MED-09).
+///
+/// These used to look for the mood's Material icon, which was only ever a
+/// stand-in for the drawing that did not exist yet. The bundled pack replaced
+/// it, so the assertion moved down to the thing a child actually sees.
+Set<String> _poses(WidgetTester tester) => tester
+    .widgetList<Image>(find.byType(Image))
+    .map((image) => image.image)
+    .whereType<AssetImage>()
+    .map((provider) => provider.assetName)
+    .toSet();
+
 void main() {
   testWidgets('a passed attempt is celebrated', (tester) async {
     await _pump(tester, _junior());
     await _finishJunior(tester);
 
     expect(find.byType(CompanionStage), findsOneWidget);
-    expect(find.byIcon(Icons.celebration_rounded), findsOneWidget);
+    expect(
+      _poses(tester),
+      contains(NoriPosePack.assetFor(CompanionMood.celebration)),
+    );
     expect(find.textContaining('Nicely done!'), findsOneWidget);
   });
 
@@ -70,12 +85,20 @@ void main() {
     await _pump(tester, _junior());
     await _finishJunior(tester, correctly: false);
 
-    expect(find.byIcon(Icons.refresh_rounded), findsOneWidget);
+    expect(
+      _poses(tester),
+      contains(NoriPosePack.assetFor(CompanionMood.gentleRetry)),
+    );
     expect(
       find.textContaining('Some of these need another look.'),
       findsOneWidget,
     );
-    expect(find.byIcon(Icons.celebration_rounded), findsNothing);
+    // The gentle retry pose is kind, not sad, and it is emphatically not the
+    // celebration: a child who got it wrong must not be cheered at.
+    expect(
+      _poses(tester),
+      isNot(contains(NoriPosePack.assetFor(CompanionMood.celebration))),
+    );
   });
 
   testWidgets('the companion stays quiet before a result exists',

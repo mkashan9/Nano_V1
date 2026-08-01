@@ -1,7 +1,7 @@
 id: MED-09
 name: "Nori Character Sheet and Static Pose Pack"
 release: R4
-status: BACKLOG
+status: DONE
 dependencies:
   - MED-08
 dependency_notes: >

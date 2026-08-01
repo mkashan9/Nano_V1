@@ -1,10 +1,10 @@
-﻿# MODULE_STATUS
+# MODULE_STATUS
 
 Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 
 | ID | Name | Release | Status | Dependencies |
 |----|------|---------|--------|--------------|
-| AUD-01 | Repository and Security Audit | R0 | DONE | â€” |
+| AUD-01 | Repository and Security Audit | R0 | DONE | — |
 | FND-01 | Workspace, Configuration, and Environments | R0 | DONE | AUD-01 |
 | FND-02 | Shared Design System | R0 | DONE | FND-01 |
 | FND-03 | Junior and Senior Responsive Foundations | R0 | DONE | FND-02 |
@@ -48,8 +48,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | MED-06 | Fish Audio Narration and Composed Reaction Clips | R4 | DONE | MED-03, MED-04, MED-05 |
 | MED-07 | Wan 2.2 Character Animation with Compose Fallback | R4 | DONE | MED-06 |
 | MED-08 | Real Playback and Companion Art Rendering | R4 | DONE | MED-07, FND-07 |
-| MED-09 | Nori Character Sheet and Static Pose Pack | R4 | ACTIVE | MED-08 |
-| MED-10 | Idle Life and Local Animation Tier | R4 | BACKLOG | MED-09 |
+| MED-09 | Nori Character Sheet and Static Pose Pack | R4 | DONE | MED-08 |
+| MED-10 | Idle Life and Local Animation Tier | R4 | ACTIVE | MED-09 |
 | MED-11 | Full Narration and Celebration Clip Pack | R4 | BACKLOG | MED-09 |
 | MED-12 | Nori Everywhere and Companion Coverage Gate | R4 | BACKLOG | MED-10, MED-11 |
 | XP-01 | Trusted XP Ledger | R5 | BACKLOG | SEC-02, AUTH-01 |

@@ -1,16 +1,16 @@
-﻿# HANDBOOK_TRACEABILITY
+# HANDBOOK_TRACEABILITY
 
 Maps handbook requirements to automation modules. Automation queue is intentionally
 more granular than handbook module IDs; no major handbook requirement is left unmapped.
 
-Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementation_Handbook_v1.0.docx`
+Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Handbook_v1.0.docx`
 
 | Handbook requirement | Module ID(s) | Application | Screen / service | Database responsibility | Test responsibility | Status |
 |----------------------|--------------|-------------|------------------|-------------------------|----------------------|--------|
-| 1.1 Product statement â€” Nano education platform | AUD-01 | all | N/A | N/A | docs review | IN_PROGRESS |
-| 1.2 Product surfaces â€” student, teacher, school mgmt, superadmin | FND-04 | all apps | role shells | roles | shell tests | USER_TEST |
-| 1.3 Account model â€” school vs independent students | AUTH-01,AUTH-04,IND-02 | student_app | auth/onboarding | profiles,school_id | auth/RLS | USER_TEST |
-| 1.4 Non-negotiable rules â€” safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | USER_TEST |
+| 1.1 Product statement — Nano education platform | AUD-01 | all | N/A | N/A | docs review | IN_PROGRESS |
+| 1.2 Product surfaces — student, teacher, school mgmt, superadmin | FND-04 | all apps | role shells | roles | shell tests | USER_TEST |
+| 1.3 Account model — school vs independent students | AUTH-01,AUTH-04,IND-02 | student_app | auth/onboarding | profiles,school_id | auth/RLS | USER_TEST |
+| 1.4 Non-negotiable rules — safety, tenancy, server authority | SEC-02,SEC-03,QA-01 | supabase | policies/functions | RLS | pgTAP | USER_TEST |
 | 2.x Release strategy and pilot criteria | QA-06 | docs | pilot checklist | N/A | release checklist | BACKLOG |
 | 3.1 Shared domain, separate shells | FND-04 | all apps | shells | N/A | widget | USER_TEST |
 | 3.2 Junior interaction rules | FND-03,STU-03 | student_app | Junior Home | prefs | widget/golden | DONE |
@@ -24,7 +24,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | 6.3 Trusted operations (scores, XP, publish) | QZ-05,XP-01,MRK-04,GME-05 | edge functions | scoring | ledgers | function tests | BACKLOG |
 | 6.4 Versioning and history | SEC-03,MRK-04,ATT-03 | supabase | audit | audit_logs | history tests | BACKLOG |
 | 7.x Reuse-first engineering | AUD-01 | docs/provenance | registry | N/A | docs | IN_PROGRESS |
-| 8.1â€“8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
+| 8.1–8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
 | 8.3 Design tokens | FND-02 | nano_design_system | tokens | N/A | golden | BACKLOG |
 | 8.4 Component families | FND-02 | nano_design_system | components | N/A | widget | BACKLOG |
 | 8.5 Accessibility contract | FND-07,QA-04 | all apps | a11y | prefs | a11y tests | USER_TEST |
@@ -71,9 +71,9 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Handbook MED-01 Media asset delivery | MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | PARTIAL |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |
 | Handbook PAR-01 Guardian guidance | PAR-01,PAR-02,PAR-03,FBK-01 | student+admin | Parent card | guidance | guardian | BACKLOG |
-| XP rules â€” video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
+| XP rules — video/quiz/games XP; no marks/attendance XP | XP-01..XP-06 | edge | ledger | xp_ledger | idempotency | BACKLOG |
 | Junior must not see Communities | COM-01,SAFE-04,STU-03 | student_app | nav guard | roles | junior nav test | BACKLOG |
-| Independent students â€” natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
+| Independent students — natural experience, no empty Flex | IND-01,IND-02,IND-03,IND-04 | student_app | Independent Home | entitlements | nav tests | BACKLOG |
 | English/Urdu readiness | FND-06,QA-05 | all apps | l10n | locale prefs | bidi audit | USER_TEST |
 | Generated media cost controls | MED-02 | edge+student_app | budgets, cached delivery, local fallback | generation_quotas,generation_usage,generated_assets | SQL+unit+widget | DONE |
 | Nori voice Aoede; no privileged calc | MED-03,CMP-01 | edge+app | narration lines, Aoede registry, caption-first Listen | narration_voices,narration_lines,narration_line_versions,generated_assets | SQL+unit+widget | DONE |
@@ -82,8 +82,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 | Narration and reaction clips through the chosen providers | MED-06 | edge+packages+admin_web | Moderation plays voice and video | generation_providers,narration_voices,reaction_clip_versions | SQL+Deno+widget | DONE |
 | Character animation of approved companion art | MED-07 | edge+packages | Moderation reviews Wan clips | generation_providers | SQL+Deno | DONE |
 | Approved media finally reaches a child; nothing plays unasked | MED-08 | student_app+packages | companion art, Listen, Play clip, real topic playback | none | widget+unit | DONE |
-| Nori is one recognisable character in every pose | MED-09 | packages+student_app | bundled offline art, approved pose pack | generated_assets,companion_character_sheet | SQL+widget | ACTIVE |
-| A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, blink, mood motion | none | widget | BACKLOG |
+| Nori is one recognisable character in every pose | MED-09 | packages+student_app | bundled offline art, approved pose pack | generated_assets,companion_character_sheet | SQL+widget | DONE |
+| A companion that looks alive costs nothing to run | MED-10 | packages+student_app | breathing, blink, mood motion | none | widget | ACTIVE |
 | A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | BACKLOG |
 | Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | BACKLOG |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
@@ -95,7 +95,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` â† `Nano_Product_and_Implementatio
 ## Coverage statement
 
 - Mapped requirement rows: **64**
-- Handbook catalog modules (FND/SEC/STU/â€¦): each appears in at least one row
+- Handbook catalog modules (FND/SEC/STU/…): each appears in at least one row
 - Master automation queue (120 modules): each release feature is reachable from a handbook row
 - Status values: BACKLOG | IN_PROGRESS | DONE
 
