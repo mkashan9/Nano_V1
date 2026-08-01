@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MED-05 owner manual test
+- [ ] MED-06 Fish Audio Narration and Composed Reaction Clips
 
 ## Completed
 
@@ -37,9 +37,9 @@
 - [x] MED-02
 - [x] MED-03
 - [x] MED-04
+- [x] MED-05
 
 ## Upcoming
 
-- [ ] MED-06 Fish Audio Narration and Composed Reaction Clips
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger
