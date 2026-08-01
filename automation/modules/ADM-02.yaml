@@ -1,16 +1,27 @@
 id: ADM-02
 name: "School Creation, Codes, Status, and Administrator Control"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
   - SEC-02
+dependency_notes: >
+  ADM-01 owns the Platform read model. This module owns create school, immutable
+  codes, status writes with reason, and first school-admin assignment. Replace
+  admin, user suspend, and session revoke stay with ADM-03.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-02/
@@ -19,27 +30,55 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "ADM-01 Global School and Account Operations â€” school status and setup"
+  - "SCH-01 school codes immutable after create"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.schools
+  - public.school_memberships
+server_functions:
+  - "public.create_school"
+  - "public.set_school_status"
+  - "public.assign_first_school_admin"
 acceptance:
+  - Platform staff can create a school with a unique immutable code
+  - Status changes require an explicit reason and write an audit event
+  - First school admin can be assigned once; replace-admin is not in this module
+  - Learners cannot call school write RPCs
+  - Schools destination lists schools and exposes create/status/admin actions
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm02_school_ops.sql
+  - packages/nano_domain/test/school_admin_ops_test.dart
+  - packages/nano_data/test/school_admin_repository_test.dart
+  - apps/admin_web/test/schools_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_writes_platform_only
+  - school_code_immutable
+  - status_change_requires_reason
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - As superadmin open Schools, create a school with a valid code
+  - Change status with a reason and confirm audit appears on Platform
+  - Assign a first school admin to a school that has none
+  - Confirm a second assign is rejected
+rollback_notes: >
+  Revert the branch and migration. Schools destination falls back to the stub.
 requires_owner_test: true
+owner_decisions_locked:
+  code: >
+    School codes match ^[A-Z0-9]{3,16}$ and are immutable after create. No
+    regenerate in this module.
+  status: >
+    set_school_status accepts active, suspended, and archived. Every change
+    (including restore to active) requires a non-empty reason and audits.
+  admin: >
+    assign_first_school_admin only when the school has no active school_admin
+    membership. Replace-admin waits on ADM-03.

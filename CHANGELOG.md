@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- ADM-02: platform staff can create schools with immutable codes, change status with an audited reason, and assign the first school admin
+
 - ADM-01: superadmin Platform home with safe metrics, school directory search, and audit preview; Content/Moderation stay on the existing shell
 
 - XP-06: privacy-safe achievement and quiz score share cards (clipboard), plus featured pins (max 3) on Me; school records stay off the card

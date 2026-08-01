@@ -1,7 +1,7 @@
 id: ADM-01
 name: "Superadmin Dashboard"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - AUTH-03
   - FND-04
@@ -47,7 +47,7 @@ server_functions:
   - "public.platform_dashboard"
 acceptance:
   - Platform home shows safe aggregate metrics for superadmins only
-  - School search returns code, name, status, and counts â€” never email or guardian data
+  - School search returns code, name, status, and counts Ã¢â‚¬â€ never email or guardian data
   - Recent audit preview omits personal contact fields
   - Content and Moderation destinations remain reachable unchanged
   - Non-platform roles cannot execute platform_dashboard
@@ -76,5 +76,7 @@ owner_decisions_locked:
     revoke, and replace-admin with reason + stronger auth.
   privacy: >
     School summaries expose id, code, name, status, learner/staff counts only.
-    Audit preview exposes action, target_type, school code, and timestamp â€”
+    Audit preview exposes action, target_type, school code, and timestamp Ã¢â‚¬â€
     never email, guardian, marks, or attendance.
+owner_test_result: approved
+owner_approved_at: "2026-08-02T02:20:00Z"

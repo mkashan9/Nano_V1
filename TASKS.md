@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-01 Superadmin Dashboard
+- [ ] ADM-02 School Creation, Codes, Status, and Administrator Control
 
 ## Completed
 
@@ -43,5 +43,6 @@
 - [x] XP-04 Daily and Weekly Missions
 - [x] XP-05 Streaks and Gentle Motivation
 - [x] XP-06 Shareable Achievement and Score Cards
-- [ ] ADM-01 Superadmin Dashboard
+- [x] ADM-01 Superadmin Dashboard
 - [ ] ADM-02 School Creation, Codes, Status, and Administrator Control
+- [ ] ADM-03 Global User and Account Control
