@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SCH-05: school admins assign teachers to class/section/subject with coverage and workload
 - SCH-04: school admins manage students (create, suspend, enroll) and CSV import from Students
 - SCH-03: school admins manage teachers (create, suspend) and CSV import from Teachers
 - SCH-02: school admins manage grades, classes, sections, and school subjects from Classes

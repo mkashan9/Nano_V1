@@ -159,6 +159,13 @@ abstract final class NavCatalog {
       requiredPermission: 'school.teachers',
     ),
     NavDestination(
+      id: 'assignments',
+      label: 'Assignments',
+      path: '/assignments',
+      iconName: 'fact_check',
+      requiredPermission: 'school.assignments',
+    ),
+    NavDestination(
       id: 'classes',
       label: 'Classes',
       path: '/classes',

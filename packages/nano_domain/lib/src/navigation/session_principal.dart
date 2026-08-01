@@ -132,6 +132,7 @@ class SessionPrincipal {
           'school.overview',
           'school.students',
           'school.teachers',
+          'school.assignments',
           'school.classes',
           'school.reports',
           'school.settings',

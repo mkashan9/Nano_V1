@@ -69,8 +69,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | SCH-01 | School Dashboard and Branding | R6 | DONE | AUTH-03, SEC-02 |
 | SCH-02 | Classes, Grades, Sections, and Subjects | R6 | DONE | SCH-01 |
 | SCH-03 | Teacher Management and Excel Import | R6 | DONE | SCH-02 |
-| SCH-04 | Student Management and Excel Import | R6 | USER_TEST | SCH-02 |
-| SCH-05 | Teacher Assignment Matrix | R6 | BACKLOG | SCH-03, SCH-04 |
+| SCH-04 | Student Management and Excel Import | R6 | DONE | SCH-02 |
+| SCH-05 | Teacher Assignment Matrix | R6 | USER_TEST | SCH-03, SCH-04 |
 | SCH-06 | Marks and Result Policies | R6 | BACKLOG | SCH-01 |
 | SCH-07 | School Reports | R6 | BACKLOG | SCH-05, SCH-06 |
 | TCH-01 | Teacher Dashboard | R7 | BACKLOG | AUTH-02, SCH-05 |

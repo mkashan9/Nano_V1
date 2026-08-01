@@ -6,6 +6,7 @@ export 'admin/platform_analytics.dart';
 export 'admin/platform_dashboard.dart';
 export 'admin/school_student_ops.dart';
 export 'admin/school_teacher_ops.dart';
+export 'admin/teacher_assignment_ops.dart';
 export 'admin/academic_structure.dart';
 export 'admin/school_dashboard.dart';
 export 'admin/platform_user_ops.dart';
