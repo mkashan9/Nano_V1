@@ -14,6 +14,32 @@ void main() {
       expect(quiz.items.every((item) => !item.exposesCorrectness), isTrue);
     });
 
+    test('resolves the topic ids the fake catalog hands the UI', () async {
+      final quizzes = FakeLearnerQuizRepository();
+      final catalog = await FakeLearningCatalogRepository(
+        seniorEligible: true,
+      ).loadCatalog();
+
+      for (final topicVersionId in const [
+        'tv-counting-1',
+        'tv-addition-1',
+        'tv-living-things-1',
+      ]) {
+        expect(
+          catalog.subjects
+              .expand((subject) => subject.topics)
+              .any((topic) => topic.topicVersionId == topicVersionId),
+          isTrue,
+          reason: '$topicVersionId is missing from the fake catalog',
+        );
+        expect(
+          await quizzes.quizForTopic(topicVersionId),
+          isNotNull,
+          reason: 'Take quiz would show the empty state for $topicVersionId',
+        );
+      }
+    });
+
     test('returns null for unknown topics', () async {
       final repository = FakeLearnerQuizRepository();
       expect(

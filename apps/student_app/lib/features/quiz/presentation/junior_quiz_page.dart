@@ -3,19 +3,21 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// QZ-03 Junior attempt: one question per screen, companion prompts,
-/// local selections only — no client-side final score (QZ-05).
+/// QZ-03/QZ-05 Junior attempt: one question per screen; answers persist and
+/// finish submits for a server score.
 class JuniorQuizPage extends StatefulWidget {
   const JuniorQuizPage({
     super.key,
     required this.topicVersionId,
     required this.repository,
+    this.attemptRepository,
     this.companionName = 'Nori',
     this.topicTitle,
   });
 
   final String topicVersionId;
   final LearnerQuizRepository repository;
+  final QuizAttemptRepository? attemptRepository;
   final String companionName;
   final String? topicTitle;
 
@@ -26,6 +28,11 @@ class JuniorQuizPage extends StatefulWidget {
 class _JuniorQuizPageState extends State<JuniorQuizPage> {
   NanoViewState _state = const NanoViewLoading();
   JuniorQuizFlow? _flow;
+  String? _attemptId;
+  ScoreResult? _score;
+  var _submitting = false;
+  late final QuizAttemptRepository _attempts =
+      widget.attemptRepository ?? FakeQuizAttemptRepository();
 
   @override
   void initState() {
@@ -48,8 +55,13 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
         });
         return;
       }
+      final session = await _attempts.startOrResume(widget.topicVersionId);
+      if (!mounted) return;
       setState(() {
-        _flow = JuniorQuizFlow.start(quiz);
+        _attemptId = session.attemptId;
+        _flow = session.answers.isEmpty
+            ? JuniorQuizFlow.start(quiz)
+            : JuniorQuizFlow.resume(quiz, session.answers);
         _state = const NanoViewReady();
       });
     } catch (_) {
@@ -58,16 +70,51 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
     }
   }
 
-  void _select(String optionId) {
+  Future<void> _select(String optionId) async {
     final flow = _flow;
-    if (flow == null || flow.finished) return;
-    setState(() => _flow = flow.select(optionId));
+    final attemptId = _attemptId;
+    if (flow == null || flow.finished || attemptId == null) return;
+    final next = flow.select(optionId);
+    setState(() => _flow = next);
+    try {
+      await _attempts.saveAnswer(
+        attemptId: attemptId,
+        questionVersionId: next.currentItem.questionVersionId,
+        selectedOptionId: optionId,
+      );
+    } catch (_) {
+      // Keep the local selection; the next save or submit will surface issues.
+    }
   }
 
-  void _advance() {
+  Future<void> _advance() async {
     final flow = _flow;
-    if (flow == null || !flow.canAdvance) return;
-    setState(() => _flow = flow.advance());
+    if (flow == null || !flow.canAdvance || _submitting) return;
+    if (!flow.isLastQuestion) {
+      setState(() => _flow = flow.advance());
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _flow = flow.advance();
+    });
+    try {
+      final score = await _attempts.submit(_attemptId!);
+      if (!mounted) return;
+      setState(() {
+        _score = score;
+        _submitting = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _submitting = false;
+        _flow = flow;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not submit quiz')),
+      );
+    }
   }
 
   @override
@@ -95,7 +142,7 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
                     NanoSpacing.md,
                     NanoSpacing.xxl,
                   ),
-                  child: flow.finished
+                  child: flow.finished || _score != null
                       ? _FinishedPane(
                           copy: copy,
                           companionName: widget.companionName,
@@ -103,6 +150,7 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
                             locale,
                             companionName: widget.companionName,
                           ),
+                          score: _score,
                         )
                       : _QuestionPane(
                           flow: flow,
@@ -110,6 +158,7 @@ class _JuniorQuizPageState extends State<JuniorQuizPage> {
                           locale: locale,
                           companionName: widget.companionName,
                           theme: theme,
+                          submitting: _submitting,
                           onSelect: _select,
                           onAdvance: _advance,
                         ),
@@ -127,6 +176,7 @@ class _QuestionPane extends StatelessWidget {
     required this.locale,
     required this.companionName,
     required this.theme,
+    required this.submitting,
     required this.onSelect,
     required this.onAdvance,
   });
@@ -136,6 +186,7 @@ class _QuestionPane extends StatelessWidget {
   final NanoAppLocale locale;
   final String companionName;
   final ThemeData theme;
+  final bool submitting;
   final ValueChanged<String> onSelect;
   final VoidCallback onAdvance;
 
@@ -149,10 +200,7 @@ class _QuestionPane extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CompanionSlot(
-              size: 88,
-              semanticLabel: companionName,
-            ),
+            CompanionSlot(size: 88, semanticLabel: companionName),
             const SizedBox(width: NanoSpacing.md),
             Expanded(
               child: Semantics(
@@ -175,10 +223,7 @@ class _QuestionPane extends StatelessWidget {
           value: (flow.currentIndex + 1) / flow.questionCount,
         ),
         const SizedBox(height: NanoSpacing.lg),
-        Text(
-          item.stemFor(locale),
-          style: theme.textTheme.headlineSmall,
-        ),
+        Text(item.stemFor(locale), style: theme.textTheme.headlineSmall),
         const SizedBox(height: NanoSpacing.lg),
         Expanded(
           child: ListView.separated(
@@ -199,7 +244,7 @@ class _QuestionPane extends StatelessWidget {
                   borderRadius: BorderRadius.circular(NanoRadii.junior),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(NanoRadii.junior),
-                    onTap: () => onSelect(option.id),
+                    onTap: submitting ? null : () => onSelect(option.id),
                     child: Padding(
                       padding: const EdgeInsets.all(
                         NanoSpacing.cardPaddingJunior,
@@ -217,7 +262,7 @@ class _QuestionPane extends StatelessWidget {
         ),
         const SizedBox(height: NanoSpacing.md),
         FilledButton(
-          onPressed: flow.canAdvance ? onAdvance : null,
+          onPressed: flow.canAdvance && !submitting ? onAdvance : null,
           child: Text(
             flow.isLastQuestion ? copy.quizFinishLabel : copy.quizNextLabel,
           ),
@@ -232,11 +277,13 @@ class _FinishedPane extends StatelessWidget {
     required this.copy,
     required this.companionName,
     required this.prompt,
+    this.score,
   });
 
   final NanoCopy copy;
   final String companionName;
   final String prompt;
+  final ScoreResult? score;
 
   @override
   Widget build(BuildContext context) {
@@ -255,20 +302,40 @@ class _FinishedPane extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: NanoSpacing.md),
-        Semantics(
-          liveRegion: true,
-          child: Text(
+        if (score != null) ...[
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              copy.quizServerScore(score!.scorePercent),
+              style: theme.textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Text(
+            score!.passed ? copy.quizPassedLabel : copy.quizFailedLabel,
+            style: theme.textTheme.titleLarge,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Text(
+            copy.quizScoreFromServerNotice,
+            style: theme.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+        ] else ...[
+          Text(
             prompt,
             style: theme.textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
-        ),
-        const SizedBox(height: NanoSpacing.md),
-        Text(
-          copy.quizScoreLaterNotice,
-          style: theme.textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-        ),
+          const SizedBox(height: NanoSpacing.md),
+          Text(
+            copy.quizScoreLaterNotice,
+            style: theme.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+        ],
         const Spacer(),
         OutlinedButton(
           onPressed: () => Navigator.of(context).maybePop(),

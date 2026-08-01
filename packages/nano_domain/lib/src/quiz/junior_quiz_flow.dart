@@ -29,6 +29,22 @@ class JuniorQuizFlow {
     return JuniorQuizFlow(quiz: quiz);
   }
 
+  factory JuniorQuizFlow.resume(
+    TopicQuiz quiz,
+    Map<String, String> selections,
+  ) {
+    JuniorQuizFlow.start(quiz);
+    final index = quiz.items.indexWhere(
+      (item) => !selections.containsKey(item.questionVersionId),
+    );
+    return JuniorQuizFlow(
+      quiz: quiz,
+      currentIndex: index < 0 ? quiz.items.length - 1 : index,
+      selections: selections,
+      finished: false,
+    );
+  }
+
   final TopicQuiz quiz;
   final int currentIndex;
   final Map<String, String> selections;

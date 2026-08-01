@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- QZ-05: trusted quiz attempts with resume, retake limits, and idempotent server scoring
+
 - QZ-04: Senior quiz navigation and review without client-side scoring
 
 - QZ-03: Junior one-question-per-screen quiz with companion prompts and no client-side score

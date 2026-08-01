@@ -63,8 +63,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('You finished the quiz!'), findsOneWidget);
-    expect(find.textContaining('score will be saved later'), findsOneWidget);
-    expect(find.textContaining('%'), findsNothing);
+    expect(find.textContaining('Score:'), findsOneWidget);
+    expect(find.text('This score was saved by the server.'), findsOneWidget);
   });
 
   testWidgets('jump chip moves without clearing answers', (tester) async {

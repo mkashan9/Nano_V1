@@ -17,6 +17,7 @@ class TopicDetailPage extends StatefulWidget {
     required this.progressRepository,
     this.checkpointRepository,
     this.learnerQuizRepository,
+    this.quizAttemptRepository,
     this.companionName,
     this.junior = true,
     this.openPlayer = true,
@@ -27,6 +28,7 @@ class TopicDetailPage extends StatefulWidget {
   final LearningProgressRepository progressRepository;
   final CheckpointRepository? checkpointRepository;
   final LearnerQuizRepository? learnerQuizRepository;
+  final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
   final bool junior;
 
@@ -89,6 +91,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
           progressRepository: widget.progressRepository,
           checkpointRepository: widget.checkpointRepository,
           learnerQuizRepository: widget.learnerQuizRepository,
+          quizAttemptRepository: widget.quizAttemptRepository,
           companionName: widget.companionName,
           junior: widget.junior,
           onProgress: (updated) {
@@ -113,12 +116,14 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
             ? JuniorQuizPage(
                 topicVersionId: _topic.topicVersionId,
                 repository: repo,
+                attemptRepository: widget.quizAttemptRepository,
                 companionName: widget.companionName ?? 'Nori',
                 topicTitle: title,
               )
             : SeniorQuizPage(
                 topicVersionId: _topic.topicVersionId,
                 repository: repo,
+                attemptRepository: widget.quizAttemptRepository,
                 topicTitle: title,
               ),
       ),

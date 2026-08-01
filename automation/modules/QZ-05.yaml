@@ -1,7 +1,7 @@
 id: QZ-05
 name: "Trusted Scoring, Attempts, Retakes, and Resume"
 release: R3
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - QZ-03
   - QZ-04
@@ -10,6 +10,7 @@ applications:
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
   - docs/
   - automation/
@@ -20,26 +21,57 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - supabase/migrations/
+  - supabase/tests/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for QZ-05"
+  - "QZ-02 Student Quiz: client never determines the final score"
+  - "Attempt stores the published quiz and question snapshot"
+  - "Submit is idempotent and duplicate-safe"
+  - "Closing and reopening preserves the attempt"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.quiz_attempts
+  - public.attempt_answers
+  - public.attempt_events
+  - public.score_results
+  - public.suspicious_attempt_flags
+server_functions:
+  - public.start_or_resume_quiz_attempt
+  - public.save_attempt_answer
+  - public.submit_quiz_attempt
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
+  - Client never computes or writes the final score
+  - start_or_resume returns an in-progress attempt or creates a new one
+  - Closing and reopening preserves saved answers
+  - Duplicate submit returns the same score_results row
+  - Retakes respect quiz_policies.max_retakes
+  - Learners can only read and advance their own attempts
+  - Junior and Senior finish paths call server submit and show the returned score
   - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/quiz_attempt_test.dart
+  - packages/nano_data/test/quiz_attempt_repository_test.dart
+  - apps/student_app/test/quiz_attempt_submit_test.dart
+  - supabase/tests/qz05_trusted_scoring.sql
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - score_results_rpc_only
+  - learner_own_attempts_only
+  - submit_idempotent
+accessibility_checks:
+  - server_score_announced
 manual_test_steps:
-  - Review module docs and status
+  - As Junior, start a quiz, answer, leave, reopen — answers resume
+  - Finish and confirm a server percent/pass appears (not a client invention)
+  - Submit again and confirm the same result
+  - As Senior, finish via review and see the same server score path
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

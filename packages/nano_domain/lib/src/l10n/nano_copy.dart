@@ -223,6 +223,14 @@ class NanoCopy {
       ? 'اسکور بعد میں محفوظ ہوگا — ابھی صرف مشق ہے۔'
       : 'Your score will be saved later — this is practice for now.';
   String get quizDoneButtonLabel => isUrdu ? 'واپس' : 'Done';
+  String get quizPassedLabel => isUrdu ? 'کامیاب' : 'Passed';
+  String get quizFailedLabel => isUrdu ? 'دوبارہ کوشش' : 'Try again';
+  String quizServerScore(double percent) => isUrdu
+      ? 'اسکور: ${percent.toStringAsFixed(0)}٪'
+      : 'Score: ${percent.toStringAsFixed(0)}%';
+  String get quizScoreFromServerNotice => isUrdu
+      ? 'یہ اسکور سرور نے محفوظ کیا ہے۔'
+      : 'This score was saved by the server.';
   String get quizUnavailableLabel =>
       isUrdu ? 'اس ٹاپک کا کوئز ابھی نہیں ہے۔' : 'No quiz for this topic yet.';
   String quizProgressLabel(int current, int total) => isUrdu

@@ -20,6 +20,21 @@ class SeniorQuizFlow {
     return SeniorQuizFlow(quiz: quiz);
   }
 
+  factory SeniorQuizFlow.resume(
+    TopicQuiz quiz,
+    Map<String, String> selections,
+  ) {
+    SeniorQuizFlow.start(quiz);
+    final index = quiz.items.indexWhere(
+      (item) => !selections.containsKey(item.questionVersionId),
+    );
+    return SeniorQuizFlow(
+      quiz: quiz,
+      currentIndex: index < 0 ? 0 : index,
+      selections: selections,
+    );
+  }
+
   final TopicQuiz quiz;
   final int currentIndex;
   final Map<String, String> selections;

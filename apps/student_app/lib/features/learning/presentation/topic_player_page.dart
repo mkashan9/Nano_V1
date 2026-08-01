@@ -22,6 +22,7 @@ class TopicPlayerPage extends StatefulWidget {
     required this.progressRepository,
     this.checkpointRepository,
     this.learnerQuizRepository,
+    this.quizAttemptRepository,
     this.companionName,
     this.junior = true,
     this.captionsEnabled,
@@ -37,6 +38,7 @@ class TopicPlayerPage extends StatefulWidget {
   /// Absent for short content that has no refresh moments.
   final CheckpointRepository? checkpointRepository;
   final LearnerQuizRepository? learnerQuizRepository;
+  final QuizAttemptRepository? quizAttemptRepository;
   final String? companionName;
   final bool junior;
 
@@ -441,12 +443,14 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                           ? JuniorQuizPage(
                               topicVersionId: _topic.topicVersionId,
                               repository: repo,
+                              attemptRepository: widget.quizAttemptRepository,
                               companionName: widget.companionName ?? 'Nori',
                               topicTitle: title,
                             )
                           : SeniorQuizPage(
                               topicVersionId: _topic.topicVersionId,
                               repository: repo,
+                              attemptRepository: widget.quizAttemptRepository,
                               topicTitle: title,
                             ),
                     ),

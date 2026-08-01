@@ -1,7 +1,7 @@
 id: QZ-04
 name: "Senior Quiz Experience"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - QZ-02
   - STU-04

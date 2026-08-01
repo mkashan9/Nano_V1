@@ -4,6 +4,7 @@ export 'learning/learning_catalog_repository.dart';
 export 'learning/learning_insights_repository.dart';
 export 'quiz/learner_quiz_repository.dart';
 export 'quiz/question_bank_repository.dart';
+export 'quiz/quiz_attempt_repository.dart';
 export 'quiz/topic_quiz_repository.dart';
 export 'learning/learning_progress_repository.dart';
 export 'onboarding/onboarding_repository.dart';

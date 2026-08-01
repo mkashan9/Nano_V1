@@ -18,11 +18,20 @@ class FakeLearnerQuizRepository implements LearnerQuizRepository {
   final bool alwaysFail;
   final List<TopicQuiz> _items;
 
+  /// Server fixture topic ids resolve to the same fake quiz as the fake
+  /// learning catalog's ids, so a topic opened from either fixture family
+  /// finds its quiz.
+  static const _topicAliases = <String, String>{
+    '40000000-0000-0000-0000-000000000001': 'tv-counting-1',
+    '40000000-0000-0000-0000-000000000002': 'tv-addition-1',
+    '40000000-0000-0000-0000-000000000003': 'tv-living-things-1',
+  };
+
   /// Learner-safe seeds: options never carry is_correct.
   static final _defaultSeed = <TopicQuiz>[
     TopicQuiz(
       id: '60000000-0000-0000-0000-000000000001',
-      topicVersionId: '40000000-0000-0000-0000-000000000001',
+      topicVersionId: 'tv-counting-1',
       topicSlug: 'counting',
       topicTitle: 'Counting to 20',
       status: QuestionStatus.published,
@@ -55,7 +64,7 @@ class FakeLearnerQuizRepository implements LearnerQuizRepository {
     ),
     TopicQuiz(
       id: '60000000-0000-0000-0000-000000000002',
-      topicVersionId: '40000000-0000-0000-0000-000000000002',
+      topicVersionId: 'tv-addition-1',
       topicSlug: 'addition',
       topicTitle: 'Adding small numbers',
       status: QuestionStatus.published,
@@ -75,7 +84,7 @@ class FakeLearnerQuizRepository implements LearnerQuizRepository {
     ),
     TopicQuiz(
       id: '60000000-0000-0000-0000-000000000003',
-      topicVersionId: '40000000-0000-0000-0000-000000000003',
+      topicVersionId: 'tv-living-things-1',
       topicSlug: 'living-things',
       topicTitle: 'Living things',
       status: QuestionStatus.published,
@@ -98,8 +107,9 @@ class FakeLearnerQuizRepository implements LearnerQuizRepository {
   @override
   Future<TopicQuiz?> quizForTopic(String topicVersionId) async {
     if (alwaysFail) throw StateError('Learner quiz unavailable');
+    final wanted = _topicAliases[topicVersionId] ?? topicVersionId;
     for (final item in _items) {
-      if (item.topicVersionId == topicVersionId &&
+      if (item.topicVersionId == wanted &&
           item.status == QuestionStatus.published) {
         if (!item.isLearnerSafe) {
           throw StateError('Learner quiz leaked correctness');
