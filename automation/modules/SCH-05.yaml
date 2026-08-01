@@ -1,45 +1,77 @@
 id: SCH-05
 name: "Teacher Assignment Matrix"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SCH-03
   - SCH-04
+dependency_notes: >
+  SCH-03 owns teachers. SCH-04 owns students. SCH-02 class-subject maps are
+  required before assign. This module owns the assignment matrix and workload.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-05/
   - automation/modules/SCH-05.yaml
+  - automation/modules/SCH-04.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook SCH-04 Teacher Assignment and Workload"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-05"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.teacher_assignments
+  - public.class_subjects
+  - public.classes
+  - public.sections
+  - public.school_subjects
+server_functions:
+  - "public.list_teacher_assignment_matrix"
+  - "public.assign_teacher"
+  - "public.end_teacher_assignment"
+  - "public.replace_teacher_assignment"
 acceptance:
+  - School admin Assignments hub lists matrix with workload and uncovered scopes
+  - Assign requires class-subject map and active teacher
+  - End/replace require reason and preserve history
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch05_teacher_assignment_matrix.sql
+  - packages/nano_domain/test/teacher_assignment_ops_test.dart
+  - packages/nano_data/test/teacher_assignment_repository_test.dart
+  - apps/admin_web/test/teacher_assignments_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Assignments as school admin
+  - Assign, end, and replace a teacher on a mapped subject
+rollback_notes: >
+  Revert the branch and migration. Assignments returns to stub nav.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Assignment matrix with coverage + simple workload counts. Co-assign allowed.
+  deferred: >
+    Timetable conflicts; attendance/marks load weighting; SCH-06/SCH-07.

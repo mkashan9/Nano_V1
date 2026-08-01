@@ -23,6 +23,7 @@ void main() {
   AcademicStructureRepository? academicStructureRepository;
   SchoolTeacherRepository? schoolTeacherRepository;
   SchoolStudentRepository? schoolStudentRepository;
+  TeacherAssignmentRepository? teacherAssignmentRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     // One client, so the review calls carry the signed-in reviewer's token.
@@ -47,6 +48,7 @@ void main() {
     academicStructureRepository = SupabaseAcademicStructureRepository(client);
     schoolTeacherRepository = SupabaseSchoolTeacherRepository(client);
     schoolStudentRepository = SupabaseSchoolStudentRepository(client);
+    teacherAssignmentRepository = SupabaseTeacherAssignmentRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -66,6 +68,7 @@ void main() {
       academicStructureRepository: academicStructureRepository,
       schoolTeacherRepository: schoolTeacherRepository,
       schoolStudentRepository: schoolStudentRepository,
+      teacherAssignmentRepository: teacherAssignmentRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -95,6 +98,7 @@ class NanoAdminApp extends StatefulWidget {
     this.academicStructureRepository,
     this.schoolTeacherRepository,
     this.schoolStudentRepository,
+    this.teacherAssignmentRepository,
   });
 
   final EnvironmentConfig config;
@@ -118,6 +122,7 @@ class NanoAdminApp extends StatefulWidget {
   final AcademicStructureRepository? academicStructureRepository;
   final SchoolTeacherRepository? schoolTeacherRepository;
   final SchoolStudentRepository? schoolStudentRepository;
+  final TeacherAssignmentRepository? teacherAssignmentRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -142,6 +147,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late final AcademicStructureRepository _academicStructureRepository;
   late final SchoolTeacherRepository _schoolTeacherRepository;
   late final SchoolStudentRepository _schoolStudentRepository;
+  late final TeacherAssignmentRepository _teacherAssignmentRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -185,6 +191,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         widget.schoolTeacherRepository ?? FakeSchoolTeacherRepository();
     _schoolStudentRepository =
         widget.schoolStudentRepository ?? FakeSchoolStudentRepository();
+    _teacherAssignmentRepository =
+        widget.teacherAssignmentRepository ?? FakeTeacherAssignmentRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -245,6 +253,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       academicStructureRepository: _academicStructureRepository,
       schoolTeacherRepository: _schoolTeacherRepository,
       schoolStudentRepository: _schoolStudentRepository,
+      teacherAssignmentRepository: _teacherAssignmentRepository,
     );
   }
 

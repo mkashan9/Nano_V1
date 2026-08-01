@@ -44,6 +44,7 @@ class NanoCopy {
   String get overview => isUrdu ? 'جائزہ' : 'Overview';
   String get students => isUrdu ? 'طلبہ' : 'Students';
   String get teachers => isUrdu ? 'اساتذہ' : 'Teachers';
+  String get assignments => isUrdu ? 'تفویضات' : 'Assignments';
   String get reports => isUrdu ? 'رپورٹس' : 'Reports';
   String get settings => isUrdu ? 'ترتیبات' : 'Settings';
   String get schoolMetricLearners => isUrdu ? 'طلبہ' : 'Learners';
@@ -193,6 +194,44 @@ class NanoCopy {
   String studentsImportPreviewSummary(int ok, int fail) => isUrdu
       ? '$ok ٹھیک، $fail ناکام'
       : '$ok ready, $fail failed';
+  String get assignmentsPageTitle => isUrdu ? 'تفویضات' : 'Assignments';
+  String get assignmentsPageSubtitle => isUrdu
+      ? 'استاد کو کلاس، سیکشن، مضمون تفویض کریں؛ کوریج اور ورکلوڈ دیکھیں۔'
+      : 'Assign teachers to class/section/subject; review coverage and workload.';
+  String get assignmentsEmpty =>
+      isUrdu ? 'ابھی کوئی تفویض نہیں۔' : 'No assignments yet.';
+  String get assignmentsCreateTitle =>
+      isUrdu ? 'نئی تفویض' : 'Assign teacher';
+  String get assignmentsCreateAction => isUrdu ? 'تفویض' : 'Assign';
+  String get assignmentsTeacherLabel => isUrdu ? 'استاد' : 'Teacher';
+  String get assignmentsClassLabel => isUrdu ? 'کلاس' : 'Class';
+  String get assignmentsSubjectLabel => isUrdu ? 'مضمون' : 'Subject';
+  String get assignmentsSectionLabel =>
+      isUrdu ? 'سیکشن (اختیاری)' : 'Section (optional)';
+  String get assignmentsSectionNone =>
+      isUrdu ? 'پوری کلاس' : 'Whole class';
+  String get assignmentsEndTitle => isUrdu ? 'تفویض ختم' : 'End assignment';
+  String get assignmentsEndAction => isUrdu ? 'ختم' : 'End';
+  String get assignmentsReplaceTitle =>
+      isUrdu ? 'استاد تبدیل' : 'Replace teacher';
+  String get assignmentsReplaceAction => isUrdu ? 'تبدیل' : 'Replace';
+  String get assignmentsReasonLabel => isUrdu ? 'وجہ' : 'Reason';
+  String get assignmentsConfirmAction => isUrdu ? 'تصدیق' : 'Confirm';
+  String get assignmentsNeedAnotherTeacher => isUrdu
+      ? 'تبدیلی کے لیے دوسرا استاد درکار ہے۔'
+      : 'Need another teacher to replace.';
+  String get assignmentsListTitle =>
+      isUrdu ? 'تفویض فہرست' : 'Assignment list';
+  String get assignmentsWorkloadTitle => isUrdu ? 'ورکلوڈ' : 'Workload';
+  String assignmentsWorkloadValue(int count) =>
+      isUrdu ? '$count فعال' : '$count active';
+  String get assignmentsUncoveredTitle =>
+      isUrdu ? 'بغیر استاد مضامین' : 'Uncovered subjects';
+  String get assignmentsConflictsTitle =>
+      isUrdu ? 'مشترکہ تفویضات' : 'Co-assignments';
+  String get assignmentsActiveCount => isUrdu ? 'فعال' : 'Active';
+  String get assignmentsUncoveredCount => isUrdu ? 'کھلے' : 'Uncovered';
+  String get assignmentsConflictCount => isUrdu ? 'مشترکہ' : 'Shared';
   String get platform => isUrdu ? 'پلیٹ فارم' : 'Platform';
   String get platformDashboardTitle =>
       isUrdu ? 'پلیٹ فارم ڈیش بورڈ' : 'Platform dashboard';
@@ -830,6 +869,7 @@ class NanoCopy {
         'overview' => overview,
         'students' => students,
         'teachers' => teachers,
+        'assignments' => assignments,
         'reports' => reports,
         'settings' => settings,
         'platform' => platform,

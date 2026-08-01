@@ -1,7 +1,7 @@
 id: SCH-04
 name: "Student Management and Excel Import"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - SCH-02
 dependency_notes: >
