@@ -55,8 +55,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | BACKLOG |
 | Handbook CLS-01 Classroom | CLS-01,CLS-02,CLS-03 | teacher_app | Classroom | announcements | ack tests | BACKLOG |
 | Handbook SCH-01 School setup branding | SCH-01 | admin_web | School dash | schools | branding | DONE |
-| Handbook SCH-02 Academic structure | SCH-02 | admin_web | Classes | classes | structure | USER_TEST |
-| Handbook SCH-03 Users imports enrollment | SCH-03,SCH-04 | admin_web | Imports | users | excel import | BACKLOG |
+| Handbook SCH-02 Academic structure | SCH-02 | admin_web | Classes | classes | structure | DONE |
+| Handbook SCH-03 Users imports enrollment | SCH-03,SCH-04 | admin_web | Imports | users | excel import | USER_TEST |
 | Handbook SCH-04 Teacher assignment | SCH-05 | admin_web | Assignment matrix | assignments | matrix | BACKLOG |
 | Handbook ADM-01 Global school accounts | ADM-01,ADM-02,ADM-03 | admin_web | Superadmin | schools,users | admin | DONE |
 | Handbook ADM-02 Learning content admin | ADM-04 | admin_web | Content admin | content | admin | DONE |

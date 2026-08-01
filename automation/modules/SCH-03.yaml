@@ -1,44 +1,78 @@
 id: SCH-03
 name: "Teacher Management and Excel Import"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SCH-02
+dependency_notes: >
+  SCH-02 owns academic structure. This module owns school-admin teacher
+  directory, create, suspend, and CSV import. Students stay SCH-04.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SCH-03/
   - automation/modules/SCH-03.yaml
+  - automation/modules/SCH-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook SCH-03 Users imports enrollment (teachers slice)"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SCH-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.profiles
+  - public.school_memberships
+  - auth.users
+server_functions:
+  - "public.list_school_teachers"
+  - "public.create_school_teacher"
+  - "public.set_school_teacher_status"
+  - "public.preview_teacher_import"
+  - "public.commit_teacher_import"
 acceptance:
+  - School admin Teachers hub lists in-tenant teachers
+  - Create teacher provisions auth+profile+membership and shows temp password
+  - Suspend/restore requires reason and is audited
+  - CSV import commits only when preview has zero failures
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/sch03_teacher_management.sql
+  - packages/nano_domain/test/school_teacher_ops_test.dart
+  - packages/nano_data/test/school_teacher_repository_test.dart
+  - apps/admin_web/test/school_teachers_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - school_scoped_rpcs
+  - import_all_or_nothing
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Teachers as school admin
+  - Create, suspend, restore a teacher
+  - Preview and commit CSV import
+rollback_notes: >
+  Revert the branch and migration. Teachers returns to stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Teachers only. CSV import. No student enrollment. No assignment matrix.
+  deferred: >
+    SCH-04 students; SCH-05 assignments; xlsx binary; email invite.

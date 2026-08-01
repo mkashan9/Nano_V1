@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] SCH-02 Classes, Grades, Sections, and Subjects
+- [ ] SCH-03 Teacher Management and Excel Import
 
 ## Completed
 
@@ -52,4 +52,9 @@
 - [x] ADM-07 Notification Administration
 - [x] ADM-08 Platform Analytics
 - [x] SCH-01 School Dashboard and Branding
-- [ ] SCH-02 Classes, Grades, Sections, and Subjects
+- [x] SCH-02 Classes, Grades, Sections, and Subjects
+- [ ] SCH-03 Teacher Management and Excel Import
+- [ ] SCH-04 Student Management and Excel Import
+- [ ] SCH-05 Teacher Assignment Matrix
+- [ ] SCH-06 Marks and Result Policies
+- [ ] SCH-07 School Reports
