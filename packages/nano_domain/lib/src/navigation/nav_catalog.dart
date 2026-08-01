@@ -225,6 +225,13 @@ abstract final class NavCatalog {
       requiredPermission: 'platform.games',
     ),
     NavDestination(
+      id: 'notifications',
+      label: 'Notifications',
+      path: '/notifications',
+      iconName: 'notifications',
+      requiredPermission: 'platform.notifications',
+    ),
+    NavDestination(
       id: 'moderation',
       label: 'Moderation',
       path: '/moderation',

@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-06 Game Administration
+- [ ] ADM-07 Notification Administration
 
 ## Completed
 
@@ -48,5 +48,6 @@
 - [x] ADM-03 Global User and Account Control
 - [x] ADM-04 Learning Stack Content Administration
 - [x] ADM-05 Gamification Administration
-- [ ] ADM-06 Game Administration
+- [x] ADM-06 Game Administration
 - [ ] ADM-07 Notification Administration
+- [ ] ADM-08 Platform Analytics

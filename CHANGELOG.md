@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- ADM-07: platform staff can draft, publish, and disable notification templates from Notifications
 - ADM-06: platform staff can draft, publish, and disable game catalog versions from Games
 - ADM-05: platform staff can edit XP policy/levels, toggle achievements and missions, and adjust XP with a reason
 - ADM-04: platform staff can draft, publish, and archive Learning Stack subjects/topics from Content ? Catalog

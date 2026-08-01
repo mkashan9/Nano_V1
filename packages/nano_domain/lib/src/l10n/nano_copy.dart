@@ -302,6 +302,20 @@ class NanoCopy {
       isUrdu ? 'کیٹلاگ' : 'Catalog';
   String get gamification => isUrdu ? 'گیمیفیکیشن' : 'Gamification';
   String get gameAdmin => isUrdu ? 'گیمز' : 'Games';
+  String get notificationAdminSearchHint =>
+      isUrdu ? 'ٹیمپلیٹ تلاش' : 'Search templates';
+  String get notificationAdminNew =>
+      isUrdu ? 'نیا ٹیمپلیٹ' : 'New template';
+  String get notificationAdminPublish => isUrdu ? 'شائع کریں' : 'Publish';
+  String get notificationAdminDisable => isUrdu ? 'بند کریں' : 'Disable';
+  String get notificationAdminReason => isUrdu ? 'وجہ' : 'Reason';
+  String get notificationAdminStatus => isUrdu ? 'حیثیت' : 'Status';
+  String get notificationAdminChannel => isUrdu ? 'چینل' : 'Channel';
+  String get notificationAdminDeepLink =>
+      isUrdu ? 'ڈیپ لنک' : 'Deep link';
+  String get notificationAdminEmptyDetail => isUrdu
+      ? 'تفصیل دیکھنے کے لیے ٹیمپلیٹ منتخب کریں۔'
+      : 'Select a template to see details.';
   String get gameAdminSearchHint =>
       isUrdu ? 'گیم تلاش' : 'Search games';
   String get gameAdminNew => isUrdu ? 'نیا گیم' : 'New game';
@@ -636,6 +650,7 @@ class NanoCopy {
         'content' => content,
         'gamification' => gamification,
         'gameAdmin' => gameAdmin,
+        'notifications' => notificationsLabel,
         'moderation' => moderation,
         'analytics' => analytics,
         'audit' => audit,
