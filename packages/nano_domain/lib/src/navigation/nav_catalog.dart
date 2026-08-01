@@ -211,6 +211,13 @@ abstract final class NavCatalog {
       requiredPermission: 'platform.content',
     ),
     NavDestination(
+      id: 'gamification',
+      label: 'Gamification',
+      path: '/gamification',
+      iconName: 'emoji_events',
+      requiredPermission: 'platform.gamification',
+    ),
+    NavDestination(
       id: 'moderation',
       label: 'Moderation',
       path: '/moderation',

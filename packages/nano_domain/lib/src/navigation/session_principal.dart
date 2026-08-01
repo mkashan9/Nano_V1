@@ -142,6 +142,7 @@ class SessionPrincipal {
           'platform.schools',
           'platform.users',
           'platform.content',
+          'platform.gamification',
           'platform.moderation',
           'platform.analytics',
           'platform.audit',

@@ -59,7 +59,8 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook SCH-03 Users imports enrollment | SCH-03,SCH-04 | admin_web | Imports | users | excel import | BACKLOG |
 | Handbook SCH-04 Teacher assignment | SCH-05 | admin_web | Assignment matrix | assignments | matrix | BACKLOG |
 | Handbook ADM-01 Global school accounts | ADM-01,ADM-02,ADM-03 | admin_web | Superadmin | schools,users | admin | DONE |
-| Handbook ADM-02 Learning content admin | ADM-04 | admin_web | Content admin | content | admin | USER_TEST |
+| Handbook ADM-02 Learning content admin | ADM-04 | admin_web | Content admin | content | admin | DONE |
+| Handbook GAM-01 admin ops | ADM-05 | admin_web | Superadmin | gamification | admin | USER_TEST |
 | Handbook GME-01 Games secure host | GME-01,GME-02,GME-05,GME-07 | student_app | Games | game_sessions | verify score | BACKLOG |
 | Handbook SOC-01 Friends challenges sharing | SOC-01,SOC-02,SOC-03,SOC-04,LGE-03 | student_app | Social | friends | social+block | BACKLOG |
 | Handbook COM-01 Senior Communities | COM-01..COM-06 | student_app | Communities | communities | junior exclusion | BACKLOG |
