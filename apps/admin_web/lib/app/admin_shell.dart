@@ -1,7 +1,9 @@
+import 'package:admin_web/features/content/presentation/question_bank_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:nano_data/nano_data.dart';
 
 class AdminShell extends StatelessWidget {
   const AdminShell({
@@ -13,6 +15,7 @@ class AdminShell extends StatelessWidget {
     required this.copy,
     this.onSignOut,
     this.liveAuth = false,
+    this.questionBankRepository,
   });
 
   final EnvironmentConfig config;
@@ -22,6 +25,7 @@ class AdminShell extends StatelessWidget {
   final NanoCopy copy;
   final VoidCallback? onSignOut;
   final bool liveAuth;
+  final QuestionBankRepository? questionBankRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -128,13 +132,21 @@ class AdminDestinationPage extends StatelessWidget {
     super.key,
     required this.destination,
     required this.principal,
+    this.questionBankRepository,
   });
 
   final NavDestination destination;
   final SessionPrincipal principal;
+  final QuestionBankRepository? questionBankRepository;
 
   @override
   Widget build(BuildContext context) {
+    if (destination.id == 'content' &&
+        principal.role == AppRole.superadmin &&
+        questionBankRepository != null) {
+      return QuestionBankPage(repository: questionBankRepository!);
+    }
+
     final authLine = principal.isAuthenticated
         ? 'Signed in · ${principal.userId ?? '—'}'
         : 'Preview persona';

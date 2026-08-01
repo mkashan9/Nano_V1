@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
@@ -36,6 +37,7 @@ class NanoAdminApp extends StatefulWidget {
     this.initialLocale = NanoAppLocale.en,
     this.authRepository,
     this.requireAuth = false,
+    this.questionBankRepository,
   });
 
   final EnvironmentConfig config;
@@ -44,6 +46,7 @@ class NanoAdminApp extends StatefulWidget {
   final NanoAppLocale initialLocale;
   final AuthRepository? authRepository;
   final bool requireAuth;
+  final QuestionBankRepository? questionBankRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -53,6 +56,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late SessionPrincipal _principal;
   late GoRouter _router;
   late NanoAppLocale _locale;
+  late final QuestionBankRepository _questionBankRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -64,6 +68,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
             ? SessionPrincipal.schoolAdmin(displayName: '')
             : SessionPrincipal.schoolAdmin());
     _locale = widget.initialLocale;
+    _questionBankRepository =
+        widget.questionBankRepository ?? FakeQuestionBankRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -109,6 +115,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         });
       },
       onSignedOut: _signOut,
+      questionBankRepository: _questionBankRepository,
     );
   }
 

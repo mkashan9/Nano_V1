@@ -203,6 +203,31 @@ class NanoCopy {
   String get noSkipAheadNotice => isUrdu
       ? 'اس ویڈیو میں آگے نہیں چھوڑ سکتے۔'
       : "You can't skip ahead in this video.";
+  String get questionBankTitle =>
+      isUrdu ? 'سوالات کا ذخیرہ' : 'Question bank';
+  String get newQuestionLabel => isUrdu ? 'نیا سوال' : 'New question';
+  String get publishQuestionLabel => isUrdu ? 'شائع کریں' : 'Publish';
+  String get retireQuestionLabel => isUrdu ? 'ریٹائر کریں' : 'Retire';
+  String get draftStatusLabel => isUrdu ? 'مسودہ' : 'Draft';
+  String get publishedStatusLabel => isUrdu ? 'شائع شدہ' : 'Published';
+  String get retiredStatusLabel => isUrdu ? 'ریٹائرڈ' : 'Retired';
+  String get duplicateWarning => isUrdu
+      ? 'ایسا ہی سوال پہلے سے موجود ہے۔'
+      : 'A similar question already exists.';
+  String get juniorPreviewLabel => isUrdu ? 'جونیئر پیش نظارہ' : 'Junior preview';
+  String get seniorPreviewLabel => isUrdu ? 'سینئر پیش نظارہ' : 'Senior preview';
+  String get correctOptionLabel => isUrdu ? 'درست جواب' : 'Correct answer';
+  String get stemLabel => isUrdu ? 'سوال' : 'Question';
+  String get optionsLabel => isUrdu ? 'اختیارات' : 'Options';
+  String get difficultyLabel => isUrdu ? 'مشکل' : 'Difficulty';
+  String get provenanceLabel => isUrdu ? 'ماخذ' : 'Provenance';
+  String get explanationLabel => isUrdu ? 'وضاحت' : 'Explanation';
+  String get versionIdLabel => isUrdu ? 'ورژن شناخت' : 'Version id';
+  String questionStatusLabel(String status) => switch (status) {
+        'published' => publishedStatusLabel,
+        'retired' => retiredStatusLabel,
+        _ => draftStatusLabel,
+      };
   String get noCaptionsLabel =>
       isUrdu ? 'اس ویڈیو کے کیپشنز نہیں ہیں۔' : 'This video has no captions.';
   String get videoUnavailable => isUrdu

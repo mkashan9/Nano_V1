@@ -30,8 +30,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | LRN-02 | Topic List, Ordering, and Prerequisites | R3 | DONE | LRN-01 |
 | LRN-03 | Video Player, Resume, Captions, and Completion | R3 | DONE | LRN-02 |
 | LRN-04 | Long-Video Checkpoints and Refresh Interactions | R3 | DONE | LRN-03 |
-| LRN-05 | Learning Progress and Recommendations | R3 | USER_TEST | LRN-03 |
-| QZ-01 | Superadmin Question Bank | R3 | BACKLOG | SEC-03 |
+| LRN-05 | Learning Progress and Recommendations | R3 | DONE | LRN-03 |
+| QZ-01 | Superadmin Question Bank | R3 | USER_TEST | SEC-03 |
 | QZ-02 | Video-Specific Ordered Quiz Authoring | R3 | BACKLOG | QZ-01, LRN-02 |
 | QZ-03 | Junior Quiz Experience | R3 | BACKLOG | QZ-02, STU-03 |
 | QZ-04 | Senior Quiz Experience | R3 | BACKLOG | QZ-02, STU-04 |

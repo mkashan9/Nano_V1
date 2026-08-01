@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- QZ-01: platform-admin question bank with immutable published versions, duplicate-stem warnings, and Junior/Senior curator preview
+
 - LRN-05: per-subject progress summary and server-ranked next-up recommendations that can only name topics the learner may already open
 
 - LRN-04: long-video refresh checkpoints at safe chapter boundaries, a server-enforced required-checkpoint credit gate, and content-configured seeking

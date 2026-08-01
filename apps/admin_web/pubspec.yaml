@@ -39,6 +39,8 @@ dependencies:
     path: ../../packages/nano_design_system
   nano_auth:
     path: ../../packages/nano_auth
+  nano_data:
+    path: ../../packages/nano_data
   supabase: ^2.8.0
 
 
