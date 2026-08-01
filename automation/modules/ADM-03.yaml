@@ -1,7 +1,7 @@
 id: ADM-03
 name: "Global User and Account Control"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - ADM-01
   - SEC-03

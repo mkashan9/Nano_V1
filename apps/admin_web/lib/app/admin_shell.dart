@@ -21,6 +21,7 @@ class AdminShell extends StatelessWidget {
     this.liveAuth = false,
     this.questionBankRepository,
     this.topicQuizRepository,
+    this.learningContentRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
@@ -36,6 +37,7 @@ class AdminShell extends StatelessWidget {
   final bool liveAuth;
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
+  final LearningContentRepository? learningContentRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
@@ -148,6 +150,7 @@ class AdminDestinationPage extends StatelessWidget {
     required this.principal,
     this.questionBankRepository,
     this.topicQuizRepository,
+    this.learningContentRepository,
     this.assetReviewRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
@@ -158,6 +161,7 @@ class AdminDestinationPage extends StatelessWidget {
   final SessionPrincipal principal;
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
+  final LearningContentRepository? learningContentRepository;
   final AssetReviewRepository? assetReviewRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
@@ -190,10 +194,12 @@ class AdminDestinationPage extends StatelessWidget {
     if (destination.id == 'content' &&
         principal.role == AppRole.superadmin &&
         questionBankRepository != null &&
-        topicQuizRepository != null) {
+        topicQuizRepository != null &&
+        learningContentRepository != null) {
       return ContentHubPage(
         questionBankRepository: questionBankRepository!,
         topicQuizRepository: topicQuizRepository!,
+        learningContentRepository: learningContentRepository!,
       );
     }
 
