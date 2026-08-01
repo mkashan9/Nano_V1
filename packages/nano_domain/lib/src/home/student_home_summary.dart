@@ -22,7 +22,7 @@ class ContinueLearningItem {
 }
 
 /// Non-blocking notices the home screen may show above content.
-enum HomeNoticeKind { none, maintenance, accessWarning }
+enum HomeNoticeKind { none, maintenance, accessWarning, streakGentle }
 
 /// Independently loaded parts of the home, so one failure never blanks the
 /// whole screen (handbook STU-02: "Home renders with partial data when one

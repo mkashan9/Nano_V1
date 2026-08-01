@@ -1,16 +1,27 @@
 id: XP-05
 name: "Streaks and Gentle Motivation"
 release: R5
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - XP-01
   - CMP-02
+dependency_notes: >
+  Learning events already credit the ledger. This module owns consecutive-day
+  streaks from those events, shows them on Home and Me, and uses gentle copy
+  (and CMP-02's calm mood vocabulary) when a streak pauses — never shame.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/XP-05/
@@ -19,27 +30,47 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "GAM-01 XP, Levels, Achievements, Missions, and Streaks"
+  - "Broken streak messaging is gentle"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for XP-05"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.streaks
+server_functions:
+  - "nano_internal.touch_streak"
+  - "public.my_streak"
 acceptance:
+  - Streak state is server-owned; clients never write the count
+  - A trusted learning day (topic complete or quiz pass) extends or starts the streak
+  - Same-day activity does not double-count
+  - A gap pauses the streak; messaging is gentle, not shaming
+  - Home and Me prefer my_streak when a repository is wired
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/xp05_streaks.sql
+  - packages/nano_domain/test/streak_test.dart
+  - packages/nano_data/test/streak_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - no_client_streak_write
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Complete a lesson and confirm Home/Me streak becomes at least 1
+  - Complete again the same day and confirm the count does not jump twice
+  - Confirm a paused streak shows gentle welcome-back copy, not blame
+rollback_notes: >
+  Revert the branch and migration. Home/Me fall back to fixture streak 7.
 requires_owner_test: true
+owner_decisions_locked:
+  activity: >
+    A streak day is earned by topic completion or a passed quiz (same trusted
+    events that already feed XP). UTC calendar days.
+  break: >
+    Missing a full UTC day pauses the streak. On the next activity the count
+    restarts at 1 with a welcome-back notice. Longest streak is preserved.
+    No freeze / streak repair in this module.

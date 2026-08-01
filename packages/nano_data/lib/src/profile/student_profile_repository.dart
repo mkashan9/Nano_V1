@@ -2,6 +2,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
 import '../xp/achievement_repository.dart';
+import '../xp/streak_repository.dart';
 import '../xp/xp_ledger_repository.dart';
 
 /// Profile, privacy, and device sessions for the signed-in learner.
@@ -31,6 +32,7 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     this.progress = const (xp: 560, streak: 7, topics: 12),
     this.xpLedger,
     this.achievements,
+    this.streakRepository,
     List<ProfileAchievement>? fixtureAchievements,
   })  : _sessions = [...?sessions],
         fixtureAchievements = fixtureAchievements ??
@@ -59,6 +61,9 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
   /// XP-03: when set, Me reads awards from the repository instead of fixtures.
   final AchievementRepository? achievements;
 
+  /// XP-05: when set, Me reads the live streak count.
+  final StreakRepository? streakRepository;
+
   final List<ProfileAchievement> fixtureAchievements;
 
   final List<DeviceSession> _sessions;
@@ -78,6 +83,9 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
     final XpBalance? balance =
         xpLedger == null ? null : await xpLedger!.balance();
     final xp = balance?.total ?? progress.xp;
+    final streak = streakRepository == null
+        ? progress.streak
+        : (await streakRepository!.current()).current;
     final List<ProfileAchievement> awards;
     if (achievements != null) {
       final mine = await achievements!.mine();
@@ -100,7 +108,7 @@ class FakeStudentProfileRepository implements StudentProfileRepository {
       latestMarkLabel: 'Fractions quiz 8/10',
       xp: xp,
       levelProgress: balance?.levelProgress,
-      streakDays: progress.streak,
+      streakDays: streak,
       completedTopics: progress.topics,
       recommendedNext: 'Fractions: equal parts',
       achievements: awards,

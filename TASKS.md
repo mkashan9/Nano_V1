@@ -40,5 +40,6 @@
 - [x] XP-01 Trusted XP Ledger
 - [x] XP-02 Levels and Thresholds
 - [x] XP-03 Achievements and Stickers
-- [ ] XP-04 Daily and Weekly Missions
+- [x] XP-04 Daily and Weekly Missions
+- [ ] XP-05 Streaks and Gentle Motivation
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)

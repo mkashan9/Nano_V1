@@ -24,6 +24,7 @@ void main() {
   XpLedgerRepository? xpLedgerRepository;
   AchievementRepository? achievementRepository;
   MissionRepository? missionRepository;
+  StreakRepository? streakRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -43,6 +44,7 @@ void main() {
     xpLedgerRepository = SupabaseXpLedgerRepository(client);
     achievementRepository = SupabaseAchievementRepository(client);
     missionRepository = SupabaseMissionRepository(client);
+    streakRepository = SupabaseStreakRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -56,6 +58,7 @@ void main() {
       xpLedgerRepository: xpLedgerRepository,
       achievementRepository: achievementRepository,
       missionRepository: missionRepository,
+      streakRepository: streakRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -89,6 +92,7 @@ class NanoStudentApp extends StatefulWidget {
     this.xpLedgerRepository,
     this.achievementRepository,
     this.missionRepository,
+    this.streakRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -132,6 +136,10 @@ class NanoStudentApp extends StatefulWidget {
   /// XP-04: live daily/weekly missions for Home. Optional — without it Home
   /// keeps fixture plan items.
   final MissionRepository? missionRepository;
+
+  /// XP-05: live streak for Home and Me. Optional — without it the fixture
+  /// seven-day streak remains.
+  final StreakRepository? streakRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -181,22 +189,25 @@ class _NanoStudentAppState extends State<NanoStudentApp>
             : SessionPrincipal.junior());
     _locale = widget.initialLocale;
     _a11y = widget.initialAccessibility;
-    // Home and profile still use fixtures for subjects; XP-01 replaces XP,
-    // XP-03 replaces achievements, XP-04 replaces the mission plan when live.
+    // Home and profile still use fixtures for subjects; live repos replace XP,
+    // achievements, missions, and streaks when Supabase is wired.
     final xpLedger = widget.xpLedgerRepository;
     final achievementRepo = widget.achievementRepository;
     final missionRepo = widget.missionRepository;
+    final streakRepo = widget.streakRepository;
     _homeRepository = widget.homeRepository ??
         FakeStudentHomeRepository(
           subjects: StudentHomeFixtures.subjects,
           missions: StudentHomeFixtures.missions,
           xpLedger: xpLedger,
           missionRepository: missionRepo,
+          streakRepository: streakRepo,
         );
     _profileRepository = widget.profileRepository ??
         FakeStudentProfileRepository(
           xpLedger: xpLedger,
           achievements: achievementRepo,
+          streakRepository: streakRepo,
           sessions: [
             SecurityFixtures.activeSession.copyWith(isCurrent: true),
             SecurityFixtures.revokedSession,

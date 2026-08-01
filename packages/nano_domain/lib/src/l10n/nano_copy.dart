@@ -100,6 +100,9 @@ class NanoCopy {
       : 'You are learning on your own: lessons, quizzes, and games are ready for you.';
   String get keepGoing => isUrdu ? 'جاری رکھیں' : 'Keep going';
   String get streakLabel => isUrdu ? 'دن کا سلسلہ' : 'day streak';
+  String get streakWelcomeBack => isUrdu
+      ? 'خوش آمدید۔ آرام سیکھنے کا حصہ ہے — نیا سلسلہ تب شروع ہوگا جب آپ تیار ہوں۔'
+      : 'Welcome back. Rest is part of learning — a new streak starts when you are ready.';
   String get notificationsLabel => isUrdu ? 'اطلاعات' : 'Notifications';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>

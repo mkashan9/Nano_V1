@@ -1,7 +1,7 @@
 id: XP-04
 name: "Daily and Weekly Missions"
 release: R5
-status: USER_TEST
+status: DONE
 dependencies:
   - XP-01
 dependency_notes: >
@@ -78,3 +78,5 @@ owner_decisions_locked:
   cadence: >
     Daily resets at UTC midnight. Weekly uses ISO week (IYYY-IW). Progress
     counts events whose timestamps fall in the current period.
+owner_test_result: approved
+owner_approved_at: "2026-08-01T20:52:08Z"
