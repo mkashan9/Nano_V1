@@ -1,16 +1,29 @@
 id: ADM-04
 name: "Learning Stack Content Administration"
 release: R6
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ADM-01
   - LRN-01
+dependency_notes: >
+  ADM-01 owns the Content destination shell. LRN-01 owns the catalog schema and
+  learner reads. QZ-01/QZ-02 already own question bank and topic quiz tabs;
+  this module adds the Catalog tab and subject/topic publish RPCs. MED-05 stays
+  on Moderation.
 applications:
   - admin_web
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ADM-04/
@@ -19,27 +32,63 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "ADM-02 Learning Content Administration"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ADM-04"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.learning_subjects
+  - public.subject_versions
+  - public.topics
+  - public.topic_versions
+  - public.topic_prerequisites
+  - public.eligibility_rules
+  - public.learning_authoring
+server_functions:
+  - "public.create_subject_draft"
+  - "public.publish_subject_version"
+  - "public.archive_subject_version"
+  - "public.create_topic_draft"
+  - "public.publish_topic_version"
+  - "public.archive_topic_version"
 acceptance:
+  - Platform staff can draft, publish, and archive subjects with eligibility
+  - Platform staff can draft, publish, and archive topics with video metadata
+  - Topic publish requires a published subject and valid media fields
+  - Question bank and topic quiz tabs remain available on Content
+  - Learners cannot call authoring RPCs
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/adm04_learning_content.sql
+  - packages/nano_domain/test/learning_content_ops_test.dart
+  - packages/nano_data/test/learning_content_repository_test.dart
+  - apps/admin_web/test/learning_catalog_admin_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - user_writes_platform_only
+  - publish_gates_server_side
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Content → Catalog, create a subject draft, publish it
+  - Add a topic with fixture video metadata and publish it
+  - Confirm Junior/Senior preview share the subject version id
+  - Archive a published topic and confirm learners no longer start it
+rollback_notes: >
+  Revert the branch and migration. Catalog tab disappears; QZ tabs remain.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Catalog authoring only. Question bank and topic quizzes stay QZ. Asset
+    review stays MED-05 Moderation.
+  versioning: >
+    Draft → publish → archive. Publishing archives the prior published version
+    of the same subject/topic identity.
+  publish_gates: >
+    Subject needs a title. Topic needs title plus video_provider and video_ref,
+    and its parent subject version must already be published.
+  deferred: >
+    Bulk import, rich media pickers, full article/PDF editors, live provider ops.

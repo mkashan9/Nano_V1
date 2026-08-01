@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ADM-03 Global User and Account Control
+- [ ] ADM-04 Learning Stack Content Administration
 
 ## Completed
 
@@ -45,4 +45,6 @@
 - [x] XP-06 Shareable Achievement and Score Cards
 - [x] ADM-01 Superadmin Dashboard
 - [x] ADM-02 School Creation, Codes, Status, and Administrator Control
-- [ ] ADM-03 Global User and Account Control
+- [x] ADM-03 Global User and Account Control
+- [ ] ADM-04 Learning Stack Content Administration
+- [ ] ADM-05 Gamification Administration

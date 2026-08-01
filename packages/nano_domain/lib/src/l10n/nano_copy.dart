@@ -298,6 +298,37 @@ class NanoCopy {
       isUrdu ? 'سوالات کا ذخیرہ' : 'Question bank';
   String get topicQuizzesTitle =>
       isUrdu ? 'موضوع کے کوئز' : 'Topic quizzes';
+  String get learningCatalogTitle =>
+      isUrdu ? 'کیٹلاگ' : 'Catalog';
+  String get authoringSearchHint =>
+      isUrdu ? 'مضمون تلاش' : 'Search subjects';
+  String get authoringNewSubject =>
+      isUrdu ? 'نیا مضمون' : 'New subject';
+  String get authoringNewTopic =>
+      isUrdu ? 'نیا موضوع' : 'New topic';
+  String get authoringPublishSubject =>
+      isUrdu ? 'مضمون شائع کریں' : 'Publish subject';
+  String get authoringArchiveSubject =>
+      isUrdu ? 'مضمون محفوظ کریں' : 'Archive subject';
+  String get authoringPublishTopic =>
+      isUrdu ? 'موضوع شائع کریں' : 'Publish topic';
+  String get authoringArchiveTopic =>
+      isUrdu ? 'موضوع محفوظ کریں' : 'Archive topic';
+  String get authoringTopicsTitle => isUrdu ? 'موضوعات' : 'Topics';
+  String get authoringNoTopics =>
+      isUrdu ? 'ابھی کوئی موضوع نہیں۔' : 'No topics yet.';
+  String get authoringEmptyDetail => isUrdu
+      ? 'تفصیل کے لیے ایک مضمون منتخب کریں۔'
+      : 'Select a subject to review details.';
+  String get authoringVersionId => isUrdu ? 'ورژن شناخت' : 'Version id';
+  String get authoringPreviewTitle =>
+      isUrdu ? 'پیش نظارہ' : 'Preview';
+  String get authoringJuniorPreview =>
+      isUrdu ? 'جونیئر پیش نظارہ' : 'Junior preview';
+  String get authoringSeniorPreview =>
+      isUrdu ? 'سینئر پیش نظارہ' : 'Senior preview';
+  String get authoringSharedVersion =>
+      isUrdu ? 'مشترکہ ورژن' : 'Shared version';
   String get newQuizLabel => isUrdu ? 'نیا کوئز' : 'New quiz';
   String get publishQuizLabel => isUrdu ? 'کوئز شائع کریں' : 'Publish quiz';
   String get retireQuizLabel => isUrdu ? 'کوئز ریٹائر کریں' : 'Retire quiz';

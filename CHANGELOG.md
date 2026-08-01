@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- ADM-04: platform staff can draft, publish, and archive Learning Stack subjects/topics from Content ? Catalog
 - ADM-03: platform staff can search users safely, suspend/restore with reason, replace school admin, and revoke sessions
 - ADM-02: platform staff can create schools with immutable codes, change status with an audited reason, and assign the first school admin
 
