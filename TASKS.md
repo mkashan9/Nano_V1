@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] QZ-05 owner manual test
+- [ ] QZ-06 owner manual test
 
 ## Completed
 
@@ -28,7 +28,8 @@
 - [x] QZ-02
 - [x] QZ-03
 - [x] QZ-04
+- [x] QZ-05
 
 ## Upcoming
 
-- [ ] QZ-06 Quiz Results, Explanations, and Progress Update
+- [ ] CMP-01 Nori Core Runtime

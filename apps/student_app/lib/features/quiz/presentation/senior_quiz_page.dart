@@ -3,6 +3,8 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+import 'quiz_result_view.dart';
+
 /// QZ-04/QZ-05 Senior attempt: navigation + review; finish submits for a
 /// server score.
 class SeniorQuizPage extends StatefulWidget {
@@ -28,6 +30,7 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
   SeniorQuizFlow? _flow;
   String? _attemptId;
   ScoreResult? _score;
+  AttemptResult? _result;
   var _submitting = false;
   late final QuizAttemptRepository _attempts =
       widget.attemptRepository ?? FakeQuizAttemptRepository();
@@ -57,6 +60,8 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
       if (!mounted) return;
       setState(() {
         _attemptId = session.attemptId;
+        _score = null;
+        _result = null;
         _flow = session.answers.isEmpty
             ? SeniorQuizFlow.start(quiz)
             : SeniorQuizFlow.resume(quiz, session.answers);
@@ -97,9 +102,17 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
     });
     try {
       final score = await _attempts.submit(attemptId);
+      // A failed review read must not cost the learner the score they earned.
+      AttemptResult? result;
+      try {
+        result = await _attempts.result(score.attemptId);
+      } catch (_) {
+        result = null;
+      }
       if (!mounted) return;
       setState(() {
         _score = score;
+        _result = result;
         _submitting = false;
       });
     } catch (_) {
@@ -139,28 +152,36 @@ class _SeniorQuizPageState extends State<SeniorQuizPage> {
                     NanoSpacing.md,
                     NanoSpacing.xxl,
                   ),
-                  child: flow.finished || _score != null
-                      ? _FinishedPane(copy: copy, score: _score)
-                      : flow.reviewing
-                          ? _ReviewPane(
-                              flow: flow,
-                              copy: copy,
-                              submitting: _submitting,
-                              onJump: (i) => _update(flow.jumpTo(i)),
-                              onExit: () => _update(flow.exitReview()),
-                              onFinish: _finish,
-                            )
-                          : _QuestionPane(
-                              flow: flow,
-                              copy: copy,
-                              locale: locale,
-                              theme: theme,
-                              onSelect: _select,
-                              onJump: (i) => _update(flow.jumpTo(i)),
-                              onPrevious: () => _update(flow.goPrevious()),
-                              onNext: () => _update(flow.goNext()),
-                              onReview: () => _update(flow.enterReview()),
-                            ),
+                  child: _result != null
+                      ? QuizResultView(
+                          result: _result!,
+                          copy: copy,
+                          locale: locale,
+                          retaking: _submitting,
+                          onRetake: _load,
+                        )
+                      : flow.finished || _score != null
+                          ? _FinishedPane(copy: copy, score: _score)
+                          : flow.reviewing
+                              ? _ReviewPane(
+                                  flow: flow,
+                                  copy: copy,
+                                  submitting: _submitting,
+                                  onJump: (i) => _update(flow.jumpTo(i)),
+                                  onExit: () => _update(flow.exitReview()),
+                                  onFinish: _finish,
+                                )
+                              : _QuestionPane(
+                                  flow: flow,
+                                  copy: copy,
+                                  locale: locale,
+                                  theme: theme,
+                                  onSelect: _select,
+                                  onJump: (i) => _update(flow.jumpTo(i)),
+                                  onPrevious: () => _update(flow.goPrevious()),
+                                  onNext: () => _update(flow.goNext()),
+                                  onReview: () => _update(flow.enterReview()),
+                                ),
                 ),
               ),
       ),

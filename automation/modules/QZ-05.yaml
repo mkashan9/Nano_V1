@@ -1,7 +1,7 @@
 id: QZ-05
 name: "Trusted Scoring, Attempts, Retakes, and Resume"
 release: R3
-status: USER_TEST
+status: DONE
 dependencies:
   - QZ-03
   - QZ-04

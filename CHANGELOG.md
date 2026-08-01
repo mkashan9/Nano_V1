@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- QZ-06: quiz results with per-question review and explanations released only after submit, a server-enforced retake budget, and recommendations that keep an unpassed quiz as review work
+
 - QZ-05: trusted quiz attempts with resume, retake limits, and idempotent server scoring
 
 - QZ-04: Senior quiz navigation and review without client-side scoring

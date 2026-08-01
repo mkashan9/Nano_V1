@@ -62,9 +62,11 @@ void main() {
     await tester.tap(find.text('Finish'));
     await tester.pumpAndSettle();
 
-    expect(find.text('You finished the quiz!'), findsOneWidget);
+    // Senior lands on the QZ-06 results screen rather than a bare score.
+    expect(find.text('Your results'), findsOneWidget);
     expect(find.textContaining('Score:'), findsOneWidget);
     expect(find.text('This score was saved by the server.'), findsOneWidget);
+    expect(find.text('What you answered'), findsOneWidget);
   });
 
   testWidgets('jump chip moves without clearing answers', (tester) async {

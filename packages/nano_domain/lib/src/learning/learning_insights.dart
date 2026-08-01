@@ -72,11 +72,13 @@ class SubjectProgress {
 /// Why a topic is being suggested.
 enum NextUpReason {
   resume,
+  reviewQuiz,
   nextInSubject,
   newSubject;
 
   static NextUpReason fromName(String? name) => switch (name) {
         'resume' => NextUpReason.resume,
+        'review_quiz' => NextUpReason.reviewQuiz,
         'next_in_subject' => NextUpReason.nextInSubject,
         _ => NextUpReason.newSubject,
       };
@@ -151,6 +153,7 @@ class NextUpSuggestion {
 
   String reasonLabel(NanoCopy copy) => switch (reason) {
         NextUpReason.resume => copy.reasonResume,
+        NextUpReason.reviewQuiz => copy.reasonReviewQuiz,
         NextUpReason.nextInSubject => copy.reasonNextInSubject,
         NextUpReason.newSubject => copy.reasonNewSubject,
       };

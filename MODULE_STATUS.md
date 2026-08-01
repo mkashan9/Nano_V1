@@ -35,8 +35,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | QZ-02 | Video-Specific Ordered Quiz Authoring | R3 | DONE | QZ-01, LRN-02 |
 | QZ-03 | Junior Quiz Experience | R3 | DONE | QZ-02, STU-03 |
 | QZ-04 | Senior Quiz Experience | R3 | DONE | QZ-02, STU-04 |
-| QZ-05 | Trusted Scoring, Attempts, Retakes, and Resume | R3 | USER_TEST | QZ-03, QZ-04 |
-| QZ-06 | Quiz Results, Explanations, and Progress Update | R3 | BACKLOG | QZ-05 |
+| QZ-05 | Trusted Scoring, Attempts, Retakes, and Resume | R3 | DONE | QZ-03, QZ-04 |
+| QZ-06 | Quiz Results, Explanations, and Progress Update | R3 | USER_TEST | QZ-05 |
 | CMP-01 | Nori Core Runtime | R4 | BACKLOG | STU-02, FND-07 |
 | CMP-02 | Nori Modes and Reaction Rules | R4 | BACKLOG | CMP-01 |
 | CMP-03 | Junior and Senior Companion Placement | R4 | BACKLOG | CMP-02, STU-03, STU-04 |
