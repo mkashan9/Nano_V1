@@ -6,6 +6,8 @@
 
 - MED-06: art a person supplied — the only image model Nano can reach without buying one cannot draw a mascot, so rather than lower the gate a curator may now place a picture in the bucket and register it, with rights required and provenance recorded; curated art enters `ready` and `unreviewed` exactly like generated art, stays unreadable by every learner until a reviewer approves it, and a file nobody registered is unreachable by anyone
 
+- MED-06: the Learning Guide is cast — Fish Educational Guide (`guide_educational`, ADR-0008) is the default voice, a female teacher register rather than the mascot speaking; stock stays reachable but is no longer default, and the stock recording of `greeting-2` was rejected and re-recorded before the module left USER_TEST
+
 - MED-06: a reviewer can finally play what they are judging — the Moderation queue hands an MP3 or an MP4 to the browser's own player instead of showing a checksum and calling it a review, admin_web being the one app that never leaves the web; the student and teacher apps gain no player and no dependency, and a preview that will not load still leaves Reject working
 
 - MED-06: a composed clip remembers what it was made of — the ask stamps the approved picture and the authored motion onto the asset, and the recorder merges provenance without letting a worker's nulls erase them; the first live render exposed the gap and the second landing carries both facts

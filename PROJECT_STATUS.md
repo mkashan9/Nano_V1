@@ -18,26 +18,33 @@
 
 ## Owner decision waiting
 
-Paste nothing — both keys are already set. Open admin_web → Moderation and
-decide the two assets waiting there:
+One asset is waiting in admin_web → Moderation:
 
-1. The composed `guide_greeting_shortClip` (MP4, `provider_id =
-   json2video_compose`, provenance shows `motion = driftIn` and the approved
-   picture it was made from)
-2. The recorded `narration_greeting-2` (MP3, `provider_id = fish_audio_voice`)
+1. The re-recorded `narration_greeting-2` (MP3, `provider_id =
+   fish_audio_voice`, `voice_id = guide_educational` — Fish Educational Guide,
+   the female teacher voice chosen from five candidates)
 
-Approving either publishes it to learners. Rejecting either frees the slot for
-a better attempt. Until you decide, both stay invisible to every learner — that
-is MED-05 working.
+Approving it publishes that line to learners. Rejecting it frees the slot.
+Until you decide, it stays invisible — that is MED-05 working.
 
-The live generation and compose steps of this manual test have already been
-run against `nano_v1` and passed. The refusal with no approved art
-(`celebration_celebration` → `NM011`) was also confirmed.
+Already decided and recorded:
+
+- The curated `guide_greeting_staticArt` picture — **approved**
+- The first generated picture — **rejected** (Pollinations `sana` cannot draw)
+- The json2video `guide_greeting_shortClip` — **rejected** ("looking very fake";
+  character animation moves to MED-07)
+- The stock-voice `narration_greeting-2` — **rejected** (ADR-0008: the guide is
+  a female teacher, not Fish stock)
 
 ## Next after MED-06 DONE
 
-R5 (XP-01) and ADM-01 stay available. ADM-01 should absorb the borrowed
-Moderation destination rather than replace it, and is the natural home for a
-curated-upload screen — today a curated picture is registered by calling the
-RPC, with no admin UI behind it. Picking a specific Fish `reference_id` is a
-small follow-up row once the owner chooses a voice.
+MED-07 Wan 2.2 image-to-video for reaction clips, with json2video kept as an
+automatic fallback when the public Space is down. Owner locked the sequence
+(finish MED-06 first), the cast voice (Educational Guide), and the hosting
+shape (Space as default, json2video as fallback). A live probe against the
+approved Nori art already rendered a 3.3-second clip where Nori stays on model
+and waves.
+
+R5 (XP-01) and ADM-01 stay available after MED-07. ADM-01 should absorb the
+borrowed Moderation destination and is the natural home for a curated-upload
+screen — today a curated picture is registered by calling the RPC.

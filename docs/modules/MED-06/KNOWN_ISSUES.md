@@ -6,11 +6,23 @@ Both provider keys were pasted into Edge Function secrets by the owner on
 2026-08-01. Live Fish TTS and live json2video compose both answered. They are
 not in git and must never be.
 
-## No Fish reference_id yet
+## The Learning Guide is cast
 
-The Learning Guide speaks in Fish's stock voice. Picking a specific
-`reference_id` is a new `narration_voices` row (the voice id is part of the
-reuse hash), not an edit of `guide_fish_stock`.
+`guide_educational` is the default voice: Fish Educational Guide
+(`2c408095b1294de896376eff6a638d90`), chosen by the owner from five candidates
+against the authored greeting and quiz lines. ADR-0008 records why it is a
+female teacher rather than the mascot speaking. `guide_fish_stock` stays
+enabled but is no longer default; the stock recording of `greeting-2` was
+rejected with that reason and re-recorded in the cast voice.
+
+## json2video motion was judged fake
+
+The owner rejected the composed `guide_greeting_shortClip` because a pan over a
+still is not character animation. A live probe of
+`cinderholm/wan2-2-i2v-v3` against the approved Nori art produced a 3.3-second
+clip where Nori stays on model and genuinely waves. That work is MED-07 and
+waits for MED-06 DONE; until then no reaction clip is published, and every
+reaction keeps its local art.
 
 ## Cost figures are estimates
 

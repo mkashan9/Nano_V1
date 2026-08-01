@@ -41,5 +41,6 @@
 
 ## Upcoming
 
+- [ ] MED-07 Wan 2.2 Character Animation with Compose Fallback
 - [ ] ADM-01 Superadmin Dashboard (absorbs the borrowed Moderation destination)
 - [ ] XP-01 Trusted XP Ledger

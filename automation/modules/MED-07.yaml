@@ -1,0 +1,78 @@
+id: MED-07
+name: "Wan 2.2 Character Animation with Compose Fallback"
+release: R4
+status: BACKLOG
+dependencies:
+  - MED-06
+dependency_notes: >
+  Owner rejected the first json2video clip as looking very fake (a pan over a
+  still is not character animation). A live probe of cinderholm/wan2-2-i2v-v3
+  against the approved Nori art rendered a 3.3-second clip where Nori stays on
+  model and waves. Sequence locked: finish MED-06 first, then start this.
+applications:
+  - packages
+  - supabase
+  - docs
+  - automation
+allowed_paths:
+  - supabase/migrations/
+  - supabase/tests/
+  - supabase/functions/generate-asset/
+  - supabase/functions/_shared/
+  - supabase/functions/.env.example
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_media/
+  - docs/
+  - automation/
+  - docs/modules/MED-07/
+  - automation/modules/MED-07.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MED-07"
+ui_references: []
+database_scope:
+  - generation_providers (wan_i2v_space, keep json2video_compose as fallback)
+  - reaction_clip_versions (prompts / motion directions for i2v)
+server_functions:
+  - "adapter: WanI2VSpaceAdapter"
+  - "fallback: Json2VideoComposeAdapter when the Space is down"
+acceptance:
+  - Wan 2.2 image-to-video is the default video provider for reaction clips
+  - Every clip is still composed only from approved companion art (MED-06 gate stays)
+  - A public Hugging Face Space with no SLA must fail over to json2video rather than leave a reaction without a clip path
+  - A missing or sleeping Space fails closed into the fallback, never into a blank learner screen
+  - MED-05 still reviews every clip before a learner sees it — i2v can invent, so the human gate is load-bearing
+  - Neither a Hugging Face token (if ever required) nor any provider key appears in a Flutter client or in git
+  - Module documentation complete
+required_tests: []
+security_checks:
+  - no_secrets_in_diff
+  - unapproved_art_never_sent_to_wan
+  - supabase_advisors_no_new_errors
+manual_test_steps: []
+rollback_notes: >
+  Revert the module branch. Restore json2video_compose as the sole default
+  video provider. Drop the Wan provider row and adapter.
+requires_owner_test: true
+owner_decisions_locked:
+  sequencing: "After MED-06 DONE. One module ACTIVE."
+  hosting: >
+    Public Hugging Face Space cinderholm/wan2-2-i2v-v3 as the default, with
+    json2video kept as an automatic fallback when the Space is down, asleep,
+    or changes its API. Owner chose this shape on 2026-08-01 after a live
+    probe confirmed the motion quality.
+  voice: >
+    Unrelated to this module. The guide voice is already cast
+    (guide_educational / ADR-0008) and reaction clips stay silent.
+  safety: >
+    i2v can invent. The MED-05 review gate is the control that makes that
+    acceptable; do not weaken it.

@@ -36,9 +36,16 @@
 
 | Check | Result |
 |-------|--------|
-| Live Fish TTS with a real key | **passed** — `greeting-2` MP3 landed unreviewed |
-| Live json2video compose with a real key | **passed** — `guide_greeting` MP4 landed with motion and source art recorded |
-| Learner-facing published voice / clip | Waiting on Moderation approval of the two unreviewed assets |
+| Live Fish TTS with a real key | **passed** — `greeting-2` first in stock, then re-recorded in Educational Guide after the owner cast it |
+| Live json2video compose with a real key | **passed** — then **rejected by owner** as looking fake; character animation deferred to MED-07 |
+| Learner-facing published voice / clip | Waiting on Moderation approval of the cast-voice `narration_greeting-2` |
+| Wan 2.2 i2v probe (not a module deliverable) | **passed as evidence** — 62s, 640×640, 3.3s, Nori on model and waving; hosting shape locked for MED-07 |
+
+## Cast voice
+
+`guide_educational` is the sole default. `med06_guide_educational_voice.sql`
+checks that, and a live `request_narration_line('greeting-2')` resolved to
+`voice_id = guide_educational` before `generate-asset` recorded the MP3.
 
 ## Gap caught during the owner's manual test
 

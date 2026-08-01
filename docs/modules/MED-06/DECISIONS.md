@@ -100,3 +100,24 @@ A cost budget that reads zero for every recording and every clip is a cost
 budget that never stops anything (MED-02). Both new adapters default to a
 conservative estimate; the owner corrects them against real invoices later.
 Urdu is billed by UTF-8 bytes, the way Fish counts it.
+
+## The Learning Guide is a cast female teacher
+
+ADR-0008 carries the reading: the guide voice is a teacher speaking alongside
+the learner, not the mascot performing. The owner listened to five Fish
+candidates on the authored greeting and quiz lines and chose Educational Guide
+(`2c408095b1294de896376eff6a638d90`). It lands as a new `narration_voices` row
+`guide_educational` rather than an edit of `guide_fish_stock`, because the
+voice id is part of the reuse hash. Stock stays enabled and reachable; it is
+simply no longer the default. The stock recording of `greeting-2` was rejected
+with that reason and re-recorded in the cast voice before the module left
+USER_TEST.
+
+## json2video composition was a stepping stone
+
+The owner rejected the first composed clip as looking very fake — a pan over a
+still is not character animation. A live probe of Wan 2.2 image-to-video against
+the same approved art produced a clip where Nori stays on model and waves. That
+work is MED-07 and waits for this module to finish; the compose gate, the
+motion set, and the provenance stamp remain, because whatever animates the art
+still needs an approved picture and a record of what it was made of.

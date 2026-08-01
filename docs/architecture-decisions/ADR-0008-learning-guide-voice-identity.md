@@ -2,7 +2,9 @@
 
 ## Status
 
-Accepted (owner, 2026-08-01). The specific Fish `reference_id` is still open.
+Accepted (owner, 2026-08-01). Cast as Fish Educational Guide
+(`reference_id = 2c408095b1294de896376eff6a638d90`, registry id
+`guide_educational`) on the same day.
 
 ## Context
 
