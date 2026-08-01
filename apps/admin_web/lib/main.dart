@@ -16,6 +16,7 @@ void main() {
   PlatformUserRepository? platformUserRepository;
   LearningContentRepository? learningContentRepository;
   GamificationAdminRepository? gamificationAdminRepository;
+  GameAdminRepository? gameAdminRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     // One client, so the review calls carry the signed-in reviewer's token.
@@ -33,6 +34,7 @@ void main() {
     platformUserRepository = SupabasePlatformUserRepository(client);
     learningContentRepository = SupabaseLearningContentRepository(client);
     gamificationAdminRepository = SupabaseGamificationAdminRepository(client);
+    gameAdminRepository = SupabaseGameAdminRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -45,6 +47,7 @@ void main() {
       platformUserRepository: platformUserRepository,
       learningContentRepository: learningContentRepository,
       gamificationAdminRepository: gamificationAdminRepository,
+      gameAdminRepository: gameAdminRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -67,6 +70,7 @@ class NanoAdminApp extends StatefulWidget {
     this.platformUserRepository,
     this.learningContentRepository,
     this.gamificationAdminRepository,
+    this.gameAdminRepository,
   });
 
   final EnvironmentConfig config;
@@ -83,6 +87,7 @@ class NanoAdminApp extends StatefulWidget {
   final PlatformUserRepository? platformUserRepository;
   final LearningContentRepository? learningContentRepository;
   final GamificationAdminRepository? gamificationAdminRepository;
+  final GameAdminRepository? gameAdminRepository;
 
   @override
   State<NanoAdminApp> createState() => _NanoAdminAppState();
@@ -100,6 +105,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late final PlatformUserRepository _platformUserRepository;
   late final LearningContentRepository _learningContentRepository;
   late final GamificationAdminRepository _gamificationAdminRepository;
+  late final GameAdminRepository _gameAdminRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -129,6 +135,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         widget.learningContentRepository ?? FakeLearningContentRepository();
     _gamificationAdminRepository =
         widget.gamificationAdminRepository ?? FakeGamificationAdminRepository();
+    _gameAdminRepository =
+        widget.gameAdminRepository ?? FakeGameAdminRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -182,6 +190,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       platformUserRepository: _platformUserRepository,
       learningContentRepository: _learningContentRepository,
       gamificationAdminRepository: _gamificationAdminRepository,
+      gameAdminRepository: _gameAdminRepository,
     );
   }
 

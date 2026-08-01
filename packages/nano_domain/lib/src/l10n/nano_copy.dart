@@ -301,6 +301,18 @@ class NanoCopy {
   String get learningCatalogTitle =>
       isUrdu ? 'کیٹلاگ' : 'Catalog';
   String get gamification => isUrdu ? 'گیمیفیکیشن' : 'Gamification';
+  String get gameAdmin => isUrdu ? 'گیمز' : 'Games';
+  String get gameAdminSearchHint =>
+      isUrdu ? 'گیم تلاش' : 'Search games';
+  String get gameAdminNew => isUrdu ? 'نیا گیم' : 'New game';
+  String get gameAdminPublish => isUrdu ? 'شائع کریں' : 'Publish';
+  String get gameAdminDisable => isUrdu ? 'بند کریں' : 'Disable';
+  String get gameAdminReason => isUrdu ? 'وجہ' : 'Reason';
+  String get gameAdminStatus => isUrdu ? 'حیثیت' : 'Status';
+  String get gameAdminEntry => isUrdu ? 'انٹری' : 'Entry';
+  String get gameAdminEmptyDetail => isUrdu
+      ? 'تفصیل دیکھنے کے لیے گیم منتخب کریں۔'
+      : 'Select a game to see details.';
   String get gamificationPageTitle =>
       isUrdu ? 'گیمیفیکیشن انتظام' : 'Gamification';
   String get gamificationPageSubtitle => isUrdu
@@ -623,6 +635,7 @@ class NanoCopy {
         'users' => users,
         'content' => content,
         'gamification' => gamification,
+        'gameAdmin' => gameAdmin,
         'moderation' => moderation,
         'analytics' => analytics,
         'audit' => audit,

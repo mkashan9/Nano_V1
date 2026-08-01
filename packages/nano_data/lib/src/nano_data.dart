@@ -1,3 +1,4 @@
+export 'admin/game_admin_repository.dart';
 export 'admin/gamification_admin_repository.dart';
 export 'admin/learning_content_repository.dart';
 export 'admin/platform_dashboard_repository.dart';
