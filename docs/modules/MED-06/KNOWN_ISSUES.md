@@ -1,12 +1,10 @@
 # MED-06 known issues
 
-## Keys are validated but not set
+## Keys are set
 
-Both provider keys were validated live against their APIs on 2026-08-01 and then
-cleared from the shell. They are not Edge Function secrets yet. Until the owner
-pastes them in Studio, every voice and every clip fails closed with
-`PROVIDER_UNCONFIGURED`, which is the correct undeployed state: every caption
-and every reaction keeps its local art.
+Both provider keys were pasted into Edge Function secrets by the owner on
+2026-08-01. Live Fish TTS and live json2video compose both answered. They are
+not in git and must never be.
 
 ## No Fish reference_id yet
 
@@ -40,13 +38,12 @@ Two ways out, and they are not exclusive:
 Until the first is done, `pollinations_image` stays the default and stays close
 to useless for anything a child will look at.
 
-## The companion picture is curated, not generated
+## The companion picture is curated and approved
 
-`guide_greeting_staticArt` now holds a hand-supplied picture registered through
-`register_curated_asset`, sitting `ready` / `unreviewed`. The earlier generated
-one is `rejected` and stays in the table as the record of why. A clip of
-`guide_greeting` still refuses with `NM011` until a reviewer approves the new
-picture in `1:1`. That is the gate working, not a bug.
+`guide_greeting_staticArt` is a hand-supplied picture registered through
+`register_curated_asset` and approved. Learners can read it, and the compose
+gate is open for `guide_greeting` in `1:1`. The earlier generated one stays
+`rejected` as the record of why.
 
 ## The curated master lives outside the repo
 

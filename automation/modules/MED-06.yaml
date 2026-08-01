@@ -71,6 +71,7 @@ acceptance:
 required_tests:
   - supabase/tests/med06_fish_and_json2video.sql
   - supabase/tests/med06_curated_companion_art.sql
+  - supabase/tests/med06_composition_provenance.sql
   - supabase/functions/generate-asset/adapters/fish_audio_test.ts
   - supabase/functions/generate-asset/adapters/json2video_test.ts
 security_checks:

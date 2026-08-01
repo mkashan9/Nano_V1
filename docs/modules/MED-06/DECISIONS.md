@@ -65,6 +65,16 @@ anyway. `curated_upload` is enabled but never default — an unqualified request
 for an image is a request to *generate* one, and a default that cannot generate
 would turn every such request into a failure nobody asked for.
 
+## Composition facts are stamped at the ask
+
+A composed render spans two invocations, and only the first knows which picture
+was used. Re-resolving at collection time answers the wrong question — what is
+approved now, not what was animated — and answers nothing if the art has since
+been rejected. So `request_reaction_clip` stamps the motion and the source
+asset id onto the row when it already has them, and
+`record_generated_asset_result` merges provenance while stripping nulls so a
+worker reporting ignorance cannot erase knowledge.
+
 ## Cost estimates are non-zero by default
 
 A cost budget that reads zero for every recording and every clip is a cost

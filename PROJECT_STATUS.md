@@ -18,23 +18,21 @@
 
 ## Owner decision waiting
 
-Paste `VOICE_PROVIDER_API_KEY` (Fish Audio) and `VIDEO_PROVIDER_API_KEY`
-(json2video) into Supabase Edge Function secrets, then run the MED-06 manual
-test. Neither key is in git and neither must ever be. Until they are set, every
-voice and every clip fails closed with `PROVIDER_UNCONFIGURED` — captions and
-local art keep working.
+Paste nothing — both keys are already set. Open admin_web → Moderation and
+decide the two assets waiting there:
 
-A curated `guide_greeting_staticArt` picture is waiting in Moderation,
-`unreviewed`. A clip of that reaction will refuse with `NM011` until a reviewer
-approves it; that is the compose gate working. The generated picture that
-preceded it is `rejected`, with the owner's reason recorded.
+1. The composed `guide_greeting_shortClip` (MP4, `provider_id =
+   json2video_compose`, provenance shows `motion = driftIn` and the approved
+   picture it was made from)
+2. The recorded `narration_greeting-2` (MP3, `provider_id = fish_audio_voice`)
 
-**Nano has no usable image provider.** Pollinations serves only `sana` to
-callers without a token, and it cannot draw a mascot — eleven prompts across
-three art directions produced nothing approvable, including a photograph of a
-child. Buying an image provider that can draw is an open owner decision; the
-adapter would be small. Until then `pollinations_image` stays the default and
-companion art comes in by hand through `register_curated_asset`.
+Approving either publishes it to learners. Rejecting either frees the slot for
+a better attempt. Until you decide, both stay invisible to every learner — that
+is MED-05 working.
+
+The live generation and compose steps of this manual test have already been
+run against `nano_v1` and passed. The refusal with no approved art
+(`celebration_celebration` → `NM011`) was also confirmed.
 
 ## Next after MED-06 DONE
 
