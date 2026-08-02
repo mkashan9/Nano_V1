@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/league/presentation/league_board_page.dart';
 import 'package:student_app/features/profile/presentation/social_identity_section.dart';
+import 'package:student_app/features/share/presentation/social_share_sheet.dart';
 
 /// STU-05 owner profile: identity, progress, privacy, settings, devices,
 /// and a sign-out that clears private local caches.
@@ -208,12 +208,15 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     setState(() => _busyAwardId = achievement.id);
     try {
       final card = await share.forAchievement(achievement.id);
-      await Clipboard.setData(
-        ClipboardData(text: card.shareTextFor(urdu: copy.isUrdu)),
-      );
       if (!mounted) return;
+      final outcome = await showSocialShareSheet(
+        context: context,
+        card: card,
+        copy: copy,
+      );
+      if (!mounted || outcome == null) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(copy.shareCopiedSnack)),
+        SnackBar(content: Text(shareOutcomeMessage(outcome, copy))),
       );
     } catch (_) {
       if (!mounted) return;
