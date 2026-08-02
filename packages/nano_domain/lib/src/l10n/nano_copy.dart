@@ -1,4 +1,5 @@
 import '../companion/companion_mode.dart';
+import '../game/game_assets.dart';
 import '../media/generated_asset.dart';
 import '../teacher/teacher_attendance.dart';
 import '../teacher/teacher_marks_grid.dart';
@@ -58,6 +59,27 @@ class NanoCopy {
   String get gamesBridgeRejected => isUrdu
       ? 'غیر محفوظ پیغام نظرانداز کیا گیا۔'
       : 'Unsafe game message was ignored.';
+  String get gamesSave => isUrdu ? 'محفوظ کریں' : 'Save';
+  String get gamesUpdate => isUrdu ? 'اپ ڈیٹ' : 'Update';
+  String get gamesFreeSpace => isUrdu ? 'جگہ خالی کریں' : 'Free space';
+  String get gamesReady => isUrdu ? 'کھیلنے کے لیے تیار' : 'Ready to play';
+  String get gamesNotOnDevice =>
+      isUrdu ? 'اس آلے پر نہیں' : 'Not on this device';
+  String get gamesUpdateAvailable =>
+      isUrdu ? 'نیا ورژن دستیاب' : 'Update available';
+  String get gamesStorageFailed =>
+      isUrdu ? 'محفوظ نہیں ہو سکا۔' : 'Could not save this game.';
+  String gamesStorageUsed(int bytes) {
+    final kb = (bytes / 1024).round();
+    return isUrdu ? 'محفوظ: $kb KB' : 'Saved: $kb KB';
+  }
+  String gamesInstallStatusLabel(GameLocalInstallStatus status) =>
+      switch (status) {
+        GameLocalInstallStatus.ready => gamesReady,
+        GameLocalInstallStatus.notOnDevice => gamesNotOnDevice,
+        GameLocalInstallStatus.updateAvailable => gamesUpdateAvailable,
+        GameLocalInstallStatus.failed => gamesStorageFailed,
+      };
   String gamesCategoryLabel(String category) => switch (category) {
         'challenge' => isUrdu ? 'چیلنج' : 'Challenge',
         'world' => isUrdu ? 'دنیا' : 'World',

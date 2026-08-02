@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- GME-04: game save/update/free-space state for versioned asset packs
 - GME-03: Flutter-native Shape Sort host via shared game bridge
 - GME-02: secure web/fixture game host with short-lived play sessions
 - GME-01: students browse eligible published games (no play host yet)

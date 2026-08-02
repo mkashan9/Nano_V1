@@ -1,44 +1,67 @@
 id: GME-04
 name: "Game Download, Version, and Storage State"
 release: R8
-status: BACKLOG
+status: DONE
 dependencies:
   - GME-01
+dependency_notes: >
+  Asset descriptors + local install pins for catalog Save/Update/Free space.
+  Real CDN transfer deferred.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_games/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/GME-04/
   - automation/modules/GME-04.yaml
+  - automation/modules/GME-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for GME-04"
+  - "Handbook GME-01 download/asset state and storage management"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.game_assets
+server_functions:
+  - "public.list_game_assets_for_learner"
 acceptance:
+  - Catalog shows friendly install status without technical jargon
+  - Save pins a version; Update when hash changes; Free space removes pin
+  - Play requires ready/update-available when assets are declared
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/gme04_game_assets.sql
+  - packages/nano_domain/test/game_assets_test.dart
+  - packages/nano_data/test/game_asset_repository_test.dart
+  - apps/student_app/test/games_catalog_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - assets_rpc_eligibility_gated
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Save Number Rush, Play, Free space
+rollback_notes: >
+  Revert branch and migration. Catalog returns to Play-without-save.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Asset metadata + local pin state in catalog.
+  deferred: >
+    Durable disk packs, CDN progress, encrypted storage.

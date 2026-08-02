@@ -436,6 +436,8 @@ class StudentGamesTab extends StatelessWidget {
     super.key,
     this.repository,
     this.sessionRepository,
+    this.assetRepository,
+    this.localStorageRepository,
     this.independent = false,
     this.gradeLevel,
     this.junior = false,
@@ -443,6 +445,8 @@ class StudentGamesTab extends StatelessWidget {
 
   final GameCatalogRepository? repository;
   final GameSessionRepository? sessionRepository;
+  final GameAssetRepository? assetRepository;
+  final GameLocalStorageRepository? localStorageRepository;
   final bool independent;
   final int? gradeLevel;
   final bool junior;
@@ -452,6 +456,9 @@ class StudentGamesTab extends StatelessWidget {
     return GamesCatalogPage(
       repository: repository ?? FakeGameCatalogRepository(),
       sessionRepository: sessionRepository ?? FakeGameSessionRepository(),
+      assetRepository: assetRepository ?? FakeGameAssetRepository(),
+      localStorageRepository:
+          localStorageRepository ?? FakeGameLocalStorageRepository(),
       independent: independent,
       gradeLevel: gradeLevel,
       junior: junior,

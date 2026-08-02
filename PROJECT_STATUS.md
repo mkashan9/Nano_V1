@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R8 Games
-- **Current module:** GME-04 Game Download, Version, and Storage State
+- **Current module:** GME-05 Trusted Game Result Verification
 - **Current status:** ACTIVE
-- **Current branch:** module/GME-04-game-download-storage
-- **Last completed module:** GME-03
+- **Current branch:** module/GME-05-trusted-game-verify
+- **Last completed module:** GME-04
 - **Application name:** Nano
 
 ## Releases
 
 - R1–R7: complete
-- R8: GME-01..GME-03 DONE; GME-04 ACTIVE
+- R8: GME-01..GME-04 DONE; GME-05 ACTIVE
 
 ## Owner decision waiting
 
-None — implementing GME-04.
+None — implementing GME-05.

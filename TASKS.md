@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] GME-04 Game Download, Version, and Storage State
+- [ ] GME-05 Trusted Game Result Verification
 
 ## Completed
 
+- [x] GME-04
 - [x] GME-03
 - [x] GME-02
 - [x] GME-01
