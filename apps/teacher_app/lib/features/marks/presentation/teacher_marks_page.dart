@@ -4,7 +4,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// MRK-01/MRK-02 Marks: draft assessments plus in-app marks grid.
+/// MRK-01–MRK-04 Marks: drafts, grid, CSV import, publish, and corrections.
 class TeacherMarksPage extends StatefulWidget {
   const TeacherMarksPage({
     super.key,
@@ -38,10 +38,14 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
   final _csv = TextEditingController();
   MarksImportPreview? _importPreview;
   String? _importKey;
+  MarksCorrectionHistory? _history;
+  final _reason = TextEditingController();
   late DateTime _date;
   var _saving = false;
   var _savingMarks = false;
   var _importBusy = false;
+  var _publishing = false;
+  var _correcting = false;
   String? _message;
 
   static const _categories = [
@@ -70,6 +74,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     _weight.dispose();
     _description.dispose();
     _csv.dispose();
+    _reason.dispose();
     _disposeGridCtrls();
     super.dispose();
   }
@@ -169,7 +174,9 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
       _gridAssessmentId = null;
       _importPreview = null;
       _importKey = null;
+      _history = null;
       _csv.clear();
+      _reason.clear();
     });
   }
 
@@ -194,11 +201,20 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     });
     try {
       final grid = await widget.repository.loadMarks(assessmentId);
+      MarksCorrectionHistory? history;
+      if (grid.isCorrectable) {
+        history = await widget.repository.loadMarksHistory(assessmentId);
+      }
       if (!mounted) return;
       _bindGrid(grid);
       setState(() {
         _grid = grid;
         _gridAssessmentId = assessmentId;
+        _history = history;
+        _importPreview = null;
+        _importKey = null;
+        _csv.clear();
+        _reason.clear();
         _state = const NanoViewReady();
       });
     } catch (_) {
@@ -414,6 +430,112 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     }
   }
 
+  Future<void> _publishMarks() async {
+    final assessmentId = _gridAssessmentId;
+    if (assessmentId == null || _publishing) return;
+    setState(() {
+      _publishing = true;
+      _message = null;
+    });
+    try {
+      final published = await widget.repository.publishMarks(
+        assessmentId: assessmentId,
+        idempotencyKey:
+            'publish-$assessmentId-${DateTime.now().millisecondsSinceEpoch}',
+      );
+      final history =
+          await widget.repository.loadMarksHistory(assessmentId);
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      _bindGrid(published);
+      setState(() {
+        _grid = published;
+        _history = history;
+        _publishing = false;
+      });
+      final assignmentId = _assignmentId;
+      if (assignmentId != null) {
+        await _loadList(assignmentId);
+      }
+      if (!mounted) return;
+      setState(() => _message = copy.teacherMarksPublished);
+    } catch (_) {
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _publishing = false;
+        _message = copy.teacherMarksPublishFailed;
+      });
+    }
+  }
+
+  Future<void> _applyCorrection() async {
+    final assessmentId = _gridAssessmentId;
+    final grid = _grid;
+    if (assessmentId == null || grid == null || _correcting) return;
+    final reason = _reason.text.trim();
+    if (reason.isEmpty) return;
+    setState(() {
+      _correcting = true;
+      _message = null;
+    });
+    try {
+      MarksCorrectionResult? last;
+      for (final student in grid.roster) {
+        final status =
+            _statusDraft[student.id] ?? MarksEntryStatus.notSubmitted;
+        final obtainedText = _scoreCtrls[student.id]?.text.trim() ?? '';
+        final remarks = _remarkCtrls[student.id]?.text.trim() ?? '';
+        final existing = grid.entryByStudent[student.id];
+        final obtained = status == MarksEntryStatus.scored
+            ? double.tryParse(obtainedText)
+            : null;
+        if (existing == null) continue;
+        if (existing.status == status &&
+            existing.obtainedMarks == obtained &&
+            existing.remarks.trim() == remarks) {
+          continue;
+        }
+        last = await widget.repository.correctMarks(
+          assessmentId: assessmentId,
+          studentUserId: student.id,
+          newStatus: status,
+          obtainedMarks: obtained,
+          remarks: remarks,
+          reason: reason,
+        );
+      }
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      if (last == null) {
+        setState(() {
+          _correcting = false;
+          _message = copy.teacherMarksCorrectFailed;
+        });
+        return;
+      }
+      _bindGrid(last.grid);
+      setState(() {
+        _grid = last!.grid;
+        _history = last.history;
+        _correcting = false;
+        _reason.clear();
+        _message = copy.teacherMarksCorrected;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _correcting = false;
+        _message = copy.teacherMarksCorrectFailed;
+      });
+    }
+  }
+
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -590,12 +712,24 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      FilledButton(
-                        onPressed: _savingMarks ? null : _saveMarks,
-                        child: Text(copy.teacherMarksSaveGrid),
-                      ),
+                      if (grid.isDraft)
+                        FilledButton(
+                          onPressed: _savingMarks ? null : _saveMarks,
+                          child: Text(copy.teacherMarksSaveGrid),
+                        ),
+                      if (grid.isDraft)
+                        FilledButton.tonal(
+                          onPressed: _publishing ||
+                                  _savingMarks ||
+                                  grid.entries.isEmpty
+                              ? null
+                              : _publishMarks,
+                          child: Text(copy.teacherMarksPublishAction),
+                        ),
                       OutlinedButton(
-                        onPressed: _savingMarks ? null : _closeGrid,
+                        onPressed: _savingMarks || _publishing || _correcting
+                            ? null
+                            : _closeGrid,
                         child: Text(copy.teacherMarksCloseGrid),
                       ),
                     ],
@@ -624,69 +758,128 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
                           });
                         },
                       ),
-                  const SizedBox(height: 24),
-                  Text(
-                    copy.teacherMarksImportTitle,
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    copy.teacherMarksImportSubtitle,
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _csv,
-                    minLines: 4,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                      labelText: copy.teacherMarksImportCsvLabel,
-                      alignLabelWithHint: true,
+                  if (grid.isCorrectable) ...[
+                    const SizedBox(height: 24),
+                    Text(
+                      copy.teacherMarksCorrectTitle,
+                      style: theme.textTheme.titleMedium,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: _importBusy ? null : _loadMarksTemplate,
-                        child: Text(copy.teacherMarksLoadTemplate),
-                      ),
-                      OutlinedButton(
-                        onPressed: _csv.text.isEmpty
-                            ? null
-                            : () async {
-                                await Clipboard.setData(
-                                  ClipboardData(text: _csv.text),
-                                );
-                              },
-                        child: Text(copy.teacherMarksCopyCsv),
-                      ),
-                      OutlinedButton(
-                        onPressed: _importBusy ? null : _previewMarksImport,
-                        child: Text(copy.teacherMarksPreviewImport),
-                      ),
-                      FilledButton(
-                        onPressed: _importBusy ||
-                                !(_importPreview?.canCommit ?? false)
-                            ? null
-                            : _commitMarksImport,
-                        child: Text(copy.teacherMarksCommitImport),
-                      ),
-                    ],
-                  ),
-                  if (_importPreview != null &&
-                      _importPreview!.failedRows.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      copy.teacherMarksCorrectSubtitle,
+                      style: theme.textTheme.bodyMedium,
+                    ),
                     const SizedBox(height: 8),
-                    for (final fail in _importPreview!.failedRows.take(5))
-                      Text(
-                        copy.teacherMarksImportRowError(
-                          fail.row,
-                          fail.error,
-                        ),
-                        style: theme.textTheme.bodySmall,
+                    TextField(
+                      controller: _reason,
+                      onChanged: (_) => setState(() {}),
+                      decoration: InputDecoration(
+                        labelText: copy.teacherMarksCorrectReasonLabel,
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    FilledButton(
+                      onPressed: _correcting || _reason.text.trim().isEmpty
+                          ? null
+                          : _applyCorrection,
+                      child: Text(copy.teacherMarksApplyCorrection),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      copy.teacherMarksHistoryTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    if (_history == null || _history!.corrections.isEmpty)
+                      Text(copy.teacherMarksHistoryEmpty)
+                    else
+                      for (final c in _history!.corrections.take(10))
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            copy.teacherMarksHistoryLine(
+                              name: c.displayName.trim().isEmpty
+                                  ? copy.teacherClassesStudentFallback
+                                  : c.displayName,
+                              previous: copy.teacherMarksStatusValueLabel(
+                                c.previousStatus,
+                                c.previousObtainedMarks,
+                              ),
+                              next: copy.teacherMarksStatusValueLabel(
+                                c.newStatus,
+                                c.newObtainedMarks,
+                              ),
+                              reason: c.reason,
+                            ),
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                  ],
+                  if (grid.isDraft) ...[
+                    const SizedBox(height: 24),
+                    Text(
+                      copy.teacherMarksImportTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      copy.teacherMarksImportSubtitle,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _csv,
+                      minLines: 4,
+                      maxLines: 8,
+                      decoration: InputDecoration(
+                        labelText: copy.teacherMarksImportCsvLabel,
+                        alignLabelWithHint: true,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _importBusy ? null : _loadMarksTemplate,
+                          child: Text(copy.teacherMarksLoadTemplate),
+                        ),
+                        OutlinedButton(
+                          onPressed: _csv.text.isEmpty
+                              ? null
+                              : () async {
+                                  await Clipboard.setData(
+                                    ClipboardData(text: _csv.text),
+                                  );
+                                },
+                          child: Text(copy.teacherMarksCopyCsv),
+                        ),
+                        OutlinedButton(
+                          onPressed: _importBusy ? null : _previewMarksImport,
+                          child: Text(copy.teacherMarksPreviewImport),
+                        ),
+                        FilledButton(
+                          onPressed: _importBusy ||
+                                  !(_importPreview?.canCommit ?? false)
+                              ? null
+                              : _commitMarksImport,
+                          child: Text(copy.teacherMarksCommitImport),
+                        ),
+                      ],
+                    ),
+                    if (_importPreview != null &&
+                        _importPreview!.failedRows.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      for (final fail in _importPreview!.failedRows.take(5))
+                        Text(
+                          copy.teacherMarksImportRowError(
+                            fail.row,
+                            fail.error,
+                          ),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                    ],
                   ],
                 ] else ...[
                   const SizedBox(height: 24),
@@ -710,21 +903,24 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
                             a.status.wire,
                           ),
                         ),
-                        trailing: a.isDraft
-                            ? Wrap(
-                                spacing: 4,
-                                children: [
-                                  TextButton(
-                                    onPressed: () => _edit(a),
-                                    child: Text(copy.teacherMarksEditAction),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => _openGrid(a.id),
-                                    child: Text(copy.teacherMarksEnterAction),
-                                  ),
-                                ],
-                              )
-                            : null,
+                        trailing: Wrap(
+                          spacing: 4,
+                          children: [
+                            if (a.isDraft)
+                              TextButton(
+                                onPressed: () => _edit(a),
+                                child: Text(copy.teacherMarksEditAction),
+                              ),
+                            TextButton(
+                              onPressed: () => _openGrid(a.id),
+                              child: Text(
+                                a.isDraft
+                                    ? copy.teacherMarksEnterAction
+                                    : copy.teacherMarksOpenAction,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                 ],
               ],

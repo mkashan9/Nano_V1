@@ -1,7 +1,7 @@
 id: MRK-03
 name: "Marks Excel Download and Upload"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - MRK-02
 dependency_notes: >

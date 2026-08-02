@@ -117,6 +117,8 @@ class TeacherMarksGrid {
 
   bool get isDraft => assessmentStatus.isDraft;
 
+  bool get isCorrectable => assessmentStatus.isCorrectable;
+
   String get scopeLabel => '$classLabel · $subjectCode';
 
   Map<String, MarksEntryMark> get entryByStudent {

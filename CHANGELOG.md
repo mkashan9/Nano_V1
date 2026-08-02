@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- MRK-04: teachers publish draft marks and correct published entries with immutable history
 - MRK-03: teachers download/preview/commit marks CSV templates into draft marks grids
 - MRK-02: teachers enter draft marks grids for draft assessments with status and caps
 - MRK-01: teachers create and edit draft assessments for assigned scopes

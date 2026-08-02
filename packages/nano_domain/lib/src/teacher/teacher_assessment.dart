@@ -22,6 +22,11 @@ enum AssessmentStatus {
   String get wire => name;
 
   bool get isDraft => this == AssessmentStatus.draft;
+
+  bool get isCorrectable =>
+      this == AssessmentStatus.published || this == AssessmentStatus.corrected;
+
+  bool get isClosed => this == AssessmentStatus.closed;
 }
 
 class TeacherAssessment {
@@ -56,6 +61,8 @@ class TeacherAssessment {
   final DateTime? updatedAt;
 
   bool get isDraft => status.isDraft;
+
+  bool get isCorrectable => status.isCorrectable;
 
   factory TeacherAssessment.fromJson(Map<String, dynamic> json) {
     return TeacherAssessment(

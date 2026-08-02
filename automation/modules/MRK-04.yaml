@@ -1,45 +1,76 @@
 id: MRK-04
 name: "Marks Publication and Correction"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - MRK-02
   - SEC-03
+dependency_notes: >
+  Publishes MRK-02 draft marks. Corrections append immutable history (ATT-03 pattern).
+  Closed-period override deferred.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/MRK-04/
   - automation/modules/MRK-04.yaml
+  - automation/modules/MRK-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook MRK-01 publication and correction"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MRK-04"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.marks_corrections
+  - public.assessments
+  - public.marks_entries
+server_functions:
+  - "public.teacher_marks_publish"
+  - "public.teacher_marks_correct"
+  - "public.teacher_marks_history"
 acceptance:
+  - Publish moves draft to published with audit
+  - Corrections require reason and append immutable history
+  - Closed result periods reject teacher correction
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/mrk04_marks_publication.sql
+  - packages/nano_domain/test/marks_correction_test.dart
+  - packages/nano_data/test/marks_correction_repository_test.dart
+  - apps/teacher_app/test/teacher_marks_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - immutable_correction_history
+  - draft_only_until_publish
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Publish draft marks
+  - Correct with reason and review history
+rollback_notes: >
+  Revert the branch and migration. Grid/import remain for drafts.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Publish + correct with immutable history only.
+  deferred: >
+    Closed-period privileged override; notification delivery; version snapshots.
