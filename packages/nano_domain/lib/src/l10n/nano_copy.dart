@@ -313,6 +313,19 @@ class NanoCopy {
   String teacherClassroomAttachmentCount(int count) => isUrdu
       ? '$count منسلکات'
       : '$count attachment${count == 1 ? '' : 's'}';
+  String get teacherClassroomScheduleLabel =>
+      isUrdu ? 'شیڈول اشاعت' : 'Schedule publish';
+  String get teacherClassroomExpiryLabel =>
+      isUrdu ? 'میعاد ختم' : 'Expires on';
+  String get teacherClassroomClearSchedule =>
+      isUrdu ? 'شیڈول صاف' : 'Clear schedule';
+  String get teacherClassroomClearExpiry =>
+      isUrdu ? 'میعاد صاف' : 'Clear expiry';
+  String get teacherClassroomRequiresAck =>
+      isUrdu ? 'تسلیم درکار' : 'Require acknowledgement';
+  String teacherClassroomAckSummary(int ack, int roster) => isUrdu
+      ? '$ack/$roster تسلیم'
+      : '$ack/$roster acknowledged';
   String get teacherMarksSubtitle => isUrdu
       ? 'تفویض چنیں، مسودہ تشخیص بنائیں، اور نمبر درج کریں۔'
       : 'Pick an assignment, create draft assessments, and enter marks.';

@@ -1,44 +1,73 @@
 id: CLS-03
 name: "Scheduling, Expiry, and Acknowledgement"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - CLS-01
+dependency_notes: >
+  Builds on CLS-01 announcements (and CLS-02 list nesting). Student UI is FLX-04.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/CLS-03/
   - automation/modules/CLS-03.yaml
+  - automation/modules/CLS-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook CLS-01 Classroom — schedule, expiry, acknowledgements"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for CLS-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.classroom_items
+  - public.classroom_acknowledgements
+server_functions:
+  - "public.teacher_classroom_list"
+  - "public.teacher_classroom_create"
+  - "public.teacher_classroom_update"
+  - "public.student_classroom_acknowledge"
 acceptance:
+  - Schedule future publish on drafts; due items promote
+  - Expiry flag; history retained
+  - Ack counts vs roster on published items
+  - Auditable student acknowledge RPC
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/cls03_schedule_expiry_ack.sql
+  - packages/nano_domain/test/teacher_classroom_test.dart
+  - packages/nano_data/test/teacher_classroom_repository_test.dart
+  - apps/teacher_app/test/teacher_classroom_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - enrollment_scoped_student_ack
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Schedule, publish, and review acknowledgement summary
+rollback_notes: >
+  Revert the branch and migration. Prior announcements remain.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Teacher schedule/expiry/ack counts; student ack RPC without FLX UI.
+  deferred: >
+    Student classroom feed (FLX-04); archives/folders.

@@ -3,7 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// CLS-01/CLS-02 Classroom: announcements plus draft link attachments.
+/// CLS-01/02/03 Classroom: announcements, attachments, schedule/expiry/ack.
 class TeacherClassroomPage extends StatefulWidget {
   const TeacherClassroomPage({
     super.key,
@@ -29,6 +29,9 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
   final _attTitle = TextEditingController();
   final _attUrl = TextEditingController();
   var _publishNow = false;
+  var _requiresAck = true;
+  DateTime? _scheduledAt;
+  DateTime? _expiresAt;
   var _saving = false;
   var _attBusy = false;
   String? _message;
@@ -110,6 +113,9 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
     _attTitle.clear();
     _attUrl.clear();
     _publishNow = false;
+    _requiresAck = true;
+    _scheduledAt = null;
+    _expiresAt = null;
   }
 
   void _edit(TeacherClassroomItem item) {
@@ -118,9 +124,51 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
       _title.text = item.title;
       _body.text = item.body;
       _publishNow = false;
+      _requiresAck = item.requiresAcknowledgement;
+      _scheduledAt = item.scheduledPublishAt;
+      _expiresAt = item.expiresAt;
       _attTitle.clear();
       _attUrl.clear();
       _message = null;
+    });
+  }
+
+  String _dateLabel(DateTime? value) {
+    if (value == null) return '—';
+    final d = value.toUtc();
+    final mm = d.month.toString().padLeft(2, '0');
+    final dd = d.day.toString().padLeft(2, '0');
+    return '${d.year}-$mm-$dd';
+  }
+
+  Future<void> _pickSchedule() async {
+    final now = DateTime.now();
+    final initial = _scheduledAt ?? now.add(const Duration(days: 1));
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(initial.year, initial.month, initial.day),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2035),
+    );
+    if (picked == null) return;
+    setState(() {
+      _scheduledAt = DateTime.utc(picked.year, picked.month, picked.day);
+      _publishNow = false;
+    });
+  }
+
+  Future<void> _pickExpiry() async {
+    final now = DateTime.now();
+    final initial = _expiresAt ?? now.add(const Duration(days: 14));
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(initial.year, initial.month, initial.day),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2035),
+    );
+    if (picked == null) return;
+    setState(() {
+      _expiresAt = DateTime.utc(picked.year, picked.month, picked.day);
     });
   }
 
@@ -138,6 +186,11 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
         title: _title.text,
         body: _body.text,
         publishNow: _editingId == null && _publishNow,
+        scheduledPublishAt: _scheduledAt,
+        expiresAt: _expiresAt,
+        requiresAcknowledgement: _requiresAck,
+        clearSchedule: _editingId != null && _scheduledAt == null,
+        clearExpiry: _editingId != null && _expiresAt == null,
       );
       final list = _editingId == null
           ? await widget.repository.create(
@@ -303,10 +356,63 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
                     value: _publishNow,
                     onChanged: _saving
                         ? null
-                        : (v) => setState(() => _publishNow = v ?? false),
+                        : (v) => setState(() {
+                              _publishNow = v ?? false;
+                              if (_publishNow) _scheduledAt = null;
+                            }),
                     title: Text(copy.teacherClassroomPublishNow),
                   ),
                 ],
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: _requiresAck,
+                  onChanged: _saving
+                      ? null
+                      : (v) => setState(() => _requiresAck = v ?? true),
+                  title: Text(copy.teacherClassroomRequiresAck),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(copy.teacherClassroomScheduleLabel),
+                  subtitle: Text(_dateLabel(_scheduledAt)),
+                  trailing: Wrap(
+                    spacing: 4,
+                    children: [
+                      TextButton(
+                        onPressed: _saving || _publishNow ? null : _pickSchedule,
+                        child: Text(copy.teacherClassroomScheduleLabel),
+                      ),
+                      if (_scheduledAt != null)
+                        TextButton(
+                          onPressed: _saving
+                              ? null
+                              : () => setState(() => _scheduledAt = null),
+                          child: Text(copy.teacherClassroomClearSchedule),
+                        ),
+                    ],
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(copy.teacherClassroomExpiryLabel),
+                  subtitle: Text(_dateLabel(_expiresAt)),
+                  trailing: Wrap(
+                    spacing: 4,
+                    children: [
+                      TextButton(
+                        onPressed: _saving ? null : _pickExpiry,
+                        child: Text(copy.teacherClassroomExpiryLabel),
+                      ),
+                      if (_expiresAt != null)
+                        TextButton(
+                          onPressed: _saving
+                              ? null
+                              : () => setState(() => _expiresAt = null),
+                          child: Text(copy.teacherClassroomClearExpiry),
+                        ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -395,7 +501,7 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
                       title: Text(item.title),
                       subtitle: Text(
                         copy.teacherClassroomListSubtitle(
-                          item.status.wire,
+                          item.displayStatus,
                           [
                             if (item.body.trim().isEmpty)
                               copy.teacherClassroomBodyEmpty
@@ -404,6 +510,12 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
                             if (item.attachments.isNotEmpty)
                               copy.teacherClassroomAttachmentCount(
                                 item.attachments.length,
+                              ),
+                            if (item.status == ClassroomItemStatus.published &&
+                                item.requiresAcknowledgement)
+                              copy.teacherClassroomAckSummary(
+                                item.ackCount,
+                                item.rosterCount,
                               ),
                           ].join(' · '),
                         ),

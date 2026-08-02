@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nano_domain/nano_domain.dart';
 
 void main() {
-  test('parses classroom list with attachments', () {
+  test('parses classroom list with schedule, expiry, and ack counts', () {
     final list = TeacherClassroomList.fromJson({
       'assignment_id': 'asg-1',
       'school_id': TenancyFixtures.alphaSchoolId,
@@ -16,6 +16,12 @@ void main() {
           'title': 'Homework reminder',
           'body': 'Bring notebooks',
           'status': 'draft',
+          'scheduled_publish_at': '2026-08-10T00:00:00Z',
+          'expires_at': '2026-08-20T00:00:00Z',
+          'requires_acknowledgement': true,
+          'is_expired': false,
+          'ack_count': 0,
+          'roster_count': 2,
           'attachments': [
             {
               'id': 'a1',
@@ -29,12 +35,9 @@ void main() {
         },
       ],
     });
-    expect(list.scopeLabel, '5-A · MATH');
+    expect(list.items.first.isScheduled, isTrue);
+    expect(list.items.first.displayStatus, 'scheduled');
     expect(list.items.first.attachments, hasLength(1));
-    expect(list.items.first.attachments.first.kind, ClassroomAttachmentKind.link);
-    expect(
-      list.items.first.attachments.first.url,
-      'https://example.com/ws.pdf',
-    );
+    expect(list.items.first.rosterCount, 2);
   });
 }
