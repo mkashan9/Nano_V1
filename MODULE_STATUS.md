@@ -103,7 +103,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | LGE-03 | Challenges and Rematches | R8 | DONE | LGE-02 |
 | SOC-01 | Usernames, Friend Codes, and Limited Profiles | R9 | DONE | STU-05, SEC-03 |
 | SOC-02 | Friend Requests, Removal, and Blocking | R9 | DONE | SOC-01 |
-| SOC-03 | Friends Leaderboards | R9 | ACTIVE | SOC-02, LGE-02 |
+| SOC-03 | Friends Leaderboards | R9 | USER_TEST | SOC-02, LGE-02 |
 | SOC-04 | Social Sharing | R9 | BACKLOG | SOC-01, XP-06 |
 | COM-01 | Community Discovery | R9 | BACKLOG | STU-04, SAFE-01 |
 | COM-02 | Community Creation and Roles | R9 | BACKLOG | COM-01 |

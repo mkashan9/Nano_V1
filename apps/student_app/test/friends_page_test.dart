@@ -43,5 +43,9 @@ void main() {
     await tester.tap(find.text('Friends').last);
     await tester.pumpAndSettle();
     expect(find.text('sara'), findsOneWidget);
+
+    await tester.tap(find.text('Ranking'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('XP'), findsWidgets);
   });
 }

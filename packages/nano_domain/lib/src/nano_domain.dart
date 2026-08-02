@@ -34,6 +34,7 @@ export 'league/league_board.dart';
 export 'league/league_challenge.dart';
 export 'social/social_identity.dart';
 export 'social/friend_graph.dart';
+export 'social/friends_leaderboard.dart';
 export 'media/asset_review.dart';
 export 'media/generated_asset.dart';
 export 'media/generation_budget.dart';

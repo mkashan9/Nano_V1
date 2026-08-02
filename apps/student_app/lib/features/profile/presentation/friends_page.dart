@@ -3,7 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// SOC-02 inbox: friends, pending requests, and blocks.
+/// SOC-02/03 inbox: friends, requests, blocks, and weekly ranking.
 class FriendsPage extends StatefulWidget {
   const FriendsPage({
     super.key,
@@ -24,12 +24,13 @@ class _FriendsPageState extends State<FriendsPage>
   List<FriendPeer> _friends = const [];
   List<FriendRequest> _requests = const [];
   List<BlockedPeer> _blocks = const [];
+  FriendsLeaderboard _board = FriendsLeaderboard.empty;
   var _busy = false;
 
   @override
   void initState() {
     super.initState();
-    _tabs = TabController(length: 3, vsync: this);
+    _tabs = TabController(length: 4, vsync: this);
     _load();
   }
 
@@ -48,11 +49,13 @@ class _FriendsPageState extends State<FriendsPage>
       final friends = await widget.repository.listFriends();
       final requests = await widget.repository.listRequests();
       final blocks = await widget.repository.listBlocks();
+      final board = await widget.repository.friendsLeaderboard();
       if (!mounted) return;
       setState(() {
         _friends = friends;
         _requests = requests;
         _blocks = blocks;
+        _board = board;
         _loading = false;
       });
     } catch (_) {
@@ -89,10 +92,12 @@ class _FriendsPageState extends State<FriendsPage>
         title: Text(copy.friendsTitle),
         bottom: TabBar(
           controller: _tabs,
+          isScrollable: true,
           tabs: [
             Tab(text: copy.friendsTab),
             Tab(text: copy.requestsTab),
             Tab(text: copy.blockedTab),
+            Tab(text: copy.rankingTab),
           ],
         ),
       ),
@@ -149,6 +154,7 @@ class _FriendsPageState extends State<FriendsPage>
                         () => widget.repository.unblock(peer.peerToken),
                       ),
                     ),
+                    _RankingList(board: _board, copy: copy),
                   ],
                 ),
     );
@@ -281,6 +287,50 @@ class _BlocksList extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _RankingList extends StatelessWidget {
+  const _RankingList({
+    required this.board,
+    required this.copy,
+  });
+
+  final FriendsLeaderboard board;
+  final NanoCopy copy;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (board.friendCount == 0 && board.entries.length <= 1) {
+      return Center(child: Text(copy.friendsRankingEmpty));
+    }
+    return ListView(
+      padding: const EdgeInsets.all(NanoSpacing.md),
+      children: [
+        Text(
+          copy.friendsRankingSubtitle(board.weekKey, board.friendCount),
+          style: theme.textTheme.titleMedium,
+        ),
+        if (board.myRank != null) ...[
+          const SizedBox(height: NanoSpacing.sm),
+          Text(
+            copy.friendsMyRank(board.myRank!, board.myWeekXp),
+            style: theme.textTheme.bodyMedium,
+          ),
+        ],
+        const SizedBox(height: NanoSpacing.md),
+        for (final entry in board.entries)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: CircleAvatar(child: Text('#${entry.rank}')),
+            title: Text(
+              entry.isMe ? '${entry.displayLabel} (you)' : entry.displayLabel,
+            ),
+            trailing: Text('${entry.weekXp} XP'),
+          ),
+      ],
     );
   }
 }
