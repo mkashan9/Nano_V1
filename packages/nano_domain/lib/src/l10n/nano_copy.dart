@@ -1,6 +1,7 @@
 import '../companion/companion_mode.dart';
 import '../media/generated_asset.dart';
 import '../teacher/teacher_attendance.dart';
+import '../teacher/teacher_marks_grid.dart';
 import 'nano_app_locale.dart';
 
 /// Foundation UI copy for English and Urdu.
@@ -252,8 +253,8 @@ class NanoCopy {
           : '$name: $previous → $next ($reason)';
   String get teacherMarksTitle => isUrdu ? 'نمبر' : 'Marks';
   String get teacherMarksSubtitle => isUrdu
-      ? 'تفویض چنیں اور مسودہ تشخیص بنائیں۔ نمبر اندراج بعد میں۔'
-      : 'Pick an assignment and create draft assessments. Marks entry comes later.';
+      ? 'تفویض چنیں، مسودہ تشخیص بنائیں، اور نمبر درج کریں۔'
+      : 'Pick an assignment, create draft assessments, and enter marks.';
   String get teacherMarksNoAssignments => isUrdu
       ? 'تشخیص کے لیے کوئی فعال تفویض نہیں۔'
       : 'No active assignments for assessments.';
@@ -289,6 +290,45 @@ class NanoCopy {
       ? 'ابھی کوئی تشخیص نہیں۔'
       : 'No assessments yet.';
   String get teacherMarksEditAction => isUrdu ? 'ترمیم' : 'Edit';
+  String get teacherMarksEnterAction =>
+      isUrdu ? 'نمبر درج' : 'Enter marks';
+  String get teacherMarksGridTitle =>
+      isUrdu ? 'نمبر گرڈ' : 'Marks grid';
+  String get teacherMarksGridSubtitle => isUrdu
+      ? 'مسودہ تشخیص کے لیے نمبر محفوظ کریں — اشاعت بعد میں۔'
+      : 'Save draft marks for this assessment — publish comes later.';
+  String get teacherMarksSaveGrid =>
+      isUrdu ? 'نمبر محفوظ' : 'Save marks';
+  String get teacherMarksCloseGrid =>
+      isUrdu ? 'گرڈ بند' : 'Close grid';
+  String get teacherMarksGridSaved =>
+      isUrdu ? 'نمبر محفوظ ہو گئے۔' : 'Marks saved.';
+  String get teacherMarksGridSaveFailed => isUrdu
+      ? 'نمبر محفوظ نہیں ہو سکے۔'
+      : 'Could not save marks.';
+  String get teacherMarksGridEmpty => isUrdu
+      ? 'اس کلاس میں ابھی کوئی طالب علم نہیں۔'
+      : 'No enrolled students in this class yet.';
+  String get teacherMarksObtainedLabel =>
+      isUrdu ? 'حاصل' : 'Obtained';
+  String get teacherMarksRemarksLabel =>
+      isUrdu ? 'نوٹ' : 'Remarks';
+  String teacherMarksEntryStatusLabel(MarksEntryStatus status) {
+    if (isUrdu) {
+      return switch (status) {
+        MarksEntryStatus.scored => 'نمبر',
+        MarksEntryStatus.absent => 'غیر حاضر',
+        MarksEntryStatus.exempt => 'مستثنی',
+        MarksEntryStatus.notSubmitted => 'جمع نہیں',
+      };
+    }
+    return switch (status) {
+      MarksEntryStatus.scored => 'Scored',
+      MarksEntryStatus.absent => 'Absent',
+      MarksEntryStatus.exempt => 'Exempt',
+      MarksEntryStatus.notSubmitted => 'Not submitted',
+    };
+  }
   String teacherMarksListSubtitle(
     String category,
     String date,

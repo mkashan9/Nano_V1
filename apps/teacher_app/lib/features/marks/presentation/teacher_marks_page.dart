@@ -3,7 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// MRK-01 Marks: create and edit draft assessments for assigned scopes.
+/// MRK-01/MRK-02 Marks: draft assessments plus in-app marks grid.
 class TeacherMarksPage extends StatefulWidget {
   const TeacherMarksPage({
     super.key,
@@ -22,15 +22,21 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
   NanoViewState _state = const NanoViewLoading();
   TeacherMyClasses? _mine;
   TeacherAssessmentList? _list;
+  TeacherMarksGrid? _grid;
   String? _assignmentId;
   String? _editingId;
+  String? _gridAssessmentId;
   final _category = TextEditingController(text: 'Quiz');
   final _name = TextEditingController();
   final _total = TextEditingController(text: '100');
   final _weight = TextEditingController();
   final _description = TextEditingController();
+  final Map<String, TextEditingController> _scoreCtrls = {};
+  final Map<String, TextEditingController> _remarkCtrls = {};
+  final Map<String, MarksEntryStatus> _statusDraft = {};
   late DateTime _date;
   var _saving = false;
+  var _savingMarks = false;
   String? _message;
 
   static const _categories = [
@@ -58,7 +64,20 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     _total.dispose();
     _weight.dispose();
     _description.dispose();
+    _disposeGridCtrls();
     super.dispose();
+  }
+
+  void _disposeGridCtrls() {
+    for (final c in _scoreCtrls.values) {
+      c.dispose();
+    }
+    for (final c in _remarkCtrls.values) {
+      c.dispose();
+    }
+    _scoreCtrls.clear();
+    _remarkCtrls.clear();
+    _statusDraft.clear();
   }
 
   String get _dateIso =>
@@ -137,11 +156,48 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     });
   }
 
+  Future<void> _openGrid(String assessmentId) async {
+    setState(() {
+      _state = const NanoViewLoading();
+      _message = null;
+    });
+    try {
+      final grid = await widget.repository.loadMarks(assessmentId);
+      if (!mounted) return;
+      _disposeGridCtrls();
+      for (final s in grid.roster) {
+        final existing = grid.entryByStudent[s.id];
+        _statusDraft[s.id] = existing?.status ?? MarksEntryStatus.scored;
+        _scoreCtrls[s.id] = TextEditingController(
+          text: existing?.obtainedMarks?.toString() ?? '',
+        );
+        _remarkCtrls[s.id] = TextEditingController(
+          text: existing?.remarks ?? '',
+        );
+      }
+      setState(() {
+        _grid = grid;
+        _gridAssessmentId = assessmentId;
+        _state = const NanoViewReady();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _state = const NanoViewError());
+    }
+  }
+
+  void _closeGrid() {
+    _disposeGridCtrls();
+    setState(() {
+      _grid = null;
+      _gridAssessmentId = null;
+    });
+  }
+
   TeacherAssessmentDraftInput? _readInput(NanoCopy copy) {
     final total = double.tryParse(_total.text.trim());
     final weightRaw = _weight.text.trim();
-    final weight =
-        weightRaw.isEmpty ? null : double.tryParse(weightRaw);
+    final weight = weightRaw.isEmpty ? null : double.tryParse(weightRaw);
     if (_category.text.trim().isEmpty ||
         _name.text.trim().isEmpty ||
         total == null ||
@@ -198,6 +254,58 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     }
   }
 
+  Future<void> _saveMarks() async {
+    final assessmentId = _gridAssessmentId;
+    final grid = _grid;
+    if (assessmentId == null || grid == null || _savingMarks) return;
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    final entries = <MarksEntryMark>[];
+    for (final s in grid.roster) {
+      final status = _statusDraft[s.id] ?? MarksEntryStatus.scored;
+      double? obtained;
+      if (status == MarksEntryStatus.scored) {
+        obtained = double.tryParse(_scoreCtrls[s.id]?.text.trim() ?? '');
+        if (obtained == null) {
+          setState(() => _message = copy.teacherMarksGridSaveFailed);
+          return;
+        }
+      }
+      entries.add(
+        MarksEntryMark(
+          studentUserId: s.id,
+          status: status,
+          obtainedMarks: obtained,
+          remarks: _remarkCtrls[s.id]?.text ?? '',
+        ),
+      );
+    }
+    setState(() {
+      _savingMarks = true;
+      _message = null;
+    });
+    try {
+      final saved = await widget.repository.saveMarks(
+        assessmentId: assessmentId,
+        entries: entries,
+        idempotencyKey:
+            'marks-$assessmentId-${DateTime.now().millisecondsSinceEpoch}',
+      );
+      if (!mounted) return;
+      setState(() {
+        _grid = saved;
+        _savingMarks = false;
+        _message = copy.teacherMarksGridSaved;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _savingMarks = false;
+        _message = copy.teacherMarksGridSaveFailed;
+      });
+    }
+  }
+
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -218,6 +326,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     final theme = Theme.of(context);
     final mine = _mine;
     final list = _list;
+    final grid = _grid;
 
     return NanoViewStateHost(
       state: _state,
@@ -248,6 +357,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
                 onChanged: (id) {
                   if (id != null) {
                     _resetForm();
+                    _closeGrid();
                     _loadList(id);
                   }
                 },
@@ -255,133 +365,256 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
               if (list != null) ...[
                 const SizedBox(height: 8),
                 Text(list.scopeLabel, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 16),
-                Text(
-                  _editingId == null
-                      ? copy.teacherMarksCreateTitle
-                      : copy.teacherMarksEditTitle,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  value: _categories.contains(_category.text)
-                      ? _category.text
-                      : 'Other',
-                  decoration: InputDecoration(
-                    labelText: copy.teacherMarksCategoryLabel,
+                if (grid == null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    _editingId == null
+                        ? copy.teacherMarksCreateTitle
+                        : copy.teacherMarksEditTitle,
+                    style: theme.textTheme.titleMedium,
                   ),
-                  items: [
-                    for (final c in _categories)
-                      DropdownMenuItem(value: c, child: Text(c)),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) setState(() => _category.text = v);
-                  },
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _name,
-                  decoration: InputDecoration(
-                    labelText: copy.teacherMarksNameLabel,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(copy.teacherMarksDateLabel),
-                  subtitle: Text(_dateIso),
-                  trailing: IconButton(
-                    onPressed: _pickDate,
-                    icon: const Icon(Icons.calendar_today),
-                  ),
-                ),
-                TextField(
-                  controller: _total,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: copy.teacherMarksTotalLabel,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _weight,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: copy.teacherMarksWeightLabel,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _description,
-                  minLines: 2,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    labelText: copy.teacherMarksDescriptionLabel,
-                    alignLabelWithHint: true,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    FilledButton(
-                      onPressed: _saving ? null : _save,
-                      child: Text(
-                        _editingId == null
-                            ? copy.teacherMarksSaveDraft
-                            : copy.teacherMarksUpdateDraft,
-                      ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: _categories.contains(_category.text)
+                        ? _category.text
+                        : 'Other',
+                    decoration: InputDecoration(
+                      labelText: copy.teacherMarksCategoryLabel,
                     ),
-                    if (_editingId != null)
-                      OutlinedButton(
-                        onPressed: _saving
-                            ? null
-                            : () => setState(_resetForm),
-                        child: Text(copy.teacherMarksCancelEdit),
+                    items: [
+                      for (final c in _categories)
+                        DropdownMenuItem(value: c, child: Text(c)),
+                    ],
+                    onChanged: (v) {
+                      if (v != null) setState(() => _category.text = v);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _name,
+                    decoration: InputDecoration(
+                      labelText: copy.teacherMarksNameLabel,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(copy.teacherMarksDateLabel),
+                    subtitle: Text(_dateIso),
+                    trailing: IconButton(
+                      onPressed: _pickDate,
+                      icon: const Icon(Icons.calendar_today),
+                    ),
+                  ),
+                  TextField(
+                    controller: _total,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: copy.teacherMarksTotalLabel,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _weight,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: copy.teacherMarksWeightLabel,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _description,
+                    minLines: 2,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: copy.teacherMarksDescriptionLabel,
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilledButton(
+                        onPressed: _saving ? null : _save,
+                        child: Text(
+                          _editingId == null
+                              ? copy.teacherMarksSaveDraft
+                              : copy.teacherMarksUpdateDraft,
+                        ),
                       ),
-                  ],
-                ),
+                      if (_editingId != null)
+                        OutlinedButton(
+                          onPressed:
+                              _saving ? null : () => setState(_resetForm),
+                          child: Text(copy.teacherMarksCancelEdit),
+                        ),
+                    ],
+                  ),
+                ],
                 if (_message != null) ...[
                   const SizedBox(height: 8),
                   Text(_message!, style: theme.textTheme.bodyMedium),
                 ],
-                const SizedBox(height: 24),
-                Text(
-                  copy.teacherMarksListTitle,
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                if (list.assessments.isEmpty)
-                  Text(copy.teacherMarksListEmpty)
-                else
-                  for (final a in list.assessments)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(a.name),
-                      subtitle: Text(
-                        copy.teacherMarksListSubtitle(
-                          a.category,
-                          a.assessmentDate,
-                          a.totalMarks,
-                          a.status.wire,
-                        ),
+                if (grid != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    copy.teacherMarksGridTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${grid.assessmentName} · ${grid.totalMarks}',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    copy.teacherMarksGridSubtitle,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilledButton(
+                        onPressed: _savingMarks ? null : _saveMarks,
+                        child: Text(copy.teacherMarksSaveGrid),
                       ),
-                      trailing: a.isDraft
-                          ? TextButton(
-                              onPressed: () => _edit(a),
-                              child: Text(copy.teacherMarksEditAction),
-                            )
-                          : null,
-                    ),
+                      OutlinedButton(
+                        onPressed: _savingMarks ? null : _closeGrid,
+                        child: Text(copy.teacherMarksCloseGrid),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (grid.roster.isEmpty)
+                    Text(copy.teacherMarksGridEmpty)
+                  else
+                    for (final student in grid.roster)
+                      _MarksRow(
+                        name: student.displayName.trim().isEmpty
+                            ? copy.teacherClassesStudentFallback
+                            : student.displayName,
+                        status: _statusDraft[student.id] ??
+                            MarksEntryStatus.scored,
+                        scoreController: _scoreCtrls[student.id]!,
+                        remarkController: _remarkCtrls[student.id]!,
+                        statusLabel: copy.teacherMarksEntryStatusLabel,
+                        obtainedLabel: copy.teacherMarksObtainedLabel,
+                        remarksLabel: copy.teacherMarksRemarksLabel,
+                        onCycleStatus: () {
+                          setState(() {
+                            final current = _statusDraft[student.id] ??
+                                MarksEntryStatus.scored;
+                            _statusDraft[student.id] = current.next;
+                          });
+                        },
+                      ),
+                ] else ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    copy.teacherMarksListTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  if (list.assessments.isEmpty)
+                    Text(copy.teacherMarksListEmpty)
+                  else
+                    for (final a in list.assessments)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(a.name),
+                        subtitle: Text(
+                          copy.teacherMarksListSubtitle(
+                            a.category,
+                            a.assessmentDate,
+                            a.totalMarks,
+                            a.status.wire,
+                          ),
+                        ),
+                        trailing: a.isDraft
+                            ? Wrap(
+                                spacing: 4,
+                                children: [
+                                  TextButton(
+                                    onPressed: () => _edit(a),
+                                    child: Text(copy.teacherMarksEditAction),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => _openGrid(a.id),
+                                    child: Text(copy.teacherMarksEnterAction),
+                                  ),
+                                ],
+                              )
+                            : null,
+                      ),
+                ],
               ],
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _MarksRow extends StatelessWidget {
+  const _MarksRow({
+    required this.name,
+    required this.status,
+    required this.scoreController,
+    required this.remarkController,
+    required this.statusLabel,
+    required this.obtainedLabel,
+    required this.remarksLabel,
+    required this.onCycleStatus,
+  });
+
+  final String name;
+  final MarksEntryStatus status;
+  final TextEditingController scoreController;
+  final TextEditingController remarkController;
+  final String Function(MarksEntryStatus) statusLabel;
+  final String obtainedLabel;
+  final String remarksLabel;
+  final VoidCallback onCycleStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(name),
+            subtitle: Text(statusLabel(status)),
+            trailing: TextButton(
+              onPressed: onCycleStatus,
+              child: Text(statusLabel(status)),
+            ),
+          ),
+          if (status == MarksEntryStatus.scored)
+            TextField(
+              controller: scoreController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: InputDecoration(labelText: obtainedLabel),
+            ),
+          const SizedBox(height: 4),
+          TextField(
+            controller: remarkController,
+            decoration: InputDecoration(labelText: remarksLabel),
+          ),
+        ],
       ),
     );
   }

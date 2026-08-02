@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] MRK-01 Assessment Creation
+- [ ] MRK-02 In-App Marks Grid
 
 ## Completed
 
@@ -40,6 +40,7 @@
 - [x] ATT-01 In-App Attendance Grid
 - [x] ATT-02 Attendance Excel Download and Upload
 - [x] ATT-03 Attendance Correction and History
+- [x] MRK-01 Assessment Creation
 
 ## Upcoming
 

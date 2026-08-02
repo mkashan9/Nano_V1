@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- MRK-02: teachers enter draft marks grids for draft assessments with status and caps
 - MRK-01: teachers create and edit draft assessments for assigned scopes
 - ATT-03: teachers correct submitted attendance with required reason and immutable history
 - ATT-02: teachers download/preview/commit attendance CSV templates into canonical sessions

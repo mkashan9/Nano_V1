@@ -1,7 +1,7 @@
 id: MRK-01
 name: "Assessment Creation"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - TCH-02
   - SCH-06

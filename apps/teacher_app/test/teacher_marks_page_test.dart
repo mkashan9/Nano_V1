@@ -6,8 +6,8 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:teacher_app/features/marks/presentation/teacher_marks_page.dart';
 
 void main() {
-  testWidgets('shows marks page and saves draft assessment', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(900, 1600));
+  testWidgets('creates draft and opens marks grid', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(900, 1800));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
@@ -25,13 +25,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Marks'), findsOneWidget);
-    expect(find.text('Save draft'), findsOneWidget);
-
     await tester.enterText(find.byType(TextField).first, 'Chapter 1 Quiz');
     await tester.tap(find.text('Save draft'));
     await tester.pumpAndSettle();
 
     expect(find.text('Draft assessment saved.'), findsOneWidget);
-    expect(find.textContaining('Chapter 1 Quiz'), findsWidgets);
+    expect(find.text('Enter marks'), findsOneWidget);
+
+    await tester.tap(find.text('Enter marks'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Marks grid'), findsOneWidget);
+    expect(find.text('Save marks'), findsOneWidget);
   });
 }
