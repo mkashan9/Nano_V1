@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:teacher_app/features/home/presentation/teacher_dashboard_page.dart';
 
 class TeacherShell extends StatelessWidget {
   const TeacherShell({
@@ -12,6 +14,7 @@ class TeacherShell extends StatelessWidget {
     required this.copy,
     this.onSignOut,
     this.liveAuth = false,
+    this.teacherDashboardRepository,
   });
 
   final EnvironmentConfig config;
@@ -20,6 +23,7 @@ class TeacherShell extends StatelessWidget {
   final NanoCopy copy;
   final VoidCallback? onSignOut;
   final bool liveAuth;
+  final TeacherDashboardRepository? teacherDashboardRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +66,21 @@ class TeacherShell extends StatelessWidget {
 }
 
 class TeacherDestinationPage extends StatelessWidget {
-  const TeacherDestinationPage({super.key, required this.destination});
+  const TeacherDestinationPage({
+    super.key,
+    required this.destination,
+    this.teacherDashboardRepository,
+  });
 
   final NavDestination destination;
+  final TeacherDashboardRepository? teacherDashboardRepository;
 
   @override
   Widget build(BuildContext context) {
+    if (destination.id == 'dashboard' && teacherDashboardRepository != null) {
+      return TeacherDashboardPage(repository: teacherDashboardRepository!);
+    }
+
     return NanoScaffold(
       padBody: true,
       body: Center(

@@ -123,6 +123,39 @@ class NanoCopy {
   String get policiesClosePeriodAction => isUrdu ? 'بند' : 'Close';
   String get policiesReasonLabel => isUrdu ? 'وجہ' : 'Reason';
   String get policiesConfirmAction => isUrdu ? 'تصدیق' : 'Confirm';
+  String get teacherDashboardTitle =>
+      isUrdu ? 'ڈیش بورڈ' : 'Dashboard';
+  String teacherDashboardGreeting(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      return isUrdu ? 'خوش آمدید' : 'Welcome';
+    }
+    return isUrdu ? 'خوش آمدید، $trimmed' : 'Welcome, $trimmed';
+  }
+
+  String teacherDashboardSchool(String name, String code) =>
+      isUrdu ? '$name ($code)' : '$name ($code)';
+  String get teacherDashboardAssignments =>
+      isUrdu ? 'فعال تفویضات' : 'Active assignments';
+  String get teacherDashboardPending =>
+      isUrdu ? 'زیر التوا' : 'Pending';
+  String get teacherDashboardPendingTitle =>
+      isUrdu ? 'آنے والے کام' : 'Coming workflows';
+  String get teacherDashboardPendingAttendance =>
+      isUrdu ? 'حاضری' : 'Attendance';
+  String get teacherDashboardPendingDrafts =>
+      isUrdu ? 'مسودہ تشخیص' : 'Draft assessments';
+  String get teacherDashboardPendingMarks =>
+      isUrdu ? 'غیر شائع نمبر' : 'Unpublished marks';
+  String get teacherDashboardPendingClassroom =>
+      isUrdu ? 'کلاس روم' : 'Classroom';
+  String get teacherDashboardScopeTitle =>
+      isUrdu ? 'میری تفویضات' : 'My assignments';
+  String get teacherDashboardScopeEmpty => isUrdu
+      ? 'ابھی کوئی فعال تفویض نہیں۔'
+      : 'No active assignments yet.';
+  String get teacherDashboardOpenClasses =>
+      isUrdu ? 'کلاسز' : 'Open classes';
   String get reportsPageTitle => isUrdu ? 'رپورٹس' : 'Reports';
   String get reportsPageSubtitle => isUrdu
       ? 'اسکول کے محفوظ خلاصے — طالب علم کے ذاتی رابطے نہیں۔'

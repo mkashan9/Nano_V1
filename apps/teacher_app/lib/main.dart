@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:teacher_app/app/teacher_router.dart';
@@ -9,19 +10,24 @@ import 'package:teacher_app/app/teacher_router.dart';
 void main() {
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
+  TeacherDashboardRepository? teacherDashboardRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
+    final client =
+        NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey);
     authRepository = SupabaseAuthRepository(
-      NanoAuthClient.create(config.supabaseUrl, config.supabaseAnonKey),
+      client,
       allowedAccountKinds: const {'teacher'},
       appLabel: 'teachers',
     );
+    teacherDashboardRepository = SupabaseTeacherDashboardRepository(client);
     requireAuth = true;
   }
   runApp(
     NanoTeacherApp(
       config: config,
       authRepository: authRepository,
+      teacherDashboardRepository: teacherDashboardRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -35,6 +41,7 @@ class NanoTeacherApp extends StatefulWidget {
     this.initialLocation,
     this.initialLocale = NanoAppLocale.en,
     this.authRepository,
+    this.teacherDashboardRepository,
     this.requireAuth = false,
   });
 
@@ -43,6 +50,7 @@ class NanoTeacherApp extends StatefulWidget {
   final String? initialLocation;
   final NanoAppLocale initialLocale;
   final AuthRepository? authRepository;
+  final TeacherDashboardRepository? teacherDashboardRepository;
   final bool requireAuth;
 
   @override
@@ -53,6 +61,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
   late NanoAppLocale _locale;
   late SessionPrincipal _principal;
   late GoRouter _router;
+  late TeacherDashboardRepository _teacherDashboardRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -64,6 +73,8 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
         (widget.requireAuth
             ? SessionPrincipal.teacher(displayName: '')
             : SessionPrincipal.teacher());
+    _teacherDashboardRepository =
+        widget.teacherDashboardRepository ?? FakeTeacherDashboardRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -95,6 +106,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
       authRepository: widget.authRepository,
       requireAuth: widget.requireAuth,
       authBootstrap: _authBootstrap,
+      teacherDashboardRepository: _teacherDashboardRepository,
       onAuthBootstrap: (bootstrap) {
         setState(() {
           _authBootstrap = bootstrap;

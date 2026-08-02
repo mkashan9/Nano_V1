@@ -13,8 +13,8 @@ void main() {
     await tester.pumpWidget(const NanoTeacherApp(config: config));
     await tester.pumpAndSettle();
     expect(find.text('Dashboard'), findsWidgets);
-    expect(find.text('Classes'), findsOneWidget);
-    expect(find.text('Attendance'), findsOneWidget);
-    expect(find.text('Marks'), findsOneWidget);
+    expect(find.text('Classes'), findsWidgets);
+    expect(find.text('Attendance'), findsWidgets);
+    expect(find.text('Marks'), findsWidgets);
   });
 }

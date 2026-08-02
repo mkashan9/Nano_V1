@@ -50,7 +50,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook QZ-02 results, explanations, recommendations | QZ-06 | student_app | quiz results | topic_quiz_progress,learner_quiz_history,get_attempt_result,learning_next_up | unit+widget+SQL | DONE |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | DONE |
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
-| Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | BACKLOG |
+| Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | USER_TEST |
 | Handbook ATT-01 Attendance | ATT-01,ATT-02,ATT-03 | teacher_app | Attendance grid | attendance | grid+excel | BACKLOG |
 | Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | BACKLOG |
 | Handbook CLS-01 Classroom | CLS-01,CLS-02,CLS-03 | teacher_app | Classroom | announcements | ack tests | BACKLOG |
@@ -91,7 +91,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | A line for every moment, a clip for the big ones | MED-11 | edge+packages | narration and celebration coverage | narration_lines,reaction_clips | SQL+unit | DONE |
 | Nori is present wherever the policy says, and the gap is visible | MED-12 | student_app+admin_web | full placement, coverage report | none | domain+widget | DONE |
 | Long video checkpoints ~10 min | LRN-04 | student_app | player checkpoints | refresh_checkpoints,checkpoint_events | checkpoint tests | DONE |
-| School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | USER_TEST |
+| School reports / analytics | SCH-07,ADM-08,ANA-01 | admin_web | reports | analytics | report tests | DONE |
 | Marks/attendance Excel flows | ATT-02,MRK-03,SCH-03,SCH-04 | teacher+admin | excel | imports | parse tests | BACKLOG |
 | Offline / poor network | SYNC-01,QA-03,FND-05 | apps | offline states | queue | offline tests | USER_TEST |
 | Pilot release preparation | QA-06 | all | checklist | N/A | gate | BACKLOG |
