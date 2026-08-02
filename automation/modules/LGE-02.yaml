@@ -1,7 +1,7 @@
 id: LGE-02
 name: "Leaderboards"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - LGE-01
 dependency_notes: >

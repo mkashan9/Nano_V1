@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] LGE-02 Leaderboards
+- [ ] LGE-03 Challenges and Rematches
 
 ## Completed
 
+- [x] LGE-02
 - [x] LGE-01
 - [x] GME-07
 - [x] GME-06

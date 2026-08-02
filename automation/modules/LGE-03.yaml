@@ -1,7 +1,7 @@
 id: LGE-03
 name: "Challenges and Rematches"
 release: R8
-status: BACKLOG
+status: ACTIVE
 dependencies:
   - LGE-02
 applications:
