@@ -1,45 +1,78 @@
 id: GME-02
 name: "Secure Web Game Container"
 release: R8
-status: BACKLOG
+status: DONE
 dependencies:
   - GME-01
   - SEC-03
+dependency_notes: >
+  Restricted host + short-lived play tokens for eligible web games.
+  Score verify / XP deferred to GME-05. Flutter native host to GME-03.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_games/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/GME-02/
   - automation/modules/GME-02.yaml
+  - automation/modules/GME-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook §11.2 Game bridge contract"
+  - "Handbook §11.3 WebView security"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for GME-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.game_sessions
+server_functions:
+  - "public.start_game_session"
+  - "public.abort_game_session"
+  - "public.report_game_client_completed"
+  - "nano_internal.game_allowed_origins"
 acceptance:
+  - Catalog Play starts an eligible web game session with a one-time token
+  - Fixture host runs fixture:// games and posts narrow bridge messages
+  - Unknown/oversized bridge messages are rejected
+  - Client completion stored without XP verification
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/gme02_game_sessions.sql
+  - packages/nano_domain/test/game_session_test.dart
+  - packages/nano_data/test/game_session_repository_test.dart
+  - packages/nano_games/test/game_bridge_controller_test.dart
+  - apps/student_app/test/games_catalog_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - play_token_hashed_at_rest
+  - no_supabase_token_to_game
+  - bridge_rejects_unknown
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Games, Play Number Rush, Finish, confirm verification-later banner
+rollback_notes: >
+  Revert branch and migration. Catalog returns to browse-only.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Secure host + sessions + fixture bridge; no XP verify.
+  deferred: >
+    HTTPS WebView, Flutter native host, trusted verify/XP, junior worlds layout.

@@ -19,6 +19,7 @@ export 'flex/student_attendance_repository.dart';
 export 'flex/student_marks_repository.dart';
 export 'flex/student_classroom_repository.dart';
 export 'game/game_catalog_repository.dart';
+export 'game/game_session_repository.dart';
 export 'teacher/teacher_dashboard_repository.dart';
 export 'teacher/teacher_classes_repository.dart';
 export 'teacher/teacher_attendance_repository.dart';

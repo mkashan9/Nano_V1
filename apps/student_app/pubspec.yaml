@@ -43,6 +43,8 @@ dependencies:
     path: ../../packages/nano_auth
   nano_media:
     path: ../../packages/nano_media
+  nano_games:
+    path: ../../packages/nano_games
   supabase: ^2.8.0
 
 

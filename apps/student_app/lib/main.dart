@@ -31,6 +31,7 @@ void main() {
   StudentClassroomRepository? studentClassroomRepository;
   StudentFlexRepository? studentFlexRepository;
   GameCatalogRepository? gameCatalogRepository;
+  GameSessionRepository? gameSessionRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -61,6 +62,7 @@ void main() {
       classroom: studentClassroomRepository!,
     );
     gameCatalogRepository = SupabaseGameCatalogRepository(client);
+    gameSessionRepository = SupabaseGameSessionRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -81,6 +83,7 @@ void main() {
       studentMarksRepository: studentMarksRepository,
       studentClassroomRepository: studentClassroomRepository,
       gameCatalogRepository: gameCatalogRepository,
+      gameSessionRepository: gameSessionRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -121,6 +124,7 @@ class NanoStudentApp extends StatefulWidget {
     this.studentMarksRepository,
     this.studentClassroomRepository,
     this.gameCatalogRepository,
+    this.gameSessionRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -180,6 +184,7 @@ class NanoStudentApp extends StatefulWidget {
   final StudentMarksRepository? studentMarksRepository;
   final StudentClassroomRepository? studentClassroomRepository;
   final GameCatalogRepository? gameCatalogRepository;
+  final GameSessionRepository? gameSessionRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -571,6 +576,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       studentMarksRepository: widget.studentMarksRepository,
       studentClassroomRepository: widget.studentClassroomRepository,
       gameCatalogRepository: widget.gameCatalogRepository,
+      gameSessionRepository: widget.gameSessionRepository,
     );
   }
 

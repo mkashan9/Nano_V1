@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/games/presentation/game_host_page.dart';
 
-/// GME-01 Games catalog list (no play host yet).
+/// GME-01/02 Games catalog with Play for eligible web games.
 class GamesCatalogPage extends StatefulWidget {
   const GamesCatalogPage({
     super.key,
     required this.repository,
+    this.sessionRepository,
     this.independent = false,
     this.gradeLevel,
     this.junior = false,
   });
 
   final GameCatalogRepository repository;
+  final GameSessionRepository? sessionRepository;
   final bool independent;
   final int? gradeLevel;
   final bool junior;
@@ -52,6 +55,18 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
     }
   }
 
+  void _open(CatalogGame game) {
+    final sessions = widget.sessionRepository ?? FakeGameSessionRepository();
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => GameHostPage(
+          game: game,
+          sessionRepository: sessions,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -72,7 +87,7 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
                   Text(copy.games, style: theme.textTheme.headlineSmall),
                   const SizedBox(height: NanoSpacing.xs),
                   Text(
-                    copy.gamesComingSoonPlay,
+                    copy.gamesHostIntro,
                     style: theme.textTheme.bodyMedium,
                   ),
                   const SizedBox(height: NanoSpacing.md),
@@ -93,6 +108,12 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           isThreeLine: true,
+                          trailing: game.entryKind == GameEntryKind.web
+                              ? TextButton(
+                                  onPressed: () => _open(game),
+                                  child: Text(copy.gamesPlay),
+                                )
+                              : null,
                         ),
                       ),
                 ],

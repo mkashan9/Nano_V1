@@ -39,6 +39,25 @@ class NanoCopy {
   String get gamesComingSoonPlay => isUrdu
       ? 'کھیلنا اگلے ماڈیول میں آئے گا۔'
       : 'Play opens in a later module.';
+  String get gamesPlay => isUrdu ? 'کھیلیں' : 'Play';
+  String get gamesClose => isUrdu ? 'بند کریں' : 'Close';
+  String get gamesHostIntro => isUrdu
+      ? 'محفوظ میزبان میں کھیلیں۔ اسکور کی تصدیق بعد میں ہو گی۔'
+      : 'Play in the secure host. Score verification comes later.';
+  String get gamesStartError =>
+      isUrdu ? 'کھیل شروع نہیں ہو سکا۔' : 'Could not start the game.';
+  String get gamesFlutterDeferred => isUrdu
+      ? 'یہ کھیل فلیٹر میزبان میں بعد میں آئے گا۔'
+      : 'This game opens in a later Flutter host.';
+  String get gamesHttpsDeferred => isUrdu
+      ? 'ریموٹ ویب کھیل ابھی رجسٹرڈ نہیں۔'
+      : 'Remote web games are not registered yet.';
+  String get gamesResultPendingVerify => isUrdu
+      ? 'نتیجہ موصول ہو گیا۔ تصدیق بعد میں ہو گی۔'
+      : 'Result received. Verification comes later.';
+  String get gamesBridgeRejected => isUrdu
+      ? 'غیر محفوظ پیغام نظرانداز کیا گیا۔'
+      : 'Unsafe game message was ignored.';
   String gamesCategoryLabel(String category) => switch (category) {
         'challenge' => isUrdu ? 'چیلنج' : 'Challenge',
         'world' => isUrdu ? 'دنیا' : 'World',

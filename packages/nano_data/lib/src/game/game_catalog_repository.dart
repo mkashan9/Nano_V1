@@ -25,6 +25,7 @@ class FakeGameCatalogRepository implements GameCatalogRepository {
                 sortOrder: 10,
                 minGrade: 1,
                 maxGrade: 5,
+                entryRef: 'fixture://number_rush',
               ),
               CatalogGame(
                 gameId: 'g-circuit',
@@ -37,6 +38,7 @@ class FakeGameCatalogRepository implements GameCatalogRepository {
                 minGrade: 6,
                 maxGrade: 12,
                 independentAllowed: false,
+                entryRef: 'fixture://school_circuit',
               ),
             ];
 
