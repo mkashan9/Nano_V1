@@ -38,6 +38,7 @@ export 'home/student_home_summary.dart';
 export 'flex/flex_hub.dart';
 export 'flex/student_attendance.dart';
 export 'flex/student_marks.dart';
+export 'flex/student_classroom.dart';
 export 'teacher/teacher_dashboard.dart';
 export 'teacher/teacher_classes.dart';
 export 'teacher/teacher_attendance.dart';

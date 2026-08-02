@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] FLX-03 Student Marks and Results
+- [ ] FLX-04 Student Classroom
 
 ## Completed
 
+- [x] FLX-03
 - [x] FLX-02
 - [x] FLX-01
 - [x] CLS-03

@@ -17,6 +17,7 @@ export 'home/student_home_repository.dart';
 export 'flex/student_flex_repository.dart';
 export 'flex/student_attendance_repository.dart';
 export 'flex/student_marks_repository.dart';
+export 'flex/student_classroom_repository.dart';
 export 'teacher/teacher_dashboard_repository.dart';
 export 'teacher/teacher_classes_repository.dart';
 export 'teacher/teacher_attendance_repository.dart';

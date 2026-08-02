@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- FLX-04: students read published classroom announcements and acknowledge
 - FLX-03: students view their own published marks by month
 - FLX-02: students view their own submitted attendance by month
 - FLX-01: school-linked Flex hub (attendance / marks / classroom entry cards)
