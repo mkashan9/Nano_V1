@@ -1,7 +1,7 @@
 id: FLX-01
 name: "Student Flex Home"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-03
   - STU-04

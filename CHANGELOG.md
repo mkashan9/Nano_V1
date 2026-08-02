@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- FLX-02: students view their own submitted attendance by month
 - FLX-01: school-linked Flex hub (attendance / marks / classroom entry cards)
 - CLS-03: schedule/expiry on drafts; acknowledgement counts for teachers
 - CLS-02: teachers attach https links to draft classroom announcements

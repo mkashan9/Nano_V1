@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] FLX-01 Student Flex Home
+- [ ] FLX-02 Student Attendance
 
 ## Completed
 
+- [x] FLX-01
 - [x] CLS-03
 - [x] CLS-02
 - [x] CLS-01

@@ -4,8 +4,9 @@ import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
 import '../../../app/nav_placeholder_page.dart';
+import 'student_attendance_page.dart';
 
-/// FLX-01 Flex hub: attendance / marks / classroom entry points.
+/// FLX-01/FLX-02 Flex hub: attendance / marks / classroom entry points.
 class FlexHomePage extends StatefulWidget {
   const FlexHomePage({
     super.key,
@@ -59,6 +60,16 @@ class _FlexHomePageState extends State<FlexHomePage> {
   void _openSection(FlexHubSectionKind kind) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
         const NanoCopy(NanoAppLocale.en);
+    if (kind == FlexHubSectionKind.attendance) {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => StudentAttendancePage(
+            repository: FakeStudentAttendanceRepository(),
+          ),
+        ),
+      );
+      return;
+    }
     final title = switch (kind) {
       FlexHubSectionKind.attendance => copy.flexAttendanceTitle,
       FlexHubSectionKind.marks => copy.flexMarksTitle,
