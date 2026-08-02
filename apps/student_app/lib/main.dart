@@ -32,6 +32,8 @@ void main() {
   StudentFlexRepository? studentFlexRepository;
   GameCatalogRepository? gameCatalogRepository;
   GameSessionRepository? gameSessionRepository;
+  GameAssetRepository? gameAssetRepository;
+  GameLocalStorageRepository? gameLocalStorageRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -63,6 +65,8 @@ void main() {
     );
     gameCatalogRepository = SupabaseGameCatalogRepository(client);
     gameSessionRepository = SupabaseGameSessionRepository(client);
+    gameAssetRepository = SupabaseGameAssetRepository(client);
+    gameLocalStorageRepository = FakeGameLocalStorageRepository();
     requireAuth = true;
   }
   runApp(
@@ -84,6 +88,8 @@ void main() {
       studentClassroomRepository: studentClassroomRepository,
       gameCatalogRepository: gameCatalogRepository,
       gameSessionRepository: gameSessionRepository,
+      gameAssetRepository: gameAssetRepository,
+      gameLocalStorageRepository: gameLocalStorageRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -125,6 +131,8 @@ class NanoStudentApp extends StatefulWidget {
     this.studentClassroomRepository,
     this.gameCatalogRepository,
     this.gameSessionRepository,
+    this.gameAssetRepository,
+    this.gameLocalStorageRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -185,6 +193,8 @@ class NanoStudentApp extends StatefulWidget {
   final StudentClassroomRepository? studentClassroomRepository;
   final GameCatalogRepository? gameCatalogRepository;
   final GameSessionRepository? gameSessionRepository;
+  final GameAssetRepository? gameAssetRepository;
+  final GameLocalStorageRepository? gameLocalStorageRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -577,6 +587,8 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       studentClassroomRepository: widget.studentClassroomRepository,
       gameCatalogRepository: widget.gameCatalogRepository,
       gameSessionRepository: widget.gameSessionRepository,
+      gameAssetRepository: widget.gameAssetRepository,
+      gameLocalStorageRepository: widget.gameLocalStorageRepository,
     );
   }
 

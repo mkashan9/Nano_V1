@@ -50,6 +50,8 @@ GoRouter createStudentRouter({
   StudentClassroomRepository? studentClassroomRepository,
   GameCatalogRepository? gameCatalogRepository,
   GameSessionRepository? gameSessionRepository,
+  GameAssetRepository? gameAssetRepository,
+  GameLocalStorageRepository? gameLocalStorageRepository,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -233,6 +235,8 @@ GoRouter createStudentRouter({
                     studentClassroomRepository: studentClassroomRepository,
                     gameCatalogRepository: gameCatalogRepository,
                     gameSessionRepository: gameSessionRepository,
+                    gameAssetRepository: gameAssetRepository,
+                    gameLocalStorageRepository: gameLocalStorageRepository,
                     onboardingProgress: onboardingProgress,
                   ),
                 ),
@@ -269,6 +273,8 @@ Widget _pageFor(
   StudentClassroomRepository? studentClassroomRepository,
   GameCatalogRepository? gameCatalogRepository,
   GameSessionRepository? gameSessionRepository,
+  GameAssetRepository? gameAssetRepository,
+  GameLocalStorageRepository? gameLocalStorageRepository,
   OnboardingProgress? onboardingProgress,
 }) {
   return switch (id) {
@@ -291,6 +297,8 @@ Widget _pageFor(
     'game' || 'games' => StudentGamesTab(
         repository: gameCatalogRepository,
         sessionRepository: gameSessionRepository,
+        assetRepository: gameAssetRepository,
+        localStorageRepository: gameLocalStorageRepository,
         independent: principal.role == AppRole.independentStudent,
         gradeLevel: onboardingProgress?.selfReportedGradeLevel,
         junior: principal.usesJuniorPresentation,
