@@ -288,6 +288,31 @@ class NanoCopy {
   String get teacherClassroomEditAction => isUrdu ? 'ترمیم' : 'Edit';
   String teacherClassroomListSubtitle(String status, String body) =>
       '$status · $body';
+  String get teacherClassroomAttachmentsTitle =>
+      isUrdu ? 'منسلکات' : 'Attachments';
+  String get teacherClassroomAttachmentsSubtitle => isUrdu
+      ? 'مسودہ اعلان پر لنک شامل کریں۔'
+      : 'Add https links to this draft announcement.';
+  String get teacherClassroomAttachmentTitleLabel =>
+      isUrdu ? 'لنک عنوان' : 'Link title';
+  String get teacherClassroomAttachmentUrlLabel =>
+      isUrdu ? 'URL' : 'URL';
+  String get teacherClassroomAddLink => isUrdu ? 'لنک شامل' : 'Add link';
+  String get teacherClassroomRemoveAttachment =>
+      isUrdu ? 'ہٹائیں' : 'Remove';
+  String get teacherClassroomAttachmentsEmpty => isUrdu
+      ? 'ابھی کوئی منسلکہ نہیں۔'
+      : 'No attachments yet.';
+  String get teacherClassroomAttachmentAdded =>
+      isUrdu ? 'منسلکہ شامل ہو گیا۔' : 'Attachment added.';
+  String get teacherClassroomAttachmentRemoved =>
+      isUrdu ? 'منسلکہ ہٹا دیا گیا۔' : 'Attachment removed.';
+  String get teacherClassroomAttachmentFailed => isUrdu
+      ? 'منسلکہ ناکام۔'
+      : 'Could not update attachment.';
+  String teacherClassroomAttachmentCount(int count) => isUrdu
+      ? '$count منسلکات'
+      : '$count attachment${count == 1 ? '' : 's'}';
   String get teacherMarksSubtitle => isUrdu
       ? 'تفویض چنیں، مسودہ تشخیص بنائیں، اور نمبر درج کریں۔'
       : 'Pick an assignment, create draft assessments, and enter marks.';

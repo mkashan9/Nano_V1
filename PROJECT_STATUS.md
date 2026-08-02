@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R7 Teacher Operations
-- **Current module:** CLS-01 Teacher Classroom Announcements
+- **Current module:** CLS-02 Classroom Materials and Attachments
 - **Current status:** USER_TEST
-- **Current branch:** module/CLS-01-classroom-announcements
-- **Last completed module:** MRK-05
+- **Current branch:** module/CLS-02-classroom-attachments
+- **Last completed module:** CLS-01
 - **Application name:** Nano
 
 ## Releases
 
 - R1?R6: complete
-- R7 Teacher Operations: TCH-01?TCH-02, ATT-01?ATT-03, MRK-01?MRK-05 DONE; CLS-01 USER_TEST
+- R7 Teacher Operations: TCH/ATT/MRK + CLS-01 DONE; CLS-02 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/CLS-01/MANUAL_TEST.md`. Open Classroom ? create/edit draft announcement.
+Run `docs/modules/CLS-02/MANUAL_TEST.md`. Edit a draft announcement and add/remove an https link.

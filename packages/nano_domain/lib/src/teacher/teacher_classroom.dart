@@ -1,4 +1,4 @@
-/// CLS-01 teacher classroom announcement models (draft-focused).
+/// CLS-01/CLS-02 teacher classroom announcement and attachment models.
 enum ClassroomItemStatus {
   draft,
   published;
@@ -18,6 +18,89 @@ enum ClassroomItemStatus {
   bool get isDraft => this == ClassroomItemStatus.draft;
 }
 
+enum ClassroomAttachmentKind {
+  link,
+  file;
+
+  static ClassroomAttachmentKind parse(String? raw) {
+    switch ((raw ?? '').toLowerCase().trim()) {
+      case 'file':
+        return ClassroomAttachmentKind.file;
+      case 'link':
+      default:
+        return ClassroomAttachmentKind.link;
+    }
+  }
+
+  String get wire => name;
+}
+
+class TeacherClassroomAttachment {
+  const TeacherClassroomAttachment({
+    required this.id,
+    required this.classroomItemId,
+    required this.kind,
+    required this.title,
+    this.url,
+    this.storageBucket,
+    this.storagePath,
+    this.contentType,
+    this.byteSize,
+    this.checksum,
+    this.sortOrder = 1,
+  });
+
+  final String id;
+  final String classroomItemId;
+  final ClassroomAttachmentKind kind;
+  final String title;
+  final String? url;
+  final String? storageBucket;
+  final String? storagePath;
+  final String? contentType;
+  final int? byteSize;
+  final String? checksum;
+  final int sortOrder;
+
+  factory TeacherClassroomAttachment.fromJson(Map<String, dynamic> json) {
+    return TeacherClassroomAttachment(
+      id: json['id'] as String? ?? '',
+      classroomItemId: json['classroom_item_id'] as String? ?? '',
+      kind: ClassroomAttachmentKind.parse(json['kind'] as String?),
+      title: json['title'] as String? ?? '',
+      url: json['url'] as String?,
+      storageBucket: json['storage_bucket'] as String?,
+      storagePath: json['storage_path'] as String?,
+      contentType: json['content_type'] as String?,
+      byteSize: (json['byte_size'] as num?)?.toInt(),
+      checksum: json['checksum'] as String?,
+      sortOrder: (json['sort_order'] as num?)?.toInt() ?? 1,
+    );
+  }
+}
+
+class TeacherClassroomAttachmentInput {
+  const TeacherClassroomAttachmentInput({
+    required this.title,
+    this.kind = ClassroomAttachmentKind.link,
+    this.url,
+    this.storageBucket,
+    this.storagePath,
+    this.contentType,
+    this.byteSize,
+    this.checksum,
+  });
+
+  final ClassroomAttachmentKind kind;
+  final String title;
+  final String? url;
+  final String? storageBucket;
+  final String? storagePath;
+  final String? contentType;
+  final int? byteSize;
+  final String? checksum;
+}
+
 class TeacherClassroomItem {
   const TeacherClassroomItem({
     required this.id,
@@ -26,6 +109,7 @@ class TeacherClassroomItem {
     required this.title,
     required this.body,
     required this.status,
+    this.attachments = const [],
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
@@ -37,6 +121,7 @@ class TeacherClassroomItem {
   final String title;
   final String body;
   final ClassroomItemStatus status;
+  final List<TeacherClassroomAttachment> attachments;
   final DateTime? publishedAt;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -44,6 +129,7 @@ class TeacherClassroomItem {
   bool get isDraft => status.isDraft;
 
   factory TeacherClassroomItem.fromJson(Map<String, dynamic> json) {
+    final attachmentsRaw = json['attachments'];
     return TeacherClassroomItem(
       id: json['id'] as String? ?? '',
       schoolId: json['school_id'] as String? ?? '',
@@ -51,6 +137,13 @@ class TeacherClassroomItem {
       title: json['title'] as String? ?? '',
       body: json['body'] as String? ?? '',
       status: ClassroomItemStatus.parse(json['status'] as String?),
+      attachments: [
+        if (attachmentsRaw is List)
+          for (final row in attachmentsRaw.whereType<Map>())
+            TeacherClassroomAttachment.fromJson(
+              Map<String, dynamic>.from(row),
+            ),
+      ],
       publishedAt: json['published_at'] == null
           ? null
           : DateTime.tryParse('${json['published_at']}'),
