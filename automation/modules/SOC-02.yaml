@@ -1,7 +1,7 @@
 id: SOC-02
 name: "Friend Requests, Removal, and Blocking"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - SOC-01
 dependency_notes: >
