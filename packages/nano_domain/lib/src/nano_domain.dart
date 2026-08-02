@@ -33,6 +33,7 @@ export 'league/league_status.dart';
 export 'league/league_board.dart';
 export 'league/league_challenge.dart';
 export 'social/social_identity.dart';
+export 'social/friend_graph.dart';
 export 'media/asset_review.dart';
 export 'media/generated_asset.dart';
 export 'media/generation_budget.dart';
