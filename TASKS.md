@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] GME-03 Open-Source Native Game Integration
+- [ ] GME-04 Game Download, Version, and Storage State
 
 ## Completed
 
+- [x] GME-03
 - [x] GME-02
 - [x] GME-01
 - [x] FBK-01
