@@ -4,6 +4,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/league/presentation/league_board_page.dart';
+import 'package:student_app/features/profile/presentation/social_identity_section.dart';
 
 /// STU-05 owner profile: identity, progress, privacy, settings, devices,
 /// and a sign-out that clears private local caches.
@@ -23,6 +24,7 @@ class StudentProfilePage extends StatefulWidget {
     this.syncController,
     this.shareCards,
     this.leagueRepository,
+    this.socialIdentityRepository,
   });
 
   final StudentProfileRepository repository;
@@ -44,6 +46,9 @@ class StudentProfilePage extends StatefulWidget {
 
   /// LGE-01: personal weekly league status. Optional in previews.
   final LeagueRepository? leagueRepository;
+
+  /// SOC-01: username, friend code, limited profile lookup.
+  final SocialIdentityRepository? socialIdentityRepository;
 
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
@@ -291,6 +296,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               onOpenLeagueBoard: widget.leagueRepository == null
                   ? null
                   : _openLeagueBoard,
+              socialIdentityRepository: widget.socialIdentityRepository,
             ),
     );
   }
@@ -319,6 +325,7 @@ class _ProfileBody extends StatelessWidget {
     this.joiningLeague = false,
     this.onJoinLeague,
     this.onOpenLeagueBoard,
+    this.socialIdentityRepository,
   });
 
   final StudentProfileView profile;
@@ -342,6 +349,7 @@ class _ProfileBody extends StatelessWidget {
   final bool joiningLeague;
   final VoidCallback? onJoinLeague;
   final VoidCallback? onOpenLeagueBoard;
+  final SocialIdentityRepository? socialIdentityRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -516,6 +524,11 @@ class _ProfileBody extends StatelessWidget {
             ),
         ],
         const SizedBox(height: NanoSpacing.md),
+        if (socialIdentityRepository != null)
+          SocialIdentitySection(
+            repository: socialIdentityRepository!,
+            copy: copy,
+          ),
         Text(copy.privacyLabel, style: theme.textTheme.titleLarge),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,

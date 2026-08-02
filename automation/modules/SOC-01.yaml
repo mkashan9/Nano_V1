@@ -1,45 +1,69 @@
 id: SOC-01
 name: "Usernames, Friend Codes, and Limited Profiles"
 release: R9
-status: BACKLOG
+status: DONE
 dependencies:
   - STU-05
   - SEC-03
+dependency_notes: >
+  Social identity only; friend requests/blocks deferred to SOC-02 / SAFE-01.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SOC-01/
   - automation/modules/SOC-01.yaml
+  - automation/modules/LGE-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SOC-01"
+  - "Handbook SOC-01 username friend code limited profile"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.social_identities
+server_functions:
+  - "public.my_social_identity"
+  - "public.claim_username"
+  - "public.rotate_friend_code"
+  - "public.lookup_limited_profile"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Unique username claim with policy validation
+  - Rotatable friend code on Profile
+  - Limited profile lookup never returns user ids or private school fields
+  - league_privacy_label prefers username when set
 required_tests:
-  - documentation_review
+  - supabase/tests/soc01_social_identities.sql
+  - packages/nano_domain/test/social_identity_test.dart
+  - packages/nano_data/test/social_identity_repository_test.dart
+  - apps/student_app/test/student_profile_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - limited_profile_no_user_id
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Claim username; rotate friend code; look up limited profile
+rollback_notes: >
+  Revert branch and migration. Profile returns without social identity section.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Username + friend code + limited profile lookup; privacy-gated discovery.
+  deferred: >
+    Friend requests/blocks (SOC-02), friends boards (SOC-03), sharing (SOC-04).

@@ -48,9 +48,22 @@ void main() {
       expect(json.containsKey(field), isFalse, reason: field);
     }
     expect(json['email'], isNull);
-    expect(json['displayName'], 'Ali Alpha');
+    expect(json['displayName'], 'Ali');
     expect(json['level'], 3);
     expect(json['achievements'], ['First quiz']);
+  });
+
+  test('public projection prefers username when claimed', () {
+    final view = profile();
+    final privacy = PrivacySettings(userId: view.userId);
+    final public = PublicProfileProjection.of(
+      view,
+      privacy,
+      username: 'ali_alpha',
+    );
+    expect(public.displayName, 'ali_alpha');
+    expect(public.username, 'ali_alpha');
+    expect(public.toJson().containsKey('friendCode'), isFalse);
   });
 
   test('hiding achievements removes them from the public projection', () {

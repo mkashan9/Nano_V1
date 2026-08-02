@@ -50,3 +50,4 @@ export 'xp/share_card_repository.dart';
 export 'xp/streak_repository.dart';
 export 'xp/xp_ledger_repository.dart';
 export 'league/league_repository.dart';
+export 'social/social_identity_repository.dart';

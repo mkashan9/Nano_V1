@@ -196,6 +196,7 @@ class PublicProfileProjection {
   const PublicProfileProjection({
     required this.displayName,
     required this.level,
+    this.username,
     this.companionName,
     this.achievements = const [],
     this.discoverable = true,
@@ -204,10 +205,19 @@ class PublicProfileProjection {
 
   factory PublicProfileProjection.of(
     StudentProfileView view,
-    PrivacySettings privacy,
-  ) {
+    PrivacySettings privacy, {
+    String? username,
+  }) {
+    final handle = username?.trim();
+    final socialLabel = (handle != null && handle.isNotEmpty)
+        ? handle
+        : view.displayName.trim().split(RegExp(r'\s+')).firstWhere(
+              (part) => part.isNotEmpty,
+              orElse: () => 'Learner',
+            );
     return PublicProfileProjection(
-      displayName: view.displayName,
+      displayName: socialLabel,
+      username: handle,
       level: view.level.level,
       companionName: view.companionName,
       achievements: privacy.showAchievements ? view.achievements : const [],
@@ -216,7 +226,9 @@ class PublicProfileProjection {
     );
   }
 
+  /// Privacy-safe social label (username when claimed, else first name).
   final String displayName;
+  final String? username;
   final int level;
   final String? companionName;
   final List<ProfileAchievement> achievements;
@@ -237,10 +249,13 @@ class PublicProfileProjection {
     'schoolName',
     'className',
     'userId',
+    'friendCode',
+    'friend_code',
   ];
 
   Map<String, Object?> toJson() => {
         'displayName': displayName,
+        'username': username,
         'level': level,
         'companionName': companionName,
         'achievements': [
