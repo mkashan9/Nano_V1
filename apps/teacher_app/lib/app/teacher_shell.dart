@@ -4,6 +4,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:teacher_app/features/attendance/presentation/teacher_attendance_page.dart';
+import 'package:teacher_app/features/classroom/presentation/teacher_classroom_page.dart';
 import 'package:teacher_app/features/classes/presentation/teacher_classes_page.dart';
 import 'package:teacher_app/features/home/presentation/teacher_dashboard_page.dart';
 import 'package:teacher_app/features/marks/presentation/teacher_marks_page.dart';
@@ -21,6 +22,7 @@ class TeacherShell extends StatelessWidget {
     this.teacherClassesRepository,
     this.teacherAttendanceRepository,
     this.teacherAssessmentRepository,
+    this.teacherClassroomRepository,
   });
 
   final EnvironmentConfig config;
@@ -33,6 +35,7 @@ class TeacherShell extends StatelessWidget {
   final TeacherClassesRepository? teacherClassesRepository;
   final TeacherAttendanceRepository? teacherAttendanceRepository;
   final TeacherAssessmentRepository? teacherAssessmentRepository;
+  final TeacherClassroomRepository? teacherClassroomRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +85,7 @@ class TeacherDestinationPage extends StatelessWidget {
     this.teacherClassesRepository,
     this.teacherAttendanceRepository,
     this.teacherAssessmentRepository,
+    this.teacherClassroomRepository,
     this.assignmentId,
   });
 
@@ -90,6 +94,7 @@ class TeacherDestinationPage extends StatelessWidget {
   final TeacherClassesRepository? teacherClassesRepository;
   final TeacherAttendanceRepository? teacherAttendanceRepository;
   final TeacherAssessmentRepository? teacherAssessmentRepository;
+  final TeacherClassroomRepository? teacherClassroomRepository;
   final String? assignmentId;
 
   @override
@@ -116,6 +121,14 @@ class TeacherDestinationPage extends StatelessWidget {
     if (destination.id == 'marks' && teacherAssessmentRepository != null) {
       return TeacherMarksPage(
         repository: teacherAssessmentRepository!,
+        initialAssignmentId: assignmentId,
+      );
+    }
+
+    if (destination.id == 'classroom' &&
+        teacherClassroomRepository != null) {
+      return TeacherClassroomPage(
+        repository: teacherClassroomRepository!,
         initialAssignmentId: assignmentId,
       );
     }

@@ -1,44 +1,71 @@
 id: CLS-01
 name: "Teacher Classroom Announcements"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - TCH-02
+dependency_notes: >
+  Assignment-scoped announcements using TCH-02 teacher_assignments.
+  Attachments/schedule/student view deferred.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/CLS-01/
   - automation/modules/CLS-01.yaml
+  - automation/modules/MRK-05.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook CLS-01 Classroom Announcements"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for CLS-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.classroom_items
+  - public.teacher_assignments
+server_functions:
+  - "public.teacher_classroom_list"
+  - "public.teacher_classroom_create"
+  - "public.teacher_classroom_update"
 acceptance:
+  - Draft create/list/update in assignment scope
+  - Optional publish-now on create
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/cls01_classroom_announcements.sql
+  - packages/nano_domain/test/teacher_classroom_test.dart
+  - packages/nano_data/test/teacher_classroom_repository_test.dart
+  - apps/teacher_app/test/teacher_classroom_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - draft_only_update
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Create and edit draft announcements on Classroom
+rollback_notes: >
+  Revert the branch and migration. Classroom nav returns to stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Draft announcement create/list/update; optional publish-now.
+  deferred: >
+    Attachments (CLS-02); schedule/ack (CLS-03); student view (FLX-04).

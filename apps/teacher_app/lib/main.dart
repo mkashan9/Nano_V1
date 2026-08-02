@@ -14,6 +14,7 @@ void main() {
   TeacherClassesRepository? teacherClassesRepository;
   TeacherAttendanceRepository? teacherAttendanceRepository;
   TeacherAssessmentRepository? teacherAssessmentRepository;
+  TeacherClassroomRepository? teacherClassroomRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -27,6 +28,7 @@ void main() {
     teacherClassesRepository = SupabaseTeacherClassesRepository(client);
     teacherAttendanceRepository = SupabaseTeacherAttendanceRepository(client);
     teacherAssessmentRepository = SupabaseTeacherAssessmentRepository(client);
+    teacherClassroomRepository = SupabaseTeacherClassroomRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -37,6 +39,7 @@ void main() {
       teacherClassesRepository: teacherClassesRepository,
       teacherAttendanceRepository: teacherAttendanceRepository,
       teacherAssessmentRepository: teacherAssessmentRepository,
+      teacherClassroomRepository: teacherClassroomRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -54,6 +57,7 @@ class NanoTeacherApp extends StatefulWidget {
     this.teacherClassesRepository,
     this.teacherAttendanceRepository,
     this.teacherAssessmentRepository,
+    this.teacherClassroomRepository,
     this.requireAuth = false,
   });
 
@@ -66,6 +70,7 @@ class NanoTeacherApp extends StatefulWidget {
   final TeacherClassesRepository? teacherClassesRepository;
   final TeacherAttendanceRepository? teacherAttendanceRepository;
   final TeacherAssessmentRepository? teacherAssessmentRepository;
+  final TeacherClassroomRepository? teacherClassroomRepository;
   final bool requireAuth;
 
   @override
@@ -80,6 +85,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
   late TeacherClassesRepository _teacherClassesRepository;
   late TeacherAttendanceRepository _teacherAttendanceRepository;
   late TeacherAssessmentRepository _teacherAssessmentRepository;
+  late TeacherClassroomRepository _teacherClassroomRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -99,6 +105,8 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
         widget.teacherAttendanceRepository ?? FakeTeacherAttendanceRepository();
     _teacherAssessmentRepository =
         widget.teacherAssessmentRepository ?? FakeTeacherAssessmentRepository();
+    _teacherClassroomRepository =
+        widget.teacherClassroomRepository ?? FakeTeacherClassroomRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -134,6 +142,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
       teacherClassesRepository: _teacherClassesRepository,
       teacherAttendanceRepository: _teacherAttendanceRepository,
       teacherAssessmentRepository: _teacherAssessmentRepository,
+      teacherClassroomRepository: _teacherClassroomRepository,
       onAuthBootstrap: (bootstrap) {
         setState(() {
           _authBootstrap = bootstrap;

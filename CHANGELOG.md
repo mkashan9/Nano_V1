@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- CLS-01: teachers create draft classroom announcements for assigned scopes
 - MRK-05: teachers see class performance summaries for published assessments
 - MRK-04: teachers publish draft marks and correct published entries with immutable history
 - MRK-03: teachers download/preview/commit marks CSV templates into draft marks grids

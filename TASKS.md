@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] MRK-05 Result and Class Performance Summary
+- [ ] CLS-01 Teacher Classroom Announcements
 
 ## Completed
 
+- [x] MRK-05
 - [x] MRK-04
 - [x] MRK-03
 - [x] MRK-02
