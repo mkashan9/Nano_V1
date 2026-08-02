@@ -77,8 +77,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | TCH-02 | My Classes and Assigned Scope | R7 | DONE | TCH-01 |
 | ATT-01 | In-App Attendance Grid | R7 | DONE | TCH-02, SYNC-01 |
 | ATT-02 | Attendance Excel Download and Upload | R7 | DONE | ATT-01 |
-| ATT-03 | Attendance Correction and History | R7 | USER_TEST | ATT-01 |
-| MRK-01 | Assessment Creation | R7 | BACKLOG | TCH-02, SCH-06 |
+| ATT-03 | Attendance Correction and History | R7 | DONE | ATT-01 |
+| MRK-01 | Assessment Creation | R7 | USER_TEST | TCH-02, SCH-06 |
 | MRK-02 | In-App Marks Grid | R7 | BACKLOG | MRK-01, SYNC-01 |
 | MRK-03 | Marks Excel Download and Upload | R7 | BACKLOG | MRK-02 |
 | MRK-04 | Marks Publication and Correction | R7 | BACKLOG | MRK-02, SEC-03 |

@@ -6,6 +6,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:teacher_app/features/attendance/presentation/teacher_attendance_page.dart';
 import 'package:teacher_app/features/classes/presentation/teacher_classes_page.dart';
 import 'package:teacher_app/features/home/presentation/teacher_dashboard_page.dart';
+import 'package:teacher_app/features/marks/presentation/teacher_marks_page.dart';
 
 class TeacherShell extends StatelessWidget {
   const TeacherShell({
@@ -19,6 +20,7 @@ class TeacherShell extends StatelessWidget {
     this.teacherDashboardRepository,
     this.teacherClassesRepository,
     this.teacherAttendanceRepository,
+    this.teacherAssessmentRepository,
   });
 
   final EnvironmentConfig config;
@@ -30,6 +32,7 @@ class TeacherShell extends StatelessWidget {
   final TeacherDashboardRepository? teacherDashboardRepository;
   final TeacherClassesRepository? teacherClassesRepository;
   final TeacherAttendanceRepository? teacherAttendanceRepository;
+  final TeacherAssessmentRepository? teacherAssessmentRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +81,7 @@ class TeacherDestinationPage extends StatelessWidget {
     this.teacherDashboardRepository,
     this.teacherClassesRepository,
     this.teacherAttendanceRepository,
+    this.teacherAssessmentRepository,
     this.assignmentId,
   });
 
@@ -85,6 +89,7 @@ class TeacherDestinationPage extends StatelessWidget {
   final TeacherDashboardRepository? teacherDashboardRepository;
   final TeacherClassesRepository? teacherClassesRepository;
   final TeacherAttendanceRepository? teacherAttendanceRepository;
+  final TeacherAssessmentRepository? teacherAssessmentRepository;
   final String? assignmentId;
 
   @override
@@ -104,6 +109,13 @@ class TeacherDestinationPage extends StatelessWidget {
         teacherAttendanceRepository != null) {
       return TeacherAttendancePage(
         repository: teacherAttendanceRepository!,
+        initialAssignmentId: assignmentId,
+      );
+    }
+
+    if (destination.id == 'marks' && teacherAssessmentRepository != null) {
+      return TeacherMarksPage(
+        repository: teacherAssessmentRepository!,
         initialAssignmentId: assignmentId,
       );
     }

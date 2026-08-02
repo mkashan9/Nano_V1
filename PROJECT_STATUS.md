@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R7 Teacher Operations
-- **Current module:** ATT-03 Attendance Correction and History
+- **Current module:** MRK-01 Assessment Creation
 - **Current status:** USER_TEST
-- **Current branch:** module/ATT-03-attendance-correction
-- **Last completed module:** ATT-02
+- **Current branch:** module/MRK-01-assessment-creation
+- **Last completed module:** ATT-03
 - **Application name:** Nano
 
 ## Releases
 
 - R1?R6: complete
-- R7 Teacher Operations: TCH-01?TCH-02, ATT-01?ATT-02 DONE; ATT-03 USER_TEST
+- R7 Teacher Operations: TCH-01?TCH-02, ATT-01?ATT-03 DONE; MRK-01 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/ATT-03/MANUAL_TEST.md`. Open Attendance after submit; apply a correction with reason.
+Run `docs/modules/MRK-01/MANUAL_TEST.md`. Open Marks and save a draft assessment.

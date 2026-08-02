@@ -52,7 +52,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
 | Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | DONE |
 | Handbook ATT-01 Attendance | ATT-01,ATT-02,ATT-03 | teacher_app | Attendance grid | attendance | grid+excel | USER_TEST |
-| Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | BACKLOG |
+| Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | USER_TEST |
 | Handbook CLS-01 Classroom | CLS-01,CLS-02,CLS-03 | teacher_app | Classroom | announcements | ack tests | BACKLOG |
 | Handbook SCH-01 School setup branding | SCH-01 | admin_web | School dash | schools | branding | DONE |
 | Handbook SCH-02 Academic structure | SCH-02,SCH-06 | admin_web | Classes | classes | structure+policies | DONE |

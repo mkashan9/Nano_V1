@@ -1,45 +1,74 @@
 id: MRK-01
 name: "Assessment Creation"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - TCH-02
   - SCH-06
+dependency_notes: >
+  Assignment scope from TCH-02; optional open result periods from SCH-06.
+  Marks entry/publish deferred to MRK-02/MRK-04.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/MRK-01/
   - automation/modules/MRK-01.yaml
+  - automation/modules/ATT-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook MRK-01 assessment creation slice"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MRK-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.assessments
+  - public.teacher_assignments
+  - public.result_periods
+server_functions:
+  - "public.teacher_assessments_list"
+  - "public.teacher_assessment_create"
+  - "public.teacher_assessment_update"
 acceptance:
+  - Teachers create draft assessments in assignment scope
+  - Only drafts are editable
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/mrk01_assessment_creation.sql
+  - packages/nano_domain/test/teacher_assessment_test.dart
+  - packages/nano_data/test/teacher_assessment_repository_test.dart
+  - apps/teacher_app/test/teacher_marks_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - draft_only_edit
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Marks and save a draft assessment
+  - Edit the draft and update
+rollback_notes: >
+  Revert the branch and migration. Marks returns to destination stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Draft assessment create/list/update for active assignment scope.
+  deferred: >
+    Marks grid (MRK-02); Excel (MRK-03); publish/correct (MRK-04).
