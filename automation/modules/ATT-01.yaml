@@ -1,45 +1,76 @@
 id: ATT-01
 name: "In-App Attendance Grid"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - TCH-02
   - SYNC-01
+dependency_notes: >
+  Uses TCH-02 assignment scope/roster. Excel is ATT-02; corrections ATT-03.
+  Local draft policy from SYNC-01; durable queue wiring optional for this slice.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ATT-01/
   - automation/modules/ATT-01.yaml
+  - automation/modules/TCH-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook ATT-01 Attendance Management (in-app slice)"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ATT-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.attendance_sessions
+  - public.attendance_entries
+  - public.teacher_assignments
+  - public.student_enrollments
+  - public.school_marks_policies
+server_functions:
+  - "public.teacher_attendance_load"
+  - "public.teacher_attendance_submit"
 acceptance:
+  - Attendance grid loads assigned roster for date
+  - Submit is idempotent; duplicate submit blocked
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/att01_attendance_grid.sql
+  - packages/nano_domain/test/teacher_attendance_test.dart
+  - packages/nano_data/test/teacher_attendance_repository_test.dart
+  - apps/teacher_app/test/teacher_attendance_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - duplicate_submit_guard
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Attendance as teacher
+  - Mark statuses and submit
+  - Confirm already-submitted lock
+rollback_notes: >
+  Revert the branch and migration. Attendance returns to destination stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    In-app grid + submit for active assignment/date. No Excel/corrections.
+  deferred: >
+    ATT-02 Excel; ATT-03 corrections; durable offline queue wiring.

@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] TCH-02 My Classes and Assigned Scope
+- [ ] ATT-01 In-App Attendance Grid
 
 ## Completed
 
@@ -36,6 +36,7 @@
 - [x] MED-01 through MED-12
 - [x] SCH-07 School Reports
 - [x] TCH-01 Teacher Dashboard
+- [x] TCH-02 My Classes and Assigned Scope
 
 ## Upcoming
 
