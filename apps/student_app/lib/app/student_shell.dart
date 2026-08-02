@@ -438,6 +438,8 @@ class StudentGamesTab extends StatelessWidget {
     this.sessionRepository,
     this.assetRepository,
     this.localStorageRepository,
+    this.accessibility = AccessibilityPreferences.defaults,
+    this.onAccessibilityChanged,
     this.independent = false,
     this.gradeLevel,
     this.junior = false,
@@ -447,6 +449,8 @@ class StudentGamesTab extends StatelessWidget {
   final GameSessionRepository? sessionRepository;
   final GameAssetRepository? assetRepository;
   final GameLocalStorageRepository? localStorageRepository;
+  final AccessibilityPreferences accessibility;
+  final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
   final bool independent;
   final int? gradeLevel;
   final bool junior;
@@ -459,6 +463,8 @@ class StudentGamesTab extends StatelessWidget {
       assetRepository: assetRepository ?? FakeGameAssetRepository(),
       localStorageRepository:
           localStorageRepository ?? FakeGameLocalStorageRepository(),
+      accessibility: accessibility,
+      onAccessibilityChanged: onAccessibilityChanged,
       independent: independent,
       gradeLevel: gradeLevel,
       junior: junior,

@@ -63,6 +63,14 @@ class NanoCopy {
   String gamesResultVerifiedXp(int xp) => isUrdu
       ? 'نتیجہ تصدیق شدہ۔ $xp XP ملا۔'
       : 'Result verified. $xp XP awarded.';
+  String get gamesClassroomMode =>
+      isUrdu ? 'کلاس روم موڈ' : 'Classroom mode';
+  String get gamesClassroomOnHint => isUrdu
+      ? 'آواز اور ہپٹکس بند ہیں۔'
+      : 'Sound and haptics stay quiet.';
+  String get gamesClassroomOffHint => isUrdu
+      ? 'آواز اور ہپٹکس اجازت کے مطابق۔'
+      : 'Sound and haptics follow your settings.';
   String get gamesBridgeRejected => isUrdu
       ? 'غیر محفوظ پیغام نظرانداز کیا گیا۔'
       : 'Unsafe game message was ignored.';

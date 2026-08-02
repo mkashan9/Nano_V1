@@ -4,11 +4,13 @@ import 'package:nano_domain/nano_domain.dart';
 class GameBridgeController {
   GameBridgeController({
     required this.session,
+    this.settings = GamePlaySettings.defaults,
     void Function(GameBridgeMessage message)? onMessage,
     this.onUnknownOrOversized,
   }) : _onMessage = onMessage;
 
   final GameSessionStart session;
+  GamePlaySettings settings;
   final void Function(GameBridgeMessage message)? _onMessage;
   final void Function()? onUnknownOrOversized;
 
@@ -25,7 +27,7 @@ class GameBridgeController {
         'game_version': session.version,
         'signed_token': session.playToken,
         'locale': locale,
-        'settings': <String, dynamic>{},
+        'settings': settings.toBridgeJson(),
       },
     };
   }
