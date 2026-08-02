@@ -93,8 +93,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | FBK-01 | Teacher-Guardian Structured Feedback | R7 | DONE | TCH-02 |
 | GME-01 | Game Catalog and Eligibility | R8 | DONE | STU-03, STU-04, XP-01 |
 | GME-02 | Secure Web Game Container | R8 | DONE | GME-01, SEC-03 |
-| GME-03 | Open-Source Native Game Integration | R8 | ACTIVE | GME-01 |
-| GME-04 | Game Download, Version, and Storage State | R8 | BACKLOG | GME-01 |
+| GME-03 | Open-Source Native Game Integration | R8 | DONE | GME-01 |
+| GME-04 | Game Download, Version, and Storage State | R8 | ACTIVE | GME-01 |
 | GME-05 | Trusted Game Result Verification | R8 | BACKLOG | GME-02, XP-01 |
 | GME-06 | Game Audio, Haptics, and Classroom Mode | R8 | BACKLOG | GME-01, FND-07 |
 | GME-07 | Game Kill Switch and Version Disable | R8 | BACKLOG | GME-01, ADM-06 |

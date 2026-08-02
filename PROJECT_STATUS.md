@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R8 Games
-- **Current module:** GME-03 Open-Source Native Game Integration
+- **Current module:** GME-04 Game Download, Version, and Storage State
 - **Current status:** ACTIVE
-- **Current branch:** module/GME-03-native-game-host
-- **Last completed module:** GME-02
+- **Current branch:** module/GME-04-game-download-storage
+- **Last completed module:** GME-03
 - **Application name:** Nano
 
 ## Releases
 
 - R1–R7: complete
-- R8: GME-01..GME-02 DONE; GME-03 ACTIVE
+- R8: GME-01..GME-03 DONE; GME-04 ACTIVE
 
 ## Owner decision waiting
 
-None — implementing GME-03.
+None — implementing GME-04.

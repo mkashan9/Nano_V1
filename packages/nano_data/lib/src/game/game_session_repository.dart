@@ -27,16 +27,20 @@ class FakeGameSessionRepository implements GameSessionRepository {
   @override
   Future<GameSessionStart> startSession(String gameVersionId) async {
     if (alwaysFail) throw StateError('Could not start game');
+    final flutter = gameVersionId.contains('shape');
     final start = _seed ??
         GameSessionStart(
           sessionId: 'sess-$gameVersionId',
           playToken: 'token-$gameVersionId-secret',
           gameVersionId: gameVersionId,
-          slug: 'number_rush',
-          titleEn: 'Number Rush',
-          entryKind: GameEntryKind.web,
-          entryRef: 'fixture://number_rush',
-          allowedOrigins: const ['fixture://number_rush'],
+          slug: flutter ? 'shape_sort' : 'number_rush',
+          titleEn: flutter ? 'Shape Sort' : 'Number Rush',
+          entryKind: flutter ? GameEntryKind.flutter : GameEntryKind.web,
+          entryRef:
+              flutter ? 'fixture://shape_sort' : 'fixture://number_rush',
+          allowedOrigins: [
+            flutter ? 'fixture://shape_sort' : 'fixture://number_rush',
+          ],
           expiresAt: DateTime.utc(2026, 8, 2, 13),
         );
     _byId[start.sessionId] = start;

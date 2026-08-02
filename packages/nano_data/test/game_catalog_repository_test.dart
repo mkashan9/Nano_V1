@@ -14,7 +14,10 @@ void main() {
   test('fake catalog applies grade band', () async {
     final repo = FakeGameCatalogRepository();
     final junior = await repo.loadCatalog(independent: false, gradeLevel: 3);
-    expect(junior.games.map((g) => g.slug), ['number_rush']);
+    expect(
+      junior.games.map((g) => g.slug).toList()..sort(),
+      ['number_rush', 'shape_sort'],
+    );
 
     final senior = await repo.loadCatalog(independent: false, gradeLevel: 8);
     expect(senior.games.map((g) => g.slug), ['school_circuit']);
