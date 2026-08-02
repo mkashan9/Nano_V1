@@ -14,6 +14,7 @@ export 'admin/school_dashboard_repository.dart';
 export 'admin/platform_user_repository.dart';
 export 'admin/school_admin_repository.dart';
 export 'home/student_home_repository.dart';
+export 'teacher/teacher_dashboard_repository.dart';
 export 'learning/checkpoint_repository.dart';
 export 'learning/learning_catalog_repository.dart';
 export 'learning/learning_insights_repository.dart';

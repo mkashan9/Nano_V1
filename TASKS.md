@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] SCH-07 School Reports
+- [ ] TCH-01 Teacher Dashboard
 
 ## Completed
 
@@ -34,6 +34,7 @@
 - [x] CMP-02
 - [x] CMP-03
 - [x] MED-01 through MED-12
+- [x] SCH-07 School Reports
 
 ## Upcoming
 

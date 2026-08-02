@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
+import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:teacher_app/app/teacher_shell.dart';
@@ -17,6 +18,7 @@ GoRouter createTeacherRouter({
   ValueChanged<AuthBootstrap>? onAuthBootstrap,
   ValueChanged<SessionPrincipal>? onPrincipalChanged,
   VoidCallback? onSignedOut,
+  TeacherDashboardRepository? teacherDashboardRepository,
 }) {
   final visible = NavCatalog.visibleFor(principal);
   final destinations = visible.isNotEmpty
@@ -108,6 +110,7 @@ GoRouter createTeacherRouter({
             copy: copy,
             onSignOut: onSignedOut,
             liveAuth: requireAuth,
+            teacherDashboardRepository: teacherDashboardRepository,
           );
         },
         branches: [
@@ -117,8 +120,10 @@ GoRouter createTeacherRouter({
                 GoRoute(
                   path: dest.path,
                   name: dest.id,
-                  builder: (context, state) =>
-                      TeacherDestinationPage(destination: dest),
+                  builder: (context, state) => TeacherDestinationPage(
+                    destination: dest,
+                    teacherDashboardRepository: teacherDashboardRepository,
+                  ),
                 ),
               ],
             ),

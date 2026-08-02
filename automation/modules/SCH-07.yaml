@@ -1,7 +1,7 @@
 id: SCH-07
 name: "School Reports"
 release: R6
-status: USER_TEST
+status: DONE
 dependencies:
   - SCH-05
   - SCH-06

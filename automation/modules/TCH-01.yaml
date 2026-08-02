@@ -1,45 +1,76 @@
 id: TCH-01
 name: "Teacher Dashboard"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - AUTH-02
   - SCH-05
+dependency_notes: >
+  AUTH-02 teacher sign-in and SCH-05 assignment matrix feed this dashboard.
+  Roster detail stays TCH-02; pending counts stay stubbed until ATT/MRK/CLS.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/TCH-01/
   - automation/modules/TCH-01.yaml
+  - automation/modules/SCH-07.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook TCH-01 Teacher dashboard"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for TCH-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.teacher_assignments
+  - public.school_memberships
+  - public.classes
+  - public.sections
+  - public.school_subjects
+  - public.schools
+  - public.profiles
+server_functions:
+  - "nano_internal.require_teacher_school_id"
+  - "public.teacher_dashboard"
 acceptance:
+  - Teacher Dashboard shows caller-scoped active assignments
+  - Pending workflow counts visible (stubs allowed)
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/tch01_teacher_dashboard.sql
+  - packages/nano_domain/test/teacher_dashboard_test.dart
+  - packages/nano_data/test/teacher_dashboard_repository_test.dart
+  - apps/teacher_app/test/teacher_dashboard_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Dashboard as teacher
+  - Confirm assignments and pending stubs
+rollback_notes: >
+  Revert the branch and migration. Dashboard returns to destination stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Caller-scoped assignment list and pending stubs only.
+  deferred: >
+    Rosters (TCH-02); live pending counts (ATT/MRK/CLS).
