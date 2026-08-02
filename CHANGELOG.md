@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SOC-04: social share sheet and username-aware share cards
 - SOC-03: friends weekly XP leaderboard
 - SOC-02: friend requests, removal, and blocking
 - SOC-01: usernames, friend codes, and limited profile lookup

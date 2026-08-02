@@ -1017,6 +1017,22 @@ class NanoCopy {
       isUrdu ? 'نمایاں اعزازات' : 'Featured';
   String get shareAchievementLabel => isUrdu ? 'شیئر کریں' : 'Share';
   String get shareScoreLabel => isUrdu ? 'سکور شیئر کریں' : 'Share score';
+  String get shareSheetTitle => isUrdu ? 'شیئر کریں' : 'Share';
+  String get shareCopyLabel => isUrdu ? 'کاپی' : 'Copy text';
+  String get shareSystemLabel =>
+      isUrdu ? 'سسٹم شیئر' : 'Share via apps';
+  String get shareWhatsAppLabel => isUrdu ? 'WhatsApp' : 'WhatsApp';
+  String get shareCommunitiesLabel =>
+      isUrdu ? 'کمیونٹیز' : 'Communities';
+  String get shareCommunitiesHint => isUrdu
+      ? 'کمیونٹی شیئر جلد آ رہا ہے۔'
+      : 'Community sharing comes with Communities.';
+  String get shareSharedSnack =>
+      isUrdu ? 'شیئر شیٹ کھل گئی' : 'Share sheet opened';
+  String get shareOpenedSnack =>
+      isUrdu ? 'بیرونی ایپ کھل گئی' : 'Opened external app';
+  String get shareFailedSnack =>
+      isUrdu ? 'شیئر ناکام' : 'Could not share';
   String get shareCopiedSnack =>
       isUrdu ? 'شیئر متن کاپی ہو گیا' : 'Share text copied';
   String get pinAchievementLabel => isUrdu ? 'نمایاں کریں' : 'Feature';

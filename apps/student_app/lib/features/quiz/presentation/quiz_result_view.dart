@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/share/presentation/social_share_sheet.dart';
 
 /// QZ-06 results: the server score, a per-question review with explanations,
 /// and the retake budget the server will honour.
@@ -10,7 +10,7 @@ import 'package:nano_domain/nano_domain.dart';
 /// Junior and Senior share the data and differ only in density and warmth,
 /// so a learner cannot see a different verdict depending on the shell.
 ///
-/// XP-06 adds an optional privacy-safe score share card (clipboard).
+/// XP-06/SOC-04: privacy-safe score share via destination sheet.
 class QuizResultView extends StatelessWidget {
   const QuizResultView({
     super.key,
@@ -58,12 +58,15 @@ class QuizResultView extends StatelessWidget {
           passed: result.passed,
         );
       }
-      await Clipboard.setData(
-        ClipboardData(text: card.shareTextFor(urdu: copy.isUrdu)),
-      );
       if (!context.mounted) return;
+      final outcome = await showSocialShareSheet(
+        context: context,
+        card: card,
+        copy: copy,
+      );
+      if (!context.mounted || outcome == null) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(copy.shareCopiedSnack)),
+        SnackBar(content: Text(shareOutcomeMessage(outcome, copy))),
       );
     } catch (_) {
       if (!context.mounted) return;
