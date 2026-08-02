@@ -1,7 +1,7 @@
 id: SOC-03
 name: "Friends Leaderboards"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - SOC-02
   - LGE-02
