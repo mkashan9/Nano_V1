@@ -62,11 +62,31 @@ class FakeGameSessionRepository implements GameSessionRepository {
     if (start == null || start.playToken != playToken) {
       throw StateError('Invalid session');
     }
+    final score = (payload['raw_score'] as num?)?.toInt() ?? -1;
+    final duration = (payload['duration_ms'] as num?)?.toInt() ?? -1;
+    final nonce = '${payload['nonce'] ?? ''}';
+    final payloadSession = '${payload['session_id'] ?? ''}';
+    if (payloadSession != sessionId ||
+        nonce.length < 8 ||
+        score < 0 ||
+        score > 1000 ||
+        duration < 0 ||
+        duration > 1800000) {
+      return GameClientCompletionResult(
+        sessionId: sessionId,
+        status: GameSessionStatus.completed,
+        verified: false,
+        xpAwarded: 0,
+        message: 'Result rejected.',
+      );
+    }
     return GameClientCompletionResult(
       sessionId: sessionId,
       status: GameSessionStatus.completed,
-      verified: false,
-      message: 'Result received. Verification comes later.',
+      verified: true,
+      verifiedScore: score,
+      xpAwarded: 20,
+      message: 'Result verified. XP awarded.',
     );
   }
 }

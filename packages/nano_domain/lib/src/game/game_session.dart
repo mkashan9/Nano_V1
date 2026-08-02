@@ -93,12 +93,16 @@ class GameClientCompletionResult {
     required this.status,
     required this.verified,
     required this.message,
+    this.verifiedScore,
+    this.xpAwarded = 0,
   });
 
   final String sessionId;
   final GameSessionStatus status;
   final bool verified;
   final String message;
+  final int? verifiedScore;
+  final int xpAwarded;
 
   factory GameClientCompletionResult.fromJson(Map<String, dynamic> json) {
     return GameClientCompletionResult(
@@ -106,6 +110,8 @@ class GameClientCompletionResult {
       status: GameSessionStatus.parse(json['status'] as String?),
       verified: json['verified'] as bool? ?? false,
       message: json['message'] as String? ?? '',
+      verifiedScore: (json['verified_score'] as num?)?.toInt(),
+      xpAwarded: (json['xp_awarded'] as num?)?.toInt() ?? 0,
     );
   }
 }

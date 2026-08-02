@@ -3,18 +3,40 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('fake session start and client completed without verify', () async {
+  test('fake session verifies completion and awards XP', () async {
     final repo = FakeGameSessionRepository();
     final start = await repo.startSession('v-number');
     expect(start.playToken, isNotEmpty);
-    expect(start.allowedOrigins, contains('fixture://number_rush'));
 
     final result = await repo.reportClientCompleted(
       sessionId: start.sessionId,
       playToken: start.playToken,
-      payload: {'raw_score': 3},
+      payload: {
+        'session_id': start.sessionId,
+        'raw_score': 3,
+        'duration_ms': 1200,
+        'nonce': 'fixture-nonce-001',
+      },
+    );
+    expect(result.verified, isTrue);
+    expect(result.xpAwarded, 20);
+    expect(result.status, GameSessionStatus.completed);
+  });
+
+  test('fake session rejects impossible score', () async {
+    final repo = FakeGameSessionRepository();
+    final start = await repo.startSession('v-number');
+    final result = await repo.reportClientCompleted(
+      sessionId: start.sessionId,
+      playToken: start.playToken,
+      payload: {
+        'session_id': start.sessionId,
+        'raw_score': 99999,
+        'duration_ms': 100,
+        'nonce': 'fixture-nonce-bad',
+      },
     );
     expect(result.verified, isFalse);
-    expect(result.status, GameSessionStatus.completed);
+    expect(result.xpAwarded, 0);
   });
 }

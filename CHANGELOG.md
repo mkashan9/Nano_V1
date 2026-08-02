@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- GME-05: trusted game result verification awards XP once per session
 - GME-04: game save/update/free-space state for versioned asset packs
 - GME-03: Flutter-native Shape Sort host via shared game bridge
 - GME-02: secure web/fixture game host with short-lived play sessions

@@ -43,8 +43,8 @@ class NanoCopy {
   String get gamesPlay => isUrdu ? 'کھیلیں' : 'Play';
   String get gamesClose => isUrdu ? 'بند کریں' : 'Close';
   String get gamesHostIntro => isUrdu
-      ? 'محفوظ میزبان میں کھیلیں۔ اسکور کی تصدیق بعد میں ہو گی۔'
-      : 'Play in the secure host. Score verification comes later.';
+      ? 'محفوظ میزبان میں کھیلیں۔ تصدیق شدہ نتائج XP دیتے ہیں۔'
+      : 'Play in the secure host. Verified results award XP.';
   String get gamesStartError =>
       isUrdu ? 'کھیل شروع نہیں ہو سکا۔' : 'Could not start the game.';
   String get gamesFlutterDeferred => isUrdu
@@ -56,6 +56,13 @@ class NanoCopy {
   String get gamesResultPendingVerify => isUrdu
       ? 'نتیجہ موصول ہو گیا۔ تصدیق بعد میں ہو گی۔'
       : 'Result received. Verification comes later.';
+  String get gamesResultVerified =>
+      isUrdu ? 'نتیجہ تصدیق شدہ۔' : 'Result verified.';
+  String get gamesResultRejected =>
+      isUrdu ? 'نتیجہ مسترد کر دیا گیا۔' : 'Result rejected.';
+  String gamesResultVerifiedXp(int xp) => isUrdu
+      ? 'نتیجہ تصدیق شدہ۔ $xp XP ملا۔'
+      : 'Result verified. $xp XP awarded.';
   String get gamesBridgeRejected => isUrdu
       ? 'غیر محفوظ پیغام نظرانداز کیا گیا۔'
       : 'Unsafe game message was ignored.';
