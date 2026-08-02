@@ -11,6 +11,7 @@ void main() {
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
   AssetReviewRepository? assetReviewRepository;
+  ModerationQueueRepository? moderationQueueRepository;
   PlatformDashboardRepository? platformDashboardRepository;
   SchoolAdminRepository? schoolAdminRepository;
   PlatformUserRepository? platformUserRepository;
@@ -38,6 +39,7 @@ void main() {
       appLabel: 'admins',
     );
     assetReviewRepository = SupabaseAssetReviewRepository(client);
+    moderationQueueRepository = SupabaseModerationQueueRepository(client);
     platformDashboardRepository = SupabasePlatformDashboardRepository(client);
     schoolAdminRepository = SupabaseSchoolAdminRepository(client);
     platformUserRepository = SupabasePlatformUserRepository(client);
@@ -60,6 +62,7 @@ void main() {
       config: config,
       authRepository: authRepository,
       assetReviewRepository: assetReviewRepository,
+      moderationQueueRepository: moderationQueueRepository,
       platformDashboardRepository: platformDashboardRepository,
       schoolAdminRepository: schoolAdminRepository,
       platformUserRepository: platformUserRepository,
@@ -92,6 +95,7 @@ class NanoAdminApp extends StatefulWidget {
     this.questionBankRepository,
     this.topicQuizRepository,
     this.assetReviewRepository,
+    this.moderationQueueRepository,
     this.platformDashboardRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
@@ -118,6 +122,7 @@ class NanoAdminApp extends StatefulWidget {
   final QuestionBankRepository? questionBankRepository;
   final TopicQuizRepository? topicQuizRepository;
   final AssetReviewRepository? assetReviewRepository;
+  final ModerationQueueRepository? moderationQueueRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
@@ -145,6 +150,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late final QuestionBankRepository _questionBankRepository;
   late final TopicQuizRepository _topicQuizRepository;
   late final AssetReviewRepository _assetReviewRepository;
+  late final ModerationQueueRepository _moderationQueueRepository;
   late final PlatformDashboardRepository _platformDashboardRepository;
   late final SchoolAdminRepository _schoolAdminRepository;
   late final PlatformUserRepository _platformUserRepository;
@@ -179,6 +185,8 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
     // without keys; nothing it approves leaves the process.
     _assetReviewRepository =
         widget.assetReviewRepository ?? FakeAssetReviewRepository();
+    _moderationQueueRepository =
+        widget.moderationQueueRepository ?? FakeModerationQueueRepository();
     _platformDashboardRepository =
         widget.platformDashboardRepository ?? FakePlatformDashboardRepository();
     _schoolAdminRepository =
@@ -257,6 +265,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       questionBankRepository: _questionBankRepository,
       topicQuizRepository: _topicQuizRepository,
       assetReviewRepository: _assetReviewRepository,
+      moderationQueueRepository: _moderationQueueRepository,
       platformDashboardRepository: _platformDashboardRepository,
       schoolAdminRepository: _schoolAdminRepository,
       platformUserRepository: _platformUserRepository,
