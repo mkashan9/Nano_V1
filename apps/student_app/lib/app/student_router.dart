@@ -269,7 +269,9 @@ Widget _pageFor(
         onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
       ),
     'game' || 'games' => const StudentGamesTab(),
-    'flex' => const StudentFlexTab(),
+    'flex' => StudentFlexTab(
+      flexEligible: principal.flexEligible,
+    ),
     'communities' => const StudentCommunitiesTab(),
     'profile' => StudentProfileTab(
         principal: principal,

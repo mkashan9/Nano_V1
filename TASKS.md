@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] CLS-03 Scheduling, Expiry, and Acknowledgement
+- [ ] FLX-01 Student Flex Home
 
 ## Completed
 
+- [x] CLS-03
 - [x] CLS-02
 - [x] CLS-01
 - [x] MRK-05

@@ -927,8 +927,32 @@ class NanoCopy {
       isUrdu ? 'آج کے لیے کچھ باقی نہیں۔' : 'Nothing planned for today.';
   String get latestUpdate => isUrdu ? 'تازہ اپڈیٹ' : 'Latest update';
   String get flexTitle => isUrdu ? 'فلیکس' : 'Flex';
+  String get flexSubtitle => isUrdu
+      ? 'حاضری، نمبر، اور کلاس روم — صرف اسکول والے طلبہ۔'
+      : 'Attendance, marks, and classroom — for school-linked students.';
+  String get flexAttendanceTitle => isUrdu ? 'حاضری' : 'Attendance';
+  String get flexAttendanceSubtitle => isUrdu
+      ? 'آپ کے دن اور خلاصہ (جلد آ رہا ہے)۔'
+      : 'Your days and summaries (coming soon).';
+  String get flexMarksTitle => isUrdu ? 'نمبر' : 'Marks';
+  String get flexMarksSubtitle => isUrdu
+      ? 'شائع شدہ نتائج (جلد آ رہا ہے)۔'
+      : 'Published results (coming soon).';
+  String get flexClassroomTitle => isUrdu ? 'کلاس روم' : 'Classroom';
+  String get flexClassroomSubtitle => isUrdu
+      ? 'اعلانات اور وسائل (جلد آ رہا ہے)۔'
+      : 'Announcements and materials (coming soon).';
+  String get flexSectionComingSoon => isUrdu
+      ? 'یہ حصہ اگلے ماڈیول میں آئے گا۔'
+      : 'This section arrives in a later module.';
+  String get flexIndependentBlocked => isUrdu
+      ? 'آزاد طلبہ فلیکس نہیں دیکھ سکتے۔'
+      : 'Independent students never see Flex.';
   String flexOpenTasks(int count) =>
       isUrdu ? '$count کام باقی ہیں' : '$count tasks open';
+  String flexSectionOpen(int count) => isUrdu
+      ? '$count کھلے'
+      : '$count open';
   String get continueBuilding => isUrdu ? 'بناتے رہیں' : 'Continue building';
   String get sectionUnavailable =>
       isUrdu ? 'یہ حصہ ابھی لوڈ نہیں ہوا۔' : "This part didn't load.";
