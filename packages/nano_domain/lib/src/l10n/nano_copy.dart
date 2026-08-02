@@ -32,6 +32,18 @@ class NanoCopy {
   String get learning => isUrdu ? 'سیکھنا' : 'Learning';
   String get play => isUrdu ? 'کھیلیں' : 'Play';
   String get games => isUrdu ? 'گیمز' : 'Games';
+  String get gamesEmpty =>
+      isUrdu ? 'ابھی کوئی کھیل دستیاب نہیں۔' : 'No games available yet.';
+  String get gamesLoadError =>
+      isUrdu ? 'کھیل لوڈ نہیں ہو سکے۔' : 'Could not load games.';
+  String get gamesComingSoonPlay => isUrdu
+      ? 'کھیلنا اگلے ماڈیول میں آئے گا۔'
+      : 'Play opens in a later module.';
+  String gamesCategoryLabel(String category) => switch (category) {
+        'challenge' => isUrdu ? 'چیلنج' : 'Challenge',
+        'world' => isUrdu ? 'دنیا' : 'World',
+        _ => isUrdu ? 'مشق' : 'Practice',
+      };
   String get flex => isUrdu ? 'فلیکس' : 'Flex';
   String get communities => isUrdu ? 'کمیونٹیز' : 'Communities';
   String get me => isUrdu ? 'میں' : 'Me';

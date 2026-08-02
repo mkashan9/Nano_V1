@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- GME-01: students browse eligible published games (no play host yet)
 - FBK-01: teachers draft and publish structured feedback for roster students
 - FLX-04: students read published classroom announcements and acknowledge
 - FLX-03: students view their own published marks by month

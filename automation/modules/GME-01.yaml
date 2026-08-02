@@ -1,46 +1,75 @@
 id: GME-01
 name: "Game Catalog and Eligibility"
 release: R8
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-03
   - STU-04
   - XP-01
+dependency_notes: >
+  Learner catalog of ADM-06 published games with grade + independent gates.
+  Play host deferred to GME-02.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_games/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/GME-01/
   - automation/modules/GME-01.yaml
+  - automation/modules/FBK-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook GME-01 Games secure host — catalog slice"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for GME-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.games
+  - public.game_versions
+server_functions:
+  - "public.list_games_for_learner"
+  - "nano_internal.game_version_is_eligible"
 acceptance:
+  - Student Games tab lists published eligible games
+  - Draft/disabled and out-of-band grades hidden server-side
+  - Independent learners cannot see independent_allowed=false games
+  - No play host in this slice
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/gme01_game_catalog.sql
+  - packages/nano_domain/test/game_catalog_test.dart
+  - packages/nano_data/test/game_catalog_repository_test.dart
+  - apps/student_app/test/games_catalog_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_eligibility
+  - learner_rpc_only_catalog
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Games as junior school student; confirm Number Rush only
+rollback_notes: >
+  Revert branch and migration. Games tab returns to placeholder.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Browse catalog with eligibility; no play.
+  deferred: >
+    Host, sessions, score verify, junior worlds layout, companion on Games.

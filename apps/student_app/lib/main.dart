@@ -30,6 +30,7 @@ void main() {
   StudentMarksRepository? studentMarksRepository;
   StudentClassroomRepository? studentClassroomRepository;
   StudentFlexRepository? studentFlexRepository;
+  GameCatalogRepository? gameCatalogRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -59,6 +60,7 @@ void main() {
       marks: studentMarksRepository!,
       classroom: studentClassroomRepository!,
     );
+    gameCatalogRepository = SupabaseGameCatalogRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -78,6 +80,7 @@ void main() {
       studentAttendanceRepository: studentAttendanceRepository,
       studentMarksRepository: studentMarksRepository,
       studentClassroomRepository: studentClassroomRepository,
+      gameCatalogRepository: gameCatalogRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -117,6 +120,7 @@ class NanoStudentApp extends StatefulWidget {
     this.studentAttendanceRepository,
     this.studentMarksRepository,
     this.studentClassroomRepository,
+    this.gameCatalogRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -175,6 +179,7 @@ class NanoStudentApp extends StatefulWidget {
   final StudentAttendanceRepository? studentAttendanceRepository;
   final StudentMarksRepository? studentMarksRepository;
   final StudentClassroomRepository? studentClassroomRepository;
+  final GameCatalogRepository? gameCatalogRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -565,6 +570,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       studentAttendanceRepository: widget.studentAttendanceRepository,
       studentMarksRepository: widget.studentMarksRepository,
       studentClassroomRepository: widget.studentClassroomRepository,
+      gameCatalogRepository: widget.gameCatalogRepository,
     );
   }
 
