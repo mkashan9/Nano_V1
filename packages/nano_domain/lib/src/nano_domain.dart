@@ -44,6 +44,7 @@ export 'teacher/teacher_assessment.dart';
 export 'teacher/teacher_marks_grid.dart';
 export 'teacher/marks_import.dart';
 export 'teacher/marks_correction.dart';
+export 'teacher/marks_result_summary.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';
 export 'learning/learning_insights.dart';

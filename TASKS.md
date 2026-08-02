@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] MRK-04 Marks Publication and Correction
+- [ ] MRK-05 Result and Class Performance Summary
 
 ## Completed
 
+- [x] MRK-04
 - [x] MRK-03
 - [x] MRK-02
 - [x] AUD-01

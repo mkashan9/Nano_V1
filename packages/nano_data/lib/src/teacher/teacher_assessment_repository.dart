@@ -3,7 +3,7 @@ import 'package:supabase/supabase.dart';
 
 import 'teacher_classes_repository.dart';
 
-/// MRK-01/MRK-02/MRK-03/MRK-04 assessments, marks grid, import, publish/correct.
+/// MRK-01–MRK-05 assessments, marks grid, import, publish/correct, result summary.
 abstract class TeacherAssessmentRepository {
   Future<TeacherMyClasses> listAssignments();
   Future<TeacherAssessmentList> listForAssignment(String assignmentId);
@@ -45,6 +45,7 @@ abstract class TeacherAssessmentRepository {
     String remarks = '',
     required String reason,
   });
+  Future<MarksResultSummary> loadResultSummary(String assessmentId);
 }
 
 class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
@@ -583,6 +584,125 @@ class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
       history: history,
     );
   }
+
+  @override
+  Future<MarksResultSummary> loadResultSummary(String assessmentId) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    final grid = await loadMarks(assessmentId);
+    if (!grid.isCorrectable) {
+      throw StateError(
+        'Result summary is only available for published assessments.',
+      );
+    }
+    const passing = 40.0;
+    final bands = SchoolMarksPolicy.defaultGradeBands;
+    final students = <MarksResultStudentRow>[];
+    final percents = <double>[];
+    var scored = 0;
+    var absent = 0;
+    var exempt = 0;
+    var notSubmitted = 0;
+    var pass = 0;
+    var fail = 0;
+    for (final s in grid.roster) {
+      final entry = grid.entryByStudent[s.id];
+      final status = entry?.status ?? MarksEntryStatus.notSubmitted;
+      double? percent;
+      String? grade;
+      bool? passed;
+      switch (status) {
+        case MarksEntryStatus.scored:
+          scored += 1;
+          final obtained = entry?.obtainedMarks;
+          if (obtained != null && grid.totalMarks > 0) {
+            percent = double.parse(
+              ((obtained / grid.totalMarks) * 100).toStringAsFixed(2),
+            );
+            for (final b in bands) {
+              if (percent >= b.min) {
+                grade = b.label;
+                break;
+              }
+            }
+            passed = percent >= passing;
+            if (passed == true) {
+              pass += 1;
+            } else {
+              fail += 1;
+            }
+            percents.add(percent);
+          }
+        case MarksEntryStatus.absent:
+          absent += 1;
+        case MarksEntryStatus.exempt:
+          exempt += 1;
+        case MarksEntryStatus.notSubmitted:
+          notSubmitted += 1;
+      }
+      students.add(
+        MarksResultStudentRow(
+          studentUserId: s.id,
+          displayName: s.displayName,
+          status: status.wire,
+          obtainedMarks: entry?.obtainedMarks,
+          percent: percent,
+          passed: passed,
+          gradeLabel: grade,
+        ),
+      );
+    }
+    percents.sort();
+    double? median;
+    if (percents.isNotEmpty) {
+      final mid = percents.length ~/ 2;
+      median = percents.length.isOdd
+          ? percents[mid]
+          : double.parse(
+              ((percents[mid - 1] + percents[mid]) / 2).toStringAsFixed(2),
+            );
+    }
+    final avg = percents.isEmpty
+        ? 0.0
+        : double.parse(
+            (percents.reduce((a, b) => a + b) / percents.length)
+                .toStringAsFixed(2),
+          );
+    return MarksResultSummary(
+      assessmentId: grid.assessmentId,
+      assignmentId: grid.assignmentId,
+      schoolId: grid.schoolId,
+      classLabel: grid.classLabel,
+      subjectCode: grid.subjectCode,
+      assessmentName: grid.assessmentName,
+      assessmentStatus: grid.assessmentStatus.wire,
+      totalMarks: grid.totalMarks,
+      passingPercent: passing,
+      reportCardFormat: 'both',
+      rosterCount: grid.roster.length,
+      scoredCount: scored,
+      absentCount: absent,
+      exemptCount: exempt,
+      notSubmittedCount: notSubmitted,
+      averagePercent: avg,
+      medianPercent: median,
+      highestPercent: percents.isEmpty ? null : percents.last,
+      lowestPercent: percents.isEmpty ? null : percents.first,
+      passCount: pass,
+      failCount: fail,
+      passRatePercent: scored == 0
+          ? null
+          : double.parse(((pass / scored) * 100).toStringAsFixed(2)),
+      gradeDistribution: [
+        for (final b in bands)
+          MarksGradeBucket(
+            label: b.label,
+            count: students.where((s) => s.gradeLabel == b.label).length,
+          ),
+      ],
+      students: students,
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+  }
 }
 
 class SupabaseTeacherAssessmentRepository
@@ -773,5 +893,15 @@ class SupabaseTeacherAssessmentRepository
     );
     if (raw is! Map) throw StateError('Marks correction failed.');
     return MarksCorrectionResult.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<MarksResultSummary> loadResultSummary(String assessmentId) async {
+    final raw = await _client.rpc(
+      'teacher_marks_result_summary',
+      params: {'p_assessment_id': assessmentId},
+    );
+    if (raw is! Map) throw StateError('Marks result summary unavailable.');
+    return MarksResultSummary.fromJson(Map<String, dynamic>.from(raw));
   }
 }

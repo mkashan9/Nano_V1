@@ -49,6 +49,7 @@ void main() {
     await tester.tap(find.text('Publish marks'));
     await tester.pumpAndSettle();
     expect(find.text('Assessment published.'), findsOneWidget);
+    expect(find.text('Result summary'), findsOneWidget);
     expect(find.text('Correction'), findsOneWidget);
 
     // Cycle not_submitted → scored → absent so correction needs no obtained marks.
