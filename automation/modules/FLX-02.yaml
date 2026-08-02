@@ -1,7 +1,7 @@
 id: FLX-02
 name: "Student Attendance"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - FLX-01
   - ATT-01

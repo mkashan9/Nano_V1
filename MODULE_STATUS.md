@@ -87,8 +87,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | CLS-02 | Classroom Materials and Attachments | R7 | DONE | CLS-01, MED-02 |
 | CLS-03 | Scheduling, Expiry, and Acknowledgement | R7 | DONE | CLS-01 |
 | FLX-01 | Student Flex Home | R7 | DONE | STU-03, STU-04, AUTH-01 |
-| FLX-02 | Student Attendance | R7 | USER_TEST | FLX-01, ATT-01 |
-| FLX-03 | Student Marks and Results | R7 | BACKLOG | FLX-01, MRK-04 |
+| FLX-02 | Student Attendance | R7 | DONE | FLX-01, ATT-01 |
+| FLX-03 | Student Marks and Results | R7 | USER_TEST | FLX-01, MRK-04 |
 | FLX-04 | Student Classroom | R7 | BACKLOG | FLX-01, CLS-01 |
 | FBK-01 | Teacher-Guardian Structured Feedback | R7 | BACKLOG | TCH-02 |
 | GME-01 | Game Catalog and Eligibility | R8 | BACKLOG | STU-03, STU-04, XP-01 |

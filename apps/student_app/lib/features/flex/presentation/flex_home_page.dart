@@ -5,8 +5,9 @@ import 'package:nano_domain/nano_domain.dart';
 
 import '../../../app/nav_placeholder_page.dart';
 import 'student_attendance_page.dart';
+import 'student_marks_page.dart';
 
-/// FLX-01/FLX-02 Flex hub: attendance / marks / classroom entry points.
+/// FLX-01/02/03 Flex hub: attendance / marks / classroom entry points.
 class FlexHomePage extends StatefulWidget {
   const FlexHomePage({
     super.key,
@@ -65,6 +66,16 @@ class _FlexHomePageState extends State<FlexHomePage> {
         MaterialPageRoute<void>(
           builder: (_) => StudentAttendancePage(
             repository: FakeStudentAttendanceRepository(),
+          ),
+        ),
+      );
+      return;
+    }
+    if (kind == FlexHubSectionKind.marks) {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => StudentMarksPage(
+            repository: FakeStudentMarksRepository(),
           ),
         ),
       );
