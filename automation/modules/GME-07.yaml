@@ -1,7 +1,7 @@
 id: GME-07
 name: "Game Kill Switch and Version Disable"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - GME-01
   - ADM-06
