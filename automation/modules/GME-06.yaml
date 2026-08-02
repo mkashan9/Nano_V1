@@ -1,7 +1,7 @@
 id: GME-06
 name: "Game Audio, Haptics, and Classroom Mode"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - GME-01
   - FND-07
