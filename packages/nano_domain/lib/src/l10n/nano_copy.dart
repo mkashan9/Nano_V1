@@ -1,5 +1,6 @@
 import '../companion/companion_mode.dart';
 import '../media/generated_asset.dart';
+import '../teacher/teacher_attendance.dart';
 import 'nano_app_locale.dart';
 
 /// Foundation UI copy for English and Urdu.
@@ -174,6 +175,48 @@ class NanoCopy {
       : 'This assignment is not in your active scope.';
   String get teacherClassesStudentFallback =>
       isUrdu ? 'طالب علم' : 'Student';
+  String get teacherAttendanceTitle => isUrdu ? 'حاضری' : 'Attendance';
+  String get teacherAttendanceSubtitle => isUrdu
+      ? 'تفویض اور تاریخ چنیں، حاضری جمع کرائیں۔'
+      : 'Pick an assignment and date, then submit the grid.';
+  String get teacherAttendanceNoAssignments => isUrdu
+      ? 'حاضری کے لیے کوئی فعال تفویض نہیں۔'
+      : 'No active assignments for attendance.';
+  String get teacherAttendanceAssignmentLabel =>
+      isUrdu ? 'تفویض' : 'Assignment';
+  String get teacherAttendanceDateLabel => isUrdu ? 'تاریخ' : 'Date';
+  String get teacherAttendanceMarkAllPresent =>
+      isUrdu ? 'سب حاضر' : 'Mark all present';
+  String get teacherAttendanceSubmit => isUrdu ? 'جمع کرائیں' : 'Submit';
+  String get teacherAttendanceAlreadySubmitted =>
+      isUrdu ? 'جمع ہو چکی' : 'Already submitted';
+  String get teacherAttendanceSubmitted =>
+      isUrdu ? 'حاضری جمع ہو گئی۔' : 'Attendance submitted.';
+  String get teacherAttendanceSubmitFailed => isUrdu
+      ? 'حاضری جمع نہیں ہو سکی۔'
+      : 'Could not submit attendance.';
+  String get teacherAttendanceRosterEmpty => isUrdu
+      ? 'اس کلاس میں ابھی کوئی طالب علم نہیں۔'
+      : 'No enrolled students in this class yet.';
+  String teacherAttendanceStatusLabel(AttendanceEntryStatus status) {
+    if (isUrdu) {
+      return switch (status) {
+        AttendanceEntryStatus.present => 'حاضر',
+        AttendanceEntryStatus.absent => 'غیر حاضر',
+        AttendanceEntryStatus.late => 'دیر',
+        AttendanceEntryStatus.leave => 'چھٹی',
+        AttendanceEntryStatus.excused => 'معاف',
+      };
+    }
+    return switch (status) {
+      AttendanceEntryStatus.present => 'Present',
+      AttendanceEntryStatus.absent => 'Absent',
+      AttendanceEntryStatus.late => 'Late',
+      AttendanceEntryStatus.leave => 'Leave',
+      AttendanceEntryStatus.excused => 'Excused',
+    };
+  }
+
   String get reportsPageTitle => isUrdu ? 'رپورٹس' : 'Reports';
   String get reportsPageSubtitle => isUrdu
       ? 'اسکول کے محفوظ خلاصے — طالب علم کے ذاتی رابطے نہیں۔'

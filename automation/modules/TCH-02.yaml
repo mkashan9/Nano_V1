@@ -1,7 +1,7 @@
 id: TCH-02
 name: "My Classes and Assigned Scope"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - TCH-01
 dependency_notes: >

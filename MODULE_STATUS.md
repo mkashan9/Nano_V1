@@ -74,8 +74,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | SCH-06 | Marks and Result Policies | R6 | DONE | SCH-01 |
 | SCH-07 | School Reports | R6 | DONE | SCH-05, SCH-06 |
 | TCH-01 | Teacher Dashboard | R7 | DONE | AUTH-02, SCH-05 |
-| TCH-02 | My Classes and Assigned Scope | R7 | USER_TEST | TCH-01 |
-| ATT-01 | In-App Attendance Grid | R7 | BACKLOG | TCH-02, SYNC-01 |
+| TCH-02 | My Classes and Assigned Scope | R7 | DONE | TCH-01 |
+| ATT-01 | In-App Attendance Grid | R7 | USER_TEST | TCH-02, SYNC-01 |
 | ATT-02 | Attendance Excel Download and Upload | R7 | BACKLOG | ATT-01 |
 | ATT-03 | Attendance Correction and History | R7 | BACKLOG | ATT-01 |
 | MRK-01 | Assessment Creation | R7 | BACKLOG | TCH-02, SCH-06 |

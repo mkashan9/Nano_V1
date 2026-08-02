@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:teacher_app/features/attendance/presentation/teacher_attendance_page.dart';
 import 'package:teacher_app/features/classes/presentation/teacher_classes_page.dart';
 import 'package:teacher_app/features/home/presentation/teacher_dashboard_page.dart';
 
@@ -17,6 +18,7 @@ class TeacherShell extends StatelessWidget {
     this.liveAuth = false,
     this.teacherDashboardRepository,
     this.teacherClassesRepository,
+    this.teacherAttendanceRepository,
   });
 
   final EnvironmentConfig config;
@@ -27,6 +29,7 @@ class TeacherShell extends StatelessWidget {
   final bool liveAuth;
   final TeacherDashboardRepository? teacherDashboardRepository;
   final TeacherClassesRepository? teacherClassesRepository;
+  final TeacherAttendanceRepository? teacherAttendanceRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -74,12 +77,14 @@ class TeacherDestinationPage extends StatelessWidget {
     required this.destination,
     this.teacherDashboardRepository,
     this.teacherClassesRepository,
+    this.teacherAttendanceRepository,
     this.assignmentId,
   });
 
   final NavDestination destination;
   final TeacherDashboardRepository? teacherDashboardRepository;
   final TeacherClassesRepository? teacherClassesRepository;
+  final TeacherAttendanceRepository? teacherAttendanceRepository;
   final String? assignmentId;
 
   @override
@@ -91,6 +96,14 @@ class TeacherDestinationPage extends StatelessWidget {
     if (destination.id == 'classes' && teacherClassesRepository != null) {
       return TeacherClassesPage(
         repository: teacherClassesRepository!,
+        initialAssignmentId: assignmentId,
+      );
+    }
+
+    if (destination.id == 'attendance' &&
+        teacherAttendanceRepository != null) {
+      return TeacherAttendancePage(
+        repository: teacherAttendanceRepository!,
         initialAssignmentId: assignmentId,
       );
     }
