@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] FBK-01 Teacher-Guardian Structured Feedback
+- [ ] GME-01 Game Catalog and Eligibility
 
 ## Completed
 
+- [x] FBK-01
 - [x] FLX-04
 - [x] FLX-03
 - [x] FLX-02

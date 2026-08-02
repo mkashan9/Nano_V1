@@ -2,18 +2,18 @@
 
 ## Current state
 
-- **Current release:** R7 Student Flex
-- **Current module:** FBK-01 Teacher-Guardian Structured Feedback
-- **Current status:** USER_TEST
-- **Current branch:** module/FBK-01-teacher-feedback
-- **Last completed module:** FLX-04
+- **Current release:** R8 Games
+- **Current module:** GME-01 Game Catalog and Eligibility
+- **Current status:** ACTIVE
+- **Current branch:** module/GME-01-game-catalog
+- **Last completed module:** FBK-01
 - **Application name:** Nano
 
 ## Releases
 
-- R1?R6: complete
-- R7: CLS + FLX DONE; FBK-01 USER_TEST
+- R1–R7: complete (including FBK-01)
+- R8: GME-01 ACTIVE
 
 ## Owner decision waiting
 
-Run `docs/modules/FBK-01/MANUAL_TEST.md`. Open Feedback, draft, then publish a note.
+None — implementing GME-01.

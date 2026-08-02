@@ -1,7 +1,7 @@
 id: FBK-01
 name: "Teacher-Guardian Structured Feedback"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - TCH-02
 dependency_notes: >
