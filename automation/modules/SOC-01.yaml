@@ -1,7 +1,7 @@
 id: SOC-01
 name: "Usernames, Friend Codes, and Limited Profiles"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-05
   - SEC-03
