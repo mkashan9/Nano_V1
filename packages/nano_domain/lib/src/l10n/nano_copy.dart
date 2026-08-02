@@ -198,6 +198,30 @@ class NanoCopy {
   String get teacherAttendanceRosterEmpty => isUrdu
       ? 'اس کلاس میں ابھی کوئی طالب علم نہیں۔'
       : 'No enrolled students in this class yet.';
+  String get teacherAttendanceImportTitle =>
+      isUrdu ? 'Excel / CSV درآمد' : 'Excel / CSV import';
+  String get teacherAttendanceImportSubtitle => isUrdu
+      ? 'مستحکم طالب علم شناخت استعمال کریں — نام اکیلے کافی نہیں۔'
+      : 'Use stable student IDs — names alone are not enough.';
+  String get teacherAttendanceImportCsvLabel =>
+      isUrdu ? 'CSV مواد' : 'CSV content';
+  String get teacherAttendanceLoadTemplate =>
+      isUrdu ? 'سانچہ لوڈ' : 'Load template';
+  String get teacherAttendanceCopyCsv => isUrdu ? 'کاپی' : 'Copy CSV';
+  String get teacherAttendancePreviewImport =>
+      isUrdu ? 'پیش منظر' : 'Preview import';
+  String get teacherAttendanceCommitImport =>
+      isUrdu ? 'درآمد محفوظ' : 'Commit import';
+  String teacherAttendanceImportPreviewSummary(int ok, int fail) => isUrdu
+      ? '$ok درست، $fail غلط'
+      : '$ok ok, $fail failed';
+  String get teacherAttendanceImportCommitted =>
+      isUrdu ? 'درآمد جمع ہو گئی۔' : 'Import committed.';
+  String get teacherAttendanceImportFailed => isUrdu
+      ? 'درآمد ناکام۔'
+      : 'Import failed.';
+  String teacherAttendanceImportRowError(int row, String error) =>
+      isUrdu ? 'قطار $row: $error' : 'Row $row: $error';
   String teacherAttendanceStatusLabel(AttendanceEntryStatus status) {
     if (isUrdu) {
       return switch (status) {

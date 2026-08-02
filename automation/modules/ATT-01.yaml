@@ -1,7 +1,7 @@
 id: ATT-01
 name: "In-App Attendance Grid"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - TCH-02
   - SYNC-01

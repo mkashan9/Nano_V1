@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ATT-01 In-App Attendance Grid
+- [ ] ATT-02 Attendance Excel Download and Upload
 
 ## Completed
 
@@ -37,6 +37,7 @@
 - [x] SCH-07 School Reports
 - [x] TCH-01 Teacher Dashboard
 - [x] TCH-02 My Classes and Assigned Scope
+- [x] ATT-01 In-App Attendance Grid
 
 ## Upcoming
 

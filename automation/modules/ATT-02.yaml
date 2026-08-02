@@ -1,44 +1,72 @@
 id: ATT-02
 name: "Attendance Excel Download and Upload"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ATT-01
+dependency_notes: >
+  Commits into ATT-01 sessions/entries. Corrections remain ATT-03.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ATT-02/
   - automation/modules/ATT-02.yaml
+  - automation/modules/ATT-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook ATT-01 Excel import slice"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ATT-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.attendance_import_jobs
+  - public.attendance_import_rows
+  - public.attendance_sessions
+  - public.attendance_entries
+server_functions:
+  - "public.teacher_attendance_template"
+  - "public.preview_attendance_import"
+  - "public.commit_attendance_import"
 acceptance:
+  - Template uses stable student IDs
+  - Preview/commit produce same records as in-app submit
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/att02_attendance_excel.sql
+  - packages/nano_domain/test/attendance_import_test.dart
+  - packages/nano_data/test/attendance_import_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - stable_student_ids
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Load template on Attendance
+  - Preview and commit CSV import
+rollback_notes: >
+  Revert the branch and migration. Import UI can be removed; grid remains.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    CSV/Excel-compatible template + preview + commit only.
+  deferred: >
+    Binary xlsx parser; ATT-03 corrections.

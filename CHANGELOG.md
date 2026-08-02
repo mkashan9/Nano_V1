@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- ATT-02: teachers download/preview/commit attendance CSV templates into canonical sessions
 - ATT-01: teachers submit in-app attendance grids for assigned scopes with idempotent submit
 - TCH-02: teachers open My Classes for assignment-scoped rosters with server guards
 - TCH-01: teachers open Dashboard for caller-scoped assignments and pending workflow stubs
