@@ -932,8 +932,17 @@ class NanoCopy {
       : 'Attendance, marks, and classroom — for school-linked students.';
   String get flexAttendanceTitle => isUrdu ? 'حاضری' : 'Attendance';
   String get flexAttendanceSubtitle => isUrdu
-      ? 'آپ کے دن اور خلاصہ (جلد آ رہا ہے)۔'
-      : 'Your days and summaries (coming soon).';
+      ? 'آپ کے دن اور خلاصہ۔'
+      : 'Your days and summaries.';
+  String get studentAttendanceSubtitle => isUrdu
+      ? 'صرف آپ کی جمع شدہ حاضری۔'
+      : 'Only your submitted attendance.';
+  String get studentAttendanceEmpty => isUrdu
+      ? 'اس مہینے کوئی ریکارڈ نہیں۔'
+      : 'No attendance recorded this month.';
+  String studentAttendanceCounts(int present, int absent, int late) => isUrdu
+      ? 'حاضر $present · غیر حاضر $absent · دیر $late'
+      : 'Present $present · Absent $absent · Late $late';
   String get flexMarksTitle => isUrdu ? 'نمبر' : 'Marks';
   String get flexMarksSubtitle => isUrdu
       ? 'شائع شدہ نتائج (جلد آ رہا ہے)۔'

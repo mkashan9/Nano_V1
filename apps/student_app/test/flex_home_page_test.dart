@@ -30,9 +30,10 @@ void main() {
     expect(find.text('Marks'), findsOneWidget);
     expect(find.text('Classroom'), findsOneWidget);
 
-    await tester.tap(find.text('Marks'));
+    await tester.tap(find.text('Attendance'));
     await tester.pumpAndSettle();
-    expect(find.text('This section arrives in a later module.'), findsOneWidget);
+    expect(find.textContaining('Present 1'), findsOneWidget);
+    expect(find.text('Only your submitted attendance.'), findsOneWidget);
   });
 
   testWidgets('blocks independent learners', (tester) async {
