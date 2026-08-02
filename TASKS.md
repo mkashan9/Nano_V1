@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] CLS-02 Classroom Materials and Attachments
+- [ ] CLS-03 Scheduling, Expiry, and Acknowledgement
 
 ## Completed
 
+- [x] CLS-02
 - [x] CLS-01
 - [x] MRK-05
 - [x] MRK-04

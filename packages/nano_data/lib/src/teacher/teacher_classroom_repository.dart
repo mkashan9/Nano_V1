@@ -3,7 +3,7 @@ import 'package:supabase/supabase.dart';
 
 import 'teacher_classes_repository.dart';
 
-/// CLS-01/CLS-02 classroom announcements and attachments.
+/// CLS-01/CLS-02/CLS-03 classroom announcements, attachments, schedule/ack.
 abstract class TeacherClassroomRepository {
   Future<TeacherMyClasses> listAssignments();
   Future<TeacherClassroomList> listForAssignment(String assignmentId);
@@ -29,12 +29,76 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
 
   final TeacherClassesRepository _classes;
   final Map<String, List<TeacherClassroomItem>> _byAssignment = {};
+  final Map<String, Set<String>> _acksByItem = {};
   var _seq = 0;
   var _attSeq = 0;
   var alwaysFail = false;
 
   @override
   Future<TeacherMyClasses> listAssignments() => _classes.listMine();
+
+  Future<int> _rosterCount(String assignmentId) async {
+    try {
+      final roster = await _classes.loadRoster(assignmentId);
+      return roster.studentCount;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  TeacherClassroomItem _withCounts(TeacherClassroomItem item, int roster) {
+    final now = DateTime.now().toUtc();
+    var status = item.status;
+    var publishedAt = item.publishedAt;
+    if (status.isDraft &&
+        item.scheduledPublishAt != null &&
+        !item.scheduledPublishAt!.isAfter(now)) {
+      status = ClassroomItemStatus.published;
+      publishedAt = publishedAt ?? item.scheduledPublishAt;
+    }
+    final expired =
+        item.expiresAt != null && !item.expiresAt!.isAfter(now);
+    return TeacherClassroomItem(
+      id: item.id,
+      schoolId: item.schoolId,
+      teacherAssignmentId: item.teacherAssignmentId,
+      title: item.title,
+      body: item.body,
+      status: status,
+      attachments: item.attachments,
+      scheduledPublishAt: item.scheduledPublishAt,
+      expiresAt: item.expiresAt,
+      requiresAcknowledgement: item.requiresAcknowledgement,
+      isExpired: expired,
+      ackCount: _acksByItem[item.id]?.length ?? 0,
+      rosterCount: roster,
+      publishedAt: publishedAt,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    );
+  }
+
+  /// Test helper: record a student acknowledgement (FLX-04 will call server RPC).
+  Future<void> recordAck({
+    required String itemId,
+    required String studentUserId,
+  }) async {
+    for (final entry in _byAssignment.entries) {
+      final idx = entry.value.indexWhere((i) => i.id == itemId);
+      if (idx < 0) continue;
+      final enriched =
+          _withCounts(entry.value[idx], await _rosterCount(entry.key));
+      if (enriched.status != ClassroomItemStatus.published) {
+        throw StateError('Only published announcements can be acknowledged.');
+      }
+      if (enriched.isExpired) {
+        throw StateError('This announcement has expired.');
+      }
+      (_acksByItem[itemId] ??= {}).add(studentUserId);
+      return;
+    }
+    throw StateError('Announcement not found.');
+  }
 
   @override
   Future<TeacherClassroomList> listForAssignment(String assignmentId) async {
@@ -50,14 +114,32 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
     if (scope == null) {
       throw StateError('Assignment is not in your active scope.');
     }
+    final roster = await _rosterCount(assignmentId);
+    final raw = _byAssignment[assignmentId] ?? const <TeacherClassroomItem>[];
+    final items = [
+      for (final item in raw) _withCounts(item, roster),
+    ];
+    // Persist promotions
+    _byAssignment[assignmentId] = items;
     return TeacherClassroomList(
       assignmentId: assignmentId,
       schoolId: mine.schoolId,
       classLabel: scope.classLabel,
       subjectCode: scope.subjectCode,
-      items: List.unmodifiable(_byAssignment[assignmentId] ?? const []),
+      items: List.unmodifiable(items),
       generatedAt: DateTime.utc(2026, 8, 2),
     );
+  }
+
+  void _validateSchedule(TeacherClassroomDraftInput input) {
+    if (input.publishNow && input.scheduledPublishAt != null) {
+      throw StateError('Choose either publish now or a schedule, not both.');
+    }
+    final scheduled = input.scheduledPublishAt;
+    final expires = input.expiresAt;
+    if (scheduled != null && expires != null && !expires.isAfter(scheduled)) {
+      throw StateError('Expiry must be after the scheduled publish time.');
+    }
   }
 
   @override
@@ -68,11 +150,21 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
     if (alwaysFail) throw StateError('Classroom unavailable');
     final title = input.title.trim();
     if (title.isEmpty) throw StateError('Title is required.');
+    _validateSchedule(input);
     final list = await listForAssignment(assignmentId);
     _seq += 1;
-    final status = input.publishNow
-        ? ClassroomItemStatus.published
-        : ClassroomItemStatus.draft;
+    final now = DateTime.utc(2026, 8, 2);
+    var status = ClassroomItemStatus.draft;
+    DateTime? publishedAt;
+    var scheduled = input.scheduledPublishAt;
+    if (input.publishNow) {
+      status = ClassroomItemStatus.published;
+      publishedAt = now;
+      scheduled = null;
+    } else if (scheduled != null && !scheduled.isAfter(now)) {
+      status = ClassroomItemStatus.published;
+      publishedAt = scheduled;
+    }
     final row = TeacherClassroomItem(
       id: 'cls-$_seq',
       schoolId: list.schoolId,
@@ -80,9 +172,12 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
       title: title,
       body: input.body,
       status: status,
-      publishedAt: input.publishNow ? DateTime.utc(2026, 8, 2) : null,
-      createdAt: DateTime.utc(2026, 8, 2),
-      updatedAt: DateTime.utc(2026, 8, 2),
+      scheduledPublishAt: scheduled,
+      expiresAt: input.expiresAt,
+      requiresAcknowledgement: input.requiresAcknowledgement,
+      publishedAt: publishedAt,
+      createdAt: now,
+      updatedAt: now,
     );
     _byAssignment[assignmentId] = [
       row,
@@ -99,12 +194,29 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
     if (alwaysFail) throw StateError('Classroom unavailable');
     final title = input.title.trim();
     if (title.isEmpty) throw StateError('Title is required.');
+    _validateSchedule(input);
     for (final entry in _byAssignment.entries) {
       final idx = entry.value.indexWhere((i) => i.id == itemId);
       if (idx < 0) continue;
       final existing = entry.value[idx];
       if (!existing.isDraft) {
         throw StateError('Only draft announcements can be edited.');
+      }
+      final scheduled = input.clearSchedule
+          ? null
+          : (input.scheduledPublishAt ?? existing.scheduledPublishAt);
+      final expires = input.clearExpiry
+          ? null
+          : (input.expiresAt ?? existing.expiresAt);
+      if (scheduled != null && expires != null && !expires.isAfter(scheduled)) {
+        throw StateError('Expiry must be after the scheduled publish time.');
+      }
+      final now = DateTime.utc(2026, 8, 2);
+      var status = existing.status;
+      var publishedAt = existing.publishedAt;
+      if (scheduled != null && !scheduled.isAfter(now)) {
+        status = ClassroomItemStatus.published;
+        publishedAt = publishedAt ?? scheduled;
       }
       final copy = List<TeacherClassroomItem>.from(entry.value);
       copy[idx] = TeacherClassroomItem(
@@ -113,11 +225,14 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
         teacherAssignmentId: existing.teacherAssignmentId,
         title: title,
         body: input.body,
-        status: existing.status,
+        status: status,
         attachments: existing.attachments,
-        publishedAt: existing.publishedAt,
+        scheduledPublishAt: scheduled,
+        expiresAt: expires,
+        requiresAcknowledgement: input.requiresAcknowledgement,
+        publishedAt: publishedAt,
         createdAt: existing.createdAt,
-        updatedAt: DateTime.utc(2026, 8, 2),
+        updatedAt: now,
       );
       _byAssignment[entry.key] = copy;
       return listForAssignment(entry.key);
@@ -172,6 +287,9 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
         body: existing.body,
         status: existing.status,
         attachments: [...existing.attachments, att],
+        scheduledPublishAt: existing.scheduledPublishAt,
+        expiresAt: existing.expiresAt,
+        requiresAcknowledgement: existing.requiresAcknowledgement,
         publishedAt: existing.publishedAt,
         createdAt: existing.createdAt,
         updatedAt: DateTime.utc(2026, 8, 2),
@@ -206,6 +324,9 @@ class FakeTeacherClassroomRepository implements TeacherClassroomRepository {
             for (final a in existing.attachments)
               if (a.id != attachmentId) a,
           ],
+          scheduledPublishAt: existing.scheduledPublishAt,
+          expiresAt: existing.expiresAt,
+          requiresAcknowledgement: existing.requiresAcknowledgement,
           publishedAt: existing.publishedAt,
           createdAt: existing.createdAt,
           updatedAt: DateTime.utc(2026, 8, 2),
@@ -251,6 +372,9 @@ class SupabaseTeacherClassroomRepository
         'p_title': input.title,
         'p_body': input.body,
         'p_publish': input.publishNow,
+        'p_scheduled_publish_at': input.scheduledPublishAt?.toUtc().toIso8601String(),
+        'p_expires_at': input.expiresAt?.toUtc().toIso8601String(),
+        'p_requires_acknowledgement': input.requiresAcknowledgement,
       },
     );
     if (raw is! Map) throw StateError('Classroom create failed.');
@@ -268,6 +392,11 @@ class SupabaseTeacherClassroomRepository
         'p_item_id': itemId,
         'p_title': input.title,
         'p_body': input.body,
+        'p_scheduled_publish_at': input.scheduledPublishAt?.toUtc().toIso8601String(),
+        'p_expires_at': input.expiresAt?.toUtc().toIso8601String(),
+        'p_requires_acknowledgement': input.requiresAcknowledgement,
+        'p_clear_schedule': input.clearSchedule,
+        'p_clear_expiry': input.clearExpiry,
       },
     );
     if (raw is! Map) throw StateError('Classroom update failed.');

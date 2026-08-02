@@ -84,8 +84,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | MRK-04 | Marks Publication and Correction | R7 | DONE | MRK-02, SEC-03 |
 | MRK-05 | Result and Class Performance Summary | R7 | DONE | MRK-04 |
 | CLS-01 | Teacher Classroom Announcements | R7 | DONE | TCH-02 |
-| CLS-02 | Classroom Materials and Attachments | R7 | USER_TEST | CLS-01, MED-02 |
-| CLS-03 | Scheduling, Expiry, and Acknowledgement | R7 | BACKLOG | CLS-01 |
+| CLS-02 | Classroom Materials and Attachments | R7 | DONE | CLS-01, MED-02 |
+| CLS-03 | Scheduling, Expiry, and Acknowledgement | R7 | USER_TEST | CLS-01 |
 | FLX-01 | Student Flex Home | R7 | BACKLOG | STU-03, STU-04, AUTH-01 |
 | FLX-02 | Student Attendance | R7 | BACKLOG | FLX-01, ATT-01 |
 | FLX-03 | Student Marks and Results | R7 | BACKLOG | FLX-01, MRK-04 |

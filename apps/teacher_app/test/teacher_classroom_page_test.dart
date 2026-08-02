@@ -7,7 +7,7 @@ import 'package:teacher_app/features/classroom/presentation/teacher_classroom_pa
 
 void main() {
   testWidgets('creates draft and adds a link attachment', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(900, 1600));
+    await tester.binding.setSurfaceSize(const Size(900, 1800));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
@@ -33,6 +33,7 @@ void main() {
     await tester.tap(find.text('Edit').first);
     await tester.pumpAndSettle();
     expect(find.text('Attachments'), findsOneWidget);
+    expect(find.text('Require acknowledgement'), findsWidgets);
 
     final fields = find.byType(TextField);
     await tester.enterText(fields.at(2), 'Worksheet');
@@ -42,5 +43,31 @@ void main() {
 
     expect(find.text('Attachment added.'), findsOneWidget);
     expect(find.text('Worksheet'), findsWidgets);
+  });
+
+  testWidgets('publish now shows acknowledgement summary', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(900, 1800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final repo = FakeTeacherClassroomRepository();
+
+    await tester.pumpWidget(
+      NanoLocaleScope(
+        locale: NanoAppLocale.en,
+        copy: const NanoCopy(NanoAppLocale.en),
+        child: MaterialApp(
+          theme: NanoTheme.teacher(),
+          home: TeacherClassroomPage(repository: repo),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).first, 'Read this');
+    await tester.tap(find.text('Publish now'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save draft'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('0/2 acknowledged'), findsOneWidget);
   });
 }

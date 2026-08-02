@@ -1,4 +1,4 @@
-/// CLS-01/CLS-02 teacher classroom announcement and attachment models.
+/// CLS-01/CLS-02/CLS-03 teacher classroom announcement models.
 enum ClassroomItemStatus {
   draft,
   published;
@@ -110,6 +110,12 @@ class TeacherClassroomItem {
     required this.body,
     required this.status,
     this.attachments = const [],
+    this.scheduledPublishAt,
+    this.expiresAt,
+    this.requiresAcknowledgement = true,
+    this.isExpired = false,
+    this.ackCount = 0,
+    this.rosterCount = 0,
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
@@ -122,11 +128,28 @@ class TeacherClassroomItem {
   final String body;
   final ClassroomItemStatus status;
   final List<TeacherClassroomAttachment> attachments;
+  final DateTime? scheduledPublishAt;
+  final DateTime? expiresAt;
+  final bool requiresAcknowledgement;
+  final bool isExpired;
+  final int ackCount;
+  final int rosterCount;
   final DateTime? publishedAt;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   bool get isDraft => status.isDraft;
+
+  bool get isScheduled =>
+      isDraft &&
+      scheduledPublishAt != null &&
+      scheduledPublishAt!.isAfter(DateTime.now().toUtc());
+
+  String get displayStatus {
+    if (isExpired) return 'expired';
+    if (isScheduled) return 'scheduled';
+    return status.wire;
+  }
 
   factory TeacherClassroomItem.fromJson(Map<String, dynamic> json) {
     final attachmentsRaw = json['attachments'];
@@ -144,6 +167,17 @@ class TeacherClassroomItem {
               Map<String, dynamic>.from(row),
             ),
       ],
+      scheduledPublishAt: json['scheduled_publish_at'] == null
+          ? null
+          : DateTime.tryParse('${json['scheduled_publish_at']}'),
+      expiresAt: json['expires_at'] == null
+          ? null
+          : DateTime.tryParse('${json['expires_at']}'),
+      requiresAcknowledgement:
+          json['requires_acknowledgement'] as bool? ?? true,
+      isExpired: json['is_expired'] as bool? ?? false,
+      ackCount: (json['ack_count'] as num?)?.toInt() ?? 0,
+      rosterCount: (json['roster_count'] as num?)?.toInt() ?? 0,
       publishedAt: json['published_at'] == null
           ? null
           : DateTime.tryParse('${json['published_at']}'),
@@ -200,9 +234,19 @@ class TeacherClassroomDraftInput {
     required this.title,
     this.body = '',
     this.publishNow = false,
+    this.scheduledPublishAt,
+    this.expiresAt,
+    this.requiresAcknowledgement = true,
+    this.clearSchedule = false,
+    this.clearExpiry = false,
   });
 
   final String title;
   final String body;
   final bool publishNow;
+  final DateTime? scheduledPublishAt;
+  final DateTime? expiresAt;
+  final bool requiresAcknowledgement;
+  final bool clearSchedule;
+  final bool clearExpiry;
 }

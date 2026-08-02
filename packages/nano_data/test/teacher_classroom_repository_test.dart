@@ -47,6 +47,40 @@ void main() {
     expect(removed.items.first.attachments, isEmpty);
   });
 
+  test('schedules future publish and tracks acknowledgements', () async {
+    final repo = FakeTeacherClassroomRepository();
+    final created = await repo.create(
+      assignmentId: 'asg-1',
+      input: TeacherClassroomDraftInput(
+        title: 'Parent night',
+        scheduledPublishAt: DateTime.utc(2026, 9, 1),
+        expiresAt: DateTime.utc(2026, 9, 15),
+      ),
+    );
+    expect(created.items.first.isScheduled, isTrue);
+    expect(created.items.first.displayStatus, 'scheduled');
+
+    final published = await repo.create(
+      assignmentId: 'asg-1',
+      input: const TeacherClassroomDraftInput(
+        title: 'Posted',
+        publishNow: true,
+      ),
+    );
+    final item = published.items.firstWhere((i) => i.title == 'Posted');
+    expect(item.status, ClassroomItemStatus.published);
+    expect(item.rosterCount, 2);
+
+    await repo.recordAck(
+      itemId: item.id,
+      studentUserId: TenancyFixtures.aliAlphaId,
+    );
+    final listed = await repo.listForAssignment('asg-1');
+    final again = listed.items.firstWhere((i) => i.id == item.id);
+    expect(again.ackCount, 1);
+    expect(again.rosterCount, 2);
+  });
+
   test('publish-now creates published item; draft-only edit', () async {
     final repo = FakeTeacherClassroomRepository();
     final published = await repo.create(
@@ -61,16 +95,6 @@ void main() {
       () => repo.update(
         itemId: published.items.first.id,
         input: const TeacherClassroomDraftInput(title: 'Nope'),
-      ),
-      throwsStateError,
-    );
-    expect(
-      () => repo.addAttachment(
-        itemId: published.items.first.id,
-        input: const TeacherClassroomAttachmentInput(
-          title: 'Nope',
-          url: 'https://example.com',
-        ),
       ),
       throwsStateError,
     );

@@ -1,7 +1,7 @@
 id: CLS-02
 name: "Classroom Materials and Attachments"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - CLS-01
   - MED-02
