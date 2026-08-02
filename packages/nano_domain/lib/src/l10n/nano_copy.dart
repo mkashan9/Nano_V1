@@ -1058,6 +1058,32 @@ class NanoCopy {
       isUrdu ? 'درخواستیں قبول کرتی ہے' : 'Accepts friend requests';
   String get noRequestsLabel =>
       isUrdu ? 'درخواستیں بند' : 'Not accepting requests';
+  String get sendFriendRequestLabel =>
+      isUrdu ? 'دوست بنیں' : 'Send friend request';
+  String get requestSentLabel =>
+      isUrdu ? 'درخواست بھیج دی گئی' : 'Request sent';
+  String get alreadyFriendsLabel => isUrdu ? 'پہلے سے دوست' : 'Already friends';
+  String get blockUserLabel => isUrdu ? 'بلاک' : 'Block';
+  String get friendsTitle => isUrdu ? 'دوست' : 'Friends';
+  String get friendsTab => isUrdu ? 'دوست' : 'Friends';
+  String get requestsTab => isUrdu ? 'درخواستیں' : 'Requests';
+  String get blockedTab => isUrdu ? 'بلاک' : 'Blocked';
+  String get friendsEmpty =>
+      isUrdu ? 'ابھی کوئی دوست نہیں۔' : 'No friends yet.';
+  String get requestsEmpty =>
+      isUrdu ? 'کوئی زیر درخواست نہیں۔' : 'No open requests.';
+  String get blocksEmpty =>
+      isUrdu ? 'کوئی بلاک نہیں۔' : 'No blocked learners.';
+  String get removeFriendLabel => isUrdu ? 'ہٹائیں' : 'Remove';
+  String get acceptRequestLabel => isUrdu ? 'قبول' : 'Accept';
+  String get declineRequestLabel => isUrdu ? 'مسترد' : 'Decline';
+  String get cancelRequestLabel => isUrdu ? 'منسوخ' : 'Cancel';
+  String get unblockLabel => isUrdu ? 'ان بلاک' : 'Unblock';
+  String get incomingRequestHint =>
+      isUrdu ? 'آپ کو درخواست بھیجی' : 'Wants to be friends';
+  String get outgoingRequestHint =>
+      isUrdu ? 'منتظر جواب' : 'Waiting for a reply';
+  String get openFriendsLabel => isUrdu ? 'دوست کھولیں' : 'Open Friends';
   String get devicesLabel => isUrdu ? 'ڈیوائسز' : 'Devices';
   String get thisDeviceLabel => isUrdu ? 'یہ ڈیوائس' : 'This device';
   String get revokeLabel => isUrdu ? 'رسائی ختم کریں' : 'Sign out device';

@@ -3,17 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/profile/presentation/friends_page.dart';
 
-/// SOC-01: claim username, show/rotate friend code, look up limited profiles.
+/// SOC-01/02: claim username, friend code, lookup, request, and open Friends.
 class SocialIdentitySection extends StatefulWidget {
   const SocialIdentitySection({
     super.key,
     required this.repository,
     required this.copy,
+    this.friendGraph,
   });
 
   final SocialIdentityRepository repository;
   final NanoCopy copy;
+  final FriendGraphRepository? friendGraph;
 
   @override
   State<SocialIdentitySection> createState() => _SocialIdentitySectionState();
@@ -143,17 +146,89 @@ class _SocialIdentitySectionState extends State<SocialIdentitySection> {
     }
   }
 
+  Future<void> _sendRequest() async {
+    final graph = widget.friendGraph;
+    final query = _lookupCtrl.text.trim();
+    if (graph == null || query.isEmpty) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await graph.sendRequest(query);
+      final found = await widget.repository.lookup(query);
+      if (!mounted) return;
+      setState(() {
+        _lookupResult = found;
+        _busy = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(widget.copy.requestSentLabel)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  Future<void> _blockLookup() async {
+    final graph = widget.friendGraph;
+    final query = _lookupCtrl.text.trim();
+    if (graph == null || query.isEmpty) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await graph.blockUser(query);
+      if (!mounted) return;
+      setState(() {
+        _lookupResult = null;
+        _busy = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _error = 'Could not block';
+      });
+    }
+  }
+
+  void _openFriends() {
+    final graph = widget.friendGraph;
+    if (graph == null) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => FriendsPage(repository: graph),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final copy = widget.copy;
     final identity = _identity;
+    final lookup = _lookupResult;
+    final graph = widget.friendGraph;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(copy.socialIdentityLabel, style: theme.textTheme.titleLarge),
         const SizedBox(height: NanoSpacing.sm),
+        if (graph != null)
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: _openFriends,
+              child: Text(copy.openFriendsLabel),
+            ),
+          ),
         if (_loading)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: NanoSpacing.md),
@@ -216,30 +291,48 @@ class _SocialIdentitySectionState extends State<SocialIdentitySection> {
               child: Text(copy.lookupProfileLabel),
             ),
           ),
-          if (_lookupResult != null) ...[
+          if (lookup != null) ...[
             const SizedBox(height: NanoSpacing.sm),
             Text(copy.limitedProfileTitle, style: theme.textTheme.titleMedium),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.person_outline),
-              title: Text(_lookupResult!.socialLabel),
+              title: Text(lookup.socialLabel),
               subtitle: Text(
                 [
-                  copy.levelLabel(_lookupResult!.level),
-                  if (_lookupResult!.companionName != null)
-                    _lookupResult!.companionName!,
-                  _lookupResult!.acceptsFriendRequests
+                  copy.levelLabel(lookup.level),
+                  if (lookup.companionName != null) lookup.companionName!,
+                  lookup.acceptsFriendRequests
                       ? copy.acceptsRequestsLabel
                       : copy.noRequestsLabel,
+                  if (lookup.alreadyFriends) copy.alreadyFriendsLabel,
                 ].join(' · '),
               ),
             ),
-            for (final title in _lookupResult!.achievementTitles)
+            for (final title in lookup.achievementTitles)
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 dense: true,
                 leading: const Icon(Icons.emoji_events_outlined, size: 20),
                 title: Text(title),
+              ),
+            if (graph != null)
+              Row(
+                children: [
+                  if (!lookup.alreadyFriends &&
+                      !lookup.pendingOutgoing &&
+                      lookup.acceptsFriendRequests)
+                    TextButton(
+                      onPressed: _busy ? null : _sendRequest,
+                      child: Text(copy.sendFriendRequestLabel),
+                    ),
+                  if (lookup.pendingOutgoing)
+                    Text(copy.requestSentLabel, style: theme.textTheme.bodySmall),
+                  TextButton(
+                    onPressed: _busy ? null : _blockLookup,
+                    child: Text(copy.blockUserLabel),
+                  ),
+                ],
               ),
           ],
         ],

@@ -1,44 +1,75 @@
 id: SOC-02
 name: "Friend Requests, Removal, and Blocking"
 release: R9
-status: BACKLOG
+status: DONE
 dependencies:
   - SOC-01
+dependency_notes: >
+  Friend graph only; reports deferred to SAFE-01; boards to SOC-03.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SOC-02/
   - automation/modules/SOC-02.yaml
+  - automation/modules/SOC-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SOC-02"
+  - "Handbook SOC-02 friend requests removal blocking"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.friend_requests
+  - public.friendships
+  - public.blocks
+  - public.friend_peer_tokens
+server_functions:
+  - "public.send_friend_request"
+  - "public.respond_friend_request"
+  - "public.cancel_friend_request"
+  - "public.my_friend_requests"
+  - "public.my_friends"
+  - "public.remove_friend"
+  - "public.block_user"
+  - "public.my_blocks"
+  - "public.unblock_user"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Send/accept/decline/cancel requests without exposing peer user ids
+  - Remove friend via opaque peer token
+  - Block cancels requests, removes friendship, hides discovery both ways
 required_tests:
-  - documentation_review
+  - supabase/tests/soc02_friend_graph.sql
+  - packages/nano_domain/test/friend_graph_test.dart
+  - packages/nano_data/test/friend_graph_repository_test.dart
+  - apps/student_app/test/friends_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - opaque_peer_tokens
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Send and accept a request; remove; block and unblock
+rollback_notes: >
+  Revert branch and migration. Profile returns without Friends inbox actions.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Friend requests, removal, blocking with privacy-safe labels/tokens.
+  deferred: >
+    Reports (SAFE-01), friends boards (SOC-03), push notify (NOT-01).

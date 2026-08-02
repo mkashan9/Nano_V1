@@ -32,6 +32,9 @@ class LimitedProfile {
     this.companionName,
     this.acceptsFriendRequests = true,
     this.achievementTitles = const [],
+    this.alreadyFriends = false,
+    this.pendingOutgoing = false,
+    this.pendingIncoming = false,
   });
 
   final String socialLabel;
@@ -40,6 +43,9 @@ class LimitedProfile {
   final String? companionName;
   final bool acceptsFriendRequests;
   final List<String> achievementTitles;
+  final bool alreadyFriends;
+  final bool pendingOutgoing;
+  final bool pendingIncoming;
 
   factory LimitedProfile.fromJson(Map<String, dynamic> json) {
     final rawAchievements = json['achievements'];
@@ -56,6 +62,9 @@ class LimitedProfile {
       companionName: json['companion_name'] as String?,
       acceptsFriendRequests: json['accepts_friend_requests'] as bool? ?? true,
       achievementTitles: titles,
+      alreadyFriends: json['already_friends'] as bool? ?? false,
+      pendingOutgoing: json['pending_outgoing'] as bool? ?? false,
+      pendingIncoming: json['pending_incoming'] as bool? ?? false,
     );
   }
 
@@ -66,6 +75,9 @@ class LimitedProfile {
         'companion_name': companionName,
         'accepts_friend_requests': acceptsFriendRequests,
         'achievements': achievementTitles,
+        'already_friends': alreadyFriends,
+        'pending_outgoing': pendingOutgoing,
+        'pending_incoming': pendingIncoming,
       };
 
   static const forbiddenFields = <String>[
