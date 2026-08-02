@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- TCH-02: teachers open My Classes for assignment-scoped rosters with server guards
 - TCH-01: teachers open Dashboard for caller-scoped assignments and pending workflow stubs
 - SCH-07: school admins open Reports for privacy-safe coverage, enrollment, and workload summaries
 - SCH-06: school admins configure marks/result policies and result periods in Settings

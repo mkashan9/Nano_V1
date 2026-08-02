@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] TCH-01 Teacher Dashboard
+- [ ] TCH-02 My Classes and Assigned Scope
 
 ## Completed
 
@@ -35,6 +35,7 @@
 - [x] CMP-03
 - [x] MED-01 through MED-12
 - [x] SCH-07 School Reports
+- [x] TCH-01 Teacher Dashboard
 
 ## Upcoming
 

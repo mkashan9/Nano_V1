@@ -1,7 +1,7 @@
 id: TCH-01
 name: "Teacher Dashboard"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - AUTH-02
   - SCH-05

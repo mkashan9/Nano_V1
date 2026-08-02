@@ -1,44 +1,76 @@
 id: TCH-02
 name: "My Classes and Assigned Scope"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - TCH-01
+dependency_notes: >
+  Builds on TCH-01 assignment scopes. Attendance/marks stay deferred.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/TCH-02/
   - automation/modules/TCH-02.yaml
+  - automation/modules/TCH-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook TCH-01 Teacher dashboard / My Classes"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for TCH-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.teacher_assignments
+  - public.student_enrollments
+  - public.school_memberships
+  - public.classes
+  - public.sections
+  - public.school_subjects
+  - public.profiles
+server_functions:
+  - "public.teacher_my_classes"
+  - "public.teacher_class_roster"
 acceptance:
+  - My Classes lists active assignment scopes only
+  - Roster requires active assignment; unassigned ids denied
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/tch02_teacher_my_classes.sql
+  - packages/nano_domain/test/teacher_classes_test.dart
+  - packages/nano_data/test/teacher_classes_repository_test.dart
+  - apps/teacher_app/test/teacher_classes_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - unassigned_route_guard
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Classes as teacher
+  - Open assignment roster
+  - Confirm unknown assignment denied
+rollback_notes: >
+  Revert the branch and migration. Classes returns to destination stub.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Assignment list + class roster (display names). No attendance/marks.
+  deferred: >
+    Section-filtered enrollments; roll numbers; ATT/MRK workflows.
