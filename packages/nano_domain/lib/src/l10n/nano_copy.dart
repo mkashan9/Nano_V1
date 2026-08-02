@@ -156,6 +156,24 @@ class NanoCopy {
       : 'No active assignments yet.';
   String get teacherDashboardOpenClasses =>
       isUrdu ? 'کلاسز' : 'Open classes';
+  String get teacherClassesTitle => isUrdu ? 'میری کلاسز' : 'My classes';
+  String get teacherClassesSubtitle => isUrdu
+      ? 'صرف آپ کی فعال تفویضات۔'
+      : 'Only your active assignment scopes.';
+  String get teacherClassesEmpty => isUrdu
+      ? 'ابھی کوئی فعال تفویض نہیں۔'
+      : 'No active assignments yet.';
+  String get teacherClassesBack => isUrdu ? 'واپس' : 'Back';
+  String teacherClassesRosterCount(int count) =>
+      isUrdu ? '$count طلبہ' : '$count students';
+  String get teacherClassesRosterEmpty => isUrdu
+      ? 'اس کلاس میں ابھی کوئی طالب علم نہیں۔'
+      : 'No enrolled students in this class yet.';
+  String get teacherClassesRosterDenied => isUrdu
+      ? 'یہ تفویض آپ کے دائرے میں نہیں۔'
+      : 'This assignment is not in your active scope.';
+  String get teacherClassesStudentFallback =>
+      isUrdu ? 'طالب علم' : 'Student';
   String get reportsPageTitle => isUrdu ? 'رپورٹس' : 'Reports';
   String get reportsPageSubtitle => isUrdu
       ? 'اسکول کے محفوظ خلاصے — طالب علم کے ذاتی رابطے نہیں۔'

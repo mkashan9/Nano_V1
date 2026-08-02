@@ -145,7 +145,8 @@ class _TeacherDashboardPageState extends State<TeacherDashboardPage> {
                         title: Text(scope.scopeLabel),
                         subtitle: Text(scope.subjectName),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => context.go('/classes'),
+                        onTap: () =>
+                            context.go('/classes?assignment=${scope.id}'),
                       ),
                     ),
               ],

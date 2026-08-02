@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:teacher_app/features/classes/presentation/teacher_classes_page.dart';
 import 'package:teacher_app/features/home/presentation/teacher_dashboard_page.dart';
 
 class TeacherShell extends StatelessWidget {
@@ -15,6 +16,7 @@ class TeacherShell extends StatelessWidget {
     this.onSignOut,
     this.liveAuth = false,
     this.teacherDashboardRepository,
+    this.teacherClassesRepository,
   });
 
   final EnvironmentConfig config;
@@ -24,6 +26,7 @@ class TeacherShell extends StatelessWidget {
   final VoidCallback? onSignOut;
   final bool liveAuth;
   final TeacherDashboardRepository? teacherDashboardRepository;
+  final TeacherClassesRepository? teacherClassesRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +73,26 @@ class TeacherDestinationPage extends StatelessWidget {
     super.key,
     required this.destination,
     this.teacherDashboardRepository,
+    this.teacherClassesRepository,
+    this.assignmentId,
   });
 
   final NavDestination destination;
   final TeacherDashboardRepository? teacherDashboardRepository;
+  final TeacherClassesRepository? teacherClassesRepository;
+  final String? assignmentId;
 
   @override
   Widget build(BuildContext context) {
     if (destination.id == 'dashboard' && teacherDashboardRepository != null) {
       return TeacherDashboardPage(repository: teacherDashboardRepository!);
+    }
+
+    if (destination.id == 'classes' && teacherClassesRepository != null) {
+      return TeacherClassesPage(
+        repository: teacherClassesRepository!,
+        initialAssignmentId: assignmentId,
+      );
     }
 
     return NanoScaffold(

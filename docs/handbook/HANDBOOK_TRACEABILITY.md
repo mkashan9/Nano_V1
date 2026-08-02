@@ -50,7 +50,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook QZ-02 results, explanations, recommendations | QZ-06 | student_app | quiz results | topic_quiz_progress,learner_quiz_history,get_attempt_result,learning_next_up | unit+widget+SQL | DONE |
 | Handbook QZ-02 Student quiz scoring | QZ-03,QZ-04,QZ-05,QZ-06 | student_app | quiz | attempts | scoring tests | DONE |
 | Handbook FLX-01 Student Flex | FLX-01,FLX-02,FLX-03,FLX-04 | student_app | Flex | school data | RLS+UI | BACKLOG |
-| Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | USER_TEST |
+| Handbook TCH-01 Teacher dashboard | TCH-01,TCH-02 | teacher_app | Dashboard | assignments | scope tests | DONE |
 | Handbook ATT-01 Attendance | ATT-01,ATT-02,ATT-03 | teacher_app | Attendance grid | attendance | grid+excel | BACKLOG |
 | Handbook MRK-01 Marks results | MRK-01,MRK-02,MRK-03,MRK-04,MRK-05 | teacher_app | Marks | assessments | publish rules | BACKLOG |
 | Handbook CLS-01 Classroom | CLS-01,CLS-02,CLS-03 | teacher_app | Classroom | announcements | ack tests | BACKLOG |

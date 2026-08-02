@@ -11,6 +11,7 @@ void main() {
   final config = EnvironmentConfig.fromEnvironment();
   AuthRepository? authRepository;
   TeacherDashboardRepository? teacherDashboardRepository;
+  TeacherClassesRepository? teacherClassesRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -21,6 +22,7 @@ void main() {
       appLabel: 'teachers',
     );
     teacherDashboardRepository = SupabaseTeacherDashboardRepository(client);
+    teacherClassesRepository = SupabaseTeacherClassesRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -28,6 +30,7 @@ void main() {
       config: config,
       authRepository: authRepository,
       teacherDashboardRepository: teacherDashboardRepository,
+      teacherClassesRepository: teacherClassesRepository,
       requireAuth: requireAuth,
     ),
   );
@@ -42,6 +45,7 @@ class NanoTeacherApp extends StatefulWidget {
     this.initialLocale = NanoAppLocale.en,
     this.authRepository,
     this.teacherDashboardRepository,
+    this.teacherClassesRepository,
     this.requireAuth = false,
   });
 
@@ -51,6 +55,7 @@ class NanoTeacherApp extends StatefulWidget {
   final NanoAppLocale initialLocale;
   final AuthRepository? authRepository;
   final TeacherDashboardRepository? teacherDashboardRepository;
+  final TeacherClassesRepository? teacherClassesRepository;
   final bool requireAuth;
 
   @override
@@ -62,6 +67,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
   late SessionPrincipal _principal;
   late GoRouter _router;
   late TeacherDashboardRepository _teacherDashboardRepository;
+  late TeacherClassesRepository _teacherClassesRepository;
   AuthBootstrap? _authBootstrap;
   var _restoring = false;
 
@@ -75,6 +81,8 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
             : SessionPrincipal.teacher());
     _teacherDashboardRepository =
         widget.teacherDashboardRepository ?? FakeTeacherDashboardRepository();
+    _teacherClassesRepository =
+        widget.teacherClassesRepository ?? FakeTeacherClassesRepository();
     _router = _createRouter();
     if (widget.requireAuth && widget.authRepository != null) {
       _restore();
@@ -107,6 +115,7 @@ class _NanoTeacherAppState extends State<NanoTeacherApp> {
       requireAuth: widget.requireAuth,
       authBootstrap: _authBootstrap,
       teacherDashboardRepository: _teacherDashboardRepository,
+      teacherClassesRepository: _teacherClassesRepository,
       onAuthBootstrap: (bootstrap) {
         setState(() {
           _authBootstrap = bootstrap;
