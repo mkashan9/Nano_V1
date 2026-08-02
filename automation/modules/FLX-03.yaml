@@ -1,45 +1,71 @@
 id: FLX-03
 name: "Student Marks and Results"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - FLX-01
   - MRK-04
+dependency_notes: >
+  Reads published/corrected marks_entries for auth.uid only. Teacher MRK modules remain write authority.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/FLX-03/
   - automation/modules/FLX-03.yaml
+  - automation/modules/FLX-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook FLX-01 Student Flex — marks"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for FLX-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.marks_entries
+  - public.assessments
+  - public.marks_corrections
+server_functions:
+  - "public.student_marks_mine"
 acceptance:
+  - Student sees own published/corrected marks by month
+  - Draft assessments excluded
+  - Corrected results indicated
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/flx03_student_marks_mine.sql
+  - packages/nano_domain/test/student_marks_test.dart
+  - packages/nano_data/test/student_marks_repository_test.dart
+  - apps/student_app/test/student_marks_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - self_only_marks_rpc
+  - draft_assessments_excluded
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Flex Marks and review month results
+rollback_notes: >
+  Revert branch and migration. Flex hub Marks returns to placeholder.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Student month marks read view + self-only RPC with correction count.
+  deferred: >
+    Full correction history UI; live hub counts; nested go_router.

@@ -945,8 +945,19 @@ class NanoCopy {
       : 'Present $present · Absent $absent · Late $late';
   String get flexMarksTitle => isUrdu ? 'نمبر' : 'Marks';
   String get flexMarksSubtitle => isUrdu
-      ? 'شائع شدہ نتائج (جلد آ رہا ہے)۔'
-      : 'Published results (coming soon).';
+      ? 'شائع شدہ نتائج۔'
+      : 'Published results.';
+  String get studentMarksSubtitle => isUrdu
+      ? 'صرف آپ کے شائع شدہ نمبر۔'
+      : 'Only your published marks.';
+  String get studentMarksEmpty => isUrdu
+      ? 'اس مہینے کوئی نتیجہ نہیں۔'
+      : 'No published results this month.';
+  String studentMarksCounts(int scored, int absent) => isUrdu
+      ? 'نمبر $scored · غیر حاضر $absent'
+      : 'Scored $scored · Absent $absent';
+  String get studentMarksCorrectedBadge =>
+      isUrdu ? 'درست شدہ' : 'Corrected';
   String get flexClassroomTitle => isUrdu ? 'کلاس روم' : 'Classroom';
   String get flexClassroomSubtitle => isUrdu
       ? 'اعلانات اور وسائل (جلد آ رہا ہے)۔'

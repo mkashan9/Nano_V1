@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] FLX-02 Student Attendance
+- [ ] FLX-03 Student Marks and Results
 
 ## Completed
 
+- [x] FLX-02
 - [x] FLX-01
 - [x] CLS-03
 - [x] CLS-02
