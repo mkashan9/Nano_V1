@@ -1,7 +1,7 @@
 id: SOC-04
 name: "Social Sharing"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - SOC-01
   - XP-06
