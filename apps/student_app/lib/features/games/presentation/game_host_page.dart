@@ -116,11 +116,14 @@ class _GameHostPageState extends State<GameHostPage> {
         payload: message.payload,
       );
       if (!mounted) return;
-      setState(() {
-        _banner = result.message.isEmpty
-            ? copy.gamesResultPendingVerify
-            : result.message;
-      });
+      final banner = result.message.isNotEmpty
+          ? result.message
+          : result.verified
+              ? (result.xpAwarded > 0
+                  ? copy.gamesResultVerifiedXp(result.xpAwarded)
+                  : copy.gamesResultVerified)
+              : copy.gamesResultRejected;
+      setState(() => _banner = banner);
     } catch (_) {
       if (!mounted) return;
       setState(() => _banner = copy.gamesStartError);

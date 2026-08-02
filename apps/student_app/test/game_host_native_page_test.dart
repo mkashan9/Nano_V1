@@ -50,6 +50,7 @@ void main() {
 
     await tester.tap(find.text('Finish'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Verification comes later'), findsOneWidget);
+    expect(find.textContaining('Result verified'), findsOneWidget);
+    expect(find.textContaining('XP'), findsOneWidget);
   });
 }

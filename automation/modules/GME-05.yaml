@@ -1,45 +1,71 @@
 id: GME-05
 name: "Trusted Game Result Verification"
 release: R8
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - GME-02
   - XP-01
+dependency_notes: >
+  Server verifies completion payloads and awards game_result XP once per session.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_games/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/GME-05/
   - automation/modules/GME-05.yaml
+  - automation/modules/GME-04.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for GME-05"
+  - "Handbook §11.2 Nano server verifies token/version/duration/nonce"
+  - "Handbook §11.4 Verified game result XP"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.game_score_submissions
+  - public.game_results
+  - public.rejected_scores
+server_functions:
+  - "public.report_game_client_completed"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Valid completion verifies and can award XP once
+  - Invalid score/duration/nonce/token rejected without XP
+  - Replay of same session returns existing verified result
+  - Host shows verified/rejected messaging
 required_tests:
-  - documentation_review
+  - supabase/tests/gme05_trusted_game_verify.sql
+  - packages/nano_domain/test/game_result_verify_test.dart
+  - packages/nano_data/test/game_session_repository_test.dart
+  - apps/student_app/test/game_host_native_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_verify_only
+  - xp_idempotent_per_session
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Finish Number Rush; confirm verified XP banner
+rollback_notes: >
+  Revert branch and migration. Completion returns to unverified acknowledgment.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Verify + award game_result XP; reject bad payloads.
+  deferred: >
+    Per-game score policies, personal-best bonus, leagues.
