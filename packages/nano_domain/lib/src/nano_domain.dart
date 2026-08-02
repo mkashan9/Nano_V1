@@ -37,6 +37,7 @@ export 'social/friend_graph.dart';
 export 'social/friends_leaderboard.dart';
 export 'social/social_share.dart';
 export 'social/safety_report.dart';
+export 'social/moderation_queue.dart';
 export 'media/asset_review.dart';
 export 'media/generated_asset.dart';
 export 'media/generation_budget.dart';

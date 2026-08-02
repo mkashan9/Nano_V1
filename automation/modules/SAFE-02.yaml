@@ -1,48 +1,69 @@
 id: SAFE-02
 name: "Moderation Queue and Evidence"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SAFE-01
   - ADM-01
+dependency_notes: >
+  Platform queue for SAFE-01 reports; suspend reuses ADM-03 set_profile_status.
 applications:
-  - student_app
-  - teacher_app
   - admin_web
   - packages
-  - supabase
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/admin_web/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SAFE-02/
   - automation/modules/SAFE-02.yaml
+  - automation/modules/SAFE-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SAFE-02"
+  - "Handbook SAFE-02 moderation queue and evidence"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.user_reports
+  - public.moderation_evidence_access
+server_functions:
+  - "public.list_user_reports_for_moderation"
+  - "public.claim_user_report"
+  - "public.resolve_user_report"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Platform staff list open reports without peer user ids
+  - Evidence access is audited on claim
+  - Resolve/dismiss/warn/suspend require a note; suspend uses ADM-03
 required_tests:
-  - documentation_review
+  - supabase/tests/safe02_moderation_queue.sql
+  - packages/nano_domain/test/moderation_queue_test.dart
+  - packages/nano_data/test/moderation_queue_repository_test.dart
+  - apps/admin_web/test/user_reports_queue_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - platform_admin_gate
+  - evidence_access_audited
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Resolve an open report from Moderation → User reports
+rollback_notes: >
+  Revert branch and migration. Moderation hub falls back to media-only tab.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Queue, evidence access audit, dismiss/resolve/warn/suspend.
+  deferred: >
+    Community content removal; school-scoped moderators (SAFE-04).

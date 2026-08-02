@@ -112,7 +112,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | COM-05 | Voice Messages, Photos, Videos, and Files | R9 | BACKLOG | COM-04, MED-02, SAFE-02 |
 | COM-06 | Pinned Messages, Search, Gallery, and Archives | R9 | BACKLOG | COM-04 |
 | SAFE-01 | Reporting and Blocking | R9 | DONE | SEC-03, STU-04 |
-| SAFE-02 | Moderation Queue and Evidence | R9 | ACTIVE | SAFE-01, ADM-01 |
+| SAFE-02 | Moderation Queue and Evidence | R9 | USER_TEST | SAFE-01, ADM-01 |
 | SAFE-03 | Rate Limits, Restricted Content, and Link Rules | R9 | BACKLOG | SAFE-01 |
 | SAFE-04 | School and Global Community Controls | R9 | BACKLOG | SAFE-02, SCH-01 |
 | IND-01 | Independent Student Home and Natural Navigation | R10 | BACKLOG | STU-04, AUTH-04 |

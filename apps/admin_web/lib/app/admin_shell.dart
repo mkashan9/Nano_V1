@@ -2,7 +2,7 @@ import 'package:admin_web/features/analytics/presentation/platform_analytics_pag
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
 import 'package:admin_web/features/games/presentation/game_admin_page.dart';
 import 'package:admin_web/features/gamification/presentation/gamification_admin_page.dart';
-import 'package:admin_web/features/moderation/presentation/asset_review_page.dart';
+import 'package:admin_web/features/moderation/presentation/moderation_hub_page.dart';
 import 'package:admin_web/features/notifications/presentation/notification_admin_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
 import 'package:admin_web/features/school/presentation/academic_structure_page.dart';
@@ -38,6 +38,7 @@ class AdminShell extends StatelessWidget {
     this.gameAdminRepository,
     this.notificationAdminRepository,
     this.assetReviewRepository,
+    this.moderationQueueRepository,
     this.platformDashboardRepository,
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
@@ -65,6 +66,7 @@ class AdminShell extends StatelessWidget {
   final GameAdminRepository? gameAdminRepository;
   final NotificationAdminRepository? notificationAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
+  final ModerationQueueRepository? moderationQueueRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
@@ -189,6 +191,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.gameAdminRepository,
     this.notificationAdminRepository,
     this.assetReviewRepository,
+    this.moderationQueueRepository,
     this.platformDashboardRepository,
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
@@ -211,6 +214,7 @@ class AdminDestinationPage extends StatelessWidget {
   final GameAdminRepository? gameAdminRepository;
   final NotificationAdminRepository? notificationAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
+  final ModerationQueueRepository? moderationQueueRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
@@ -345,12 +349,15 @@ class AdminDestinationPage extends StatelessWidget {
       );
     }
 
-    // MED-05. The role check is a courtesy for the preview shell; the server
-    // refuses a non-admin regardless of which screen they reach.
+    // MED-05 + SAFE-02. Server refuses non-admins regardless of shell role.
     if (destination.id == 'moderation' &&
         principal.role == AppRole.superadmin &&
-        assetReviewRepository != null) {
-      return AssetReviewPage(repository: assetReviewRepository!);
+        (assetReviewRepository != null ||
+            moderationQueueRepository != null)) {
+      return ModerationHubPage(
+        assetReviewRepository: assetReviewRepository,
+        moderationQueueRepository: moderationQueueRepository,
+      );
     }
 
     final authLine = principal.isAuthenticated

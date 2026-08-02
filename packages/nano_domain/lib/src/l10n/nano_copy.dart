@@ -1110,6 +1110,31 @@ class NanoCopy {
       isUrdu ? 'رپورٹ بھیجیں' : 'Submit report';
   String get reportSubmittedLabel =>
       isUrdu ? 'رپورٹ بھیج دی گئی' : 'Report submitted';
+  String get reportsQueueTitle =>
+      isUrdu ? 'صارف رپورٹس' : 'User reports';
+  String get reportsQueueSubtitle => isUrdu
+      ? 'کھلی رپورٹس — ثبوت محفوظ؛ فیصلہ نوٹ ضروری۔'
+      : 'Open reports with privacy-safe evidence. A note is required to close.';
+  String get reportsQueueEmptyTitle =>
+      isUrdu ? 'کوئی کھلی رپورٹ نہیں' : 'No open reports';
+  String get reportsQueueEmptyBody => isUrdu
+      ? 'جب سیکھنے والے رپورٹ بھیجیں گے تو یہاں نظر آئیں گی۔'
+      : 'Learner reports will appear here when submitted.';
+  String get reportsQueuePickHint =>
+      isUrdu ? 'ایک رپورٹ منتخب کریں' : 'Select a report';
+  String reportReportedBy(String label) =>
+      isUrdu ? 'رپورٹر: $label' : 'Reported by $label';
+  String get reportAlsoBlockedHint =>
+      isUrdu ? 'رپورٹر نے بلاک بھی کیا' : 'Reporter also blocked this learner';
+  String get reportEvidenceTitle => isUrdu ? 'ثبوت' : 'Evidence';
+  String get reportResolutionNoteHint =>
+      isUrdu ? 'فیصلے کی وجہ' : 'Resolution note';
+  String get reportDismissLabel => isUrdu ? 'مسترد' : 'Dismiss';
+  String get reportResolveLabel => isUrdu ? 'حل' : 'Resolve';
+  String get reportWarnLabel => isUrdu ? 'تنبیہ' : 'Warn';
+  String get reportSuspendLabel => isUrdu ? 'معطل' : 'Suspend';
+  String get reportResolvedLabel =>
+      isUrdu ? 'رپورٹ بند ہو گئی' : 'Report closed';
   String get friendsTitle => isUrdu ? 'دوست' : 'Friends';
   String get friendsTab => isUrdu ? 'دوست' : 'Friends';
   String get requestsTab => isUrdu ? 'درخواستیں' : 'Requests';

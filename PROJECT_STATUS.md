@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R9 Social
-- **Current module:** SAFE-01 Reporting and Blocking
+- **Current module:** SAFE-02 Moderation Queue and Evidence
 - **Current status:** USER_TEST
-- **Current branch:** module/SAFE-01-reporting-blocking
-- **Last completed module:** SOC-04
+- **Current branch:** module/SAFE-02-moderation-queue
+- **Last completed module:** SAFE-01
 - **Application name:** Nano
 
 ## Releases
 
 - R1–R8: complete
-- R9: SOC-01..SOC-04 DONE; SAFE-01 USER_TEST
+- R9: SOC-01..SOC-04 and SAFE-01 DONE; SAFE-02 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/SAFE-01/MANUAL_TEST.md`. Report a learner from Profile lookup.
+Run `docs/modules/SAFE-02/MANUAL_TEST.md`. Resolve a learner report from Moderation.

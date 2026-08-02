@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SAFE-02: platform moderation queue for learner reports
 - SAFE-01: learner reports with optional block
 - SOC-04: social share sheet and username-aware share cards
 - SOC-03: friends weekly XP leaderboard
@@ -214,4 +215,5 @@ anoMotion.resolve`, the single place both preferences and the platform's own set
 - Bootstrap: credential migration, ignore rules, handbook extraction, UI catalog
 - Automation controls: module queue, status docs, Cursor rules
 - AUD-01 audit documentation set
+
 
