@@ -3,7 +3,7 @@ import 'package:supabase/supabase.dart';
 
 import 'teacher_classes_repository.dart';
 
-/// MRK-01/MRK-02 teacher assessment create/list/update and draft marks grid.
+/// MRK-01/MRK-02/MRK-03 assessments, marks grid, and CSV import.
 abstract class TeacherAssessmentRepository {
   Future<TeacherMyClasses> listAssignments();
   Future<TeacherAssessmentList> listForAssignment(String assignmentId);
@@ -20,6 +20,17 @@ abstract class TeacherAssessmentRepository {
     required String assessmentId,
     required List<MarksEntryMark> entries,
     String? idempotencyKey,
+  });
+  Future<MarksImportTemplate> loadMarksTemplate(String assessmentId);
+  Future<MarksImportPreview> previewMarksImport({
+    required String assessmentId,
+    required String idempotencyKey,
+    required List<Map<String, String>> rows,
+  });
+  Future<MarksImportCommitResult> commitMarksImport({
+    required String assessmentId,
+    required String idempotencyKey,
+    required List<Map<String, String>> rows,
   });
 }
 
@@ -237,6 +248,148 @@ class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
     _grids[assessmentId] = grid;
     return grid;
   }
+
+  @override
+  Future<MarksImportTemplate> loadMarksTemplate(String assessmentId) async {
+    final grid = await loadMarks(assessmentId);
+    return MarksImportTemplate(
+      assessmentId: grid.assessmentId,
+      assignmentId: grid.assignmentId,
+      assessmentName: grid.assessmentName,
+      totalMarks: grid.totalMarks,
+      classLabel: grid.classLabel,
+      subjectCode: grid.subjectCode,
+      headers: const [
+        'student_user_id',
+        'display_name',
+        'status',
+        'obtained_marks',
+        'remarks',
+      ],
+      rows: [
+        for (final s in grid.roster)
+          {
+            'student_user_id': s.id,
+            'display_name': s.displayName,
+            'status': (grid.entryByStudent[s.id]?.status ??
+                    MarksEntryStatus.notSubmitted)
+                .wire,
+            'obtained_marks':
+                grid.entryByStudent[s.id]?.obtainedMarks?.toString() ?? '',
+            'remarks': grid.entryByStudent[s.id]?.remarks ?? '',
+          },
+      ],
+    );
+  }
+
+  @override
+  Future<MarksImportPreview> previewMarksImport({
+    required String assessmentId,
+    required String idempotencyKey,
+    required List<Map<String, String>> rows,
+  }) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    final grid = await loadMarks(assessmentId);
+    if (!grid.isDraft) {
+      throw StateError('Marks can only be imported on draft assessments.');
+    }
+    final rosterIds = {for (final s in grid.roster) s.id};
+    final ok = <MarksImportOkRow>[];
+    final fail = <MarksImportFailure>[];
+    for (var i = 0; i < rows.length; i++) {
+      final row = rows[i];
+      final id = (row['student_user_id'] ?? '').trim();
+      final status = (row['status'] ?? '').trim().toLowerCase();
+      final obtainedText = (row['obtained_marks'] ?? '').trim();
+      if (id.isEmpty || !rosterIds.contains(id)) {
+        fail.add(MarksImportFailure(
+          row: i + 1,
+          studentUserId: id,
+          error: 'student not on assigned roster',
+        ));
+        continue;
+      }
+      if (!{'scored', 'absent', 'exempt', 'not_submitted'}.contains(status)) {
+        fail.add(MarksImportFailure(
+          row: i + 1,
+          studentUserId: id,
+          error: 'invalid status',
+        ));
+        continue;
+      }
+      double? obtained;
+      if (status == 'scored') {
+        obtained = double.tryParse(obtainedText);
+        if (obtained == null || obtained < 0) {
+          fail.add(MarksImportFailure(
+            row: i + 1,
+            studentUserId: id,
+            error: 'invalid obtained_marks',
+          ));
+          continue;
+        }
+        if (obtained > grid.totalMarks && !grid.allowBonus) {
+          fail.add(MarksImportFailure(
+            row: i + 1,
+            studentUserId: id,
+            error: 'obtained_marks exceeds total',
+          ));
+          continue;
+        }
+      }
+      ok.add(MarksImportOkRow(
+        row: i + 1,
+        studentUserId: id,
+        status: status,
+        obtainedMarks: obtained,
+        remarks: row['remarks'] ?? '',
+      ));
+    }
+    return MarksImportPreview(
+      jobId: 'job-$assessmentId',
+      assessmentId: assessmentId,
+      okCount: ok.length,
+      failCount: fail.length,
+      okRows: ok,
+      failedRows: fail,
+      canCommit: fail.isEmpty && ok.isNotEmpty,
+    );
+  }
+
+  @override
+  Future<MarksImportCommitResult> commitMarksImport({
+    required String assessmentId,
+    required String idempotencyKey,
+    required List<Map<String, String>> rows,
+  }) async {
+    final preview = await previewMarksImport(
+      assessmentId: assessmentId,
+      idempotencyKey: idempotencyKey,
+      rows: rows,
+    );
+    if (!preview.canCommit) {
+      throw StateError('Marks import has validation errors.');
+    }
+    final grid = await saveMarks(
+      assessmentId: assessmentId,
+      idempotencyKey: idempotencyKey,
+      entries: [
+        for (final r in preview.okRows)
+          MarksEntryMark(
+            studentUserId: r.studentUserId,
+            status: MarksEntryStatus.parse(r.status),
+            obtainedMarks: r.obtainedMarks,
+            remarks: r.remarks,
+          ),
+      ],
+    );
+    return MarksImportCommitResult(
+      committed: true,
+      message: 'Marks import committed.',
+      preview: preview,
+      grid: grid,
+    );
+  }
 }
 
 class SupabaseTeacherAssessmentRepository
@@ -330,5 +483,51 @@ class SupabaseTeacherAssessmentRepository
     );
     if (raw is! Map) throw StateError('Marks save failed.');
     return TeacherMarksGrid.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<MarksImportTemplate> loadMarksTemplate(String assessmentId) async {
+    final raw = await _client.rpc(
+      'teacher_marks_template',
+      params: {'p_assessment_id': assessmentId},
+    );
+    if (raw is! Map) throw StateError('Marks template unavailable.');
+    return MarksImportTemplate.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<MarksImportPreview> previewMarksImport({
+    required String assessmentId,
+    required String idempotencyKey,
+    required List<Map<String, String>> rows,
+  }) async {
+    final raw = await _client.rpc(
+      'preview_marks_import',
+      params: {
+        'p_assessment_id': assessmentId,
+        'p_idempotency_key': idempotencyKey,
+        'p_rows': rows,
+      },
+    );
+    if (raw is! Map) throw StateError('Marks import preview failed.');
+    return MarksImportPreview.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<MarksImportCommitResult> commitMarksImport({
+    required String assessmentId,
+    required String idempotencyKey,
+    required List<Map<String, String>> rows,
+  }) async {
+    final raw = await _client.rpc(
+      'commit_marks_import',
+      params: {
+        'p_assessment_id': assessmentId,
+        'p_idempotency_key': idempotencyKey,
+        'p_rows': rows,
+      },
+    );
+    if (raw is! Map) throw StateError('Marks import commit failed.');
+    return MarksImportCommitResult.fromJson(Map<String, dynamic>.from(raw));
   }
 }
