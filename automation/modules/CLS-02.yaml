@@ -1,45 +1,72 @@
 id: CLS-02
 name: "Classroom Materials and Attachments"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - CLS-01
   - MED-02
+dependency_notes: >
+  Attachments on CLS-01 drafts. MED-02 informs metadata field shape only;
+  no generation pipeline wiring.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/CLS-02/
   - automation/modules/CLS-02.yaml
+  - automation/modules/CLS-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook CLS materials and attachments"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for CLS-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.classroom_attachments
+  - public.classroom_items
+server_functions:
+  - "public.teacher_classroom_attachment_add"
+  - "public.teacher_classroom_attachment_remove"
+  - "public.teacher_classroom_list"
 acceptance:
+  - Add/list/remove https link attachments on drafts
+  - Draft-only mutation
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/cls02_classroom_attachments.sql
+  - packages/nano_domain/test/teacher_classroom_test.dart
+  - packages/nano_data/test/teacher_classroom_repository_test.dart
+  - apps/teacher_app/test/teacher_classroom_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - draft_only_attachment_mutate
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Add and remove link attachments on a draft announcement
+rollback_notes: >
+  Revert the branch and migration. Announcements remain.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Link attachments + optional file metadata on drafts.
+  deferred: >
+    Binary upload worker; malware scan; CLS-03; FLX-04.

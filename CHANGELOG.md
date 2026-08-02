@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- CLS-02: teachers attach https links to draft classroom announcements
 - CLS-01: teachers create draft classroom announcements for assigned scopes
 - MRK-05: teachers see class performance summaries for published assessments
 - MRK-04: teachers publish draft marks and correct published entries with immutable history

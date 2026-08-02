@@ -1,7 +1,7 @@
 id: CLS-01
 name: "Teacher Classroom Announcements"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - TCH-02
 dependency_notes: >

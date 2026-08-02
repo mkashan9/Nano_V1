@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] CLS-01 Teacher Classroom Announcements
+- [ ] CLS-02 Classroom Materials and Attachments
 
 ## Completed
 
+- [x] CLS-01
 - [x] MRK-05
 - [x] MRK-04
 - [x] MRK-03

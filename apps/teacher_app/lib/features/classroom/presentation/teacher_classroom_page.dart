@@ -3,7 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// CLS-01 Classroom: draft announcements for assigned scopes.
+/// CLS-01/CLS-02 Classroom: announcements plus draft link attachments.
 class TeacherClassroomPage extends StatefulWidget {
   const TeacherClassroomPage({
     super.key,
@@ -26,8 +26,11 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
   String? _editingId;
   final _title = TextEditingController();
   final _body = TextEditingController();
+  final _attTitle = TextEditingController();
+  final _attUrl = TextEditingController();
   var _publishNow = false;
   var _saving = false;
+  var _attBusy = false;
   String? _message;
 
   @override
@@ -41,7 +44,19 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
   void dispose() {
     _title.dispose();
     _body.dispose();
+    _attTitle.dispose();
+    _attUrl.dispose();
     super.dispose();
+  }
+
+  TeacherClassroomItem? get _editingItem {
+    final id = _editingId;
+    final list = _list;
+    if (id == null || list == null) return null;
+    for (final item in list.items) {
+      if (item.id == id) return item;
+    }
+    return null;
   }
 
   Future<void> _bootstrap() async {
@@ -92,6 +107,8 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
     _editingId = null;
     _title.clear();
     _body.clear();
+    _attTitle.clear();
+    _attUrl.clear();
     _publishNow = false;
   }
 
@@ -101,6 +118,8 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
       _title.text = item.title;
       _body.text = item.body;
       _publishNow = false;
+      _attTitle.clear();
+      _attUrl.clear();
       _message = null;
     });
   }
@@ -134,13 +153,74 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
         _list = list;
         _saving = false;
         _message = copy.teacherClassroomSaved;
-        _resetForm();
+        if (_editingId == null) {
+          _resetForm();
+        }
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _saving = false;
         _message = copy.teacherClassroomSaveFailed;
+      });
+    }
+  }
+
+  Future<void> _addLink() async {
+    final itemId = _editingId;
+    if (itemId == null || _attBusy) return;
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    setState(() {
+      _attBusy = true;
+      _message = null;
+    });
+    try {
+      final list = await widget.repository.addAttachment(
+        itemId: itemId,
+        input: TeacherClassroomAttachmentInput(
+          title: _attTitle.text,
+          url: _attUrl.text,
+        ),
+      );
+      if (!mounted) return;
+      setState(() {
+        _list = list;
+        _attBusy = false;
+        _attTitle.clear();
+        _attUrl.clear();
+        _message = copy.teacherClassroomAttachmentAdded;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _attBusy = false;
+        _message = copy.teacherClassroomAttachmentFailed;
+      });
+    }
+  }
+
+  Future<void> _removeAttachment(String attachmentId) async {
+    if (_attBusy) return;
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    setState(() {
+      _attBusy = true;
+      _message = null;
+    });
+    try {
+      final list = await widget.repository.removeAttachment(attachmentId);
+      if (!mounted) return;
+      setState(() {
+        _list = list;
+        _attBusy = false;
+        _message = copy.teacherClassroomAttachmentRemoved;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _attBusy = false;
+        _message = copy.teacherClassroomAttachmentFailed;
       });
     }
   }
@@ -152,6 +232,7 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
     final theme = Theme.of(context);
     final mine = _mine;
     final list = _list;
+    final editing = _editingItem;
 
     return NanoViewStateHost(
       state: _state,
@@ -246,6 +327,55 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
                       ),
                   ],
                 ),
+                if (editing != null && editing.isDraft) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    copy.teacherClassroomAttachmentsTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    copy.teacherClassroomAttachmentsSubtitle,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _attTitle,
+                    decoration: InputDecoration(
+                      labelText: copy.teacherClassroomAttachmentTitleLabel,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _attUrl,
+                    decoration: InputDecoration(
+                      labelText: copy.teacherClassroomAttachmentUrlLabel,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FilledButton.tonal(
+                    onPressed: _attBusy ? null : _addLink,
+                    child: Text(copy.teacherClassroomAddLink),
+                  ),
+                  if (editing.attachments.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(copy.teacherClassroomAttachmentsEmpty),
+                    )
+                  else
+                    for (final att in editing.attachments)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(att.title),
+                        subtitle: Text(att.url ?? att.storagePath ?? ''),
+                        trailing: TextButton(
+                          onPressed: _attBusy
+                              ? null
+                              : () => _removeAttachment(att.id),
+                          child: Text(copy.teacherClassroomRemoveAttachment),
+                        ),
+                      ),
+                ],
                 if (_message != null) ...[
                   const SizedBox(height: 8),
                   Text(_message!, style: theme.textTheme.bodyMedium),
@@ -266,9 +396,16 @@ class _TeacherClassroomPageState extends State<TeacherClassroomPage> {
                       subtitle: Text(
                         copy.teacherClassroomListSubtitle(
                           item.status.wire,
-                          item.body.trim().isEmpty
-                              ? copy.teacherClassroomBodyEmpty
-                              : item.body,
+                          [
+                            if (item.body.trim().isEmpty)
+                              copy.teacherClassroomBodyEmpty
+                            else
+                              item.body,
+                            if (item.attachments.isNotEmpty)
+                              copy.teacherClassroomAttachmentCount(
+                                item.attachments.length,
+                              ),
+                          ].join(' · '),
                         ),
                       ),
                       trailing: item.isDraft
