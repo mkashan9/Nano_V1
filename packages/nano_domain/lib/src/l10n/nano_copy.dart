@@ -632,12 +632,16 @@ class NanoCopy {
   String get teachersImportTitle =>
       isUrdu ? 'CSV درآمد' : 'CSV import';
   String get teachersImportSubtitle => isUrdu
-      ? 'کالم: display_name,email — ناکام قطاریں کچھ نہیں لکھتیں۔'
-      : 'Columns: display_name,email — failed rows write nothing.';
+      ? 'کالم: display_name,email — سانچہ ڈاؤن لوڈ کریں یا فائل چنیں، پھر پیش منظر۔'
+      : 'Columns: display_name,email — download the template or choose a CSV, then Preview.';
   String get teachersPreviewImport => isUrdu ? 'پیش منظر' : 'Preview';
   String get teachersCommitImport => isUrdu ? 'محفوظ درآمد' : 'Commit import';
   String get teachersLoadTemplate =>
-      isUrdu ? 'سانچہ' : 'Load template';
+      isUrdu ? 'سانچہ پیسٹ کریں' : 'Paste template';
+  String get teachersDownloadTemplate =>
+      isUrdu ? 'سانچہ ڈاؤن لوڈ' : 'Download template';
+  String get teachersChooseCsv =>
+      isUrdu ? 'CSV فائل چنیں' : 'Choose CSV file';
   String teachersImportPreviewSummary(int ok, int fail) => isUrdu
       ? '$ok ٹھیک، $fail ناکام'
       : '$ok ready, $fail failed';
@@ -664,12 +668,16 @@ class NanoCopy {
   String get studentsImportTitle =>
       isUrdu ? 'CSV درآمد' : 'CSV import';
   String get studentsImportSubtitle => isUrdu
-      ? 'کالم: display_name,email,class_name — ناکام قطاریں کچھ نہیں لکھتیں۔'
-      : 'Columns: display_name,email,class_name — failed rows write nothing.';
+      ? 'کالم: display_name,email,class_name — فائل چنیں یا پیش منظر دبائیں؛ صرف صفر ناکامی پر محفوظ درآمد چالو ہوگا۔ class_name فعال کلاس سے میل کھانا چاہیے۔'
+      : 'Columns: display_name,email,class_name — Choose CSV or tap Preview; Commit enables only when every row passes. class_name must match an active class.';
   String get studentsPreviewImport => isUrdu ? 'پیش منظر' : 'Preview';
   String get studentsCommitImport => isUrdu ? 'محفوظ درآمد' : 'Commit import';
   String get studentsLoadTemplate =>
-      isUrdu ? 'سانچہ' : 'Load template';
+      isUrdu ? 'سانچہ پیسٹ کریں' : 'Paste template';
+  String get studentsDownloadTemplate =>
+      isUrdu ? 'سانچہ ڈاؤن لوڈ' : 'Download template';
+  String get studentsChooseCsv =>
+      isUrdu ? 'CSV فائل چنیں' : 'Choose CSV file';
   String studentsImportPreviewSummary(int ok, int fail) => isUrdu
       ? '$ok ٹھیک، $fail ناکام'
       : '$ok ready, $fail failed';

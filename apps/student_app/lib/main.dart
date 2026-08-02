@@ -26,6 +26,10 @@ void main() {
   MissionRepository? missionRepository;
   StreakRepository? streakRepository;
   ShareCardRepository? shareCardRepository;
+  StudentAttendanceRepository? studentAttendanceRepository;
+  StudentMarksRepository? studentMarksRepository;
+  StudentClassroomRepository? studentClassroomRepository;
+  StudentFlexRepository? studentFlexRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -47,6 +51,14 @@ void main() {
     missionRepository = SupabaseMissionRepository(client);
     streakRepository = SupabaseStreakRepository(client);
     shareCardRepository = SupabaseShareCardRepository(client);
+    studentAttendanceRepository = SupabaseStudentAttendanceRepository(client);
+    studentMarksRepository = SupabaseStudentMarksRepository(client);
+    studentClassroomRepository = SupabaseStudentClassroomRepository(client);
+    studentFlexRepository = ComposedStudentFlexRepository(
+      attendance: studentAttendanceRepository!,
+      marks: studentMarksRepository!,
+      classroom: studentClassroomRepository!,
+    );
     requireAuth = true;
   }
   runApp(
@@ -62,6 +74,10 @@ void main() {
       missionRepository: missionRepository,
       streakRepository: streakRepository,
       shareCardRepository: shareCardRepository,
+      studentFlexRepository: studentFlexRepository,
+      studentAttendanceRepository: studentAttendanceRepository,
+      studentMarksRepository: studentMarksRepository,
+      studentClassroomRepository: studentClassroomRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -97,6 +113,10 @@ class NanoStudentApp extends StatefulWidget {
     this.missionRepository,
     this.streakRepository,
     this.shareCardRepository,
+    this.studentFlexRepository,
+    this.studentAttendanceRepository,
+    this.studentMarksRepository,
+    this.studentClassroomRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -148,6 +168,13 @@ class NanoStudentApp extends StatefulWidget {
   /// XP-06: featured pins and privacy-safe share cards. Optional — without it
   /// Me keeps fixture awards without pin/share actions.
   final ShareCardRepository? shareCardRepository;
+
+  /// FLX live attendance / marks / classroom. Optional — without them Flex
+  /// falls back to fake seed data (preview / tests).
+  final StudentFlexRepository? studentFlexRepository;
+  final StudentAttendanceRepository? studentAttendanceRepository;
+  final StudentMarksRepository? studentMarksRepository;
+  final StudentClassroomRepository? studentClassroomRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -534,6 +561,10 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       quizAttemptRepository: _quizAttemptRepository,
       syncController: _syncController,
       shareCards: _shareCardRepository,
+      flexRepository: widget.studentFlexRepository,
+      studentAttendanceRepository: widget.studentAttendanceRepository,
+      studentMarksRepository: widget.studentMarksRepository,
+      studentClassroomRepository: widget.studentClassroomRepository,
     );
   }
 

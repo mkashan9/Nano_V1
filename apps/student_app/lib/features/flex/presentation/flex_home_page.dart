@@ -14,11 +14,17 @@ class FlexHomePage extends StatefulWidget {
     super.key,
     required this.repository,
     required this.flexEligible,
+    this.attendanceRepository,
+    this.marksRepository,
+    this.classroomRepository,
     this.initialSection,
   });
 
   final StudentFlexRepository repository;
   final bool flexEligible;
+  final StudentAttendanceRepository? attendanceRepository;
+  final StudentMarksRepository? marksRepository;
+  final StudentClassroomRepository? classroomRepository;
   final FlexHubSectionKind? initialSection;
 
   @override
@@ -28,6 +34,15 @@ class FlexHomePage extends StatefulWidget {
 class _FlexHomePageState extends State<FlexHomePage> {
   NanoViewState _state = const NanoViewLoading();
   FlexHubSummary? _hub;
+
+  StudentAttendanceRepository get _attendance =>
+      widget.attendanceRepository ?? FakeStudentAttendanceRepository();
+
+  StudentMarksRepository get _marks =>
+      widget.marksRepository ?? FakeStudentMarksRepository();
+
+  StudentClassroomRepository get _classroom =>
+      widget.classroomRepository ?? FakeStudentClassroomRepository();
 
   @override
   void initState() {
@@ -65,9 +80,7 @@ class _FlexHomePageState extends State<FlexHomePage> {
     if (kind == FlexHubSectionKind.attendance) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => StudentAttendancePage(
-            repository: FakeStudentAttendanceRepository(),
-          ),
+          builder: (_) => StudentAttendancePage(repository: _attendance),
         ),
       );
       return;
@@ -75,9 +88,7 @@ class _FlexHomePageState extends State<FlexHomePage> {
     if (kind == FlexHubSectionKind.marks) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => StudentMarksPage(
-            repository: FakeStudentMarksRepository(),
-          ),
+          builder: (_) => StudentMarksPage(repository: _marks),
         ),
       );
       return;
@@ -85,9 +96,7 @@ class _FlexHomePageState extends State<FlexHomePage> {
     if (kind == FlexHubSectionKind.classroom) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => StudentClassroomPage(
-            repository: FakeStudentClassroomRepository(),
-          ),
+          builder: (_) => StudentClassroomPage(repository: _classroom),
         ),
       );
       return;

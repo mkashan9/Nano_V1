@@ -30,4 +30,36 @@ void main() {
     expect(find.text('Mathematics (MATH)'), findsOneWidget);
     expect(find.text('Add grade'), findsOneWidget);
   });
+
+  testWidgets('empty school still shows Add grade / Add class', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(1400, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      NanoLocaleScope(
+        locale: NanoAppLocale.en,
+        copy: const NanoCopy(NanoAppLocale.en),
+        child: MaterialApp(
+          theme: NanoTheme.schoolAdmin(),
+          home: AcademicStructurePage(
+            repository: FakeAcademicStructureRepository(
+              seed: const AcademicStructure(
+                schoolId: TenancyFixtures.alphaSchoolId,
+                gradeLevels: [],
+                classes: [],
+                sections: [],
+                subjects: [],
+                classSubjects: [],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add grade'), findsOneWidget);
+    expect(find.text('Add class'), findsOneWidget);
+    expect(find.text('Add subject'), findsOneWidget);
+  });
 }

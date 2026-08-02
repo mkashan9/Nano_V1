@@ -1,3 +1,4 @@
+import 'package:admin_web/app/csv_browser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
@@ -341,7 +342,35 @@ class _SchoolTeachersPageState extends State<SchoolTeachersPage> {
                 const SizedBox(height: NanoSpacing.sm),
                 Wrap(
                   spacing: NanoSpacing.sm,
+                  runSpacing: NanoSpacing.sm,
                   children: [
+                    OutlinedButton(
+                      onPressed: _busy
+                          ? null
+                          : () {
+                              downloadCsvFile(
+                                filename: 'nano_teachers_template.csv',
+                                contents: TeacherImportCsv.template,
+                              );
+                              _csv.text = TeacherImportCsv.template;
+                              setState(() {});
+                            },
+                      child: Text(copy.teachersDownloadTemplate),
+                    ),
+                    OutlinedButton(
+                      onPressed: _busy
+                          ? null
+                          : () async {
+                              final text = await pickCsvFile();
+                              if (!mounted || text == null) return;
+                              setState(() {
+                                _csv.text = text;
+                                _preview = null;
+                              });
+                              await _previewImport();
+                            },
+                      child: Text(copy.teachersChooseCsv),
+                    ),
                     OutlinedButton(
                       onPressed: _busy ? null : _previewImport,
                       child: Text(copy.teachersPreviewImport),
