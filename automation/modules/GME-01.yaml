@@ -1,7 +1,7 @@
 id: GME-01
 name: "Game Catalog and Eligibility"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-03
   - STU-04
