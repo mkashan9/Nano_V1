@@ -1,7 +1,7 @@
 id: GME-04
 name: "Game Download, Version, and Storage State"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - GME-01
 dependency_notes: >
