@@ -20,6 +20,9 @@ abstract class FriendGraphRepository {
   Future<List<BlockedPeer>> listBlocks();
 
   Future<void> unblock(String peerToken);
+
+  /// SOC-03 weekly XP ranks among caller + friends.
+  Future<FriendsLeaderboard> friendsLeaderboard({int limit = 25});
 }
 
 class FakeFriendGraphRepository implements FriendGraphRepository {
@@ -27,13 +30,35 @@ class FakeFriendGraphRepository implements FriendGraphRepository {
     List<FriendRequest>? requests,
     List<FriendPeer>? friends,
     List<BlockedPeer>? blocks,
+    FriendsLeaderboard? leaderboard,
   })  : _requests = [...?requests],
         _friends = [...?friends],
-        _blocks = [...?blocks];
+        _blocks = [...?blocks],
+        _leaderboard = leaderboard ??
+            const FriendsLeaderboard(
+              weekKey: '2026-W31',
+              friendCount: 1,
+              myRank: 1,
+              myWeekXp: 120,
+              entries: [
+                FriendsBoardEntry(
+                  rank: 1,
+                  weekXp: 120,
+                  displayLabel: 'You',
+                  isMe: true,
+                ),
+                FriendsBoardEntry(
+                  rank: 2,
+                  weekXp: 80,
+                  displayLabel: 'sara',
+                ),
+              ],
+            );
 
   final List<FriendRequest> _requests;
   final List<FriendPeer> _friends;
   final List<BlockedPeer> _blocks;
+  final FriendsLeaderboard _leaderboard;
   final sentQueries = <String>[];
   final blockedQueries = <String>[];
 
@@ -140,6 +165,20 @@ class FakeFriendGraphRepository implements FriendGraphRepository {
   Future<void> unblock(String peerToken) async {
     _blocks.removeWhere((b) => b.peerToken == peerToken);
   }
+
+  @override
+  Future<FriendsLeaderboard> friendsLeaderboard({int limit = 25}) async {
+    final capped = _leaderboard.entries.take(limit).toList();
+    return FriendsLeaderboard(
+      weekKey: _leaderboard.weekKey,
+      entries: capped,
+      myRank: _leaderboard.myRank,
+      myWeekXp: _leaderboard.myWeekXp,
+      friendCount: _friends.isEmpty
+          ? _leaderboard.friendCount
+          : _friends.length,
+    );
+  }
 }
 
 class SupabaseFriendGraphRepository implements FriendGraphRepository {
@@ -229,5 +268,15 @@ class SupabaseFriendGraphRepository implements FriendGraphRepository {
   @override
   Future<void> unblock(String peerToken) async {
     await _client.rpc('unblock_user', params: {'p_peer_token': peerToken});
+  }
+
+  @override
+  Future<FriendsLeaderboard> friendsLeaderboard({int limit = 25}) async {
+    final raw = await _client.rpc(
+      'my_friends_leaderboard',
+      params: {'p_limit': limit},
+    );
+    if (raw is! Map) throw StateError('Friends leaderboard unavailable.');
+    return FriendsLeaderboard.fromJson(Map<String, dynamic>.from(raw));
   }
 }

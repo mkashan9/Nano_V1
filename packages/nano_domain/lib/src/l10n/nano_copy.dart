@@ -1068,6 +1068,16 @@ class NanoCopy {
   String get friendsTab => isUrdu ? 'دوست' : 'Friends';
   String get requestsTab => isUrdu ? 'درخواستیں' : 'Requests';
   String get blockedTab => isUrdu ? 'بلاک' : 'Blocked';
+  String get rankingTab => isUrdu ? 'درجہ' : 'Ranking';
+  String get friendsRankingEmpty => isUrdu
+      ? 'دوست شامل کریں تاکہ ہفتہ وار درجہ نظر آئے۔'
+      : 'Add friends to see this week’s ranking.';
+  String friendsRankingSubtitle(String weekKey, int friendCount) => isUrdu
+      ? '$weekKey · $friendCount دوست'
+      : '$weekKey · $friendCount friends';
+  String friendsMyRank(int rank, int weekXp) => isUrdu
+      ? 'آپ #$rank · $weekXp XP'
+      : 'You #$rank · $weekXp XP';
   String get friendsEmpty =>
       isUrdu ? 'ابھی کوئی دوست نہیں۔' : 'No friends yet.';
   String get requestsEmpty =>

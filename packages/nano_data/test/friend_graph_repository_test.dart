@@ -31,4 +31,15 @@ void main() {
     await repo.unblock('blk-sara');
     expect(await repo.listBlocks(), isEmpty);
   });
+
+  test('fake friends leaderboard returns privacy-safe ranks', () async {
+    final repo = FakeFriendGraphRepository();
+    final board = await repo.friendsLeaderboard();
+    expect(board.weekKey, isNotEmpty);
+    expect(board.entries.first.isMe, isTrue);
+    expect(
+      board.entries.any((e) => e.displayLabel.toLowerCase().contains('user')),
+      isFalse,
+    );
+  });
 }

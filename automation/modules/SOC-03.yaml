@@ -1,45 +1,64 @@
 id: SOC-03
 name: "Friends Leaderboards"
 release: R9
-status: BACKLOG
+status: DONE
 dependencies:
   - SOC-02
   - LGE-02
+dependency_notes: >
+  Weekly XP among friends; school/division boards remain LGE-02.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SOC-03/
   - automation/modules/SOC-03.yaml
+  - automation/modules/SOC-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SOC-03"
+  - "Handbook SOC-03 friends ranking"
 ui_references: []
 database_scope: []
-server_functions: []
+server_functions:
+  - "public.my_friends_leaderboard"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Friends ranking uses weekly league XP
+  - Labels are privacy-safe with no peer user ids
+  - Ranking visible from Friends inbox
 required_tests:
-  - documentation_review
+  - supabase/tests/soc03_friends_leaderboard.sql
+  - packages/nano_domain/test/friends_leaderboard_test.dart
+  - packages/nano_data/test/friend_graph_repository_test.dart
+  - apps/student_app/test/friends_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - no_peer_user_ids
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Friends Ranking with two friends who earned week XP
+rollback_notes: >
+  Revert branch and migration. Friends page returns to three tabs.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Weekly friends XP board only.
+  deferred: >
+    All-time XP toggle; challenge CTAs on friend ranks.
