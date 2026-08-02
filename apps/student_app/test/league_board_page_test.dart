@@ -7,7 +7,8 @@ import 'package:student_app/features/league/presentation/league_board_page.dart'
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 
 void main() {
-  testWidgets('joined profile opens privacy-safe leaderboard', (tester) async {
+  testWidgets('board challenges peer and opens challenges inbox',
+      (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 2400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -33,7 +34,12 @@ void main() {
         divisionSlug: 'bronze',
         divisionTitleEn: 'Bronze',
         entries: [
-          LeagueBoardEntry(rank: 1, weekXp: 80, displayLabel: 'Sara'),
+          LeagueBoardEntry(
+            rank: 1,
+            weekXp: 80,
+            displayLabel: 'Sara',
+            targetToken: 'tok-sara',
+          ),
           LeagueBoardEntry(
             rank: 2,
             weekXp: 40,
@@ -68,16 +74,19 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-
-    expect(find.text('View board'), findsOneWidget);
     await tester.tap(find.text('View board'));
     await tester.pumpAndSettle();
 
-    expect(find.text("This week’s board"), findsOneWidget);
-    expect(find.text('Sara'), findsOneWidget);
-    expect(find.text('Ali (you)'), findsOneWidget);
-    expect(find.textContaining('Alpha'), findsNothing);
-    expect(leagues.boardCalls, 1);
+    expect(find.text('Challenge'), findsOneWidget);
+    await tester.tap(find.text('Challenge'));
+    await tester.pumpAndSettle();
+    expect(leagues.challengeCalls, 1);
+    expect(find.text('Challenge sent.'), findsOneWidget);
+
+    await tester.tap(find.text('Challenges'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Number Rush duel'), findsOneWidget);
+    expect(find.textContaining('Sara'), findsWidgets);
   });
 
   testWidgets('board page shows must-join when not joined', (tester) async {

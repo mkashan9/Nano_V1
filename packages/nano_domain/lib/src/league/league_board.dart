@@ -5,19 +5,26 @@ class LeagueBoardEntry {
     required this.weekXp,
     required this.displayLabel,
     this.isMe = false,
+    this.targetToken,
   });
 
   final int rank;
   final int weekXp;
   final String displayLabel;
   final bool isMe;
+  final String? targetToken;
+
+  bool get canChallenge =>
+      !isMe && targetToken != null && targetToken!.isNotEmpty;
 
   factory LeagueBoardEntry.fromJson(Map<String, dynamic> json) {
+    final token = json['target_token'] as String?;
     return LeagueBoardEntry(
       rank: (json['rank'] as num?)?.toInt() ?? 0,
       weekXp: (json['week_xp'] as num?)?.toInt() ?? 0,
       displayLabel: json['display_label'] as String? ?? 'Learner',
       isMe: json['is_me'] as bool? ?? false,
+      targetToken: (token == null || token.isEmpty) ? null : token,
     );
   }
 }

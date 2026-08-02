@@ -2,18 +2,18 @@
 
 ## Current state
 
-- **Current release:** R8 Games
-- **Current module:** LGE-03 Challenges and Rematches
+- **Current release:** R9 Social
+- **Current module:** SOC-01 Usernames, Friend Codes, and Limited Profiles
 - **Current status:** ACTIVE
-- **Current branch:** module/LGE-03-challenges-rematches
-- **Last completed module:** LGE-02
+- **Current branch:** module/SOC-01-usernames-friend-codes
+- **Last completed module:** LGE-03
 - **Application name:** Nano
 
 ## Releases
 
-- R1-R7: complete
-- R8: GME/LGE-01..LGE-02 DONE; LGE-03 ACTIVE
+- R1–R8: complete
+- R9: SOC-01 ACTIVE
 
 ## Owner decision waiting
 
-None - implementing LGE-03.
+None — implementing SOC-01.

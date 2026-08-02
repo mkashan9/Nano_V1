@@ -993,6 +993,17 @@ class NanoCopy {
   String get leagueMustJoin => isUrdu
       ? 'پہلے اس ہفتے کی لیگ میں شامل ہوں۔'
       : 'Join this week’s league first.';
+  String get leagueChallenge => isUrdu ? 'چیلنج' : 'Challenge';
+  String get leagueChallengesTitle => isUrdu ? 'چیلنجز' : 'Challenges';
+  String get leagueChallengeSent => isUrdu ? 'چیلنج بھیج دیا۔' : 'Challenge sent.';
+  String get leagueChallengeAccept => isUrdu ? 'قبول' : 'Accept';
+  String get leagueChallengeDecline => isUrdu ? 'مسترد' : 'Decline';
+  String get leagueChallengeRecord =>
+      isUrdu ? 'اسکور محفوظ کریں' : 'Record score';
+  String get leagueChallengeRematch => isUrdu ? 'دوبارہ کھیلیں' : 'Rematch';
+  String get leagueChallengesEmpty => isUrdu
+      ? 'ابھی کوئی چیلنج نہیں۔'
+      : 'No challenges yet.';
   String get notificationsLabel => isUrdu ? 'اطلاعات' : 'Notifications';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>
