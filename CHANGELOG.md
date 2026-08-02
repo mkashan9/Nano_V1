@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SOC-01: usernames, friend codes, and limited profile lookup
 - LGE-03: board-peer challenges and rematches (opaque tokens)
 - LGE-02: privacy-safe weekly leaderboard from Profile
 - LGE-01: weekly league personal status on Profile (verified game XP)

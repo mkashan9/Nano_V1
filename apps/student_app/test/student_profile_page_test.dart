@@ -7,6 +7,7 @@ import 'package:student_app/features/profile/presentation/student_profile_page.d
 
 Widget _host({
   required StudentProfileRepository repository,
+  SocialIdentityRepository? socialIdentityRepository,
   NanoSyncController? sync,
   Future<void> Function()? onSignOut,
   ValueChanged<StudentPreferences>? onPreferences,
@@ -27,6 +28,7 @@ Widget _host({
           onOpenAccessibility: () {},
           onSignOut: onSignOut,
           syncController: sync,
+          socialIdentityRepository: socialIdentityRepository,
         ),
       ),
     ),
@@ -67,6 +69,28 @@ void main() {
     expect(find.text('Let others find me'), findsOneWidget);
     expect(find.text('Devices'), findsOneWidget);
     expect(find.textContaining('This device'), findsOneWidget);
+  });
+
+  testWidgets('claims username and looks up limited profile', (tester) async {
+    final social = FakeSocialIdentityRepository();
+    await _pump(
+      tester,
+      _host(repository: _repo(), socialIdentityRepository: social),
+    );
+
+    expect(find.text('Username & friend code'), findsOneWidget);
+    expect(find.text('AB12CD34'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField).first, 'ali_play');
+    await tester.tap(find.text('Save username'));
+    await tester.pumpAndSettle();
+    expect(social.claimedUsernames, ['ali_play']);
+
+    await tester.enterText(find.byType(TextField).at(1), 'sara');
+    await tester.tap(find.text('Look up'));
+    await tester.pumpAndSettle();
+    expect(find.text('Limited profile'), findsOneWidget);
+    expect(find.text('sara'), findsWidgets);
   });
 
   testWidgets('toggling privacy persists through the repository',

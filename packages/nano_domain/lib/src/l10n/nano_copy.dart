@@ -1032,6 +1032,32 @@ class NanoCopy {
       isUrdu ? 'اعزازات دکھائیں' : 'Show my achievements';
   String get allowFriendRequestsLabel =>
       isUrdu ? 'دوستی کی درخواستیں' : 'Allow friend requests';
+  String get socialIdentityLabel =>
+      isUrdu ? 'صارف نام اور فرینڈ کوڈ' : 'Username & friend code';
+  String get usernameLabel => isUrdu ? 'صارف نام' : 'Username';
+  String get usernameHint => isUrdu
+      ? 'حروف، اعداد، انڈر اسکور — 3 تا 20'
+      : 'Letters, numbers, underscore — 3 to 20';
+  String get claimUsernameLabel =>
+      isUrdu ? 'صارف نام محفوظ کریں' : 'Save username';
+  String get friendCodeLabel => isUrdu ? 'فرینڈ کوڈ' : 'Friend code';
+  String get copyFriendCodeLabel => isUrdu ? 'کاپی' : 'Copy';
+  String get rotateFriendCodeLabel =>
+      isUrdu ? 'نیا کوڈ' : 'New code';
+  String get friendCodeCopiedSnack =>
+      isUrdu ? 'فرینڈ کوڈ کاپی ہو گیا' : 'Friend code copied';
+  String get findFriendsLabel =>
+      isUrdu ? 'دوست تلاش کریں' : 'Find a friend';
+  String get findFriendsHint => isUrdu
+      ? 'صارف نام یا فرینڈ کوڈ'
+      : 'Username or friend code';
+  String get lookupProfileLabel => isUrdu ? 'تلاش' : 'Look up';
+  String get limitedProfileTitle =>
+      isUrdu ? 'محدود پروفائل' : 'Limited profile';
+  String get acceptsRequestsLabel =>
+      isUrdu ? 'درخواستیں قبول کرتی ہے' : 'Accepts friend requests';
+  String get noRequestsLabel =>
+      isUrdu ? 'درخواستیں بند' : 'Not accepting requests';
   String get devicesLabel => isUrdu ? 'ڈیوائسز' : 'Devices';
   String get thisDeviceLabel => isUrdu ? 'یہ ڈیوائس' : 'This device';
   String get revokeLabel => isUrdu ? 'رسائی ختم کریں' : 'Sign out device';
