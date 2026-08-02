@@ -42,6 +42,7 @@ class NanoCopy {
   String get attendance => isUrdu ? 'حاضری' : 'Attendance';
   String get marks => isUrdu ? 'نمبر' : 'Marks';
   String get classroom => isUrdu ? 'کلاس روم' : 'Classroom';
+  String get feedback => isUrdu ? 'رائے' : 'Feedback';
 
   String get overview => isUrdu ? 'جائزہ' : 'Overview';
   String get students => isUrdu ? 'طلبہ' : 'Students';
@@ -1409,6 +1410,7 @@ class NanoCopy {
         'attendance' => attendance,
         'marks' => marks,
         'classroom' => classroom,
+        'feedback' => feedback,
         'overview' => overview,
         'students' => students,
         'teachers' => teachers,

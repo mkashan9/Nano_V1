@@ -1,44 +1,75 @@
 id: FBK-01
 name: "Teacher-Guardian Structured Feedback"
 release: R7
-status: BACKLOG
+status: DONE
 dependencies:
   - TCH-02
+dependency_notes: >
+  Teacher writes structured feedback for roster students. Guardian read
+  deferred to PAR-*. No student Flex surface in this slice.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/FBK-01/
   - automation/modules/FBK-01.yaml
+  - automation/modules/FLX-04.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook PAR-01 Guardian guidance (teacher write side)"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for FBK-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.feedback_notes
+server_functions:
+  - "public.teacher_feedback_list"
+  - "public.teacher_feedback_create"
+  - "public.teacher_feedback_update"
+  - "nano_internal.require_feedback_roster_student"
 acceptance:
+  - Teacher can draft and publish structured feedback for roster students
+  - Non-roster students rejected server-side
+  - Published notes are not editable
+  - No authenticated table grants on feedback_notes
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/fbk01_teacher_feedback.sql
+  - packages/nano_domain/test/teacher_feedback_test.dart
+  - packages/nano_data/test/teacher_feedback_repository_test.dart
+  - apps/teacher_app/test/teacher_feedback_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - assignment_scoped_rpc
+  - roster_student_required
+  - rpc_only_table_access
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Feedback, save draft, publish for a roster student
+rollback_notes: >
+  Revert branch and migration. Feedback nav returns to placeholder.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Teacher draft/publish structured notes (effort/behavior/progress).
+  deferred: >
+    Guardian read/reply; notifications; student Flex surface; archive.

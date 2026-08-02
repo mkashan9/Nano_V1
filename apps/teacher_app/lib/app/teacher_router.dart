@@ -23,6 +23,7 @@ GoRouter createTeacherRouter({
   TeacherAttendanceRepository? teacherAttendanceRepository,
   TeacherAssessmentRepository? teacherAssessmentRepository,
   TeacherClassroomRepository? teacherClassroomRepository,
+  TeacherFeedbackRepository? teacherFeedbackRepository,
 }) {
   final visible = NavCatalog.visibleFor(principal);
   final destinations = visible.isNotEmpty
@@ -119,6 +120,7 @@ GoRouter createTeacherRouter({
             teacherAttendanceRepository: teacherAttendanceRepository,
             teacherAssessmentRepository: teacherAssessmentRepository,
             teacherClassroomRepository: teacherClassroomRepository,
+            teacherFeedbackRepository: teacherFeedbackRepository,
           );
         },
         branches: [
@@ -135,6 +137,7 @@ GoRouter createTeacherRouter({
                     teacherAttendanceRepository: teacherAttendanceRepository,
                     teacherAssessmentRepository: teacherAssessmentRepository,
                     teacherClassroomRepository: teacherClassroomRepository,
+                    teacherFeedbackRepository: teacherFeedbackRepository,
                     assignmentId: state.uri.queryParameters['assignment'],
                   ),
                 ),

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- FBK-01: teachers draft and publish structured feedback for roster students
 - FLX-04: students read published classroom announcements and acknowledge
 - FLX-03: students view their own published marks by month
 - FLX-02: students view their own submitted attendance by month

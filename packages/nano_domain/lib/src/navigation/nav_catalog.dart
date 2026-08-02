@@ -128,6 +128,13 @@ abstract final class NavCatalog {
       requiredPermission: 'teacher.classroom',
     ),
     NavDestination(
+      id: 'feedback',
+      label: 'Feedback',
+      path: '/feedback',
+      iconName: 'feedback',
+      requiredPermission: 'teacher.feedback',
+    ),
+    NavDestination(
       id: 'profile',
       label: 'Profile',
       path: '/profile',
