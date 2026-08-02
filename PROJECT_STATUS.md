@@ -4,16 +4,16 @@
 
 - **Current release:** R8 Games
 - **Current module:** LGE-03 Challenges and Rematches
-- **Current status:** ACTIVE
+- **Current status:** USER_TEST
 - **Current branch:** module/LGE-03-challenges-rematches
 - **Last completed module:** LGE-02
 - **Application name:** Nano
 
 ## Releases
 
-- R1-R7: complete
-- R8: GME/LGE-01..LGE-02 DONE; LGE-03 ACTIVE
+- R1–R7: complete
+- R8: GME-01..GME-07 DONE; LGE-01..LGE-02 DONE; LGE-03 USER_TEST
 
 ## Owner decision waiting
 
-None - implementing LGE-03.
+Run `docs/modules/LGE-03/MANUAL_TEST.md`. Challenge a board peer and rematch.

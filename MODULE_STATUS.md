@@ -100,7 +100,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | GME-07 | Game Kill Switch and Version Disable | R8 | DONE | GME-01, ADM-06 |
 | LGE-01 | Weekly Leagues | R8 | DONE | GME-05, XP-01 |
 | LGE-02 | Leaderboards | R8 | DONE | LGE-01 |
-| LGE-03 | Challenges and Rematches | R8 | ACTIVE | LGE-02 |
+| LGE-03 | Challenges and Rematches | R8 | USER_TEST | LGE-02 |
 | SOC-01 | Usernames, Friend Codes, and Limited Profiles | R9 | BACKLOG | STU-05, SEC-03 |
 | SOC-02 | Friend Requests, Removal, and Blocking | R9 | BACKLOG | SOC-01 |
 | SOC-03 | Friends Leaderboards | R9 | BACKLOG | SOC-02, LGE-02 |

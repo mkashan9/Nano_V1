@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/league/presentation/league_challenges_page.dart';
 
-/// LGE-02 privacy-safe weekly leaderboard for the caller's pool.
+/// LGE-02/03 privacy-safe weekly leaderboard with Challenge CTAs.
 class LeagueBoardPage extends StatefulWidget {
   const LeagueBoardPage({
     super.key,
@@ -19,6 +20,7 @@ class LeagueBoardPage extends StatefulWidget {
 class _LeagueBoardPageState extends State<LeagueBoardPage> {
   NanoViewState _state = const NanoViewLoading();
   LeagueBoard? _board;
+  String? _busyToken;
 
   @override
   void initState() {
@@ -39,6 +41,36 @@ class _LeagueBoardPageState extends State<LeagueBoardPage> {
       if (!mounted) return;
       setState(() => _state = const NanoViewError());
     }
+  }
+
+  Future<void> _challenge(LeagueBoardEntry entry) async {
+    final token = entry.targetToken;
+    if (token == null || _busyToken != null) return;
+    setState(() => _busyToken = token);
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    try {
+      await widget.repository.createChallenge(token);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(copy.leagueChallengeSent)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not send challenge')),
+      );
+    } finally {
+      if (mounted) setState(() => _busyToken = null);
+    }
+  }
+
+  void _openChallenges() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LeagueChallengesPage(repository: widget.repository),
+      ),
+    );
   }
 
   @override
@@ -63,6 +95,10 @@ class _LeagueBoardPageState extends State<LeagueBoardPage> {
                           copy.leagueBoardTitle,
                           style: theme.textTheme.titleLarge,
                         ),
+                      ),
+                      TextButton(
+                        onPressed: _openChallenges,
+                        child: Text(copy.leagueChallengesTitle),
                       ),
                       TextButton(
                         onPressed: () => Navigator.of(context).maybePop(),
@@ -109,7 +145,15 @@ class _LeagueBoardPageState extends State<LeagueBoardPage> {
                                 ? '${entry.displayLabel} (you)'
                                 : entry.displayLabel,
                           ),
-                          trailing: Text(copy.leagueWeekXp(entry.weekXp)),
+                          subtitle: Text(copy.leagueWeekXp(entry.weekXp)),
+                          trailing: entry.canChallenge
+                              ? TextButton(
+                                  onPressed: _busyToken == entry.targetToken
+                                      ? null
+                                      : () => _challenge(entry),
+                                  child: Text(copy.leagueChallenge),
+                                )
+                              : null,
                         ),
                   ],
                 ],

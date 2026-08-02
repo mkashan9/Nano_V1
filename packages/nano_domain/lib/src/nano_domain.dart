@@ -31,6 +31,7 @@ export 'xp/streak.dart';
 export 'xp/xp_ledger.dart';
 export 'league/league_status.dart';
 export 'league/league_board.dart';
+export 'league/league_challenge.dart';
 export 'media/asset_review.dart';
 export 'media/generated_asset.dart';
 export 'media/generation_budget.dart';

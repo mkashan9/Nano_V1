@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- LGE-03: board-peer challenges and rematches (opaque tokens)
 - LGE-02: privacy-safe weekly leaderboard from Profile
 - LGE-01: weekly league personal status on Profile (verified game XP)
 - GME-07: kill switch aborts active sessions and stops the student host

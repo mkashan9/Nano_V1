@@ -1,44 +1,71 @@
 id: LGE-03
 name: "Challenges and Rematches"
 release: R8
-status: ACTIVE
+status: USER_TEST
 dependencies:
   - LGE-02
+dependency_notes: >
+  Board-peer challenges via opaque tokens; friend invites deferred to SOC-01.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/LGE-03/
   - automation/modules/LGE-03.yaml
+  - automation/modules/LGE-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LGE-03"
+  - "Handbook LGE challenges rematch; friend targeting deferred to SOC-01"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.challenge_rules
+  - public.challenges
+  - public.challenge_results
+  - public.challenge_target_tokens
+server_functions:
+  - "public.create_league_challenge"
+  - "public.respond_league_challenge"
+  - "public.my_league_challenges"
+  - "public.record_league_challenge_score"
+  - "public.create_league_rematch"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Board peers with tokens can be challenged
+  - Accept/decline/rematch work without exposing peer user ids
+  - Scores settle from verified game_results only
 required_tests:
-  - documentation_review
+  - supabase/tests/lge03_challenges.sql
+  - packages/nano_domain/test/league_challenge_test.dart
+  - packages/nano_data/test/league_repository_test.dart
+  - apps/student_app/test/league_board_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - opaque_target_tokens
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Challenge a board peer; accept; record verified scores; rematch
+rollback_notes: >
+  Revert branch and migration. Board returns without Challenge CTA.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    League-pool peer challenges + rematch; Number Rush duel rule.
+  deferred: >
+    Friend invites, blocks, usernames (SOC-01/02); notifications.
