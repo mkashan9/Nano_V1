@@ -3,18 +3,17 @@
 ## Current state
 
 - **Current release:** R7 Teacher Operations
-- **Current module:** ATT-01 In-App Attendance Grid
+- **Current module:** ATT-02 Attendance Excel Download and Upload
 - **Current status:** USER_TEST
-- **Current branch:** module/ATT-01-attendance-grid
-- **Last completed module:** TCH-02
+- **Current branch:** module/ATT-02-attendance-excel
+- **Last completed module:** ATT-01
 - **Application name:** Nano
 
 ## Releases
 
-- R1?R5: complete
-- R6 Administration: complete
-- R7 Teacher Operations: TCH-01?TCH-02 DONE; ATT-01 USER_TEST
+- R1?R6: complete
+- R7 Teacher Operations: TCH-01?TCH-02, ATT-01 DONE; ATT-02 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/ATT-01/MANUAL_TEST.md`. Open Attendance as teacher.
+Run `docs/modules/ATT-02/MANUAL_TEST.md`. Open Attendance import controls.
