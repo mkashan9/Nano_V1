@@ -353,6 +353,54 @@ class NanoCopy {
       MarksEntryStatus.notSubmitted => 'Not submitted',
     };
   }
+
+  String get teacherMarksPublishAction =>
+      isUrdu ? 'شائع کریں' : 'Publish marks';
+  String get teacherMarksPublished =>
+      isUrdu ? 'تشخیص شائع ہو گئی۔' : 'Assessment published.';
+  String get teacherMarksPublishFailed => isUrdu
+      ? 'شائع نہیں ہو سکی۔'
+      : 'Could not publish assessment.';
+  String get teacherMarksOpenAction => isUrdu ? 'کھولیں' : 'Open marks';
+  String get teacherMarksCorrectTitle =>
+      isUrdu ? 'تصحیح' : 'Correction';
+  String get teacherMarksCorrectSubtitle => isUrdu
+      ? 'شائع شدہ نمبر بدلیں — وجہ لازم ہے؛ پرانی قدر محفوظ رہتی ہے۔'
+      : 'Change published marks with a reason — prior values are kept.';
+  String get teacherMarksCorrectReasonLabel =>
+      isUrdu ? 'تصحیح کی وجہ' : 'Correction reason';
+  String get teacherMarksApplyCorrection =>
+      isUrdu ? 'تصحیح محفوظ' : 'Apply correction';
+  String get teacherMarksCorrected =>
+      isUrdu ? 'تصحیح محفوظ ہو گئی۔' : 'Correction saved.';
+  String get teacherMarksCorrectFailed => isUrdu
+      ? 'تصحیح ناکام۔'
+      : 'Could not apply correction.';
+  String get teacherMarksHistoryTitle =>
+      isUrdu ? 'تصحیح کی تاریخ' : 'Correction history';
+  String get teacherMarksHistoryEmpty => isUrdu
+      ? 'ابھی کوئی تصحیح نہیں۔'
+      : 'No corrections yet.';
+  String teacherMarksHistoryLine({
+    required String name,
+    required String previous,
+    required String next,
+    required String reason,
+  }) =>
+      isUrdu
+          ? '$name: $previous → $next ($reason)'
+          : '$name: $previous → $next ($reason)';
+  String teacherMarksStatusValueLabel(
+    MarksEntryStatus status, [
+    double? obtained,
+  ]) {
+    final base = teacherMarksEntryStatusLabel(status);
+    if (status == MarksEntryStatus.scored && obtained != null) {
+      return '$base $obtained';
+    }
+    return base;
+  }
+
   String teacherMarksListSubtitle(
     String category,
     String date,

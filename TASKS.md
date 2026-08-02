@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] MRK-03 Marks Excel Download and Upload
+- [ ] MRK-04 Marks Publication and Correction
 
 ## Completed
 
+- [x] MRK-03
 - [x] MRK-02
 - [x] AUD-01
 - [x] FND-01 through FND-07

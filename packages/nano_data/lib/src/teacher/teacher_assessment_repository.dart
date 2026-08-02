@@ -3,7 +3,7 @@ import 'package:supabase/supabase.dart';
 
 import 'teacher_classes_repository.dart';
 
-/// MRK-01/MRK-02/MRK-03 assessments, marks grid, and CSV import.
+/// MRK-01/MRK-02/MRK-03/MRK-04 assessments, marks grid, import, publish/correct.
 abstract class TeacherAssessmentRepository {
   Future<TeacherMyClasses> listAssignments();
   Future<TeacherAssessmentList> listForAssignment(String assignmentId);
@@ -32,6 +32,19 @@ abstract class TeacherAssessmentRepository {
     required String idempotencyKey,
     required List<Map<String, String>> rows,
   });
+  Future<TeacherMarksGrid> publishMarks({
+    required String assessmentId,
+    String? idempotencyKey,
+  });
+  Future<MarksCorrectionHistory> loadMarksHistory(String assessmentId);
+  Future<MarksCorrectionResult> correctMarks({
+    required String assessmentId,
+    required String studentUserId,
+    required MarksEntryStatus newStatus,
+    double? obtainedMarks,
+    String remarks = '',
+    required String reason,
+  });
 }
 
 class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
@@ -42,8 +55,10 @@ class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
   final TeacherClassesRepository _classes;
   final Map<String, List<TeacherAssessment>> _byAssignment = {};
   final Map<String, TeacherMarksGrid> _grids = {};
+  final Map<String, List<MarksCorrectionRecord>> _history = {};
   var allowBonus = false;
   var _seq = 0;
+  var _correctionSeq = 0;
   var alwaysFail = false;
 
   @override
@@ -390,6 +405,184 @@ class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
       grid: grid,
     );
   }
+
+  void _setAssessmentStatus(String assessmentId, AssessmentStatus status) {
+    for (final entry in _byAssignment.entries) {
+      final idx = entry.value.indexWhere((a) => a.id == assessmentId);
+      if (idx < 0) continue;
+      final existing = entry.value[idx];
+      final copy = List<TeacherAssessment>.from(entry.value);
+      copy[idx] = TeacherAssessment(
+        id: existing.id,
+        schoolId: existing.schoolId,
+        teacherAssignmentId: existing.teacherAssignmentId,
+        category: existing.category,
+        name: existing.name,
+        assessmentDate: existing.assessmentDate,
+        totalMarks: existing.totalMarks,
+        weight: existing.weight,
+        description: existing.description,
+        status: status,
+        resultPeriodId: existing.resultPeriodId,
+        createdAt: existing.createdAt,
+        updatedAt: DateTime.utc(2026, 8, 2),
+      );
+      _byAssignment[entry.key] = copy;
+      return;
+    }
+  }
+
+  @override
+  Future<TeacherMarksGrid> publishMarks({
+    required String assessmentId,
+    String? idempotencyKey,
+  }) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    final base = await loadMarks(assessmentId);
+    if (!base.isDraft) {
+      throw StateError('Only draft assessments can be published.');
+    }
+    if (base.entries.isEmpty) {
+      throw StateError('Save at least one marks entry before publishing.');
+    }
+    _setAssessmentStatus(assessmentId, AssessmentStatus.published);
+    final grid = TeacherMarksGrid(
+      assessmentId: base.assessmentId,
+      assignmentId: base.assignmentId,
+      schoolId: base.schoolId,
+      assessmentName: base.assessmentName,
+      category: base.category,
+      assessmentDate: base.assessmentDate,
+      totalMarks: base.totalMarks,
+      assessmentStatus: AssessmentStatus.published,
+      allowBonus: base.allowBonus,
+      classLabel: base.classLabel,
+      subjectCode: base.subjectCode,
+      roster: base.roster,
+      entries: base.entries,
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+    _grids[assessmentId] = grid;
+    return grid;
+  }
+
+  @override
+  Future<MarksCorrectionHistory> loadMarksHistory(String assessmentId) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    await loadMarks(assessmentId);
+    return MarksCorrectionHistory(
+      assessmentId: assessmentId,
+      corrections: List.unmodifiable(_history[assessmentId] ?? const []),
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+  }
+
+  @override
+  Future<MarksCorrectionResult> correctMarks({
+    required String assessmentId,
+    required String studentUserId,
+    required MarksEntryStatus newStatus,
+    double? obtainedMarks,
+    String remarks = '',
+    required String reason,
+  }) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    final trimmed = reason.trim();
+    if (trimmed.isEmpty) {
+      throw StateError('Correction reason is required.');
+    }
+    final base = await loadMarks(assessmentId);
+    if (!base.isCorrectable) {
+      throw StateError('Only published assessments can be corrected.');
+    }
+    final existing = base.entryByStudent[studentUserId];
+    if (existing == null) {
+      throw StateError('Marks entry not found for student.');
+    }
+    final nextObtained =
+        newStatus == MarksEntryStatus.scored ? obtainedMarks : null;
+    if (newStatus == MarksEntryStatus.scored &&
+        (nextObtained == null || nextObtained < 0)) {
+      throw StateError('Obtained marks required for scored entries.');
+    }
+    if (newStatus == MarksEntryStatus.scored &&
+        nextObtained != null &&
+        nextObtained > base.totalMarks &&
+        !base.allowBonus) {
+      throw StateError('Obtained marks exceeds total.');
+    }
+    if (existing.status == newStatus &&
+        existing.obtainedMarks == nextObtained &&
+        existing.remarks.trim() == remarks.trim()) {
+      throw StateError('Correction must change status, marks, or remarks.');
+    }
+
+    _correctionSeq += 1;
+    var studentName = '';
+    for (final s in base.roster) {
+      if (s.id == studentUserId) {
+        studentName = s.displayName;
+        break;
+      }
+    }
+    final record = MarksCorrectionRecord(
+      id: 'mcorr-$_correctionSeq',
+      assessmentId: assessmentId,
+      studentUserId: studentUserId,
+      displayName: studentName,
+      previousStatus: existing.status,
+      newStatus: newStatus,
+      previousObtainedMarks: existing.obtainedMarks,
+      newObtainedMarks: nextObtained,
+      previousRemarks: existing.remarks,
+      newRemarks: remarks,
+      reason: trimmed,
+      correctedBy: 'teacher-1',
+      correctedByName: 'Teacher',
+      correctedAt: DateTime.utc(2026, 8, 2, 12, _correctionSeq),
+      revisionBefore: _correctionSeq,
+      revisionAfter: _correctionSeq + 1,
+    );
+    _history[assessmentId] = [record, ...(_history[assessmentId] ?? const [])];
+
+    final entries = [
+      for (final e in base.entries)
+        if (e.studentUserId == studentUserId)
+          MarksEntryMark(
+            studentUserId: studentUserId,
+            status: newStatus,
+            obtainedMarks: nextObtained,
+            remarks: remarks,
+          )
+        else
+          e,
+    ];
+    _setAssessmentStatus(assessmentId, AssessmentStatus.corrected);
+    final grid = TeacherMarksGrid(
+      assessmentId: base.assessmentId,
+      assignmentId: base.assignmentId,
+      schoolId: base.schoolId,
+      assessmentName: base.assessmentName,
+      category: base.category,
+      assessmentDate: base.assessmentDate,
+      totalMarks: base.totalMarks,
+      assessmentStatus: AssessmentStatus.corrected,
+      allowBonus: base.allowBonus,
+      classLabel: base.classLabel,
+      subjectCode: base.subjectCode,
+      roster: base.roster,
+      entries: entries,
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+    _grids[assessmentId] = grid;
+    final history = await loadMarksHistory(assessmentId);
+    return MarksCorrectionResult(
+      corrected: true,
+      correctionId: record.id,
+      grid: grid,
+      history: history,
+    );
+  }
 }
 
 class SupabaseTeacherAssessmentRepository
@@ -529,5 +722,56 @@ class SupabaseTeacherAssessmentRepository
     );
     if (raw is! Map) throw StateError('Marks import commit failed.');
     return MarksImportCommitResult.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<TeacherMarksGrid> publishMarks({
+    required String assessmentId,
+    String? idempotencyKey,
+  }) async {
+    final raw = await _client.rpc(
+      'teacher_marks_publish',
+      params: {
+        'p_assessment_id': assessmentId,
+        'p_idempotency_key': idempotencyKey,
+      },
+    );
+    if (raw is! Map) throw StateError('Marks publish failed.');
+    return TeacherMarksGrid.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<MarksCorrectionHistory> loadMarksHistory(String assessmentId) async {
+    final raw = await _client.rpc(
+      'teacher_marks_history',
+      params: {'p_assessment_id': assessmentId},
+    );
+    if (raw is! Map) throw StateError('Marks history unavailable.');
+    return MarksCorrectionHistory.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<MarksCorrectionResult> correctMarks({
+    required String assessmentId,
+    required String studentUserId,
+    required MarksEntryStatus newStatus,
+    double? obtainedMarks,
+    String remarks = '',
+    required String reason,
+  }) async {
+    final raw = await _client.rpc(
+      'teacher_marks_correct',
+      params: {
+        'p_assessment_id': assessmentId,
+        'p_student_user_id': studentUserId,
+        'p_new_status': newStatus.wire,
+        'p_obtained_marks':
+            newStatus == MarksEntryStatus.scored ? obtainedMarks : null,
+        'p_remarks': remarks,
+        'p_reason': reason,
+      },
+    );
+    if (raw is! Map) throw StateError('Marks correction failed.');
+    return MarksCorrectionResult.fromJson(Map<String, dynamic>.from(raw));
   }
 }

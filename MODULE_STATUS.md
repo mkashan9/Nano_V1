@@ -80,8 +80,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | ATT-03 | Attendance Correction and History | R7 | DONE | ATT-01 |
 | MRK-01 | Assessment Creation | R7 | DONE | TCH-02, SCH-06 |
 | MRK-02 | In-App Marks Grid | R7 | DONE | MRK-01, SYNC-01 |
-| MRK-03 | Marks Excel Download and Upload | R7 | USER_TEST | MRK-02 |
-| MRK-04 | Marks Publication and Correction | R7 | BACKLOG | MRK-02, SEC-03 |
+| MRK-03 | Marks Excel Download and Upload | R7 | DONE | MRK-02 |
+| MRK-04 | Marks Publication and Correction | R7 | USER_TEST | MRK-02, SEC-03 |
 | MRK-05 | Result and Class Performance Summary | R7 | BACKLOG | MRK-04 |
 | CLS-01 | Teacher Classroom Announcements | R7 | BACKLOG | TCH-02 |
 | CLS-02 | Classroom Materials and Attachments | R7 | BACKLOG | CLS-01, MED-02 |
