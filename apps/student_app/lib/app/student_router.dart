@@ -48,6 +48,7 @@ GoRouter createStudentRouter({
   StudentAttendanceRepository? studentAttendanceRepository,
   StudentMarksRepository? studentMarksRepository,
   StudentClassroomRepository? studentClassroomRepository,
+  GameCatalogRepository? gameCatalogRepository,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -229,6 +230,8 @@ GoRouter createStudentRouter({
                     studentAttendanceRepository: studentAttendanceRepository,
                     studentMarksRepository: studentMarksRepository,
                     studentClassroomRepository: studentClassroomRepository,
+                    gameCatalogRepository: gameCatalogRepository,
+                    onboardingProgress: onboardingProgress,
                   ),
                 ),
               ],
@@ -262,6 +265,8 @@ Widget _pageFor(
   StudentAttendanceRepository? studentAttendanceRepository,
   StudentMarksRepository? studentMarksRepository,
   StudentClassroomRepository? studentClassroomRepository,
+  GameCatalogRepository? gameCatalogRepository,
+  OnboardingProgress? onboardingProgress,
 }) {
   return switch (id) {
     'home' || 'learning' => StudentLearningTab(
@@ -280,7 +285,12 @@ Widget _pageFor(
         // lands somewhere valid instead of on a dead route.
         onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
       ),
-    'game' || 'games' => const StudentGamesTab(),
+    'game' || 'games' => StudentGamesTab(
+        repository: gameCatalogRepository,
+        independent: principal.role == AppRole.independentStudent,
+        gradeLevel: onboardingProgress?.selfReportedGradeLevel,
+        junior: principal.usesJuniorPresentation,
+      ),
     'flex' => StudentFlexTab(
         flexEligible: principal.flexEligible,
         repository: flexRepository,

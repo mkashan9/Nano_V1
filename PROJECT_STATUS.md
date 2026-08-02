@@ -1,19 +1,19 @@
-# PROJECT_STATUS
+﻿# PROJECT_STATUS
 
 ## Current state
 
 - **Current release:** R8 Games
-- **Current module:** GME-01 Game Catalog and Eligibility
+- **Current module:** GME-02 Secure Web Game Container
 - **Current status:** ACTIVE
-- **Current branch:** module/GME-01-game-catalog
-- **Last completed module:** FBK-01
+- **Current branch:** module/GME-02-web-game-container
+- **Last completed module:** GME-01
 - **Application name:** Nano
 
 ## Releases
 
-- R1–R7: complete (including FBK-01)
-- R8: GME-01 ACTIVE
+- R1–R7: complete
+- R8: GME-01 DONE; GME-02 ACTIVE
 
 ## Owner decision waiting
 
-None — implementing GME-01.
+None — implementing GME-02.

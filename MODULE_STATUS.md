@@ -91,8 +91,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | FLX-03 | Student Marks and Results | R7 | DONE | FLX-01, MRK-04 |
 | FLX-04 | Student Classroom | R7 | DONE | FLX-01, CLS-01 |
 | FBK-01 | Teacher-Guardian Structured Feedback | R7 | DONE | TCH-02 |
-| GME-01 | Game Catalog and Eligibility | R8 | BACKLOG | STU-03, STU-04, XP-01 |
-| GME-02 | Secure Web Game Container | R8 | BACKLOG | GME-01, SEC-03 |
+| GME-01 | Game Catalog and Eligibility | R8 | DONE | STU-03, STU-04, XP-01 |
+| GME-02 | Secure Web Game Container | R8 | ACTIVE | GME-01, SEC-03 |
 | GME-03 | Open-Source Native Game Integration | R8 | BACKLOG | GME-01 |
 | GME-04 | Game Download, Version, and Storage State | R8 | BACKLOG | GME-01 |
 | GME-05 | Trusted Game Result Verification | R8 | BACKLOG | GME-02, XP-01 |

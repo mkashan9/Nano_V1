@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] GME-01 Game Catalog and Eligibility
+- [x] GME-01 Game Catalog and Eligibility
 
 ## Completed
 
