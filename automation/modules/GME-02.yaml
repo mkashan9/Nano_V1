@@ -1,7 +1,7 @@
 id: GME-02
 name: "Secure Web Game Container"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - GME-01
   - SEC-03
