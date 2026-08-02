@@ -26,6 +26,7 @@ void main() {
   MissionRepository? missionRepository;
   StreakRepository? streakRepository;
   ShareCardRepository? shareCardRepository;
+  LeagueRepository? leagueRepository;
   StudentAttendanceRepository? studentAttendanceRepository;
   StudentMarksRepository? studentMarksRepository;
   StudentClassroomRepository? studentClassroomRepository;
@@ -55,6 +56,7 @@ void main() {
     missionRepository = SupabaseMissionRepository(client);
     streakRepository = SupabaseStreakRepository(client);
     shareCardRepository = SupabaseShareCardRepository(client);
+    leagueRepository = SupabaseLeagueRepository(client);
     studentAttendanceRepository = SupabaseStudentAttendanceRepository(client);
     studentMarksRepository = SupabaseStudentMarksRepository(client);
     studentClassroomRepository = SupabaseStudentClassroomRepository(client);
@@ -82,6 +84,7 @@ void main() {
       missionRepository: missionRepository,
       streakRepository: streakRepository,
       shareCardRepository: shareCardRepository,
+      leagueRepository: leagueRepository,
       studentFlexRepository: studentFlexRepository,
       studentAttendanceRepository: studentAttendanceRepository,
       studentMarksRepository: studentMarksRepository,
@@ -125,6 +128,7 @@ class NanoStudentApp extends StatefulWidget {
     this.missionRepository,
     this.streakRepository,
     this.shareCardRepository,
+    this.leagueRepository,
     this.studentFlexRepository,
     this.studentAttendanceRepository,
     this.studentMarksRepository,
@@ -184,6 +188,10 @@ class NanoStudentApp extends StatefulWidget {
   /// XP-06: featured pins and privacy-safe share cards. Optional — without it
   /// Me keeps fixture awards without pin/share actions.
   final ShareCardRepository? shareCardRepository;
+
+  /// LGE-01: weekly league personal status on Me. Optional — without it the
+  /// league card is hidden.
+  final LeagueRepository? leagueRepository;
 
   /// FLX live attendance / marks / classroom. Optional — without them Flex
   /// falls back to fake seed data (preview / tests).
@@ -581,6 +589,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       quizAttemptRepository: _quizAttemptRepository,
       syncController: _syncController,
       shareCards: _shareCardRepository,
+      leagueRepository: widget.leagueRepository,
       flexRepository: widget.studentFlexRepository,
       studentAttendanceRepository: widget.studentAttendanceRepository,
       studentMarksRepository: widget.studentMarksRepository,

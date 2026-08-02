@@ -963,6 +963,24 @@ class NanoCopy {
   String get streakWelcomeBack => isUrdu
       ? 'خوش آمدید۔ آرام سیکھنے کا حصہ ہے — نیا سلسلہ تب شروع ہوگا جب آپ تیار ہوں۔'
       : 'Welcome back. Rest is part of learning — a new streak starts when you are ready.';
+  String get leagueLabel => isUrdu ? 'ہفتہ وار لیگ' : 'Weekly league';
+  String get leagueJoin => isUrdu ? 'لیگ میں شامل ہوں' : 'Join this week';
+  String get leagueJoinedHint => isUrdu
+      ? 'تصدیق شدہ گیم XP سے درجہ۔'
+      : 'Ranked by verified game XP.';
+  String get leagueNotJoinedHint => isUrdu
+      ? 'اس ہفتے کی لیگ میں شامل ہوں۔'
+      : 'Join this week’s league to track game XP.';
+  String leagueDivisionRank(String division, int rank, int peers) => isUrdu
+      ? '$division · #$rank / $peers'
+      : '$division · #$rank of $peers';
+  String leagueWeekXp(int xp) =>
+      isUrdu ? 'اس ہفتے $xp XP' : '$xp XP this week';
+  String leagueDaysLeft(int days) => isUrdu
+      ? '$days دن باقی'
+      : days == 1
+          ? '1 day left'
+          : '$days days left';
   String get notificationsLabel => isUrdu ? 'اطلاعات' : 'Notifications';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>

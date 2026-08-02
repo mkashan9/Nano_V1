@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- LGE-01: weekly league personal status on Profile (verified game XP)
 - GME-07: kill switch aborts active sessions and stops the student host
 - GME-06: game host Classroom Mode quiets sound and haptics
 - GME-05: trusted game result verification awards XP once per session

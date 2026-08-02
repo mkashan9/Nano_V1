@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] LGE-01 Weekly Leagues
+- [ ] LGE-02 Leaderboards
 
 ## Completed
 
+- [x] LGE-01
 - [x] GME-07
 - [x] GME-06
 - [x] GME-05
