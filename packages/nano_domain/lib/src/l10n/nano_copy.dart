@@ -252,6 +252,42 @@ class NanoCopy {
           ? '$name: $previous → $next ($reason)'
           : '$name: $previous → $next ($reason)';
   String get teacherMarksTitle => isUrdu ? 'نمبر' : 'Marks';
+  String get teacherClassroomTitle => isUrdu ? 'کلاس روم' : 'Classroom';
+  String get teacherClassroomSubtitle => isUrdu
+      ? 'تفویض چنیں اور کلاس کے اعلانات لکھیں۔'
+      : 'Pick an assignment and write class announcements.';
+  String get teacherClassroomNoAssignments => isUrdu
+      ? 'اعلانات کے لیے کوئی فعال تفویض نہیں۔'
+      : 'No active assignments for announcements.';
+  String get teacherClassroomAssignmentLabel =>
+      isUrdu ? 'تفویض' : 'Assignment';
+  String get teacherClassroomCreateTitle =>
+      isUrdu ? 'نیا اعلان' : 'New announcement';
+  String get teacherClassroomEditTitle =>
+      isUrdu ? 'اعلان ترمیم' : 'Edit announcement';
+  String get teacherClassroomTitleLabel => isUrdu ? 'عنوان' : 'Title';
+  String get teacherClassroomBodyLabel => isUrdu ? 'متن' : 'Body';
+  String get teacherClassroomBodyEmpty => isUrdu ? '(خالی)' : '(empty)';
+  String get teacherClassroomPublishNow =>
+      isUrdu ? 'ابھی شائع کریں' : 'Publish now';
+  String get teacherClassroomSaveDraft =>
+      isUrdu ? 'مسودہ محفوظ' : 'Save draft';
+  String get teacherClassroomUpdateDraft =>
+      isUrdu ? 'مسودہ اپ ڈیٹ' : 'Update draft';
+  String get teacherClassroomCancelEdit => isUrdu ? 'منسوخ' : 'Cancel';
+  String get teacherClassroomSaved =>
+      isUrdu ? 'اعلان محفوظ ہو گیا۔' : 'Announcement saved.';
+  String get teacherClassroomSaveFailed => isUrdu
+      ? 'اعلان محفوظ نہیں ہو سکا۔'
+      : 'Could not save announcement.';
+  String get teacherClassroomListTitle =>
+      isUrdu ? 'اعلانات' : 'Announcements';
+  String get teacherClassroomListEmpty => isUrdu
+      ? 'ابھی کوئی اعلان نہیں۔'
+      : 'No announcements yet.';
+  String get teacherClassroomEditAction => isUrdu ? 'ترمیم' : 'Edit';
+  String teacherClassroomListSubtitle(String status, String body) =>
+      '$status · $body';
   String get teacherMarksSubtitle => isUrdu
       ? 'تفویض چنیں، مسودہ تشخیص بنائیں، اور نمبر درج کریں۔'
       : 'Pick an assignment, create draft assessments, and enter marks.';

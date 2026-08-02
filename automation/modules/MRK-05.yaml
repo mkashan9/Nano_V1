@@ -1,7 +1,7 @@
 id: MRK-05
 name: "Result and Class Performance Summary"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - MRK-04
 dependency_notes: >
