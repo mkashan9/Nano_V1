@@ -4,7 +4,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// ATT-01/ATT-02 Attendance: grid entry plus CSV/Excel-compatible import.
+/// ATT-01/ATT-02/ATT-03 Attendance: grid, CSV import, and corrections.
 class TeacherAttendancePage extends StatefulWidget {
   const TeacherAttendancePage({
     super.key,
@@ -28,8 +28,11 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
   final Map<String, AttendanceEntryStatus> _draft = {};
   final _csv = TextEditingController();
   AttendanceImportPreview? _preview;
+  AttendanceCorrectionHistory? _history;
+  final _reason = TextEditingController();
   var _submitting = false;
   var _importBusy = false;
+  var _correcting = false;
   String? _message;
   String? _importKey;
 
@@ -44,6 +47,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
   @override
   void dispose() {
     _csv.dispose();
+    _reason.dispose();
     super.dispose();
   }
 
@@ -97,9 +101,24 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
           });
         _state = const NanoViewReady();
       });
+      await _refreshHistory(assignmentId);
     } catch (_) {
       if (!mounted) return;
       setState(() => _state = const NanoViewError());
+    }
+  }
+
+  Future<void> _refreshHistory(String assignmentId) async {
+    try {
+      final history = await widget.repository.loadHistory(
+        assignmentId: assignmentId,
+        sessionDate: _dateIso,
+      );
+      if (!mounted) return;
+      setState(() => _history = history);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _history = null);
     }
   }
 
@@ -235,6 +254,62 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
     }
   }
 
+  Future<void> _applyCorrection() async {
+    final assignmentId = _assignmentId;
+    final grid = _grid;
+    if (assignmentId == null || grid == null || _correcting) return;
+    if (!grid.isSubmitted) return;
+    final reason = _reason.text.trim();
+    if (reason.isEmpty) return;
+
+    final changes = <MapEntry<String, AttendanceEntryStatus>>[];
+    for (final e in _draft.entries) {
+      final current = grid.statusByStudent[e.key];
+      if (current != null && current != e.value) {
+        changes.add(MapEntry(e.key, e.value));
+      }
+    }
+    if (changes.isEmpty) return;
+
+    setState(() {
+      _correcting = true;
+      _message = null;
+    });
+    try {
+      AttendanceCorrectionResult? last;
+      for (final change in changes) {
+        last = await widget.repository.correct(
+          assignmentId: assignmentId,
+          sessionDate: _dateIso,
+          studentUserId: change.key,
+          newStatus: change.value,
+          reason: reason,
+        );
+      }
+      if (!mounted || last == null) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _grid = last!.grid;
+        _history = last.history;
+        _draft
+          ..clear()
+          ..addAll(last.grid.statusByStudent);
+        _reason.clear();
+        _correcting = false;
+        _message = copy.teacherAttendanceCorrected;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _correcting = false;
+        _message = copy.teacherAttendanceCorrectFailed;
+      });
+    }
+  }
+
   Future<void> _commitImport() async {
     final assignmentId = _assignmentId;
     final key = _importKey;
@@ -260,6 +335,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
         _importBusy = false;
         _message = copy.teacherAttendanceImportCommitted;
       });
+      await _refreshHistory(assignmentId);
     } catch (_) {
       if (!mounted) return;
       final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -309,11 +385,9 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
                       child: Text(a.scopeLabel),
                     ),
                 ],
-                onChanged: submitted
-                    ? null
-                    : (id) {
-                        if (id != null) _loadGrid(id);
-                      },
+                onChanged: (id) {
+                  if (id != null) _loadGrid(id);
+                },
               ),
               const SizedBox(height: 12),
               ListTile(
@@ -361,7 +435,7 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
                           : student.displayName,
                       status: _draft[student.id] ??
                           AttendanceEntryStatus.present,
-                      enabled: !submitted,
+                      enabled: true,
                       labelFor: copy.teacherAttendanceStatusLabel,
                       onCycle: () {
                         setState(() {
@@ -371,6 +445,59 @@ class _TeacherAttendancePageState extends State<TeacherAttendancePage> {
                         });
                       },
                     ),
+                if (submitted) ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    copy.teacherAttendanceCorrectTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    copy.teacherAttendanceCorrectSubtitle,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _reason,
+                    onChanged: (_) => setState(() {}),
+                    decoration: InputDecoration(
+                      labelText: copy.teacherAttendanceCorrectReasonLabel,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FilledButton(
+                    onPressed: _correcting || _reason.text.trim().isEmpty
+                        ? null
+                        : _applyCorrection,
+                    child: Text(copy.teacherAttendanceApplyCorrection),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    copy.teacherAttendanceHistoryTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  if (_history == null || _history!.corrections.isEmpty)
+                    Text(copy.teacherAttendanceHistoryEmpty)
+                  else
+                    for (final c in _history!.corrections.take(10))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          copy.teacherAttendanceHistoryLine(
+                            name: c.displayName.trim().isEmpty
+                                ? copy.teacherClassesStudentFallback
+                                : c.displayName,
+                            previous: copy.teacherAttendanceStatusLabel(
+                              c.previousStatus,
+                            ),
+                            next: copy.teacherAttendanceStatusLabel(c.newStatus),
+                            reason: c.reason,
+                          ),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                ],
                 const SizedBox(height: 24),
                 Text(
                   copy.teacherAttendanceImportTitle,

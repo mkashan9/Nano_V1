@@ -22,7 +22,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | 6.1 Identity model | AUTH-01,AUTH-02,AUTH-03,AUTH-04 | nano_auth | session | auth.users,profiles | auth tests | USER_TEST |
 | 6.2 Multi-school security | SEC-02 | supabase | RLS | school_id | two-school RLS | USER_TEST |
 | 6.3 Trusted operations (scores, XP, publish) | QZ-05,XP-01,MRK-04,GME-05 | edge functions | scoring | ledgers | function tests | USER_TEST |
-| 6.4 Versioning and history | SEC-03,MRK-04,ATT-03 | supabase | audit | audit_logs | history tests | BACKLOG |
+| 6.4 Versioning and history | SEC-03,MRK-04,ATT-03 | supabase | audit | audit_logs | history tests | USER_TEST |
 | 7.x Reuse-first engineering | AUD-01 | docs/provenance | registry | N/A | docs | IN_PROGRESS |
 | 8.1–8.2 UI-first / reference replication | FND-02,STU-03,STU-04 | student_app | UI | N/A | golden | BACKLOG |
 | 8.3 Design tokens | FND-02 | nano_design_system | tokens | N/A | golden | BACKLOG |

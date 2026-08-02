@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ATT-02 Attendance Excel Download and Upload
+- [ ] ATT-03 Attendance Correction and History
 
 ## Completed
 
@@ -38,6 +38,7 @@
 - [x] TCH-01 Teacher Dashboard
 - [x] TCH-02 My Classes and Assigned Scope
 - [x] ATT-01 In-App Attendance Grid
+- [x] ATT-02 Attendance Excel Download and Upload
 
 ## Upcoming
 

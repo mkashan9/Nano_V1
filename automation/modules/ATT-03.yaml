@@ -1,44 +1,71 @@
 id: ATT-03
 name: "Attendance Correction and History"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - ATT-01
+dependency_notes: >
+  Corrects ATT-01 submitted sessions. Import remains ATT-02.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/ATT-03/
   - automation/modules/ATT-03.yaml
+  - automation/modules/ATT-01.yaml
+  - automation/modules/ATT-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook ATT-01 correction slice"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for ATT-03"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.attendance_corrections
+  - public.attendance_sessions
+  - public.attendance_entries
+server_functions:
+  - "public.teacher_attendance_correct"
+  - "public.teacher_attendance_history"
 acceptance:
+  - Corrections require reason and only apply to submitted sessions
+  - Prior statuses retained in attendance_corrections
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/att03_attendance_corrections.sql
+  - packages/nano_domain/test/attendance_correction_test.dart
+  - packages/nano_data/test/attendance_correction_repository_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - immutable_correction_history
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Submit attendance then apply a correction with reason
+  - Confirm history shows previous values
+rollback_notes: >
+  Revert the branch and migration. Grid/import remain; correction UI can be removed.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Correct submitted entries with reason + immutable history.
+  deferred: >
+    Binary xlsx correction import; bulk admin override tooling.
