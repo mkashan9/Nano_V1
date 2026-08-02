@@ -1,48 +1,69 @@
 id: SAFE-01
 name: "Reporting and Blocking"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-03
   - STU-04
+dependency_notes: >
+  Learner reports + optional block; moderation queue deferred to SAFE-02.
+  Reuses SOC-02 blocks table.
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
-  - supabase
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SAFE-01/
   - automation/modules/SAFE-01.yaml
+  - automation/modules/SOC-04.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SAFE-01"
+  - "Handbook SAFE-01 reporting and blocking"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.user_reports
+server_functions:
+  - "public.submit_user_report"
+  - "public.submit_user_report_for_peer"
+  - "public.my_user_reports"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Submit report by query or peer token without exposing peer user ids
+  - Optional also-block reuses SOC-02 blocks and cancels friendships/requests
+  - Reporter can list own reports; moderation stays SAFE-02
 required_tests:
-  - documentation_review
+  - supabase/tests/safe01_reporting.sql
+  - packages/nano_domain/test/safety_report_test.dart
+  - packages/nano_data/test/safety_report_repository_test.dart
+  - apps/student_app/test/report_user_sheet_test.dart
 security_checks:
   - no_secrets_in_diff
+  - opaque_peer_tokens
+  - evidence_privacy_safe
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Report from lookup and Friends; confirm also-block hides peer
+rollback_notes: >
+  Revert branch and migration. Report buttons disappear; SOC-02 block remains.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Learner-facing reports with optional block and privacy-safe evidence.
+  deferred: >
+    Moderator queue/sanctions (SAFE-02); rate limits (SAFE-03).

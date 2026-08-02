@@ -52,3 +52,4 @@ export 'xp/xp_ledger_repository.dart';
 export 'league/league_repository.dart';
 export 'social/social_identity_repository.dart';
 export 'social/friend_graph_repository.dart';
+export 'social/safety_report_repository.dart';

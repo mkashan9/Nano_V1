@@ -26,6 +26,7 @@ class StudentProfilePage extends StatefulWidget {
     this.leagueRepository,
     this.socialIdentityRepository,
     this.friendGraphRepository,
+    this.safetyReportRepository,
   });
 
   final StudentProfileRepository repository;
@@ -53,6 +54,9 @@ class StudentProfilePage extends StatefulWidget {
 
   /// SOC-02: friend requests / remove / block.
   final FriendGraphRepository? friendGraphRepository;
+
+  /// SAFE-01: report peer with optional block.
+  final SafetyReportRepository? safetyReportRepository;
 
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
@@ -305,6 +309,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                   : _openLeagueBoard,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
+              safetyReportRepository: widget.safetyReportRepository,
             ),
     );
   }
@@ -335,6 +340,7 @@ class _ProfileBody extends StatelessWidget {
     this.onOpenLeagueBoard,
     this.socialIdentityRepository,
     this.friendGraphRepository,
+    this.safetyReportRepository,
   });
 
   final StudentProfileView profile;
@@ -360,6 +366,7 @@ class _ProfileBody extends StatelessWidget {
   final VoidCallback? onOpenLeagueBoard;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
+  final SafetyReportRepository? safetyReportRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -539,6 +546,7 @@ class _ProfileBody extends StatelessWidget {
             repository: socialIdentityRepository!,
             copy: copy,
             friendGraph: friendGraphRepository,
+            safetyReports: safetyReportRepository,
           ),
         Text(copy.privacyLabel, style: theme.textTheme.titleLarge),
         SwitchListTile(

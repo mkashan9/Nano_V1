@@ -29,6 +29,7 @@ void main() {
   LeagueRepository? leagueRepository;
   SocialIdentityRepository? socialIdentityRepository;
   FriendGraphRepository? friendGraphRepository;
+  SafetyReportRepository? safetyReportRepository;
   StudentAttendanceRepository? studentAttendanceRepository;
   StudentMarksRepository? studentMarksRepository;
   StudentClassroomRepository? studentClassroomRepository;
@@ -61,6 +62,7 @@ void main() {
     leagueRepository = SupabaseLeagueRepository(client);
     socialIdentityRepository = SupabaseSocialIdentityRepository(client);
     friendGraphRepository = SupabaseFriendGraphRepository(client);
+    safetyReportRepository = SupabaseSafetyReportRepository(client);
     studentAttendanceRepository = SupabaseStudentAttendanceRepository(client);
     studentMarksRepository = SupabaseStudentMarksRepository(client);
     studentClassroomRepository = SupabaseStudentClassroomRepository(client);
@@ -91,6 +93,7 @@ void main() {
       leagueRepository: leagueRepository,
       socialIdentityRepository: socialIdentityRepository,
       friendGraphRepository: friendGraphRepository,
+      safetyReportRepository: safetyReportRepository,
       studentFlexRepository: studentFlexRepository,
       studentAttendanceRepository: studentAttendanceRepository,
       studentMarksRepository: studentMarksRepository,
@@ -137,6 +140,7 @@ class NanoStudentApp extends StatefulWidget {
     this.leagueRepository,
     this.socialIdentityRepository,
     this.friendGraphRepository,
+    this.safetyReportRepository,
     this.studentFlexRepository,
     this.studentAttendanceRepository,
     this.studentMarksRepository,
@@ -206,6 +210,9 @@ class NanoStudentApp extends StatefulWidget {
 
   /// SOC-02 friend graph.
   final FriendGraphRepository? friendGraphRepository;
+
+  /// SAFE-01 report peer.
+  final SafetyReportRepository? safetyReportRepository;
 
   /// FLX live attendance / marks / classroom. Optional — without them Flex
   /// falls back to fake seed data (preview / tests).
@@ -608,6 +615,8 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           widget.socialIdentityRepository ?? FakeSocialIdentityRepository(),
       friendGraphRepository:
           widget.friendGraphRepository ?? FakeFriendGraphRepository(),
+      safetyReportRepository:
+          widget.safetyReportRepository ?? FakeSafetyReportRepository(),
       flexRepository: widget.studentFlexRepository,
       studentAttendanceRepository: widget.studentAttendanceRepository,
       studentMarksRepository: widget.studentMarksRepository,
