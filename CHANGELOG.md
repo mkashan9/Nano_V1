@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- SAFE-03: rate limits, restricted terms, and link allowlist
 - SAFE-02: platform moderation queue for learner reports
 - SAFE-01: learner reports with optional block
 - SOC-04: social share sheet and username-aware share cards

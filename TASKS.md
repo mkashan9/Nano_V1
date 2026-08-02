@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] SAFE-02 Moderation Queue and Evidence
+- [ ] SAFE-03 Rate Limits, Restricted Content, and Link Rules
 
 ## Completed
 

@@ -1,47 +1,69 @@
 id: SAFE-03
 name: "Rate Limits, Restricted Content, and Link Rules"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SAFE-01
+dependency_notes: >
+  Server gates for social flood and text/links; COM-04 will call
+  assert_community_message_allowed.
 applications:
-  - student_app
-  - teacher_app
-  - admin_web
   - packages
-  - supabase
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SAFE-03/
   - automation/modules/SAFE-03.yaml
+  - automation/modules/SAFE-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SAFE-03"
+  - "Handbook SAFE-03 rate limits restricted content link rules"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.safety_rate_limits
+  - public.safety_rate_usage
+  - public.restricted_terms
+  - public.link_allowlist_hosts
+server_functions:
+  - "nano_internal.assert_rate_limit"
+  - "nano_internal.assert_text_allowed"
+  - "nano_internal.assert_community_message_allowed"
+  - "public.check_safety_text"
+  - "public.my_safety_rate_status"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Friend requests and reports are rate-limited server-side
+  - Restricted terms and non-allowlisted links are rejected
+  - Community message helper exists for COM-04
 required_tests:
-  - documentation_review
+  - supabase/tests/safe03_rate_limits_content.sql
+  - packages/nano_domain/test/safety_policy_test.dart
+  - packages/nano_data/test/safety_policy_repository_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Trigger restricted term, blocked link, and rate-limit paths
+rollback_notes: >
+  Revert branch and migration. Social RPCs return to pre-SAFE-03 behavior.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Limits, terms, link allowlist, gates on friend/report, COM stub helper.
+  deferred: >
+    Admin policy editor UI; full URI parser.
