@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R8 Games
-- **Current module:** LGE-02 Leaderboards
+- **Current module:** LGE-03 Challenges and Rematches
 - **Current status:** ACTIVE
-- **Current branch:** module/LGE-02-leaderboards
-- **Last completed module:** LGE-01
+- **Current branch:** module/LGE-03-challenges-rematches
+- **Last completed module:** LGE-02
 - **Application name:** Nano
 
 ## Releases
 
 - R1-R7: complete
-- R8: GME-01..GME-07 DONE; LGE-01 DONE; LGE-02 ACTIVE
+- R8: GME/LGE-01..LGE-02 DONE; LGE-03 ACTIVE
 
 ## Owner decision waiting
 
-None - implementing LGE-02.
+None - implementing LGE-03.

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/league/presentation/league_board_page.dart';
 
 /// STU-05 owner profile: identity, progress, privacy, settings, devices,
 /// and a sign-out that clears private local caches.
@@ -123,6 +124,16 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
         const SnackBar(content: Text('Could not join the league')),
       );
     }
+  }
+
+  void _openLeagueBoard() {
+    final leagues = widget.leagueRepository;
+    if (leagues == null) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LeagueBoardPage(repository: leagues),
+      ),
+    );
   }
 
   Future<void> _setPrivacy(PrivacySettings next) async {
@@ -277,6 +288,9 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               joiningLeague: _joiningLeague,
               onJoinLeague:
                   widget.leagueRepository == null ? null : _joinLeague,
+              onOpenLeagueBoard: widget.leagueRepository == null
+                  ? null
+                  : _openLeagueBoard,
             ),
     );
   }
@@ -304,6 +318,7 @@ class _ProfileBody extends StatelessWidget {
     this.league,
     this.joiningLeague = false,
     this.onJoinLeague,
+    this.onOpenLeagueBoard,
   });
 
   final StudentProfileView profile;
@@ -326,6 +341,7 @@ class _ProfileBody extends StatelessWidget {
   final LeagueStatus? league;
   final bool joiningLeague;
   final VoidCallback? onJoinLeague;
+  final VoidCallback? onOpenLeagueBoard;
 
   @override
   Widget build(BuildContext context) {
@@ -414,12 +430,19 @@ class _ProfileBody extends StatelessWidget {
                     ].join(' · ')
                   : league!.weekKey,
             ),
-            trailing: league!.joined || onJoinLeague == null
-                ? null
-                : TextButton(
-                    onPressed: joiningLeague ? null : onJoinLeague,
-                    child: Text(copy.leagueJoin),
-                  ),
+            trailing: !league!.joined
+                ? (onJoinLeague == null
+                    ? null
+                    : TextButton(
+                        onPressed: joiningLeague ? null : onJoinLeague,
+                        child: Text(copy.leagueJoin),
+                      ))
+                : (onOpenLeagueBoard == null
+                    ? null
+                    : TextButton(
+                        onPressed: onOpenLeagueBoard,
+                        child: Text(copy.leagueBoardOpen),
+                      )),
           ),
         ],
         if (onOpenProgress != null)

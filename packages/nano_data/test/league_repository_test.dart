@@ -17,4 +17,20 @@ void main() {
     expect(again.joined, isTrue);
     expect(repo.joinCalls, 2);
   });
+
+  test('fake leaderboard returns privacy-safe labels after join', () async {
+    final repo = FakeLeagueRepository();
+    final empty = await repo.leaderboard();
+    expect(empty.joined, isFalse);
+
+    await repo.joinCurrent();
+    final board = await repo.leaderboard();
+    expect(board.joined, isTrue);
+    expect(board.entries, isNotEmpty);
+    expect(board.entries.any((e) => e.isMe), isTrue);
+    expect(
+      board.entries.every((e) => !e.displayLabel.contains('Alpha')),
+      isTrue,
+    );
+  });
 }
