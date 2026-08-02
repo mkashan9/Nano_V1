@@ -1,7 +1,7 @@
 id: SAFE-01
 name: "Reporting and Blocking"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - SEC-03
   - STU-04
