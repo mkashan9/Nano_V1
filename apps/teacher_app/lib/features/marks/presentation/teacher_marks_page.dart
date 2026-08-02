@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
@@ -34,9 +35,13 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
   final Map<String, TextEditingController> _scoreCtrls = {};
   final Map<String, TextEditingController> _remarkCtrls = {};
   final Map<String, MarksEntryStatus> _statusDraft = {};
+  final _csv = TextEditingController();
+  MarksImportPreview? _importPreview;
+  String? _importKey;
   late DateTime _date;
   var _saving = false;
   var _savingMarks = false;
+  var _importBusy = false;
   String? _message;
 
   static const _categories = [
@@ -64,6 +69,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     _total.dispose();
     _weight.dispose();
     _description.dispose();
+    _csv.dispose();
     _disposeGridCtrls();
     super.dispose();
   }
@@ -156,6 +162,31 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     });
   }
 
+  void _closeGrid() {
+    _disposeGridCtrls();
+    setState(() {
+      _grid = null;
+      _gridAssessmentId = null;
+      _importPreview = null;
+      _importKey = null;
+      _csv.clear();
+    });
+  }
+
+  void _bindGrid(TeacherMarksGrid grid) {
+    _disposeGridCtrls();
+    for (final s in grid.roster) {
+      final existing = grid.entryByStudent[s.id];
+      _statusDraft[s.id] = existing?.status ?? MarksEntryStatus.scored;
+      _scoreCtrls[s.id] = TextEditingController(
+        text: existing?.obtainedMarks?.toString() ?? '',
+      );
+      _remarkCtrls[s.id] = TextEditingController(
+        text: existing?.remarks ?? '',
+      );
+    }
+  }
+
   Future<void> _openGrid(String assessmentId) async {
     setState(() {
       _state = const NanoViewLoading();
@@ -164,17 +195,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     try {
       final grid = await widget.repository.loadMarks(assessmentId);
       if (!mounted) return;
-      _disposeGridCtrls();
-      for (final s in grid.roster) {
-        final existing = grid.entryByStudent[s.id];
-        _statusDraft[s.id] = existing?.status ?? MarksEntryStatus.scored;
-        _scoreCtrls[s.id] = TextEditingController(
-          text: existing?.obtainedMarks?.toString() ?? '',
-        );
-        _remarkCtrls[s.id] = TextEditingController(
-          text: existing?.remarks ?? '',
-        );
-      }
+      _bindGrid(grid);
       setState(() {
         _grid = grid;
         _gridAssessmentId = assessmentId;
@@ -184,14 +205,6 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
       if (!mounted) return;
       setState(() => _state = const NanoViewError());
     }
-  }
-
-  void _closeGrid() {
-    _disposeGridCtrls();
-    setState(() {
-      _grid = null;
-      _gridAssessmentId = null;
-    });
   }
 
   TeacherAssessmentDraftInput? _readInput(NanoCopy copy) {
@@ -292,6 +305,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
             'marks-$assessmentId-${DateTime.now().millisecondsSinceEpoch}',
       );
       if (!mounted) return;
+      _bindGrid(saved);
       setState(() {
         _grid = saved;
         _savingMarks = false;
@@ -302,6 +316,100 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
       setState(() {
         _savingMarks = false;
         _message = copy.teacherMarksGridSaveFailed;
+      });
+    }
+  }
+
+  Future<void> _loadMarksTemplate() async {
+    final assessmentId = _gridAssessmentId;
+    if (assessmentId == null || _importBusy) return;
+    setState(() => _importBusy = true);
+    try {
+      final template = await widget.repository.loadMarksTemplate(assessmentId);
+      if (!mounted) return;
+      setState(() {
+        _csv.text = template.csvText;
+        _importPreview = null;
+        _importBusy = false;
+        _message = null;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _importBusy = false;
+        _message = copy.teacherMarksImportFailed;
+      });
+    }
+  }
+
+  Future<void> _previewMarksImport() async {
+    final assessmentId = _gridAssessmentId;
+    if (assessmentId == null || _importBusy) return;
+    setState(() {
+      _importBusy = true;
+      _message = null;
+    });
+    try {
+      _importKey ??=
+          'marks-import-$assessmentId-${DateTime.now().millisecondsSinceEpoch}';
+      final preview = await widget.repository.previewMarksImport(
+        assessmentId: assessmentId,
+        idempotencyKey: _importKey!,
+        rows: MarksImportCsv.parse(_csv.text),
+      );
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _importPreview = preview;
+        _importBusy = false;
+        _message = copy.teacherMarksImportPreviewSummary(
+          preview.okCount,
+          preview.failCount,
+        );
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _importBusy = false;
+        _message = copy.teacherMarksImportFailed;
+      });
+    }
+  }
+
+  Future<void> _commitMarksImport() async {
+    final assessmentId = _gridAssessmentId;
+    final key = _importKey;
+    if (assessmentId == null || key == null || _importBusy) return;
+    if (!(_importPreview?.canCommit ?? false)) return;
+    setState(() => _importBusy = true);
+    try {
+      final result = await widget.repository.commitMarksImport(
+        assessmentId: assessmentId,
+        idempotencyKey: key,
+        rows: MarksImportCsv.parse(_csv.text),
+      );
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      _bindGrid(result.grid);
+      setState(() {
+        _grid = result.grid;
+        _importPreview = result.preview;
+        _importBusy = false;
+        _message = copy.teacherMarksImportCommitted;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      setState(() {
+        _importBusy = false;
+        _message = copy.teacherMarksImportFailed;
       });
     }
   }
@@ -516,6 +624,70 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
                           });
                         },
                       ),
+                  const SizedBox(height: 24),
+                  Text(
+                    copy.teacherMarksImportTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    copy.teacherMarksImportSubtitle,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _csv,
+                    minLines: 4,
+                    maxLines: 8,
+                    decoration: InputDecoration(
+                      labelText: copy.teacherMarksImportCsvLabel,
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: _importBusy ? null : _loadMarksTemplate,
+                        child: Text(copy.teacherMarksLoadTemplate),
+                      ),
+                      OutlinedButton(
+                        onPressed: _csv.text.isEmpty
+                            ? null
+                            : () async {
+                                await Clipboard.setData(
+                                  ClipboardData(text: _csv.text),
+                                );
+                              },
+                        child: Text(copy.teacherMarksCopyCsv),
+                      ),
+                      OutlinedButton(
+                        onPressed: _importBusy ? null : _previewMarksImport,
+                        child: Text(copy.teacherMarksPreviewImport),
+                      ),
+                      FilledButton(
+                        onPressed: _importBusy ||
+                                !(_importPreview?.canCommit ?? false)
+                            ? null
+                            : _commitMarksImport,
+                        child: Text(copy.teacherMarksCommitImport),
+                      ),
+                    ],
+                  ),
+                  if (_importPreview != null &&
+                      _importPreview!.failedRows.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    for (final fail in _importPreview!.failedRows.take(5))
+                      Text(
+                        copy.teacherMarksImportRowError(
+                          fail.row,
+                          fail.error,
+                        ),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                  ],
                 ] else ...[
                   const SizedBox(height: 24),
                   Text(

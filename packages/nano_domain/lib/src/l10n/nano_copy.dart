@@ -301,6 +301,30 @@ class NanoCopy {
       isUrdu ? 'نمبر محفوظ' : 'Save marks';
   String get teacherMarksCloseGrid =>
       isUrdu ? 'گرڈ بند' : 'Close grid';
+  String get teacherMarksImportTitle =>
+      isUrdu ? 'Excel / CSV درآمد' : 'Excel / CSV import';
+  String get teacherMarksImportSubtitle => isUrdu
+      ? 'مستحکم طالب علم شناخت استعمال کریں — نام اکیلے کافی نہیں۔'
+      : 'Use stable student IDs — names alone are not enough.';
+  String get teacherMarksImportCsvLabel =>
+      isUrdu ? 'CSV مواد' : 'CSV content';
+  String get teacherMarksLoadTemplate =>
+      isUrdu ? 'سانچہ لوڈ' : 'Load template';
+  String get teacherMarksCopyCsv => isUrdu ? 'کاپی' : 'Copy CSV';
+  String get teacherMarksPreviewImport =>
+      isUrdu ? 'پیش منظر' : 'Preview import';
+  String get teacherMarksCommitImport =>
+      isUrdu ? 'درآمد محفوظ' : 'Commit import';
+  String teacherMarksImportPreviewSummary(int ok, int fail) => isUrdu
+      ? '$ok درست، $fail غلط'
+      : '$ok ok, $fail failed';
+  String get teacherMarksImportCommitted =>
+      isUrdu ? 'درآمد جمع ہو گئی۔' : 'Import committed.';
+  String get teacherMarksImportFailed => isUrdu
+      ? 'درآمد ناکام۔'
+      : 'Import failed.';
+  String teacherMarksImportRowError(int row, String error) =>
+      isUrdu ? 'قطار $row: $error' : 'Row $row: $error';
   String get teacherMarksGridSaved =>
       isUrdu ? 'نمبر محفوظ ہو گئے۔' : 'Marks saved.';
   String get teacherMarksGridSaveFailed => isUrdu

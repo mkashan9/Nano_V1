@@ -37,5 +37,19 @@ void main() {
 
     expect(find.text('Marks grid'), findsOneWidget);
     expect(find.text('Save marks'), findsOneWidget);
+    expect(find.text('Load template'), findsOneWidget);
+
+    await tester.tap(find.text('Load template'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('student_user_id'), findsWidgets);
+
+    await tester.tap(find.text('Preview import'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('ok'), findsWidgets);
+
+    await tester.ensureVisible(find.text('Commit import'));
+    await tester.tap(find.text('Commit import'));
+    await tester.pumpAndSettle();
+    expect(find.text('Import committed.'), findsOneWidget);
   });
 }

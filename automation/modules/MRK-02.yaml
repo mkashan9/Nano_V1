@@ -1,7 +1,7 @@
 id: MRK-02
 name: "In-App Marks Grid"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - MRK-01
   - SYNC-01
