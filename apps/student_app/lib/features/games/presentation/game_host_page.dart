@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
@@ -5,7 +7,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_games/nano_games.dart';
 import 'package:student_app/features/games/presentation/nano_game_feedback_sink.dart';
 
-/// GME-02/03/06 secure game host with accessibility-aware feedback.
+/// GME-02/03/06/07 secure game host with kill-switch polling.
 class GameHostPage extends StatefulWidget {
   const GameHostPage({
     super.key,
@@ -15,6 +17,7 @@ class GameHostPage extends StatefulWidget {
     this.onAccessibilityChanged,
     this.feedback,
     this.localeHint = 'en',
+    this.playStatusPollInterval = const Duration(seconds: 8),
   });
 
   final CatalogGame game;
@@ -23,6 +26,7 @@ class GameHostPage extends StatefulWidget {
   final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
   final NanoFeedback? feedback;
   final String localeHint;
+  final Duration playStatusPollInterval;
 
   @override
   State<GameHostPage> createState() => _GameHostPageState();
@@ -36,6 +40,7 @@ class _GameHostPageState extends State<GameHostPage> {
   late AccessibilityPreferences _a11y;
   String? _banner;
   var _finishing = false;
+  Timer? _poll;
 
   @override
   void initState() {
@@ -44,12 +49,54 @@ class _GameHostPageState extends State<GameHostPage> {
     _start();
   }
 
+  @override
+  void dispose() {
+    _poll?.cancel();
+    super.dispose();
+  }
+
   GamePlaySettings get _settings => GamePlaySettings.fromAccessibility(_a11y);
 
+  void _beginPolling() {
+    _poll?.cancel();
+    _poll = Timer.periodic(widget.playStatusPollInterval, (_) {
+      unawaited(_checkKillSwitch());
+    });
+  }
+
+  Future<void> _checkKillSwitch() async {
+    final session = _session;
+    if (session == null || _finishing || _banner != null) return;
+    try {
+      final status =
+          await widget.sessionRepository.getPlayStatus(session.sessionId);
+      if (!mounted || !status.killSwitch) return;
+      _applyKillSwitch();
+    } catch (_) {
+      // Ignore transient poll errors; next tick retries.
+    }
+  }
+
+  void _applyKillSwitch() {
+    _poll?.cancel();
+    _finishing = true;
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    setState(() {
+      _bridge = null;
+      _feedbackSink = null;
+      _banner = copy.gamesKillSwitch;
+    });
+  }
+
   Future<void> _start() async {
+    _poll?.cancel();
     setState(() {
       _state = const NanoViewLoading();
       _banner = null;
+      _finishing = false;
+      _bridge = null;
+      _session = null;
     });
     const fallbackCopy = NanoCopy(NanoAppLocale.en);
     try {
@@ -109,6 +156,12 @@ class _GameHostPageState extends State<GameHostPage> {
         _feedbackSink = NanoGameFeedbackSink(feedback);
         _state = const NanoViewReady();
       });
+      _beginPolling();
+    } on GameSessionBlocked catch (_) {
+      if (!mounted) return;
+      final copy =
+          NanoLocaleScope.maybeOf(context)?.copy ?? fallbackCopy;
+      setState(() => _state = NanoViewError(message: copy.gamesDisabled));
     } catch (_) {
       if (!mounted) return;
       final copy =
@@ -132,6 +185,7 @@ class _GameHostPageState extends State<GameHostPage> {
     final session = _session;
     if (session == null) return;
     _finishing = true;
+    _poll?.cancel();
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
         const NanoCopy(NanoAppLocale.en);
     try {
@@ -141,14 +195,24 @@ class _GameHostPageState extends State<GameHostPage> {
         payload: message.payload,
       );
       if (!mounted) return;
-      final banner = result.message.isNotEmpty
-          ? result.message
-          : result.verified
-              ? (result.xpAwarded > 0
-                  ? copy.gamesResultVerifiedXp(result.xpAwarded)
-                  : copy.gamesResultVerified)
-              : copy.gamesResultRejected;
-      setState(() => _banner = banner);
+      final String banner;
+      if (result.status == GameSessionStatus.aborted) {
+        banner = copy.gamesKillSwitch;
+      } else if (result.message.isNotEmpty) {
+        banner = result.message;
+      } else if (result.verified) {
+        banner = result.xpAwarded > 0
+            ? copy.gamesResultVerifiedXp(result.xpAwarded)
+            : copy.gamesResultVerified;
+      } else {
+        banner = copy.gamesResultRejected;
+      }
+      setState(() {
+        if (result.status == GameSessionStatus.aborted) {
+          _bridge = null;
+        }
+        _banner = banner;
+      });
     } catch (_) {
       if (!mounted) return;
       setState(() => _banner = copy.gamesStartError);
@@ -156,6 +220,7 @@ class _GameHostPageState extends State<GameHostPage> {
   }
 
   Future<void> _close() async {
+    _poll?.cancel();
     final session = _session;
     if (session != null && _banner == null) {
       try {

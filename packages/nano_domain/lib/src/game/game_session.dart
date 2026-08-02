@@ -116,6 +116,49 @@ class GameClientCompletionResult {
   }
 }
 
+/// Thrown when start/play is blocked by eligibility or kill switch (NS143).
+class GameSessionBlocked implements Exception {
+  const GameSessionBlocked({
+    required this.code,
+    this.message = 'Game version is not eligible to play.',
+  });
+
+  final String code;
+  final String message;
+
+  bool get isVersionDisabled =>
+      code == 'NS143' ||
+      code == 'version_disabled' ||
+      code == 'version_ineligible';
+
+  @override
+  String toString() => 'GameSessionBlocked($code): $message';
+}
+
+/// Learner poll payload from `get_game_session_play_status`.
+class GameSessionPlayStatus {
+  const GameSessionPlayStatus({
+    required this.sessionId,
+    required this.status,
+    required this.versionEligible,
+    required this.killSwitch,
+  });
+
+  final String sessionId;
+  final GameSessionStatus status;
+  final bool versionEligible;
+  final bool killSwitch;
+
+  factory GameSessionPlayStatus.fromJson(Map<String, dynamic> json) {
+    return GameSessionPlayStatus(
+      sessionId: json['session_id'] as String? ?? '',
+      status: GameSessionStatus.parse(json['status'] as String?),
+      versionEligible: json['version_eligible'] as bool? ?? true,
+      killSwitch: json['kill_switch'] as bool? ?? false,
+    );
+  }
+}
+
 /// Handbook §11.2 Game -> Nano messages.
 enum GameBridgeInboundKind {
   ready,
