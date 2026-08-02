@@ -32,14 +32,9 @@ class _AcademicStructurePageState extends State<AcademicStructurePage> {
     try {
       final structure = await widget.repository.load();
       if (!mounted) return;
-      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-          const NanoCopy(NanoAppLocale.en);
       setState(() {
         _structure = structure;
-        _state = structure.activeClasses.isEmpty &&
-                structure.activeGrades.isEmpty
-            ? NanoViewEmpty(message: copy.classesEmpty)
-            : const NanoViewReady();
+        _state = const NanoViewReady();
       });
     } catch (_) {
       if (!mounted) return;
@@ -54,14 +49,9 @@ class _AcademicStructurePageState extends State<AcademicStructurePage> {
     try {
       final structure = await action();
       if (!mounted) return;
-      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-          const NanoCopy(NanoAppLocale.en);
       setState(() {
         _structure = structure;
-        _state = structure.activeClasses.isEmpty &&
-                structure.activeGrades.isEmpty
-            ? NanoViewEmpty(message: copy.classesEmpty)
-            : const NanoViewReady();
+        _state = const NanoViewReady();
       });
     } catch (error) {
       if (!mounted) return;
@@ -353,6 +343,14 @@ class _AcademicStructurePageState extends State<AcademicStructurePage> {
                       ),
                     ],
                   ),
+                  if (structure.activeGrades.isEmpty &&
+                      structure.activeClasses.isEmpty) ...[
+                    const SizedBox(height: NanoSpacing.md),
+                    Text(
+                      copy.classesEmpty,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
                   if (structure.mappingIssues.isNotEmpty) ...[
                     const SizedBox(height: NanoSpacing.md),
                     Text(

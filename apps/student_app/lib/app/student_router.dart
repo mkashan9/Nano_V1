@@ -44,6 +44,10 @@ GoRouter createStudentRouter({
   QuizAttemptRepository? quizAttemptRepository,
   NanoSyncController? syncController,
   ShareCardRepository? shareCards,
+  StudentFlexRepository? flexRepository,
+  StudentAttendanceRepository? studentAttendanceRepository,
+  StudentMarksRepository? studentMarksRepository,
+  StudentClassroomRepository? studentClassroomRepository,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -221,6 +225,10 @@ GoRouter createStudentRouter({
                     onSignOut: onSignedOut,
                     syncController: syncController,
                     shareCards: shareCards,
+                    flexRepository: flexRepository,
+                    studentAttendanceRepository: studentAttendanceRepository,
+                    studentMarksRepository: studentMarksRepository,
+                    studentClassroomRepository: studentClassroomRepository,
                   ),
                 ),
               ],
@@ -250,6 +258,10 @@ Widget _pageFor(
   VoidCallback? onSignOut,
   NanoSyncController? syncController,
   ShareCardRepository? shareCards,
+  StudentFlexRepository? flexRepository,
+  StudentAttendanceRepository? studentAttendanceRepository,
+  StudentMarksRepository? studentMarksRepository,
+  StudentClassroomRepository? studentClassroomRepository,
 }) {
   return switch (id) {
     'home' || 'learning' => StudentLearningTab(
@@ -270,8 +282,12 @@ Widget _pageFor(
       ),
     'game' || 'games' => const StudentGamesTab(),
     'flex' => StudentFlexTab(
-      flexEligible: principal.flexEligible,
-    ),
+        flexEligible: principal.flexEligible,
+        repository: flexRepository,
+        attendanceRepository: studentAttendanceRepository,
+        marksRepository: studentMarksRepository,
+        classroomRepository: studentClassroomRepository,
+      ),
     'communities' => const StudentCommunitiesTab(),
     'profile' => StudentProfileTab(
         principal: principal,

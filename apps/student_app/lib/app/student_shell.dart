@@ -443,11 +443,17 @@ class StudentFlexTab extends StatelessWidget {
   const StudentFlexTab({
     super.key,
     this.repository,
+    this.attendanceRepository,
+    this.marksRepository,
+    this.classroomRepository,
     this.flexEligible = true,
     this.initialSection,
   });
 
   final StudentFlexRepository? repository;
+  final StudentAttendanceRepository? attendanceRepository;
+  final StudentMarksRepository? marksRepository;
+  final StudentClassroomRepository? classroomRepository;
   final bool flexEligible;
   final FlexHubSectionKind? initialSection;
 
@@ -455,6 +461,9 @@ class StudentFlexTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlexHomePage(
       repository: repository ?? FakeStudentFlexRepository(),
+      attendanceRepository: attendanceRepository,
+      marksRepository: marksRepository,
+      classroomRepository: classroomRepository,
       flexEligible: flexEligible,
       initialSection: initialSection,
     );

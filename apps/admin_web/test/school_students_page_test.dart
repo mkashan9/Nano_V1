@@ -28,5 +28,7 @@ void main() {
     expect(find.text('Ali'), findsOneWidget);
     expect(find.text('Add student'), findsOneWidget);
     expect(find.text('CSV import'), findsOneWidget);
+    expect(find.text('Download template'), findsOneWidget);
+    expect(find.text('Choose CSV file'), findsOneWidget);
   });
 }
