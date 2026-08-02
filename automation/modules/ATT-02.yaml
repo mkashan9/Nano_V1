@@ -1,7 +1,7 @@
 id: ATT-02
 name: "Attendance Excel Download and Upload"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - ATT-01
 dependency_notes: >

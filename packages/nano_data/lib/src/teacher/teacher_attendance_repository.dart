@@ -3,7 +3,7 @@ import 'package:supabase/supabase.dart';
 
 import 'teacher_classes_repository.dart';
 
-/// ATT-01/ATT-02 attendance grid load, submit, and CSV import.
+/// ATT-01/ATT-02/ATT-03 attendance grid, CSV import, and corrections.
 abstract class TeacherAttendanceRepository {
   Future<TeacherMyClasses> listAssignments();
   Future<TeacherAttendanceGrid> load({
@@ -37,6 +37,19 @@ abstract class TeacherAttendanceRepository {
     required List<Map<String, String>> rows,
     String periodKey = 'daily',
   });
+  Future<AttendanceCorrectionHistory> loadHistory({
+    required String assignmentId,
+    required String sessionDate,
+    String periodKey = 'daily',
+  });
+  Future<AttendanceCorrectionResult> correct({
+    required String assignmentId,
+    required String sessionDate,
+    required String studentUserId,
+    required AttendanceEntryStatus newStatus,
+    required String reason,
+    String periodKey = 'daily',
+  });
 }
 
 class FakeTeacherAttendanceRepository implements TeacherAttendanceRepository {
@@ -46,7 +59,9 @@ class FakeTeacherAttendanceRepository implements TeacherAttendanceRepository {
 
   final TeacherClassesRepository _classes;
   final Map<String, TeacherAttendanceGrid> _grids = {};
+  final Map<String, List<AttendanceCorrectionRecord>> _history = {};
   var alwaysFail = false;
+  var _correctionSeq = 0;
 
   String _key(String assignmentId, String date, String period) =>
       '$assignmentId|$date|$period';
@@ -271,6 +286,116 @@ class FakeTeacherAttendanceRepository implements TeacherAttendanceRepository {
       grid: grid,
     );
   }
+
+  @override
+  Future<AttendanceCorrectionHistory> loadHistory({
+    required String assignmentId,
+    required String sessionDate,
+    String periodKey = 'daily',
+  }) async {
+    if (alwaysFail) throw StateError('Attendance unavailable');
+    final key = _key(assignmentId, sessionDate, periodKey);
+    final grid = _grids[key];
+    return AttendanceCorrectionHistory(
+      assignmentId: assignmentId,
+      sessionId: grid?.session?.id,
+      sessionDate: sessionDate,
+      periodKey: periodKey,
+      corrections: List.unmodifiable(_history[key] ?? const []),
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+  }
+
+  @override
+  Future<AttendanceCorrectionResult> correct({
+    required String assignmentId,
+    required String sessionDate,
+    required String studentUserId,
+    required AttendanceEntryStatus newStatus,
+    required String reason,
+    String periodKey = 'daily',
+  }) async {
+    if (alwaysFail) throw StateError('Attendance unavailable');
+    final trimmed = reason.trim();
+    if (trimmed.isEmpty) {
+      throw StateError('Correction reason is required.');
+    }
+    final key = _key(assignmentId, sessionDate, periodKey);
+    final existing = _grids[key];
+    if (existing == null || !existing.isSubmitted) {
+      throw StateError('Only submitted attendance can be corrected.');
+    }
+    final current = existing.statusByStudent[studentUserId];
+    if (current == null) {
+      throw StateError('Attendance entry not found for student.');
+    }
+    if (current == newStatus) {
+      throw StateError('New status must differ from the current value.');
+    }
+    final revBefore = existing.session?.revision ?? 1;
+    final revAfter = revBefore + 1;
+    _correctionSeq += 1;
+    String displayName = '';
+    for (final s in existing.roster) {
+      if (s.id == studentUserId) {
+        displayName = s.displayName;
+        break;
+      }
+    }
+    final record = AttendanceCorrectionRecord(
+      id: 'corr-$_correctionSeq',
+      sessionId: existing.session!.id,
+      studentUserId: studentUserId,
+      displayName: displayName,
+      previousStatus: current,
+      newStatus: newStatus,
+      reason: trimmed,
+      correctedBy: 'teacher-1',
+      correctedByName: 'Teacher',
+      correctedAt: DateTime.utc(2026, 8, 2, 12, _correctionSeq),
+      revisionBefore: revBefore,
+      revisionAfter: revAfter,
+    );
+    final updatedEntries = [
+      for (final e in existing.entries)
+        if (e.studentUserId == studentUserId)
+          AttendanceEntryMark(studentUserId: studentUserId, status: newStatus)
+        else
+          e,
+    ];
+    final grid = TeacherAttendanceGrid(
+      assignmentId: existing.assignmentId,
+      schoolId: existing.schoolId,
+      sessionDate: existing.sessionDate,
+      periodKey: existing.periodKey,
+      attendanceMode: existing.attendanceMode,
+      classLabel: existing.classLabel,
+      subjectCode: existing.subjectCode,
+      roster: existing.roster,
+      entries: updatedEntries,
+      session: AttendanceSessionInfo(
+        id: existing.session!.id,
+        status: existing.session!.status,
+        revision: revAfter,
+        idempotencyKey: existing.session!.idempotencyKey,
+        submittedAt: existing.session!.submittedAt,
+      ),
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+    _grids[key] = grid;
+    _history[key] = [record, ...(_history[key] ?? const [])];
+    final history = await loadHistory(
+      assignmentId: assignmentId,
+      sessionDate: sessionDate,
+      periodKey: periodKey,
+    );
+    return AttendanceCorrectionResult(
+      corrected: true,
+      correctionId: record.id,
+      grid: grid,
+      history: history,
+    );
+  }
 }
 
 class SupabaseTeacherAttendanceRepository implements TeacherAttendanceRepository {
@@ -383,5 +508,47 @@ class SupabaseTeacherAttendanceRepository implements TeacherAttendanceRepository
     );
     if (raw is! Map) throw StateError('Attendance import commit failed.');
     return AttendanceImportCommitResult.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<AttendanceCorrectionHistory> loadHistory({
+    required String assignmentId,
+    required String sessionDate,
+    String periodKey = 'daily',
+  }) async {
+    final raw = await _client.rpc(
+      'teacher_attendance_history',
+      params: {
+        'p_assignment_id': assignmentId,
+        'p_session_date': sessionDate,
+        'p_period_key': periodKey,
+      },
+    );
+    if (raw is! Map) throw StateError('Attendance history unavailable.');
+    return AttendanceCorrectionHistory.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<AttendanceCorrectionResult> correct({
+    required String assignmentId,
+    required String sessionDate,
+    required String studentUserId,
+    required AttendanceEntryStatus newStatus,
+    required String reason,
+    String periodKey = 'daily',
+  }) async {
+    final raw = await _client.rpc(
+      'teacher_attendance_correct',
+      params: {
+        'p_assignment_id': assignmentId,
+        'p_session_date': sessionDate,
+        'p_student_user_id': studentUserId,
+        'p_new_status': newStatus.wire,
+        'p_reason': reason,
+        'p_period_key': periodKey,
+      },
+    );
+    if (raw is! Map) throw StateError('Attendance correction failed.');
+    return AttendanceCorrectionResult.fromJson(Map<String, dynamic>.from(raw));
   }
 }

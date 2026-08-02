@@ -222,6 +222,34 @@ class NanoCopy {
       : 'Import failed.';
   String teacherAttendanceImportRowError(int row, String error) =>
       isUrdu ? 'قطار $row: $error' : 'Row $row: $error';
+  String get teacherAttendanceCorrectTitle =>
+      isUrdu ? 'تصحیح' : 'Correction';
+  String get teacherAttendanceCorrectSubtitle => isUrdu
+      ? 'جمع شدہ حاضری بدلیں — وجہ لازم ہے؛ پرانی قدر محفوظ رہتی ہے۔'
+      : 'Change submitted marks with a reason — prior values are kept.';
+  String get teacherAttendanceCorrectReasonLabel =>
+      isUrdu ? 'تصحیح کی وجہ' : 'Correction reason';
+  String get teacherAttendanceApplyCorrection =>
+      isUrdu ? 'تصحیح محفوظ' : 'Apply correction';
+  String get teacherAttendanceCorrected =>
+      isUrdu ? 'تصحیح محفوظ ہو گئی۔' : 'Correction saved.';
+  String get teacherAttendanceCorrectFailed => isUrdu
+      ? 'تصحیح ناکام۔'
+      : 'Could not apply correction.';
+  String get teacherAttendanceHistoryTitle =>
+      isUrdu ? 'تصحیح کی تاریخ' : 'Correction history';
+  String get teacherAttendanceHistoryEmpty => isUrdu
+      ? 'ابھی کوئی تصحیح نہیں۔'
+      : 'No corrections yet.';
+  String teacherAttendanceHistoryLine({
+    required String name,
+    required String previous,
+    required String next,
+    required String reason,
+  }) =>
+      isUrdu
+          ? '$name: $previous → $next ($reason)'
+          : '$name: $previous → $next ($reason)';
   String teacherAttendanceStatusLabel(AttendanceEntryStatus status) {
     if (isUrdu) {
       return switch (status) {

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- ATT-03: teachers correct submitted attendance with required reason and immutable history
 - ATT-02: teachers download/preview/commit attendance CSV templates into canonical sessions
 - ATT-01: teachers submit in-app attendance grids for assigned scopes with idempotent submit
 - TCH-02: teachers open My Classes for assignment-scoped rosters with server guards
