@@ -1,45 +1,72 @@
 id: MRK-02
 name: "In-App Marks Grid"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - MRK-01
   - SYNC-01
+dependency_notes: >
+  Draft marks on MRK-01 assessments. Local draft policy from SYNC-01.
+  Excel/publish deferred.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/MRK-02/
   - automation/modules/MRK-02.yaml
+  - automation/modules/MRK-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook MRK-01 in-app marks grid slice"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MRK-02"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.marks_entries
+  - public.assessments
+  - public.school_marks_policies
+server_functions:
+  - "public.teacher_marks_load"
+  - "public.teacher_marks_save"
 acceptance:
+  - Draft marks grid loads roster for assessment
+  - Obtained marks capped by total unless allow_bonus
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/mrk02_marks_grid.sql
+  - packages/nano_domain/test/teacher_marks_grid_test.dart
+  - packages/nano_data/test/teacher_marks_grid_repository_test.dart
+  - apps/teacher_app/test/teacher_marks_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - draft_only_marks_edit
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Enter marks on a draft assessment and save
+rollback_notes: >
+  Revert the branch and migration. Assessment create UI remains.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    In-app draft marks grid for draft assessments.
+  deferred: >
+    MRK-03 Excel; MRK-04 publish/correct; bulk paste.

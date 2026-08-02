@@ -3,7 +3,7 @@ import 'package:supabase/supabase.dart';
 
 import 'teacher_classes_repository.dart';
 
-/// MRK-01 teacher assessment create/list/update (draft).
+/// MRK-01/MRK-02 teacher assessment create/list/update and draft marks grid.
 abstract class TeacherAssessmentRepository {
   Future<TeacherMyClasses> listAssignments();
   Future<TeacherAssessmentList> listForAssignment(String assignmentId);
@@ -15,6 +15,12 @@ abstract class TeacherAssessmentRepository {
     required String assessmentId,
     required TeacherAssessmentDraftInput input,
   });
+  Future<TeacherMarksGrid> loadMarks(String assessmentId);
+  Future<TeacherMarksGrid> saveMarks({
+    required String assessmentId,
+    required List<MarksEntryMark> entries,
+    String? idempotencyKey,
+  });
 }
 
 class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
@@ -24,6 +30,8 @@ class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
 
   final TeacherClassesRepository _classes;
   final Map<String, List<TeacherAssessment>> _byAssignment = {};
+  final Map<String, TeacherMarksGrid> _grids = {};
+  var allowBonus = false;
   var _seq = 0;
   var alwaysFail = false;
 
@@ -136,6 +144,99 @@ class FakeTeacherAssessmentRepository implements TeacherAssessmentRepository {
       throw StateError('Weight cannot be negative.');
     }
   }
+
+  TeacherAssessment? _findAssessment(String assessmentId) {
+    for (final list in _byAssignment.values) {
+      for (final a in list) {
+        if (a.id == assessmentId) return a;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<TeacherMarksGrid> loadMarks(String assessmentId) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    final existing = _grids[assessmentId];
+    if (existing != null) return existing;
+
+    final assessment = _findAssessment(assessmentId);
+    if (assessment == null) {
+      throw StateError('Assessment not found.');
+    }
+    final roster = await _classes.loadRoster(assessment.teacherAssignmentId);
+    final grid = TeacherMarksGrid(
+      assessmentId: assessment.id,
+      assignmentId: assessment.teacherAssignmentId,
+      schoolId: assessment.schoolId,
+      assessmentName: assessment.name,
+      category: assessment.category,
+      assessmentDate: assessment.assessmentDate,
+      totalMarks: assessment.totalMarks,
+      assessmentStatus: assessment.status,
+      allowBonus: allowBonus,
+      classLabel: (await listForAssignment(assessment.teacherAssignmentId))
+          .classLabel,
+      subjectCode: (await listForAssignment(assessment.teacherAssignmentId))
+          .subjectCode,
+      roster: [
+        for (final s in roster.students)
+          MarksRosterStudent(id: s.id, displayName: s.displayName),
+      ],
+      entries: const [],
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+    _grids[assessmentId] = grid;
+    return grid;
+  }
+
+  @override
+  Future<TeacherMarksGrid> saveMarks({
+    required String assessmentId,
+    required List<MarksEntryMark> entries,
+    String? idempotencyKey,
+  }) async {
+    if (alwaysFail) throw StateError('Marks unavailable');
+    final base = await loadMarks(assessmentId);
+    if (!base.isDraft) {
+      throw StateError('Marks can only be edited on draft assessments.');
+    }
+    final rosterIds = {for (final s in base.roster) s.id};
+    for (final e in entries) {
+      if (!rosterIds.contains(e.studentUserId)) {
+        throw StateError('Student is not on the assigned roster.');
+      }
+      if (e.status == MarksEntryStatus.scored) {
+        final obtained = e.obtainedMarks;
+        if (obtained == null || obtained < 0) {
+          throw StateError('Obtained marks required for scored entries.');
+        }
+        if (obtained > base.totalMarks && !base.allowBonus) {
+          throw StateError(
+            'Obtained marks cannot exceed total unless bonus is allowed.',
+          );
+        }
+      }
+    }
+    final grid = TeacherMarksGrid(
+      assessmentId: base.assessmentId,
+      assignmentId: base.assignmentId,
+      schoolId: base.schoolId,
+      assessmentName: base.assessmentName,
+      category: base.category,
+      assessmentDate: base.assessmentDate,
+      totalMarks: base.totalMarks,
+      assessmentStatus: base.assessmentStatus,
+      allowBonus: base.allowBonus,
+      classLabel: base.classLabel,
+      subjectCode: base.subjectCode,
+      roster: base.roster,
+      entries: entries,
+      generatedAt: DateTime.utc(2026, 8, 2),
+    );
+    _grids[assessmentId] = grid;
+    return grid;
+  }
 }
 
 class SupabaseTeacherAssessmentRepository
@@ -201,5 +302,33 @@ class SupabaseTeacherAssessmentRepository
     );
     if (raw is! Map) throw StateError('Assessment update failed.');
     return TeacherAssessmentList.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<TeacherMarksGrid> loadMarks(String assessmentId) async {
+    final raw = await _client.rpc(
+      'teacher_marks_load',
+      params: {'p_assessment_id': assessmentId},
+    );
+    if (raw is! Map) throw StateError('Marks unavailable.');
+    return TeacherMarksGrid.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<TeacherMarksGrid> saveMarks({
+    required String assessmentId,
+    required List<MarksEntryMark> entries,
+    String? idempotencyKey,
+  }) async {
+    final raw = await _client.rpc(
+      'teacher_marks_save',
+      params: {
+        'p_assessment_id': assessmentId,
+        'p_entries': [for (final e in entries) e.toWire()],
+        'p_idempotency_key': idempotencyKey,
+      },
+    );
+    if (raw is! Map) throw StateError('Marks save failed.');
+    return TeacherMarksGrid.fromJson(Map<String, dynamic>.from(raw));
   }
 }
