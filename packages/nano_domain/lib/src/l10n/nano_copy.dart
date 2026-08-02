@@ -981,6 +981,18 @@ class NanoCopy {
       : days == 1
           ? '1 day left'
           : '$days days left';
+  String get leagueBoardTitle =>
+      isUrdu ? 'ہفتہ وار بورڈ' : 'This week’s board';
+  String get leagueBoardOpen => isUrdu ? 'بورڈ دیکھیں' : 'View board';
+  String get leagueBoardEmpty => isUrdu
+      ? 'ابھی کوئی درجہ نہیں۔ کھیل کر XP حاصل کریں۔'
+      : 'No ranks yet. Play to earn game XP.';
+  String get leagueBoardSoftHint => isUrdu
+      ? 'اپنی پیش رفت پر توجہ دیں — دوستوں کے ساتھ نرم مقابلہ۔'
+      : 'Focus on your progress — a gentle weekly race.';
+  String get leagueMustJoin => isUrdu
+      ? 'پہلے اس ہفتے کی لیگ میں شامل ہوں۔'
+      : 'Join this week’s league first.';
   String get notificationsLabel => isUrdu ? 'اطلاعات' : 'Notifications';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>

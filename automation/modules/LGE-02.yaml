@@ -1,44 +1,65 @@
 id: LGE-02
 name: "Leaderboards"
 release: R8
-status: ACTIVE
+status: USER_TEST
 dependencies:
   - LGE-01
+dependency_notes: >
+  Privacy-safe weekly board for caller division/school pool.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/LGE-02/
   - automation/modules/LGE-02.yaml
+  - automation/modules/LGE-01.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LGE-02"
+  - "Handbook LGE leaderboard snapshots privacy-safe names"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.leaderboard_snapshots
+server_functions:
+  - "public.my_league_leaderboard"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Board lists top ranks for caller pool only
+  - Labels are first-name or Learner (never full surname/school)
+  - Clients cannot write snapshots
+  - Profile opens board when joined
 required_tests:
-  - documentation_review
+  - supabase/tests/lge02_leaderboards.sql
+  - packages/nano_domain/test/league_board_test.dart
+  - packages/nano_data/test/league_repository_test.dart
+  - apps/student_app/test/league_board_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - privacy_safe_labels
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Join league, open View board, confirm first-name labels
+rollback_notes: >
+  Revert branch and migration. Profile returns to status-only card.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Weekly division/school pool board + snapshots RPC.
+  deferred: >
+    Class/friends/monthly boards, challenges (LGE-03), usernames (SOC-01).
