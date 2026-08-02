@@ -6,7 +6,8 @@
 
 ## Completed
 
-- [x] GME-02`n- [x] GME-01
+- [x] GME-02
+- [x] GME-01
 - [x] FBK-01
 - [x] FLX-04
 - [x] FLX-03

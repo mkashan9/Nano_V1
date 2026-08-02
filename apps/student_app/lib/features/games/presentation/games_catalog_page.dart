@@ -108,7 +108,8 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           isThreeLine: true,
-                          trailing: game.entryKind == GameEntryKind.web
+                          trailing: (game.entryKind == GameEntryKind.web ||
+                                  game.entryKind == GameEntryKind.flutter)
                               ? TextButton(
                                   onPressed: () => _open(game),
                                   child: Text(copy.gamesPlay),

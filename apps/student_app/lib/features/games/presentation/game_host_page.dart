@@ -4,7 +4,7 @@ import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_games/nano_games.dart';
 
-/// GME-02 secure web/fixture game host (no XP verification).
+/// GME-02/03 secure game host for web fixtures and Flutter-native fixtures.
 class GameHostPage extends StatefulWidget {
   const GameHostPage({
     super.key,
@@ -41,9 +41,10 @@ class _GameHostPageState extends State<GameHostPage> {
     });
     const fallbackCopy = NanoCopy(NanoAppLocale.en);
     try {
-      if (widget.game.entryKind != GameEntryKind.web) {
+      final kind = widget.game.entryKind;
+      if (kind != GameEntryKind.web && kind != GameEntryKind.flutter) {
         setState(() {
-          _state = NanoViewError(message: fallbackCopy.gamesFlutterDeferred);
+          _state = NanoViewError(message: fallbackCopy.gamesStartError);
         });
         return;
       }
@@ -52,20 +53,32 @@ class _GameHostPageState extends State<GameHostPage> {
       if (!mounted) return;
       final copy =
           NanoLocaleScope.maybeOf(context)?.copy ?? fallbackCopy;
-      if (!session.isFixture) {
-        setState(() {
-          _state = NanoViewError(message: copy.gamesHttpsDeferred);
-        });
-        await widget.sessionRepository.abortSession(session.sessionId);
-        return;
+
+      if (kind == GameEntryKind.web) {
+        if (!session.isFixture) {
+          setState(() {
+            _state = NanoViewError(message: copy.gamesHttpsDeferred);
+          });
+          await widget.sessionRepository.abortSession(session.sessionId);
+          return;
+        }
+        if (!canUseFixtureSurface(session)) {
+          setState(() {
+            _state = NanoViewError(message: copy.gamesStartError);
+          });
+          await widget.sessionRepository.abortSession(session.sessionId);
+          return;
+        }
+      } else {
+        if (!canUseNativeFlutterSurface(session)) {
+          setState(() {
+            _state = NanoViewError(message: copy.gamesStartError);
+          });
+          await widget.sessionRepository.abortSession(session.sessionId);
+          return;
+        }
       }
-      if (!canUseFixtureSurface(session)) {
-        setState(() {
-          _state = NanoViewError(message: copy.gamesStartError);
-        });
-        await widget.sessionRepository.abortSession(session.sessionId);
-        return;
-      }
+
       final bridge = GameBridgeController(
         session: session,
         onMessage: _onBridgeMessage,
@@ -124,6 +137,13 @@ class _GameHostPageState extends State<GameHostPage> {
     if (mounted) Navigator.of(context).maybePop();
   }
 
+  Widget _surface(GameBridgeController bridge) {
+    if (bridge.session.entryKind == GameEntryKind.flutter) {
+      return NativeShapeSortSurface(bridge: bridge);
+    }
+    return FixtureGameSurface(bridge: bridge);
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -153,8 +173,7 @@ class _GameHostPageState extends State<GameHostPage> {
               Text(_banner!, style: Theme.of(context).textTheme.bodyMedium),
             ],
             const SizedBox(height: NanoSpacing.md),
-            if (bridge != null)
-              Expanded(child: FixtureGameSurface(bridge: bridge)),
+            if (bridge != null) Expanded(child: _surface(bridge)),
           ],
         ),
       ),

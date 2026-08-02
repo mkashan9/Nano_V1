@@ -1,44 +1,74 @@
 id: GME-03
 name: "Open-Source Native Game Integration"
 release: R8
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - GME-01
+dependency_notes: >
+  Flutter-native host reusing GME-02 session/bridge. Shape Sort fixture
+  published. Download/verify deferred.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_games/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/GME-03/
+  - docs/provenance/
   - automation/modules/GME-03.yaml
+  - automation/modules/GME-02.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for GME-03"
+  - "Handbook §11.1 Flutter-native games"
+  - "Handbook §11.2 Game bridge contract"
+  - "Handbook §7 provenance for third-party games"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.game_versions
+  - public.game_sessions
+server_functions:
+  - "public.start_game_session"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Flutter entry_kind games can start a session
+  - Shape Sort published and playable via native host
+  - Shared bridge rejects unknown messages
+  - Completion unverified (no XP)
+  - Provenance recorded for the native fixture
 required_tests:
-  - documentation_review
+  - supabase/tests/gme03_native_flutter_host.sql
+  - packages/nano_games/test/native_shape_sort_surface_test.dart
+  - packages/nano_data/test/game_catalog_repository_test.dart
+  - apps/student_app/test/game_host_native_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - reuse_bridge_contract
+  - play_token_hashed_at_rest
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Play Shape Sort as junior; finish; confirm verification-later banner
+rollback_notes: >
+  Revert branch and migration. Shape Sort returns to draft; flutter start blocked.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Native Flutter host + Shape Sort fixture; shared bridge/sessions.
+  deferred: >
+    OSS binary packaging, download/cache, trusted verify/XP.
