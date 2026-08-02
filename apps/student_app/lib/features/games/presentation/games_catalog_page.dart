@@ -12,6 +12,8 @@ class GamesCatalogPage extends StatefulWidget {
     this.sessionRepository,
     this.assetRepository,
     this.localStorageRepository,
+    this.accessibility = AccessibilityPreferences.defaults,
+    this.onAccessibilityChanged,
     this.independent = false,
     this.gradeLevel,
     this.junior = false,
@@ -21,6 +23,8 @@ class GamesCatalogPage extends StatefulWidget {
   final GameSessionRepository? sessionRepository;
   final GameAssetRepository? assetRepository;
   final GameLocalStorageRepository? localStorageRepository;
+  final AccessibilityPreferences accessibility;
+  final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
   final bool independent;
   final int? gradeLevel;
   final bool junior;
@@ -121,6 +125,8 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
         builder: (_) => GameHostPage(
           game: game,
           sessionRepository: sessions,
+          accessibility: widget.accessibility,
+          onAccessibilityChanged: widget.onAccessibilityChanged,
         ),
       ),
     );

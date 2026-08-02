@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] GME-06 Game Audio, Haptics, and Classroom Mode
+- [ ] GME-07 Game Kill Switch and Version Disable
 
 ## Completed
 
+- [x] GME-06
 - [x] GME-05
 - [x] GME-04
 - [x] GME-03

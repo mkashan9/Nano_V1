@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_games/src/game_bridge_controller.dart';
+import 'package:nano_games/src/game_feedback.dart';
 
 /// Flutter-native Shape Sort fixture (`fixture://shape_sort`).
-///
-/// First-party reference native integration (GME-03). Tap a chip, then a
-/// matching bin. Posts through the shared [GameBridgeController] contract.
 class NativeShapeSortSurface extends StatefulWidget {
   const NativeShapeSortSurface({
     super.key,
     required this.bridge,
+    this.feedback,
     this.autoReady = true,
   });
 
   final GameBridgeController bridge;
+  final GameFeedbackSink? feedback;
   final bool autoReady;
 
   @override
@@ -46,7 +46,7 @@ class _NativeShapeSortSurfaceState extends State<NativeShapeSortSurface> {
     setState(() => _selectedId = chipId);
   }
 
-  void _placeOn(String target) {
+  Future<void> _placeOn(String target) async {
     final selected = _selectedId;
     if (selected == null) return;
     final chip = _chips.cast<_SortChip?>().firstWhere(
@@ -68,9 +68,10 @@ class _NativeShapeSortSurfaceState extends State<NativeShapeSortSurface> {
       'type': 'progress',
       'payload': {'checkpoint': _correct, 'last_ok': ok},
     });
+    await widget.feedback?.tick();
   }
 
-  void _finish() {
+  Future<void> _finish() async {
     final started = _startedAt ?? DateTime.now().toUtc();
     final duration =
         DateTime.now().toUtc().difference(started).inMilliseconds;
@@ -84,12 +85,14 @@ class _NativeShapeSortSurfaceState extends State<NativeShapeSortSurface> {
         'nonce': 'native-${widget.bridge.session.sessionId}-$_correct',
       },
     });
+    await widget.feedback?.success();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final remaining = _chips.where((c) => !c.placed).toList();
+    final quiet = widget.bridge.settings.classroomMode;
     return Material(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Padding(
@@ -104,7 +107,9 @@ class _NativeShapeSortSurfaceState extends State<NativeShapeSortSurface> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Native Flutter host · sorted $_correct / ${_chips.length}',
+              quiet
+                  ? 'Native Flutter host · classroom quiet · sorted $_correct / ${_chips.length}'
+                  : 'Native Flutter host · sorted $_correct / ${_chips.length}',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium,
             ),
@@ -117,7 +122,8 @@ class _NativeShapeSortSurfaceState extends State<NativeShapeSortSurface> {
                 for (final target in _targets)
                   OutlinedButton(
                     key: ValueKey('bin-$target'),
-                    onPressed: _selectedId == null ? null : () => _placeOn(target),
+                    onPressed:
+                        _selectedId == null ? null : () => _placeOn(target),
                     child: Text('bin $target'),
                   ),
               ],

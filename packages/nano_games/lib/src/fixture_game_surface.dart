@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:nano_games/src/game_bridge_controller.dart';
+import 'package:nano_games/src/game_feedback.dart';
 
 /// In-app fixture surface for `fixture://` games (no remote WebView).
-///
-/// Posts the handbook bridge messages through [GameBridgeController].
 class FixtureGameSurface extends StatefulWidget {
   const FixtureGameSurface({
     super.key,
     required this.bridge,
+    this.feedback,
     this.autoReady = true,
   });
 
   final GameBridgeController bridge;
+  final GameFeedbackSink? feedback;
   final bool autoReady;
 
   @override
@@ -34,7 +35,7 @@ class _FixtureGameSurfaceState extends State<FixtureGameSurface> {
     }
   }
 
-  void _tap() {
+  Future<void> _tap() async {
     if (!_started) {
       _started = true;
       _startedAt = DateTime.now().toUtc();
@@ -44,9 +45,10 @@ class _FixtureGameSurfaceState extends State<FixtureGameSurface> {
       'type': 'progress',
       'payload': {'checkpoint': _score},
     });
+    await widget.feedback?.tick();
   }
 
-  void _finish() {
+  Future<void> _finish() async {
     final started = _startedAt ?? DateTime.now().toUtc();
     final duration =
         DateTime.now().toUtc().difference(started).inMilliseconds;
@@ -60,12 +62,14 @@ class _FixtureGameSurfaceState extends State<FixtureGameSurface> {
         'nonce': 'fixture-${widget.bridge.session.sessionId}-$_score',
       },
     });
+    await widget.feedback?.success();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = widget.bridge.session.titleEn;
+    final quiet = widget.bridge.settings.classroomMode ||
+        !widget.bridge.settings.effectiveSoundEnabled;
     return Material(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Padding(
@@ -74,13 +78,15 @@ class _FixtureGameSurfaceState extends State<FixtureGameSurface> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              title,
+              widget.bridge.session.titleEn,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Fixture host · score $_score',
+              quiet
+                  ? 'Fixture host · quiet · score $_score'
+                  : 'Fixture host · score $_score',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium,
             ),
@@ -101,7 +107,6 @@ class _FixtureGameSurfaceState extends State<FixtureGameSurface> {
   }
 }
 
-/// Resolves whether a session can use the fixture surface.
 bool canUseFixtureSurface(GameSessionStart session) =>
     session.entryKind == GameEntryKind.web &&
     session.isFixture &&
