@@ -2,10 +2,11 @@
 
 ## Active
 
-- [x] GME-01 Game Catalog and Eligibility
+- [ ] GME-02 Secure Web Game Container
 
 ## Completed
 
+- [x] GME-01
 - [x] FBK-01
 - [x] FLX-04
 - [x] FLX-03

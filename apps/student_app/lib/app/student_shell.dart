@@ -435,12 +435,14 @@ class StudentGamesTab extends StatelessWidget {
   const StudentGamesTab({
     super.key,
     this.repository,
+    this.sessionRepository,
     this.independent = false,
     this.gradeLevel,
     this.junior = false,
   });
 
   final GameCatalogRepository? repository;
+  final GameSessionRepository? sessionRepository;
   final bool independent;
   final int? gradeLevel;
   final bool junior;
@@ -449,6 +451,7 @@ class StudentGamesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return GamesCatalogPage(
       repository: repository ?? FakeGameCatalogRepository(),
+      sessionRepository: sessionRepository ?? FakeGameSessionRepository(),
       independent: independent,
       gradeLevel: gradeLevel,
       junior: junior,

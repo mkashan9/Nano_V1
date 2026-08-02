@@ -6,7 +6,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/games/presentation/games_catalog_page.dart';
 
 void main() {
-  testWidgets('lists eligible games for a junior school learner', (tester) async {
+  testWidgets('lists games and opens fixture host from Play', (tester) async {
     await tester.binding.setSurfaceSize(const Size(900, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -18,6 +18,7 @@ void main() {
           theme: NanoTheme.junior(),
           home: GamesCatalogPage(
             repository: FakeGameCatalogRepository(),
+            sessionRepository: FakeGameSessionRepository(),
             gradeLevel: 3,
           ),
         ),
@@ -25,9 +26,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Games'), findsWidgets);
     expect(find.text('Number Rush'), findsOneWidget);
-    expect(find.text('School Circuit'), findsNothing);
-    expect(find.textContaining('Play opens'), findsOneWidget);
+    expect(find.text('Play'), findsWidgets);
+
+    await tester.tap(find.text('Play').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tap to score'), findsOneWidget);
+    await tester.tap(find.text('Tap to score'));
+    await tester.pump();
+    await tester.tap(find.text('Finish'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Verification comes later'), findsOneWidget);
   });
 }

@@ -54,6 +54,7 @@ export 'teacher/teacher_feedback.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';
 export 'game/game_catalog.dart';
+export 'game/game_session.dart';
 export 'learning/learning_insights.dart';
 export 'learning/refresh_checkpoint.dart';
 export 'quiz/attempt_result.dart';
