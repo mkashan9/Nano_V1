@@ -12,6 +12,7 @@ IconData nanoNavIcon(String name) => switch (name) {
       'fact_check' => Icons.fact_check_outlined,
       'grade' => Icons.grade_outlined,
       'cast_for_education' => Icons.cast_for_education_outlined,
+      'feedback' => Icons.feedback_outlined,
       'school' => Icons.school_outlined,
       'badge' => Icons.badge_outlined,
       'assessment' => Icons.assessment_outlined,

@@ -116,6 +116,7 @@ class SessionPrincipal {
           'teacher.attendance',
           'teacher.marks',
           'teacher.classroom',
+          'teacher.feedback',
           'teacher.profile',
         },
       );

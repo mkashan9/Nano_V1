@@ -1,7 +1,7 @@
 id: FLX-04
 name: "Student Classroom"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - FLX-01
   - CLS-01

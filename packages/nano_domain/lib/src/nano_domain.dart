@@ -50,6 +50,7 @@ export 'teacher/marks_import.dart';
 export 'teacher/marks_correction.dart';
 export 'teacher/marks_result_summary.dart';
 export 'teacher/teacher_classroom.dart';
+export 'teacher/teacher_feedback.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';
 export 'learning/learning_insights.dart';

@@ -6,6 +6,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:teacher_app/features/attendance/presentation/teacher_attendance_page.dart';
 import 'package:teacher_app/features/classroom/presentation/teacher_classroom_page.dart';
 import 'package:teacher_app/features/classes/presentation/teacher_classes_page.dart';
+import 'package:teacher_app/features/feedback/presentation/teacher_feedback_page.dart';
 import 'package:teacher_app/features/home/presentation/teacher_dashboard_page.dart';
 import 'package:teacher_app/features/marks/presentation/teacher_marks_page.dart';
 
@@ -23,6 +24,7 @@ class TeacherShell extends StatelessWidget {
     this.teacherAttendanceRepository,
     this.teacherAssessmentRepository,
     this.teacherClassroomRepository,
+    this.teacherFeedbackRepository,
   });
 
   final EnvironmentConfig config;
@@ -36,6 +38,7 @@ class TeacherShell extends StatelessWidget {
   final TeacherAttendanceRepository? teacherAttendanceRepository;
   final TeacherAssessmentRepository? teacherAssessmentRepository;
   final TeacherClassroomRepository? teacherClassroomRepository;
+  final TeacherFeedbackRepository? teacherFeedbackRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +89,7 @@ class TeacherDestinationPage extends StatelessWidget {
     this.teacherAttendanceRepository,
     this.teacherAssessmentRepository,
     this.teacherClassroomRepository,
+    this.teacherFeedbackRepository,
     this.assignmentId,
   });
 
@@ -95,6 +99,7 @@ class TeacherDestinationPage extends StatelessWidget {
   final TeacherAttendanceRepository? teacherAttendanceRepository;
   final TeacherAssessmentRepository? teacherAssessmentRepository;
   final TeacherClassroomRepository? teacherClassroomRepository;
+  final TeacherFeedbackRepository? teacherFeedbackRepository;
   final String? assignmentId;
 
   @override
@@ -129,6 +134,13 @@ class TeacherDestinationPage extends StatelessWidget {
         teacherClassroomRepository != null) {
       return TeacherClassroomPage(
         repository: teacherClassroomRepository!,
+        initialAssignmentId: assignmentId,
+      );
+    }
+
+    if (destination.id == 'feedback' && teacherFeedbackRepository != null) {
+      return TeacherFeedbackPage(
+        repository: teacherFeedbackRepository!,
         initialAssignmentId: assignmentId,
       );
     }
