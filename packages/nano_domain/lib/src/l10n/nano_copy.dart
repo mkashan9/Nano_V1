@@ -1,6 +1,7 @@
 import '../companion/companion_mode.dart';
 import '../game/game_assets.dart';
 import '../media/generated_asset.dart';
+import '../social/safety_report.dart';
 import '../teacher/teacher_attendance.dart';
 import '../teacher/teacher_marks_grid.dart';
 import 'nano_app_locale.dart';
@@ -1080,6 +1081,35 @@ class NanoCopy {
       isUrdu ? 'درخواست بھیج دی گئی' : 'Request sent';
   String get alreadyFriendsLabel => isUrdu ? 'پہلے سے دوست' : 'Already friends';
   String get blockUserLabel => isUrdu ? 'بلاک' : 'Block';
+  String get reportUserLabel => isUrdu ? 'رپورٹ' : 'Report';
+  String get reportUserTitle =>
+      isUrdu ? 'رپورٹ کریں' : 'Report learner';
+  String reportUserSubtitle(String label) => isUrdu
+      ? '$label کی رپورٹ بھیجیں — ذاتی رابطہ نہیں جاتا۔'
+      : 'Report $label. We never send school or contact details.';
+  String reportCategoryLabel(ReportCategory category) {
+    switch (category) {
+      case ReportCategory.harassment:
+        return isUrdu ? 'ہراساں' : 'Harassment';
+      case ReportCategory.spam:
+        return isUrdu ? 'سپام' : 'Spam';
+      case ReportCategory.inappropriate:
+        return isUrdu ? 'نامناسب' : 'Inappropriate';
+      case ReportCategory.impersonation:
+        return isUrdu ? 'جعلی شناخت' : 'Impersonation';
+      case ReportCategory.other:
+        return isUrdu ? 'دیگر' : 'Other';
+    }
+  }
+
+  String get reportDetailsHint =>
+      isUrdu ? 'مزید تفصیل (اختیاری)' : 'More detail (optional)';
+  String get reportAlsoBlockLabel =>
+      isUrdu ? 'اسے بلاک بھی کریں' : 'Also block this learner';
+  String get submitReportLabel =>
+      isUrdu ? 'رپورٹ بھیجیں' : 'Submit report';
+  String get reportSubmittedLabel =>
+      isUrdu ? 'رپورٹ بھیج دی گئی' : 'Report submitted';
   String get friendsTitle => isUrdu ? 'دوست' : 'Friends';
   String get friendsTab => isUrdu ? 'دوست' : 'Friends';
   String get requestsTab => isUrdu ? 'درخواستیں' : 'Requests';

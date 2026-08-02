@@ -1,7 +1,8 @@
-# CHANGELOG
+﻿# CHANGELOG
 
 ## Unreleased
 
+- SAFE-01: learner reports with optional block
 - SOC-04: social share sheet and username-aware share cards
 - SOC-03: friends weekly XP leaderboard
 - SOC-02: friend requests, removal, and blocking
@@ -85,7 +86,8 @@
 
 - MED-10: motion is capped, framed, and free ? nothing moves more than four percent and most under two, because a companion that moves enough to notice is competing with the lesson, and a test asserts the ceiling so a later "make it livelier" tweak cannot quietly raise it; the transform sits inside the circular mask so the ring and the play badge never move under a learner's finger, and the ticker comes from `TickerMode` so an off-screen or backgrounded companion burns nothing
 
-- MED-10: reduced motion and Classroom Mode stop it dead, not slow it down ? the gate is `NanoMotion.resolve`, the single place both preferences and the platform's own setting are read, so no tier table can outvote a child's choice; the controller is stopped rather than merely ignored, and the drawing stays, because reduced motion is a request for calm rather than for less companion
+- MED-10: reduced motion and Classroom Mode stop it dead, not slow it down ? the gate is 
+anoMotion.resolve`, the single place both preferences and the platform's own setting are read, so no tier table can outvote a child's choice; the controller is stopped rather than merely ignored, and the drawing stays, because reduced motion is a request for calm rather than for less companion
 
 - MED-10: gentle retry is the one mood with no tilt at all, asserted by a test rather than remembered ? a springy, waggling companion in front of a child who just got an answer wrong is the worst thing this tier could do, and it is exactly the kind of thing that arrives later as a one-line tweak
 
@@ -212,3 +214,4 @@
 - Bootstrap: credential migration, ignore rules, handbook extraction, UI catalog
 - Automation controls: module queue, status docs, Cursor rules
 - AUD-01 audit documentation set
+

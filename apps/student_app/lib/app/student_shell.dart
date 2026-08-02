@@ -527,6 +527,7 @@ class StudentProfileTab extends StatelessWidget {
     this.leagueRepository,
     this.socialIdentityRepository,
     this.friendGraphRepository,
+    this.safetyReportRepository,
   });
 
   final SessionPrincipal principal;
@@ -541,6 +542,7 @@ class StudentProfileTab extends StatelessWidget {
   final LeagueRepository? leagueRepository;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
+  final SafetyReportRepository? safetyReportRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -569,6 +571,7 @@ class StudentProfileTab extends StatelessWidget {
       leagueRepository: leagueRepository,
       socialIdentityRepository: socialIdentityRepository,
       friendGraphRepository: friendGraphRepository,
+      safetyReportRepository: safetyReportRepository,
       onOpenAccessibility: onAccessibilityChanged == null
           ? null
           : () {

@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/safety/presentation/report_user_sheet.dart';
 
-/// SOC-02/03 inbox: friends, requests, blocks, and weekly ranking.
+/// SOC-02/03 + SAFE-01 inbox: friends, requests, blocks, ranking, report.
 class FriendsPage extends StatefulWidget {
   const FriendsPage({
     super.key,
     required this.repository,
+    this.safetyReports,
   });
 
   final FriendGraphRepository repository;
+  final SafetyReportRepository? safetyReports;
 
   @override
   State<FriendsPage> createState() => _FriendsPageState();
@@ -123,6 +126,27 @@ class _FriendsPageState extends State<FriendsPage>
                       onRemove: (peer) => _run(
                         () => widget.repository.removeFriend(peer.peerToken),
                       ),
+                      onReport: widget.safetyReports == null
+                          ? null
+                          : (peer) async {
+                              final draft = await showReportUserSheet(
+                                context: context,
+                                peerLabel: peer.peerLabel,
+                              );
+                              if (draft == null) return;
+                              await _run(() async {
+                                await widget.safetyReports!.submitForPeer(
+                                  peer.peerToken,
+                                  draft,
+                                );
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(copy.reportSubmittedLabel),
+                                  ),
+                                );
+                              });
+                            },
                     ),
                     _RequestsList(
                       requests: _requests,
@@ -167,12 +191,14 @@ class _FriendsList extends StatelessWidget {
     required this.copy,
     required this.busy,
     required this.onRemove,
+    this.onReport,
   });
 
   final List<FriendPeer> friends;
   final NanoCopy copy;
   final bool busy;
   final ValueChanged<FriendPeer> onRemove;
+  final ValueChanged<FriendPeer>? onReport;
 
   @override
   Widget build(BuildContext context) {
@@ -187,9 +213,19 @@ class _FriendsList extends StatelessWidget {
           leading: const Icon(Icons.person_outline),
           title: Text(peer.peerLabel),
           subtitle: peer.username == null ? null : Text('@${peer.username}'),
-          trailing: TextButton(
-            onPressed: busy ? null : () => onRemove(peer),
-            child: Text(copy.removeFriendLabel),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (onReport != null)
+                TextButton(
+                  onPressed: busy ? null : () => onReport!(peer),
+                  child: Text(copy.reportUserLabel),
+                ),
+              TextButton(
+                onPressed: busy ? null : () => onRemove(peer),
+                child: Text(copy.removeFriendLabel),
+              ),
+            ],
           ),
         );
       },

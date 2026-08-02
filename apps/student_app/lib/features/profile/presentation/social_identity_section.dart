@@ -4,19 +4,22 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/profile/presentation/friends_page.dart';
+import 'package:student_app/features/safety/presentation/report_user_sheet.dart';
 
-/// SOC-01/02: claim username, friend code, lookup, request, and open Friends.
+/// SOC-01/02 + SAFE-01: claim username, friend code, lookup, request, report.
 class SocialIdentitySection extends StatefulWidget {
   const SocialIdentitySection({
     super.key,
     required this.repository,
     required this.copy,
     this.friendGraph,
+    this.safetyReports,
   });
 
   final SocialIdentityRepository repository;
   final NanoCopy copy;
   final FriendGraphRepository? friendGraph;
+  final SafetyReportRepository? safetyReports;
 
   @override
   State<SocialIdentitySection> createState() => _SocialIdentitySectionState();
@@ -198,12 +201,48 @@ class _SocialIdentitySectionState extends State<SocialIdentitySection> {
     }
   }
 
+  Future<void> _reportLookup() async {
+    final reports = widget.safetyReports;
+    final lookup = _lookupResult;
+    final query = _lookupCtrl.text.trim();
+    if (reports == null || lookup == null || query.isEmpty) return;
+    final draft = await showReportUserSheet(
+      context: context,
+      peerLabel: lookup.socialLabel,
+    );
+    if (draft == null || !mounted) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await reports.submitByQuery(query, draft);
+      if (!mounted) return;
+      setState(() {
+        if (draft.alsoBlock) _lookupResult = null;
+        _busy = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(widget.copy.reportSubmittedLabel)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
   void _openFriends() {
     final graph = widget.friendGraph;
     if (graph == null) return;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => FriendsPage(repository: graph),
+        builder: (_) => FriendsPage(
+          repository: graph,
+          safetyReports: widget.safetyReports,
+        ),
       ),
     );
   }
@@ -332,6 +371,11 @@ class _SocialIdentitySectionState extends State<SocialIdentitySection> {
                     onPressed: _busy ? null : _blockLookup,
                     child: Text(copy.blockUserLabel),
                   ),
+                  if (widget.safetyReports != null)
+                    TextButton(
+                      onPressed: _busy ? null : _reportLookup,
+                      child: Text(copy.reportUserLabel),
+                    ),
                 ],
               ),
           ],
