@@ -524,6 +524,7 @@ class StudentProfileTab extends StatelessWidget {
     this.onSignOut,
     this.syncController,
     this.shareCards,
+    this.leagueRepository,
   });
 
   final SessionPrincipal principal;
@@ -535,6 +536,7 @@ class StudentProfileTab extends StatelessWidget {
   final VoidCallback? onSignOut;
   final NanoSyncController? syncController;
   final ShareCardRepository? shareCards;
+  final LeagueRepository? leagueRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -560,6 +562,7 @@ class StudentProfileTab extends StatelessWidget {
           StudentPreferences(userId: principalForProfile.userId!),
       onPreferencesChanged: onPreferencesChanged,
       shareCards: shareCards,
+      leagueRepository: leagueRepository,
       onOpenAccessibility: onAccessibilityChanged == null
           ? null
           : () {

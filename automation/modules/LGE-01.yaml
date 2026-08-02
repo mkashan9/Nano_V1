@@ -1,45 +1,69 @@
 id: LGE-01
 name: "Weekly Leagues"
 release: R8
-status: ACTIVE
+status: USER_TEST
 dependencies:
   - GME-05
   - XP-01
+dependency_notes: >
+  Personal weekly league card ranked by verified game_result XP.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/LGE-01/
   - automation/modules/LGE-01.yaml
+  - automation/modules/GME-07.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for LGE-01"
+  - "Handbook LGE-01 weekly leagues personal position card"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.league_cycles
+  - public.league_divisions
+  - public.league_participants
+server_functions:
+  - "public.join_current_league"
+  - "public.my_league_status"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Join current week is idempotent
+  - Status ranks by game_result XP in the open week
+  - Profile shows personal league card
+  - Clients cannot write scores/ranks
 required_tests:
-  - documentation_review
+  - supabase/tests/lge01_weekly_leagues.sql
+  - packages/nano_domain/test/league_status_test.dart
+  - packages/nano_data/test/league_repository_test.dart
+  - apps/student_app/test/league_profile_card_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_rank_only
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Join weekly league from Profile; earn game XP; confirm week XP updates
+rollback_notes: >
+  Revert branch and migration. Profile returns without league card.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Personal weekly status + join; Bronze default; game_result XP only.
+  deferred: >
+    Full boards, promotion/relegation, challenges (LGE-02/03).

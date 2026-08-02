@@ -21,6 +21,7 @@ class StudentProfilePage extends StatefulWidget {
     this.onSignOut,
     this.syncController,
     this.shareCards,
+    this.leagueRepository,
   });
 
   final StudentProfileRepository repository;
@@ -40,6 +41,9 @@ class StudentProfilePage extends StatefulWidget {
   /// XP-06: featured pins and share-card builder. Optional in previews.
   final ShareCardRepository? shareCards;
 
+  /// LGE-01: personal weekly league status. Optional in previews.
+  final LeagueRepository? leagueRepository;
+
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
 }
@@ -49,6 +53,8 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   StudentProfileView? _profile;
   PrivacySettings? _privacy;
   List<DeviceSession> _sessions = const [];
+  LeagueStatus? _league;
+  var _joiningLeague = false;
   var _signingOut = false;
   String? _revokingId;
   String? _busyAwardId;
@@ -74,6 +80,11 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
       );
       final privacy = await widget.repository.loadPrivacy(userId);
       final sessions = await widget.repository.loadSessions(userId);
+      LeagueStatus? league;
+      final leagues = widget.leagueRepository;
+      if (leagues != null) {
+        league = await leagues.currentStatus();
+      }
       final prefs = widget.preferences;
       if (!mounted) return;
       setState(() {
@@ -85,11 +96,32 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               );
         _privacy = privacy;
         _sessions = sessions;
+        _league = league;
         _state = const NanoViewReady();
       });
     } catch (_) {
       if (!mounted) return;
       setState(() => _state = const NanoViewError());
+    }
+  }
+
+  Future<void> _joinLeague() async {
+    final leagues = widget.leagueRepository;
+    if (leagues == null || _joiningLeague) return;
+    setState(() => _joiningLeague = true);
+    try {
+      final status = await leagues.joinCurrent();
+      if (!mounted) return;
+      setState(() {
+        _league = status;
+        _joiningLeague = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _joiningLeague = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not join the league')),
+      );
     }
   }
 
@@ -241,6 +273,10 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               onShareAchievement: widget.shareCards == null
                   ? null
                   : _shareAchievement,
+              league: _league,
+              joiningLeague: _joiningLeague,
+              onJoinLeague:
+                  widget.leagueRepository == null ? null : _joinLeague,
             ),
     );
   }
@@ -265,6 +301,9 @@ class _ProfileBody extends StatelessWidget {
     this.busyAwardId,
     this.onToggleFeatured,
     this.onShareAchievement,
+    this.league,
+    this.joiningLeague = false,
+    this.onJoinLeague,
   });
 
   final StudentProfileView profile;
@@ -284,6 +323,9 @@ class _ProfileBody extends StatelessWidget {
   final String? busyAwardId;
   final ValueChanged<ProfileAchievement>? onToggleFeatured;
   final ValueChanged<ProfileAchievement>? onShareAchievement;
+  final LeagueStatus? league;
+  final bool joiningLeague;
+  final VoidCallback? onJoinLeague;
 
   @override
   Widget build(BuildContext context) {
@@ -346,6 +388,40 @@ class _ProfileBody extends StatelessWidget {
           title: Text('${profile.streakDays} ${copy.streakLabel}'),
           subtitle: Text('${profile.completedTopics} ${copy.topicsCompleted}'),
         ),
+        if (league != null) ...[
+          const SizedBox(height: NanoSpacing.sm),
+          Text(copy.leagueLabel, style: theme.textTheme.titleMedium),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.emoji_events_outlined),
+            title: Text(
+              league!.joined
+                  ? copy.leagueDivisionRank(
+                      league!.divisionTitleFor(urdu: copy.isUrdu),
+                      league!.rank ?? 0,
+                      league!.peerCount,
+                    )
+                  : copy.leagueNotJoinedHint,
+            ),
+            subtitle: Text(
+              league!.joined
+                  ? [
+                      copy.leagueWeekXp(league!.weekXp),
+                      copy.leagueDaysLeft(
+                        league!.timeRemaining.inDays.clamp(0, 7),
+                      ),
+                      copy.leagueJoinedHint,
+                    ].join(' · ')
+                  : league!.weekKey,
+            ),
+            trailing: league!.joined || onJoinLeague == null
+                ? null
+                : TextButton(
+                    onPressed: joiningLeague ? null : onJoinLeague,
+                    child: Text(copy.leagueJoin),
+                  ),
+          ),
+        ],
         if (onOpenProgress != null)
           ListTile(
             contentPadding: EdgeInsets.zero,
