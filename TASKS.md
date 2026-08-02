@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] GME-05 Trusted Game Result Verification
+- [ ] GME-06 Game Audio, Haptics, and Classroom Mode
 
 ## Completed
 
+- [x] GME-05
 - [x] GME-04
 - [x] GME-03
 - [x] GME-02

@@ -1,7 +1,7 @@
 id: GME-05
 name: "Trusted Game Result Verification"
 release: R8
-status: USER_TEST
+status: DONE
 dependencies:
   - GME-02
   - XP-01
