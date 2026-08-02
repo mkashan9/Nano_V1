@@ -39,4 +39,22 @@ void main() {
     expect(result.verified, isFalse);
     expect(result.xpAwarded, 0);
   });
+
+  test('fake session blocks disabled versions and reports kill status',
+      () async {
+    final repo = FakeGameSessionRepository(
+      disabledVersionIds: {'v-number'},
+    );
+    expect(
+      () => repo.startSession('v-number'),
+      throwsA(isA<GameSessionBlocked>()),
+    );
+
+    final live = FakeGameSessionRepository();
+    final start = await live.startSession('v-number');
+    live.forceAbortActive();
+    final status = await live.getPlayStatus(start.sessionId);
+    expect(status.killSwitch, isTrue);
+    expect(status.status, GameSessionStatus.aborted);
+  });
 }

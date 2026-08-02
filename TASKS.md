@@ -2,10 +2,11 @@
 
 ## Active
 
-- [ ] GME-07 Game Kill Switch and Version Disable
+- [ ] LGE-01 Weekly Leagues
 
 ## Completed
 
+- [x] GME-07
 - [x] GME-06
 - [x] GME-05
 - [x] GME-04

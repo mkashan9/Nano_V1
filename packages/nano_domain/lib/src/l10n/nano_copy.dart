@@ -47,6 +47,12 @@ class NanoCopy {
       : 'Play in the secure host. Verified results award XP.';
   String get gamesStartError =>
       isUrdu ? 'کھیل شروع نہیں ہو سکا۔' : 'Could not start the game.';
+  String get gamesDisabled => isUrdu
+      ? 'یہ کھیل اب دستیاب نہیں۔'
+      : 'This game is no longer available.';
+  String get gamesKillSwitch => isUrdu
+      ? 'اس کھیل کو بند کر دیا گیا ہے۔'
+      : 'This game was turned off by Nano.';
   String get gamesFlutterDeferred => isUrdu
       ? 'یہ کھیل فلیٹر میزبان میں بعد میں آئے گا۔'
       : 'This game opens in a later Flutter host.';

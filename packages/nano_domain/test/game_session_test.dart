@@ -55,4 +55,21 @@ void main() {
       );
     });
   });
+
+  group('GameSessionPlayStatus', () {
+    test('parses kill switch payload', () {
+      final status = GameSessionPlayStatus.fromJson({
+        'session_id': 's1',
+        'status': 'aborted',
+        'version_eligible': false,
+        'kill_switch': true,
+      });
+      expect(status.killSwitch, isTrue);
+      expect(status.status, GameSessionStatus.aborted);
+      expect(
+        const GameSessionBlocked(code: 'NS143').isVersionDisabled,
+        isTrue,
+      );
+    });
+  });
 }

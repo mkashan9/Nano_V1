@@ -97,8 +97,8 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | GME-04 | Game Download, Version, and Storage State | R8 | DONE | GME-01 |
 | GME-05 | Trusted Game Result Verification | R8 | DONE | GME-02, XP-01 |
 | GME-06 | Game Audio, Haptics, and Classroom Mode | R8 | DONE | GME-01, FND-07 |
-| GME-07 | Game Kill Switch and Version Disable | R8 | ACTIVE | GME-01, ADM-06 |
-| LGE-01 | Weekly Leagues | R8 | BACKLOG | GME-05, XP-01 |
+| GME-07 | Game Kill Switch and Version Disable | R8 | DONE | GME-01, ADM-06 |
+| LGE-01 | Weekly Leagues | R8 | ACTIVE | GME-05, XP-01 |
 | LGE-02 | Leaderboards | R8 | BACKLOG | LGE-01 |
 | LGE-03 | Challenges and Rematches | R8 | BACKLOG | LGE-02 |
 | SOC-01 | Usernames, Friend Codes, and Limited Profiles | R9 | BACKLOG | STU-05, SEC-03 |
