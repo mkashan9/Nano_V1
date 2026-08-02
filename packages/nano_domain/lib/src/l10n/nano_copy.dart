@@ -250,6 +250,54 @@ class NanoCopy {
       isUrdu
           ? '$name: $previous → $next ($reason)'
           : '$name: $previous → $next ($reason)';
+  String get teacherMarksTitle => isUrdu ? 'نمبر' : 'Marks';
+  String get teacherMarksSubtitle => isUrdu
+      ? 'تفویض چنیں اور مسودہ تشخیص بنائیں۔ نمبر اندراج بعد میں۔'
+      : 'Pick an assignment and create draft assessments. Marks entry comes later.';
+  String get teacherMarksNoAssignments => isUrdu
+      ? 'تشخیص کے لیے کوئی فعال تفویض نہیں۔'
+      : 'No active assignments for assessments.';
+  String get teacherMarksAssignmentLabel =>
+      isUrdu ? 'تفویض' : 'Assignment';
+  String get teacherMarksCreateTitle =>
+      isUrdu ? 'نیا مسودہ' : 'New draft assessment';
+  String get teacherMarksEditTitle =>
+      isUrdu ? 'مسودہ ترمیم' : 'Edit draft assessment';
+  String get teacherMarksCategoryLabel =>
+      isUrdu ? 'قسم' : 'Category';
+  String get teacherMarksNameLabel => isUrdu ? 'نام' : 'Name';
+  String get teacherMarksDateLabel => isUrdu ? 'تاریخ' : 'Date';
+  String get teacherMarksTotalLabel =>
+      isUrdu ? 'کل نمبر' : 'Total marks';
+  String get teacherMarksWeightLabel =>
+      isUrdu ? 'وزن (اختیاری)' : 'Weight (optional)';
+  String get teacherMarksDescriptionLabel =>
+      isUrdu ? 'تفصیل' : 'Description';
+  String get teacherMarksSaveDraft =>
+      isUrdu ? 'مسودہ محفوظ' : 'Save draft';
+  String get teacherMarksUpdateDraft =>
+      isUrdu ? 'مسودہ اپڈیٹ' : 'Update draft';
+  String get teacherMarksCancelEdit => isUrdu ? 'منسوخ' : 'Cancel';
+  String get teacherMarksSaved =>
+      isUrdu ? 'مسودہ محفوظ ہو گیا۔' : 'Draft assessment saved.';
+  String get teacherMarksSaveFailed => isUrdu
+      ? 'مسودہ محفوظ نہیں ہو سکا۔'
+      : 'Could not save assessment draft.';
+  String get teacherMarksListTitle =>
+      isUrdu ? 'تشخیصات' : 'Assessments';
+  String get teacherMarksListEmpty => isUrdu
+      ? 'ابھی کوئی تشخیص نہیں۔'
+      : 'No assessments yet.';
+  String get teacherMarksEditAction => isUrdu ? 'ترمیم' : 'Edit';
+  String teacherMarksListSubtitle(
+    String category,
+    String date,
+    double total,
+    String status,
+  ) =>
+      isUrdu
+          ? '$category · $date · $total · $status'
+          : '$category · $date · $total · $status';
   String teacherAttendanceStatusLabel(AttendanceEntryStatus status) {
     if (isUrdu) {
       return switch (status) {

@@ -1,7 +1,7 @@
 id: ATT-03
 name: "Attendance Correction and History"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - ATT-01
 dependency_notes: >

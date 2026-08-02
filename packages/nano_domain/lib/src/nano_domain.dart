@@ -40,6 +40,7 @@ export 'teacher/teacher_classes.dart';
 export 'teacher/teacher_attendance.dart';
 export 'teacher/attendance_import.dart';
 export 'teacher/attendance_correction.dart';
+export 'teacher/teacher_assessment.dart';
 export 'profile/student_profile_view.dart';
 export 'learning/learning_catalog.dart';
 export 'learning/learning_insights.dart';

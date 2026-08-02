@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] ATT-03 Attendance Correction and History
+- [ ] MRK-01 Assessment Creation
 
 ## Completed
 
@@ -39,6 +39,7 @@
 - [x] TCH-02 My Classes and Assigned Scope
 - [x] ATT-01 In-App Attendance Grid
 - [x] ATT-02 Attendance Excel Download and Upload
+- [x] ATT-03 Attendance Correction and History
 
 ## Upcoming
 
