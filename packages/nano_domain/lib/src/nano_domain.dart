@@ -35,6 +35,7 @@ export 'media/generation_budget.dart';
 export 'media/narration_line.dart';
 export 'media/reaction_clip.dart';
 export 'home/student_home_summary.dart';
+export 'flex/flex_hub.dart';
 export 'teacher/teacher_dashboard.dart';
 export 'teacher/teacher_classes.dart';
 export 'teacher/teacher_attendance.dart';

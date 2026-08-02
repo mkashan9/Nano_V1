@@ -60,6 +60,12 @@ abstract final class DeepLinkResolver {
     for (final d in catalog) {
       if (d.path == path) return d;
     }
+    // FLX-01: /flex/marks (and siblings) land on the Flex hub when eligible.
+    if (path == '/flex' || path.startsWith('/flex/')) {
+      for (final d in catalog) {
+        if (d.path == '/flex') return d;
+      }
+    }
     return null;
   }
 }

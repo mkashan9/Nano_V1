@@ -22,6 +22,7 @@ import 'package:student_app/features/learning/presentation/learning_progress_pag
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
 import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
+import 'package:student_app/features/flex/presentation/flex_home_page.dart';
 
 class StudentShell extends StatelessWidget {
   const StudentShell({
@@ -439,13 +440,23 @@ class StudentGamesTab extends StatelessWidget {
 }
 
 class StudentFlexTab extends StatelessWidget {
-  const StudentFlexTab({super.key});
+  const StudentFlexTab({
+    super.key,
+    this.repository,
+    this.flexEligible = true,
+    this.initialSection,
+  });
+
+  final StudentFlexRepository? repository;
+  final bool flexEligible;
+  final FlexHubSectionKind? initialSection;
 
   @override
   Widget build(BuildContext context) {
-    return const NavPlaceholderPage(
-      title: 'Flex',
-      subtitle: 'School-eligible students only. Independent students never see this tab.',
+    return FlexHomePage(
+      repository: repository ?? FakeStudentFlexRepository(),
+      flexEligible: flexEligible,
+      initialSection: initialSection,
     );
   }
 }

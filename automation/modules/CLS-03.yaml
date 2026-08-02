@@ -1,7 +1,7 @@
 id: CLS-03
 name: "Scheduling, Expiry, and Acknowledgement"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - CLS-01
 dependency_notes: >

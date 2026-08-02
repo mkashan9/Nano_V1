@@ -48,13 +48,13 @@ class QuizResultView extends StatelessWidget {
       final ShareCard card;
       if (shareCards != null) {
         card = await shareCards!.forQuizScore(
-          scorePercent: result.scorePercent,
+          scorePercent: result.scorePercent.round(),
           passed: result.passed,
         );
       } else {
         card = ShareCard.quizScore(
           displayName: name,
-          scorePercent: result.scorePercent,
+          scorePercent: result.scorePercent.round(),
           passed: result.passed,
         );
       }

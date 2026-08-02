@@ -1,46 +1,64 @@
 id: FLX-01
 name: "Student Flex Home"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-03
   - STU-04
   - AUTH-01
+dependency_notes: >
+  Flex hub for school-linked seniors. Attendance/marks/classroom detail → FLX-02/03/04.
 applications:
   - student_app
   - packages
   - docs
   - automation
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
   - docs/
   - automation/
   - docs/modules/FLX-01/
   - automation/modules/FLX-01.yaml
+  - automation/modules/CLS-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook FLX-01 Student Flex"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for FLX-01"
 ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Flex hub with Attendance / Marks / Classroom cards
+  - Independent students never receive Flex
+  - /flex/* deep links resolve to hub when eligible
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - packages/nano_domain/test/flex_hub_test.dart
+  - packages/nano_domain/test/navigation_guard_test.dart
+  - packages/nano_data/test/student_flex_repository_test.dart
+  - apps/student_app/test/flex_home_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - flex_eligibility_gate
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Flex as school senior; confirm hub cards; independent has no Flex tab
+rollback_notes: >
+  Revert the branch. Shell returns to placeholder Flex tab.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Flex overview hub only; section detail deferred to FLX-02/03/04.
+  deferred: >
+    Live attendance/marks/classroom queries; junior Flex labels; nested go_router paths.

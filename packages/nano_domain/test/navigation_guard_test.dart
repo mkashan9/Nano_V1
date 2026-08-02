@@ -27,6 +27,21 @@ void main() {
     expect(result.location, '/');
   });
 
+  test('deep link /flex/marks lands on Flex hub for eligible senior', () {
+    final principal = SessionPrincipal.seniorSchool(flexEligible: true);
+    final result = DeepLinkResolver.resolve(principal, '/flex/marks');
+    expect(result.fellBack, isFalse);
+    expect(result.location, '/flex');
+    expect(result.requestedPath, '/flex/marks');
+  });
+
+  test('deep link /flex/marks falls back for independent', () {
+    final principal = SessionPrincipal.independent();
+    final result = DeepLinkResolver.resolve(principal, '/flex/marks');
+    expect(result.fellBack, isTrue);
+    expect(result.location, '/');
+  });
+
   test('deep link to allowed games succeeds for junior', () {
     final principal = SessionPrincipal.junior();
     final result = DeepLinkResolver.resolve(principal, '/games');

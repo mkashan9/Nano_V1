@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- FLX-01: school-linked Flex hub (attendance / marks / classroom entry cards)
 - CLS-03: schedule/expiry on drafts; acknowledgement counts for teachers
 - CLS-02: teachers attach https links to draft classroom announcements
 - CLS-01: teachers create draft classroom announcements for assigned scopes
