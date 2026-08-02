@@ -401,6 +401,27 @@ class NanoCopy {
     return base;
   }
 
+  String get teacherMarksSummaryTitle =>
+      isUrdu ? 'نتائج کا خلاصہ' : 'Result summary';
+  String get teacherMarksSummarySubtitle => isUrdu
+      ? 'شائع شدہ تشخیص کی کلاسی کارکردگی۔'
+      : 'Class performance for this published assessment.';
+  String teacherMarksSummaryAverage(double value) =>
+      isUrdu ? 'اوسط $value%' : 'Average $value%';
+  String teacherMarksSummaryPassRate(double? value) => value == null
+      ? (isUrdu ? 'پاس شرح —' : 'Pass rate —')
+      : (isUrdu ? 'پاس شرح $value%' : 'Pass rate $value%');
+  String teacherMarksSummaryScored(int scored, int roster) => isUrdu
+      ? 'نمبر والے $scored / $roster'
+      : 'Scored $scored / $roster';
+  String teacherMarksSummaryGrades(String line) =>
+      isUrdu ? 'درجات: $line' : 'Grades: $line';
+  String teacherMarksSummaryStudentLine({
+    required String name,
+    required String detail,
+  }) =>
+      '$name · $detail';
+
   String teacherMarksListSubtitle(
     String category,
     String date,

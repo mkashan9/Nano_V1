@@ -3,17 +3,17 @@
 ## Current state
 
 - **Current release:** R7 Teacher Operations
-- **Current module:** MRK-04 Marks Publication and Correction
+- **Current module:** MRK-05 Result and Class Performance Summary
 - **Current status:** USER_TEST
-- **Current branch:** module/MRK-04-marks-publish
-- **Last completed module:** MRK-03
+- **Current branch:** module/MRK-05-result-summary
+- **Last completed module:** MRK-04
 - **Application name:** Nano
 
 ## Releases
 
 - R1?R6: complete
-- R7 Teacher Operations: TCH-01?TCH-02, ATT-01?ATT-03, MRK-01?MRK-03 DONE; MRK-04 USER_TEST
+- R7 Teacher Operations: TCH-01?TCH-02, ATT-01?ATT-03, MRK-01?MRK-04 DONE; MRK-05 USER_TEST
 
 ## Owner decision waiting
 
-Run `docs/modules/MRK-04/MANUAL_TEST.md`. Publish draft marks, then correct with a reason.
+Run `docs/modules/MRK-05/MANUAL_TEST.md`. Publish marks and review Result summary.

@@ -1,44 +1,70 @@
 id: MRK-05
 name: "Result and Class Performance Summary"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - MRK-04
+dependency_notes: >
+  Summarizes published/corrected MRK-04 assessments using SCH-06 policies.
 applications:
   - teacher_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/teacher_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/MRK-05/
   - automation/modules/MRK-05.yaml
+  - automation/modules/MRK-04.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook MRK-01 class summary / results"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for MRK-05"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.assessments
+  - public.marks_entries
+  - public.school_marks_policies
+  - public.result_periods
+server_functions:
+  - "public.teacher_marks_result_summary"
 acceptance:
+  - Summary only for published/corrected assessments
+  - Uses school passing percent and grade bands
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/mrk05_result_summary.sql
+  - packages/nano_domain/test/marks_result_summary_test.dart
+  - packages/nano_data/test/marks_result_summary_repository_test.dart
+  - apps/teacher_app/test/teacher_marks_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - teacher_scoped_rpcs
+  - draft_marks_excluded_from_summary
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Publish marks and review Result summary
+rollback_notes: >
+  Revert the branch and migration. Publish/correct UI remains.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Per-assessment class performance summary only.
+  deferred: >
+    Cross-assessment rollup; report-card PDF; FLX-03 student views.

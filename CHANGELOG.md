@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- MRK-05: teachers see class performance summaries for published assessments
 - MRK-04: teachers publish draft marks and correct published entries with immutable history
 - MRK-03: teachers download/preview/commit marks CSV templates into draft marks grids
 - MRK-02: teachers enter draft marks grids for draft assessments with status and caps

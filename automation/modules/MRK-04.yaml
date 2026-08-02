@@ -1,7 +1,7 @@
 id: MRK-04
 name: "Marks Publication and Correction"
 release: R7
-status: USER_TEST
+status: DONE
 dependencies:
   - MRK-02
   - SEC-03

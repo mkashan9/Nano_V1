@@ -39,6 +39,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
   MarksImportPreview? _importPreview;
   String? _importKey;
   MarksCorrectionHistory? _history;
+  MarksResultSummary? _summary;
   final _reason = TextEditingController();
   late DateTime _date;
   var _saving = false;
@@ -175,6 +176,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
       _importPreview = null;
       _importKey = null;
       _history = null;
+      _summary = null;
       _csv.clear();
       _reason.clear();
     });
@@ -202,8 +204,10 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
     try {
       final grid = await widget.repository.loadMarks(assessmentId);
       MarksCorrectionHistory? history;
+      MarksResultSummary? summary;
       if (grid.isCorrectable) {
         history = await widget.repository.loadMarksHistory(assessmentId);
+        summary = await widget.repository.loadResultSummary(assessmentId);
       }
       if (!mounted) return;
       _bindGrid(grid);
@@ -211,6 +215,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
         _grid = grid;
         _gridAssessmentId = assessmentId;
         _history = history;
+        _summary = summary;
         _importPreview = null;
         _importKey = null;
         _csv.clear();
@@ -445,6 +450,8 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
       );
       final history =
           await widget.repository.loadMarksHistory(assessmentId);
+      final summary =
+          await widget.repository.loadResultSummary(assessmentId);
       if (!mounted) return;
       final copy = NanoLocaleScope.maybeOf(context)?.copy ??
           const NanoCopy(NanoAppLocale.en);
@@ -452,6 +459,7 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
       setState(() {
         _grid = published;
         _history = history;
+        _summary = summary;
         _publishing = false;
       });
       final assignmentId = _assignmentId;
@@ -525,6 +533,12 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
         _reason.clear();
         _message = copy.teacherMarksCorrected;
       });
+      try {
+        final summary =
+            await widget.repository.loadResultSummary(assessmentId);
+        if (!mounted) return;
+        setState(() => _summary = summary);
+      } catch (_) {}
     } catch (_) {
       if (!mounted) return;
       final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -759,6 +773,73 @@ class _TeacherMarksPageState extends State<TeacherMarksPage> {
                         },
                       ),
                   if (grid.isCorrectable) ...[
+                    if (_summary != null) ...[
+                      const SizedBox(height: 24),
+                      Text(
+                        copy.teacherMarksSummaryTitle,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        copy.teacherMarksSummarySubtitle,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        children: [
+                          Text(
+                            copy.teacherMarksSummaryAverage(
+                              _summary!.averagePercent,
+                            ),
+                          ),
+                          Text(
+                            copy.teacherMarksSummaryPassRate(
+                              _summary!.passRatePercent,
+                            ),
+                          ),
+                          Text(
+                            copy.teacherMarksSummaryScored(
+                              _summary!.scoredCount,
+                              _summary!.rosterCount,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_summary!.gradeDistribution.any((g) => g.count > 0)) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          copy.teacherMarksSummaryGrades(
+                            [
+                              for (final g in _summary!.gradeDistribution)
+                                if (g.count > 0) '${g.label}:${g.count}',
+                            ].join(' · '),
+                          ),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      for (final row in _summary!.students.take(8))
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            copy.teacherMarksSummaryStudentLine(
+                              name: row.displayName.trim().isEmpty
+                                  ? copy.teacherClassesStudentFallback
+                                  : row.displayName,
+                              detail: row.percent == null
+                                  ? copy.teacherMarksEntryStatusLabel(
+                                      MarksEntryStatus.parse(row.status),
+                                    )
+                                  : '${row.percent}%'
+                                      '${row.gradeLabel == null ? '' : ' · ${row.gradeLabel}'}'
+                                      '${row.passed == true ? ' · pass' : row.passed == false ? ' · fail' : ''}',
+                            ),
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                    ],
                     const SizedBox(height: 24),
                     Text(
                       copy.teacherMarksCorrectTitle,
