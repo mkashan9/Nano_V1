@@ -960,8 +960,29 @@ class NanoCopy {
       isUrdu ? 'درست شدہ' : 'Corrected';
   String get flexClassroomTitle => isUrdu ? 'کلاس روم' : 'Classroom';
   String get flexClassroomSubtitle => isUrdu
-      ? 'اعلانات اور وسائل (جلد آ رہا ہے)۔'
-      : 'Announcements and materials (coming soon).';
+      ? 'اعلانات اور وسائل۔'
+      : 'Announcements and materials.';
+  String get studentClassroomSubtitle => isUrdu
+      ? 'آپ کی کلاس کے شائع شدہ اعلانات۔'
+      : 'Published announcements for your class.';
+  String get studentClassroomEmpty => isUrdu
+      ? 'ابھی کوئی اعلان نہیں۔'
+      : 'No classroom announcements yet.';
+  String studentClassroomPendingAck(int count) => isUrdu
+      ? '$count تسلیم باقی'
+      : '$count to acknowledge';
+  String get studentClassroomNeedsAck =>
+      isUrdu ? 'تسلیم درکار' : 'Needs acknowledgement';
+  String get studentClassroomAcknowledged =>
+      isUrdu ? 'تسلیم شدہ' : 'Acknowledged';
+  String get studentClassroomExpired => isUrdu ? 'میعاد ختم' : 'Expired';
+  String get studentClassroomAckAction =>
+      isUrdu ? 'تسلیم کریں' : 'Acknowledge';
+  String get studentClassroomAckDone =>
+      isUrdu ? 'تسلیم ہو گیا۔' : 'Acknowledged.';
+  String get studentClassroomAckFailed => isUrdu
+      ? 'تسلیم ناکام۔'
+      : 'Could not acknowledge.';
   String get flexSectionComingSoon => isUrdu
       ? 'یہ حصہ اگلے ماڈیول میں آئے گا۔'
       : 'This section arrives in a later module.';

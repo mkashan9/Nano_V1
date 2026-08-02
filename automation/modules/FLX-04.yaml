@@ -1,45 +1,72 @@
 id: FLX-04
 name: "Student Classroom"
 release: R7
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - FLX-01
   - CLS-01
+dependency_notes: >
+  Student feed of CLS published items; ack via CLS-03 RPC. CLS-02 attachments nested in feed.
 applications:
   - student_app
   - packages
   - docs
   - automation
+  - supabase
 allowed_paths:
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - packages/nano_testing/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/FLX-04/
   - automation/modules/FLX-04.yaml
+  - automation/modules/FLX-03.yaml
   - MODULE_STATUS.md
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
+  - docs/handbook/HANDBOOK_TRACEABILITY.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
+  - "Handbook FLX-01 Student Flex — classroom"
   - "See docs/handbook/HANDBOOK_TRACEABILITY.md for FLX-04"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.classroom_items
+  - public.classroom_attachments
+  - public.classroom_acknowledgements
+server_functions:
+  - "public.student_classroom_feed"
+  - "public.student_classroom_acknowledge"
 acceptance:
+  - Student sees published announcements for enrolled classes
+  - Can acknowledge when required and not expired
+  - Drafts excluded
   - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
 required_tests:
-  - documentation_review
+  - supabase/tests/flx04_student_classroom_feed.sql
+  - packages/nano_domain/test/student_classroom_test.dart
+  - packages/nano_data/test/student_classroom_repository_test.dart
+  - apps/student_app/test/student_classroom_page_test.dart
 security_checks:
   - no_secrets_in_diff
-accessibility_checks: []
+  - enrollment_scoped_feed
+  - draft_items_excluded
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open Flex Classroom and acknowledge an item
+rollback_notes: >
+  Revert branch and migration. Flex hub Classroom returns to placeholder.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Student classroom feed + acknowledge; attachments listed read-only.
+  deferred: >
+    Live hub counts; nested go_router; in-app link browser.
