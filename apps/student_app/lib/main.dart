@@ -39,6 +39,7 @@ void main() {
   GameAssetRepository? gameAssetRepository;
   GameLocalStorageRepository? gameLocalStorageRepository;
   CommunityDiscoveryRepository? communityDiscoveryRepository;
+  CommunityMessagingRepository? communityMessagingRepository;
   var requireAuth = false;
   if (config.supabaseUrl.isNotEmpty && config.supabaseAnonKey.isNotEmpty) {
     final client =
@@ -78,6 +79,8 @@ void main() {
     gameLocalStorageRepository = FakeGameLocalStorageRepository();
     communityDiscoveryRepository =
         SupabaseCommunityDiscoveryRepository(client);
+    communityMessagingRepository =
+        SupabaseCommunityMessagingRepository(client);
     requireAuth = true;
   }
   runApp(
@@ -106,6 +109,7 @@ void main() {
       gameAssetRepository: gameAssetRepository,
       gameLocalStorageRepository: gameLocalStorageRepository,
       communityDiscoveryRepository: communityDiscoveryRepository,
+      communityMessagingRepository: communityMessagingRepository,
       // Built here rather than inside the app state so a widget test keeps the
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
@@ -154,6 +158,7 @@ class NanoStudentApp extends StatefulWidget {
     this.gameAssetRepository,
     this.gameLocalStorageRepository,
     this.communityDiscoveryRepository,
+    this.communityMessagingRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -230,6 +235,7 @@ class NanoStudentApp extends StatefulWidget {
   final GameAssetRepository? gameAssetRepository;
   final GameLocalStorageRepository? gameLocalStorageRepository;
   final CommunityDiscoveryRepository? communityDiscoveryRepository;
+  final CommunityMessagingRepository? communityMessagingRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -640,6 +646,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       gameAssetRepository: widget.gameAssetRepository,
       gameLocalStorageRepository: widget.gameLocalStorageRepository,
       communityDiscoveryRepository: widget.communityDiscoveryRepository,
+      communityMessagingRepository: widget.communityMessagingRepository,
     );
   }
 

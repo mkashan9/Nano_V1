@@ -508,14 +508,18 @@ class StudentCommunitiesTab extends StatelessWidget {
   const StudentCommunitiesTab({
     super.key,
     this.repository,
+    this.messagingRepository,
   });
 
   final CommunityDiscoveryRepository? repository;
+  final CommunityMessagingRepository? messagingRepository;
 
   @override
   Widget build(BuildContext context) {
     return CommunitiesHubPage(
       repository: repository ?? FakeCommunityDiscoveryRepository(),
+      messagingRepository:
+          messagingRepository ?? FakeCommunityMessagingRepository(),
     );
   }
 }

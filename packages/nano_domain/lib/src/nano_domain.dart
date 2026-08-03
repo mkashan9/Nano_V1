@@ -41,6 +41,7 @@ export 'social/safety_report.dart';
 export 'social/moderation_queue.dart';
 export 'social/safety_policy.dart';
 export 'community/community_discovery.dart';
+export 'community/community_messaging.dart';
 export 'media/asset_review.dart';
 export 'media/generated_asset.dart';
 export 'media/generation_budget.dart';

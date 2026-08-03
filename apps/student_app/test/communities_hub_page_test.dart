@@ -117,6 +117,32 @@ void main() {
     expect(find.text('No pending requests'), findsOneWidget);
   });
 
+  testWidgets('member can open chat from community detail', (tester) async {
+    final repo = FakeCommunityDiscoveryRepository();
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      NanoLocaleScope(
+        locale: NanoAppLocale.en,
+        copy: const NanoCopy(NanoAppLocale.en),
+        child: MaterialApp(
+          theme: NanoTheme.senior(),
+          home: CommunitiesHubPage(
+            repository: repo,
+            messagingRepository: FakeCommunityMessagingRepository(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Study Circle'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open chat'), findsOneWidget);
+    await tester.tap(find.text('Open chat'));
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome to Study Circle — ask anything.'), findsOneWidget);
+  });
+
   testWidgets('senior shell shows Communities destination', (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
     addTearDown(() => tester.binding.setSurfaceSize(null));

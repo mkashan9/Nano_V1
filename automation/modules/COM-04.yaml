@@ -1,16 +1,25 @@
 id: COM-04
 name: "Text Messages, Replies, Mentions, and Reactions"
 release: R9
-status: BACKLOG
+status: DONE
 dependencies:
   - COM-03
   - SAFE-03
+dependency_notes: >
+  Active members chat with text/replies/mentions/reactions.
+  send_community_message uses assert_community_message_allowed (SAFE-03).
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/COM-04/
@@ -19,27 +28,44 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for COM-04"
+  - "Handbook COM-01 Senior Communities (messaging slice)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.community_messages
+  - public.community_message_mentions
+  - public.message_reactions
+server_functions:
+  - "public.list_community_messages"
+  - "public.send_community_message"
+  - "public.toggle_message_reaction"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Active member can list and send text messages
+  - Replies reference a parent in the same community
+  - Mentions only store active members
+  - Reactions toggle per user/emoji
+  - SAFE-03 message gate and SAFE-04 entitlement enforced
 required_tests:
-  - documentation_review
+  - supabase/tests/com04_community_messages.sql
+  - packages/nano_domain/test/community_messaging_test.dart
+  - packages/nano_data/test/community_messaging_repository_test.dart
+  - apps/student_app/test/community_chat_page_test.dart
+  - apps/student_app/test/communities_hub_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Open chat, send, reply, mention, react
+rollback_notes: >
+  Revert branch and migration. Message tables/RPCs removed.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Text chat + replies + mentions + reactions for active members.
+  deferred: >
+    Media, pins, search, edit/delete, realtime.
