@@ -110,8 +110,8 @@ class NanoCopy {
   String get flex => isUrdu ? 'فلیکس' : 'Flex';
   String get communities => isUrdu ? 'کمیونٹیز' : 'Communities';
   String get communitiesHubHint => isUrdu
-      ? 'کھلی کمیونٹیز تلاش کریں۔ بنانا اور جوائن بعد میں آئے گا۔'
-      : 'Browse open Communities. Create and join arrive in later modules.';
+      ? 'کمیونٹی بنائیں یا دریافت میں تلاش کریں۔ جوائن جلد آ رہا ہے۔'
+      : 'Create a community or browse Discover. Joining arrives soon.';
   String get communitiesMyTab => isUrdu ? 'میری' : 'My';
   String get communitiesDiscoverTab => isUrdu ? 'دریافت' : 'Discover';
   String get communitiesSearchHint =>
@@ -119,8 +119,8 @@ class NanoCopy {
   String get communitiesMyEmptyTitle =>
       isUrdu ? 'ابھی کوئی کمیونٹی نہیں' : 'No communities yet';
   String get communitiesMyEmptyBody => isUrdu
-      ? 'دریافت میں کچھ تلاش کریں۔ جوائن جلد آ رہا ہے۔'
-      : 'Find something in Discover. Joining arrives soon.';
+      ? 'نیا بنائیں، یا دریافت میں تلاش کریں۔'
+      : 'Create one, or find something in Discover.';
   String get communitiesDiscoverEmptyTitle =>
       isUrdu ? 'کچھ نہیں ملا' : 'Nothing to show';
   String get communitiesDiscoverEmptyBody => isUrdu
@@ -134,8 +134,29 @@ class NanoCopy {
   String get communitiesYouAreMember =>
       isUrdu ? 'آپ رکن ہیں۔' : 'You are a member.';
   String get communitiesJoinDeferredHint => isUrdu
-      ? 'جوائن اور نئی کمیونٹی بنانا اگلے ماڈیولز میں آئے گا۔'
-      : 'Joining and creating communities come in later modules.';
+      ? 'جوائن اگلے ماڈیول میں آئے گا۔'
+      : 'Joining arrives in a later module.';
+  String get communitiesCreate => isUrdu ? 'بنائیں' : 'Create';
+  String get communitiesCreateTitle =>
+      isUrdu ? 'نئی کمیونٹی' : 'New community';
+  String get communitiesNameLabel => isUrdu ? 'نام' : 'Name';
+  String get communitiesSummaryLabel => isUrdu ? 'خلاصہ' : 'Summary';
+  String get communitiesRulesLabel => isUrdu ? 'قواعد' : 'Rules';
+  String get communitiesVisibilityPublic => isUrdu ? 'عوامی' : 'Public';
+  String get communitiesVisibilityPrivate => isUrdu ? 'نجی' : 'Private';
+  String get communitiesManageRoles =>
+      isUrdu ? 'ارکان کے کردار' : 'Manage roles';
+  String get communitiesYou => isUrdu ? 'آپ' : 'you';
+  String communitiesYourRole(String role) => isUrdu
+      ? 'آپ کا کردار: ${communitiesRoleLabel(role)}'
+      : 'Your role: ${communitiesRoleLabel(role)}';
+  String communitiesRoleLabel(String role) => switch (role) {
+        'owner' => isUrdu ? 'مالک' : 'Owner',
+        'admin' => isUrdu ? 'ایڈمن' : 'Admin',
+        'moderator' => isUrdu ? 'ماڈریٹر' : 'Moderator',
+        'member' => isUrdu ? 'رکن' : 'Member',
+        _ => role,
+      };
   String communitiesMemberCount(int count) => isUrdu
       ? '$count ارکان'
       : count == 1

@@ -3,7 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// COM-01 Communities hub: My + Discover (create/join later).
+/// COM-01/02 Communities hub: My + Discover + create + roles.
 class CommunitiesHubPage extends StatefulWidget {
   const CommunitiesHubPage({
     super.key,
@@ -66,7 +66,11 @@ class _CommunitiesHubPageState extends State<CommunitiesHubPage>
       await showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
-        builder: (context) => _CommunityDetailSheet(detail: detail),
+        builder: (context) => _CommunityDetailSheet(
+          detail: detail,
+          repository: widget.repository,
+          onChanged: _load,
+        ),
       );
     } catch (error) {
       if (!mounted) return;
@@ -74,6 +78,23 @@ class _CommunitiesHubPageState extends State<CommunitiesHubPage>
         SnackBar(content: Text('$error')),
       );
     }
+  }
+
+  Future<void> _create() async {
+    final created = await showModalBottomSheet<CommunityDetail>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => _CreateCommunitySheet(
+        repository: widget.repository,
+      ),
+    );
+    if (created == null || !mounted) return;
+    await _load();
+    _tabs.animateTo(0);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(created.name)),
+    );
   }
 
   @override
@@ -86,9 +107,20 @@ class _CommunitiesHubPageState extends State<CommunitiesHubPage>
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            copy.communities,
-            style: Theme.of(context).textTheme.headlineSmall,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  copy.communities,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+              FilledButton.icon(
+                onPressed: _create,
+                icon: const Icon(Icons.add),
+                label: Text(copy.communitiesCreate),
+              ),
+            ],
           ),
           const SizedBox(height: NanoSpacing.xs),
           Text(copy.communitiesHubHint),
@@ -204,10 +236,130 @@ class _CommunityList extends StatelessWidget {
   }
 }
 
+class _CreateCommunitySheet extends StatefulWidget {
+  const _CreateCommunitySheet({required this.repository});
+
+  final CommunityDiscoveryRepository repository;
+
+  @override
+  State<_CreateCommunitySheet> createState() => _CreateCommunitySheetState();
+}
+
+class _CreateCommunitySheetState extends State<_CreateCommunitySheet> {
+  final _name = TextEditingController();
+  final _summary = TextEditingController();
+  final _rules = TextEditingController();
+  var _visibility = CommunityVisibility.public;
+  var _busy = false;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _summary.dispose();
+    _rules.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    setState(() => _busy = true);
+    try {
+      final created = await widget.repository.createCommunity(
+        name: _name.text,
+        summary: _summary.text,
+        rulesText: _rules.text,
+        visibility: _visibility,
+      );
+      if (!mounted) return;
+      Navigator.pop(context, created);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    final bottom = MediaQuery.viewInsetsOf(context).bottom;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        NanoSpacing.lg,
+        NanoSpacing.lg,
+        NanoSpacing.lg,
+        NanoSpacing.lg + bottom,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              copy.communitiesCreateTitle,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: NanoSpacing.md),
+            TextField(
+              controller: _name,
+              decoration: InputDecoration(labelText: copy.communitiesNameLabel),
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const SizedBox(height: NanoSpacing.sm),
+            TextField(
+              controller: _summary,
+              decoration:
+                  InputDecoration(labelText: copy.communitiesSummaryLabel),
+              maxLines: 2,
+            ),
+            const SizedBox(height: NanoSpacing.sm),
+            TextField(
+              controller: _rules,
+              decoration: InputDecoration(labelText: copy.communitiesRulesLabel),
+              maxLines: 3,
+            ),
+            const SizedBox(height: NanoSpacing.sm),
+            SegmentedButton<CommunityVisibility>(
+              segments: [
+                ButtonSegment(
+                  value: CommunityVisibility.public,
+                  label: Text(copy.communitiesVisibilityPublic),
+                ),
+                ButtonSegment(
+                  value: CommunityVisibility.private,
+                  label: Text(copy.communitiesVisibilityPrivate),
+                ),
+              ],
+              selected: {_visibility},
+              onSelectionChanged: _busy
+                  ? null
+                  : (next) => setState(() => _visibility = next.first),
+            ),
+            const SizedBox(height: NanoSpacing.lg),
+            FilledButton(
+              onPressed: _busy ? null : _submit,
+              child: Text(copy.communitiesCreate),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _CommunityDetailSheet extends StatelessWidget {
-  const _CommunityDetailSheet({required this.detail});
+  const _CommunityDetailSheet({
+    required this.detail,
+    required this.repository,
+    required this.onChanged,
+  });
 
   final CommunityDetail detail;
+  final CommunityDiscoveryRepository repository;
+  final VoidCallback onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -226,9 +378,9 @@ class _CommunityDetailSheet extends StatelessWidget {
               Text(detail.summary),
               const SizedBox(height: NanoSpacing.sm),
               Text(copy.communitiesMemberCount(detail.memberCount)),
-              if (detail.isMember) ...[
+              if (detail.myRole != null) ...[
                 const SizedBox(height: NanoSpacing.xs),
-                Text(copy.communitiesYouAreMember),
+                Text(copy.communitiesYourRole(detail.myRole!)),
               ],
               const SizedBox(height: NanoSpacing.lg),
               Text(
@@ -241,14 +393,171 @@ class _CommunityDetailSheet extends StatelessWidget {
                     ? copy.communitiesRulesEmpty
                     : detail.rulesText,
               ),
-              const SizedBox(height: NanoSpacing.lg),
-              Text(copy.communitiesJoinDeferredHint),
+              if (detail.canManageRoles) ...[
+                const SizedBox(height: NanoSpacing.lg),
+                OutlinedButton(
+                  onPressed: () async {
+                    await showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => _MembersSheet(
+                        communityId: detail.id,
+                        repository: repository,
+                        callerRole: detail.myRole ?? 'member',
+                      ),
+                    );
+                    onChanged();
+                  },
+                  child: Text(copy.communitiesManageRoles),
+                ),
+              ] else if (!detail.isMember) ...[
+                const SizedBox(height: NanoSpacing.lg),
+                Text(copy.communitiesJoinDeferredHint),
+              ],
               const SizedBox(height: NanoSpacing.md),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(copy.cancelLabel),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MembersSheet extends StatefulWidget {
+  const _MembersSheet({
+    required this.communityId,
+    required this.repository,
+    required this.callerRole,
+  });
+
+  final String communityId;
+  final CommunityDiscoveryRepository repository;
+  final String callerRole;
+
+  @override
+  State<_MembersSheet> createState() => _MembersSheetState();
+}
+
+class _MembersSheetState extends State<_MembersSheet> {
+  NanoViewState _state = const NanoViewLoading();
+  List<CommunityMember> _members = const [];
+  var _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _state = const NanoViewLoading());
+    try {
+      final members = await widget.repository.listMembers(widget.communityId);
+      if (!mounted) return;
+      setState(() {
+        _members = members;
+        _state = const NanoViewReady();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _state = const NanoViewError());
+    }
+  }
+
+  List<String> _rolesFor(CommunityMember member) {
+    if (widget.callerRole == 'owner') {
+      return const ['owner', 'admin', 'moderator', 'member'];
+    }
+    if (member.role == 'owner' || member.role == 'admin') {
+      return [member.role];
+    }
+    return const ['moderator', 'member'];
+  }
+
+  Future<void> _setRole(CommunityMember member, String role) async {
+    if (role == member.role) return;
+    setState(() => _busy = true);
+    try {
+      final next = await widget.repository.setMemberRole(
+        communityId: widget.communityId,
+        userId: member.userId,
+        role: role,
+      );
+      if (!mounted) return;
+      setState(() => _members = next);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.7,
+        child: Padding(
+          padding: const EdgeInsets.all(NanoSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                copy.communitiesManageRoles,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: NanoSpacing.md),
+              Expanded(
+                child: NanoViewStateHost(
+                  state: _state,
+                  onRetry: _load,
+                  child: ListView.separated(
+                    itemCount: _members.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final member = _members[index];
+                      final roles = _rolesFor(member);
+                      return ListTile(
+                        title: Text(
+                          member.isSelf
+                              ? '${member.displayName} (${copy.communitiesYou})'
+                              : member.displayName,
+                        ),
+                        trailing: DropdownButton<String>(
+                          value: roles.contains(member.role)
+                              ? member.role
+                              : roles.first,
+                          items: [
+                            for (final role in roles)
+                              DropdownMenuItem(
+                                value: role,
+                                child: Text(copy.communitiesRoleLabel(role)),
+                              ),
+                          ],
+                          onChanged: _busy || roles.length == 1
+                              ? null
+                              : (value) {
+                                  if (value != null) {
+                                    _setRole(member, value);
+                                  }
+                                },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** COM-01 Community Discovery
-- **Current status:** DONE (owner approved)
-- **Current branch:** module/COM-01-community-discovery
+- **Current module:** COM-02 Community Creation and Roles
+- **Current status:** USER_TEST
+- **Current branch:** module/COM-02-community-creation
 
 ## Release progress
 
-- R9: SOC..SAFE DONE; COM-01 DONE
+- R9: COM-01 DONE; COM-02 USER_TEST
 
 ## Owner next step
 
-NEXT starts COM-02 Community Creation and Roles.
+Run docs/modules/COM-02/MANUAL_TEST.md. Create a community; confirm owner role.

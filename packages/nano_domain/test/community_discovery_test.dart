@@ -24,8 +24,19 @@ void main() {
       'rules_text': 'Be kind',
       'visibility': 'public',
       'member_count': 3,
+      'my_role': 'owner',
+      'my_status': 'active',
     });
     expect(detail.rulesText, 'Be kind');
-    expect(detail.isMember, isFalse);
+    expect(detail.canManageRoles, isTrue);
+
+    final member = CommunityMember.fromJson({
+      'user_id': 'u1',
+      'display_name': 'Ali',
+      'role': 'admin',
+      'status': 'active',
+      'is_self': false,
+    });
+    expect(member.role, 'admin');
   });
 }

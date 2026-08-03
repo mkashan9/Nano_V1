@@ -138,6 +138,38 @@ class CommunityDetail {
       createdAt: _parseTime(json['created_at']),
     );
   }
+
+  bool get canManageRoles =>
+      myRole == 'owner' || myRole == 'admin';
+}
+
+class CommunityMember {
+  const CommunityMember({
+    required this.userId,
+    required this.displayName,
+    required this.role,
+    this.status = CommunityMembershipStatus.active,
+    this.joinedAt,
+    this.isSelf = false,
+  });
+
+  final String userId;
+  final String displayName;
+  final String role;
+  final CommunityMembershipStatus status;
+  final DateTime? joinedAt;
+  final bool isSelf;
+
+  factory CommunityMember.fromJson(Map<String, dynamic> json) {
+    return CommunityMember(
+      userId: json['user_id'] as String? ?? '',
+      displayName: json['display_name'] as String? ?? 'Member',
+      role: json['role'] as String? ?? 'member',
+      status: CommunityMembershipStatus.parse(json['status'] as String?),
+      joinedAt: _parseTime(json['joined_at']),
+      isSelf: json['is_self'] as bool? ?? false,
+    );
+  }
 }
 
 DateTime? _parseTime(Object? raw) {

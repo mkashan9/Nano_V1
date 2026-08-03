@@ -1,15 +1,24 @@
 id: COM-02
 name: "Community Creation and Roles"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - COM-01
+dependency_notes: >
+  Create open communities; creator is owner; role management for owners/admins.
+  Join deferred to COM-03.
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/COM-02/
@@ -18,27 +27,40 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for COM-02"
+  - "Handbook COM-01 Senior Communities (creation/roles slice)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.communities
+  - public.community_memberships
+server_functions:
+  - "public.create_community"
+  - "public.list_community_members"
+  - "public.set_community_member_role"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Senior can create a community and becomes owner
+  - Owners/admins can manage roles with last-owner protection
+  - Text fields pass SAFE-03 assert_text_allowed
 required_tests:
-  - documentation_review
+  - supabase/tests/com02_community_creation_roles.sql
+  - packages/nano_domain/test/community_discovery_test.dart
+  - packages/nano_data/test/community_discovery_repository_test.dart
+  - apps/student_app/test/communities_hub_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Create a community; verify My list and owner role
+rollback_notes: >
+  Revert branch and migration. Create/role RPCs removed.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Create + roles; open communities; join still COM-03.
+  deferred: >
+    Ban/remove member UI; invite links.
