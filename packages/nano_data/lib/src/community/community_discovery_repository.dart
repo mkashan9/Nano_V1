@@ -1,7 +1,7 @@
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
-/// COM-01/02 communities: discovery + create + role management.
+/// COM-01..03 communities: discovery, create, roles, join/invite.
 abstract class CommunityDiscoveryRepository {
   Future<List<CommunitySummary>> myCommunities();
 
@@ -23,6 +23,22 @@ abstract class CommunityDiscoveryRepository {
     required String userId,
     required String role,
   });
+
+  Future<CommunityDetail> joinCommunity(String communityId);
+
+  Future<void> leaveCommunity(String communityId);
+
+  Future<List<CommunityMember>> listJoinRequests(String communityId);
+
+  Future<List<CommunityMember>> respondJoinRequest({
+    required String communityId,
+    required String userId,
+    required bool accept,
+  });
+
+  Future<CommunityInvite> createInvite(String communityId);
+
+  Future<CommunityDetail> redeemInvite(String code);
 }
 
 class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
@@ -30,6 +46,7 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
     List<CommunitySummary>? mine,
     List<CommunitySummary>? discoverable,
     Map<String, CommunityDetail>? details,
+    Map<String, List<CommunityMember>>? pendingRequests,
   })  : _mine = List.of(
           mine ??
               const [
@@ -93,6 +110,9 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
           ),
           ...?details,
         },
+        _pending = {
+          ...?pendingRequests,
+        },
         _members = {
           'a1000000-0000-4000-8000-000000000001': [
             const CommunityMember(
@@ -113,6 +133,7 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
   final List<CommunitySummary> _discoverable;
   final Map<String, CommunityDetail> _details;
   final Map<String, List<CommunityMember>> _members;
+  final Map<String, List<CommunityMember>> _pending;
   var alwaysFail = false;
   var _createSeq = 0;
 
@@ -180,7 +201,15 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
         isSelf: true,
       ),
     ];
+    _pending[id] = [];
     return detail;
+  }
+
+  void seedJoinRequest(String communityId, CommunityMember member) {
+    final pending = [...(_pending[communityId] ?? const <CommunityMember>[])];
+    pending.removeWhere((m) => m.userId == member.userId);
+    pending.add(member);
+    _pending[communityId] = pending;
   }
 
   @override
@@ -212,6 +241,159 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
           m,
     ];
     return listMembers(communityId);
+  }
+
+  @override
+  Future<CommunityDetail> joinCommunity(String communityId) async {
+    if (alwaysFail) throw StateError('Join failed');
+    final existing = _details[communityId];
+    if (existing == null) throw StateError('Community not found');
+    final status = existing.visibility == CommunityVisibility.public
+        ? CommunityMembershipStatus.active
+        : CommunityMembershipStatus.pending;
+    final next = CommunityDetail(
+      id: existing.id,
+      slug: existing.slug,
+      name: existing.name,
+      summary: existing.summary,
+      rulesText: existing.rulesText,
+      visibility: existing.visibility,
+      memberCount: status == CommunityMembershipStatus.active
+          ? existing.memberCount + 1
+          : existing.memberCount,
+      myRole: 'member',
+      myStatus: status,
+    );
+    _details[communityId] = next;
+    _discoverable.removeWhere((c) => c.id == communityId);
+    if (status == CommunityMembershipStatus.active) {
+      _mine.removeWhere((c) => c.id == communityId);
+      _mine.insert(0, next.asSummary);
+      final members = [...(_members[communityId] ?? const <CommunityMember>[])];
+      if (!members.any((m) => m.userId == 'self')) {
+        members.add(
+          const CommunityMember(
+            userId: 'self',
+            displayName: 'You',
+            role: 'member',
+            isSelf: true,
+          ),
+        );
+        _members[communityId] = members;
+      }
+    } else {
+      seedJoinRequest(
+        communityId,
+        const CommunityMember(
+          userId: 'self',
+          displayName: 'You',
+          role: 'member',
+          status: CommunityMembershipStatus.pending,
+          isSelf: true,
+        ),
+      );
+    }
+    return next;
+  }
+
+  @override
+  Future<void> leaveCommunity(String communityId) async {
+    if (alwaysFail) throw StateError('Leave failed');
+    _mine.removeWhere((c) => c.id == communityId);
+    final pending = [...(_pending[communityId] ?? const <CommunityMember>[])];
+    pending.removeWhere((m) => m.userId == 'self');
+    _pending[communityId] = pending;
+    final members = [...(_members[communityId] ?? const <CommunityMember>[])];
+    members.removeWhere((m) => m.userId == 'self');
+    _members[communityId] = members;
+    final existing = _details[communityId];
+    if (existing != null) {
+      final wasActive = existing.myStatus == CommunityMembershipStatus.active;
+      _details[communityId] = CommunityDetail(
+        id: existing.id,
+        slug: existing.slug,
+        name: existing.name,
+        summary: existing.summary,
+        rulesText: existing.rulesText,
+        visibility: existing.visibility,
+        memberCount: wasActive && existing.memberCount > 0
+            ? existing.memberCount - 1
+            : existing.memberCount,
+        myStatus: CommunityMembershipStatus.left,
+      );
+      if (existing.visibility == CommunityVisibility.public) {
+        _discoverable.removeWhere((c) => c.id == communityId);
+        _discoverable.add(_details[communityId]!.asSummary);
+      }
+    }
+  }
+
+  @override
+  Future<List<CommunityMember>> listJoinRequests(String communityId) async {
+    if (alwaysFail) throw StateError('Requests unavailable');
+    return List.unmodifiable(_pending[communityId] ?? const []);
+  }
+
+  @override
+  Future<List<CommunityMember>> respondJoinRequest({
+    required String communityId,
+    required String userId,
+    required bool accept,
+  }) async {
+    if (alwaysFail) throw StateError('Respond failed');
+    final pending = [...(_pending[communityId] ?? const <CommunityMember>[])];
+    final match = pending.where((m) => m.userId == userId).toList();
+    pending.removeWhere((m) => m.userId == userId);
+    _pending[communityId] = pending;
+    if (accept && match.isNotEmpty) {
+      final members = [...(_members[communityId] ?? const <CommunityMember>[])];
+      members.add(
+        CommunityMember(
+          userId: match.first.userId,
+          displayName: match.first.displayName,
+          role: 'member',
+        ),
+      );
+      _members[communityId] = members;
+    }
+    return listJoinRequests(communityId);
+  }
+
+  @override
+  Future<CommunityInvite> createInvite(String communityId) async {
+    if (alwaysFail) throw StateError('Invite failed');
+    return CommunityInvite(
+      id: 'inv-$communityId',
+      communityId: communityId,
+      code: 'INVITE${communityId.hashCode.abs() % 10000}',
+      maxUses: 25,
+      useCount: 0,
+    );
+  }
+
+  @override
+  Future<CommunityDetail> redeemInvite(String code) async {
+    if (alwaysFail) throw StateError('Redeem failed');
+    final trimmed = code.trim().toUpperCase();
+    if (trimmed.isEmpty) throw StateError('Invite code required');
+    // Redeem against first discoverable public community for fixtures.
+    final target = _discoverable.isNotEmpty
+        ? _discoverable.first
+        : (await myCommunities()).first;
+    final existing = _details[target.id]!;
+    // Invites grant active membership even for private communities.
+    final forced = CommunityDetail(
+      id: existing.id,
+      slug: existing.slug,
+      name: existing.name,
+      summary: existing.summary,
+      rulesText: existing.rulesText,
+      visibility: CommunityVisibility.public,
+      memberCount: existing.memberCount,
+      myStatus: CommunityMembershipStatus.none,
+    );
+    _details[target.id] = forced;
+    return joinCommunity(target.id);
   }
 }
 
@@ -290,6 +472,70 @@ class SupabaseCommunityDiscoveryRepository
       },
     );
     return _members(raw);
+  }
+
+  @override
+  Future<CommunityDetail> joinCommunity(String communityId) async {
+    final raw = await _client.rpc(
+      'join_community',
+      params: {'p_community_id': communityId},
+    );
+    if (raw is! Map) throw StateError('Join failed');
+    return CommunityDetail.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<void> leaveCommunity(String communityId) async {
+    await _client.rpc(
+      'leave_community',
+      params: {'p_community_id': communityId},
+    );
+  }
+
+  @override
+  Future<List<CommunityMember>> listJoinRequests(String communityId) async {
+    final raw = await _client.rpc(
+      'list_join_requests',
+      params: {'p_community_id': communityId},
+    );
+    return _members(raw);
+  }
+
+  @override
+  Future<List<CommunityMember>> respondJoinRequest({
+    required String communityId,
+    required String userId,
+    required bool accept,
+  }) async {
+    final raw = await _client.rpc(
+      'respond_join_request',
+      params: {
+        'p_community_id': communityId,
+        'p_user_id': userId,
+        'p_accept': accept,
+      },
+    );
+    return _members(raw);
+  }
+
+  @override
+  Future<CommunityInvite> createInvite(String communityId) async {
+    final raw = await _client.rpc(
+      'create_community_invite',
+      params: {'p_community_id': communityId},
+    );
+    if (raw is! Map) throw StateError('Invite failed');
+    return CommunityInvite.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<CommunityDetail> redeemInvite(String code) async {
+    final raw = await _client.rpc(
+      'redeem_community_invite',
+      params: {'p_code': code},
+    );
+    if (raw is! Map) throw StateError('Redeem failed');
+    return CommunityDetail.fromJson(Map<String, dynamic>.from(raw));
   }
 
   List<CommunitySummary> _list(Object? raw) {

@@ -43,4 +43,53 @@ void main() {
       'moderator',
     );
   });
+
+  test('FakeCommunityDiscoveryRepository joins public and private', () async {
+    final repo = FakeCommunityDiscoveryRepository();
+    final joined = await repo.joinCommunity(
+      'a1000000-0000-4000-8000-000000000002',
+    );
+    expect(joined.isMember, isTrue);
+    expect((await repo.myCommunities()).any((c) => c.id == joined.id), isTrue);
+
+    final private = await repo.createCommunity(
+      name: 'Private Club',
+      visibility: CommunityVisibility.private,
+    );
+    // Leave as owner is allowed in fake; re-join as pending via second identity
+    // is not modeled — seed a pending request for owner review instead.
+    repo.seedJoinRequest(
+      private.id,
+      const CommunityMember(
+        userId: 'u-pending',
+        displayName: 'Pending Pat',
+        role: 'member',
+        status: CommunityMembershipStatus.pending,
+      ),
+    );
+    final requests = await repo.listJoinRequests(private.id);
+    expect(requests.single.displayName, 'Pending Pat');
+
+    final remaining = await repo.respondJoinRequest(
+      communityId: private.id,
+      userId: 'u-pending',
+      accept: true,
+    );
+    expect(remaining, isEmpty);
+    expect(
+      (await repo.listMembers(private.id)).any((m) => m.userId == 'u-pending'),
+      isTrue,
+    );
+  });
+
+  test('FakeCommunityDiscoveryRepository creates and redeems invite', () async {
+    final repo = FakeCommunityDiscoveryRepository();
+    final invite = await repo.createInvite(
+      'a1000000-0000-4000-8000-000000000001',
+    );
+    expect(invite.code, isNotEmpty);
+
+    final joined = await repo.redeemInvite(invite.code);
+    expect(joined.isMember, isTrue);
+  });
 }

@@ -29,6 +29,8 @@ void main() {
     });
     expect(detail.rulesText, 'Be kind');
     expect(detail.canManageRoles, isTrue);
+    expect(detail.canInvite, isTrue);
+    expect(detail.canLeave, isTrue);
 
     final member = CommunityMember.fromJson({
       'user_id': 'u1',
@@ -38,5 +40,39 @@ void main() {
       'is_self': false,
     });
     expect(member.role, 'admin');
+
+    final invite = CommunityInvite.fromJson({
+      'id': 'i1',
+      'community_id': 'c1',
+      'code': 'ABC123',
+      'use_count': 1,
+      'max_uses': 10,
+    });
+    expect(invite.code, 'ABC123');
+  });
+
+  test('join and leave helpers reflect membership status', () {
+    const open = CommunityDetail(
+      id: 'c1',
+      slug: 'open',
+      name: 'Open',
+      summary: '',
+      rulesText: '',
+    );
+    expect(open.canJoin, isTrue);
+    expect(open.canLeave, isFalse);
+
+    const pending = CommunityDetail(
+      id: 'c1',
+      slug: 'open',
+      name: 'Open',
+      summary: '',
+      rulesText: '',
+      myRole: 'member',
+      myStatus: CommunityMembershipStatus.pending,
+    );
+    expect(pending.isPending, isTrue);
+    expect(pending.canJoin, isFalse);
+    expect(pending.canLeave, isTrue);
   });
 }

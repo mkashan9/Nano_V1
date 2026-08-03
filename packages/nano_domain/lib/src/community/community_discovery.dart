@@ -141,6 +141,18 @@ class CommunityDetail {
 
   bool get canManageRoles =>
       myRole == 'owner' || myRole == 'admin';
+
+  bool get canInvite => canManageRoles;
+
+  bool get isPending => myStatus == CommunityMembershipStatus.pending;
+
+  bool get canJoin =>
+      myStatus == CommunityMembershipStatus.none ||
+      myStatus == CommunityMembershipStatus.left;
+
+  bool get canLeave =>
+      myStatus == CommunityMembershipStatus.active ||
+      myStatus == CommunityMembershipStatus.pending;
 }
 
 class CommunityMember {
@@ -168,6 +180,35 @@ class CommunityMember {
       status: CommunityMembershipStatus.parse(json['status'] as String?),
       joinedAt: _parseTime(json['joined_at']),
       isSelf: json['is_self'] as bool? ?? false,
+    );
+  }
+}
+
+class CommunityInvite {
+  const CommunityInvite({
+    required this.id,
+    required this.communityId,
+    required this.code,
+    this.expiresAt,
+    this.maxUses,
+    this.useCount = 0,
+  });
+
+  final String id;
+  final String communityId;
+  final String code;
+  final DateTime? expiresAt;
+  final int? maxUses;
+  final int useCount;
+
+  factory CommunityInvite.fromJson(Map<String, dynamic> json) {
+    return CommunityInvite(
+      id: json['id'] as String? ?? '',
+      communityId: json['community_id'] as String? ?? '',
+      code: json['code'] as String? ?? '',
+      expiresAt: _parseTime(json['expires_at']),
+      maxUses: json['max_uses'] as int?,
+      useCount: json['use_count'] as int? ?? 0,
     );
   }
 }

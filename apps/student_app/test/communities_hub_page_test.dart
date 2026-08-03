@@ -54,6 +54,69 @@ void main() {
     expect(find.text('Chess Club'), findsWidgets);
   });
 
+  testWidgets('discover join adds community to My', (tester) async {
+    final repo = FakeCommunityDiscoveryRepository();
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      NanoLocaleScope(
+        locale: NanoAppLocale.en,
+        copy: const NanoCopy(NanoAppLocale.en),
+        child: MaterialApp(
+          theme: NanoTheme.senior(),
+          home: CommunitiesHubPage(repository: repo),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Discover'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Science Lab'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Join'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('My'));
+    await tester.pumpAndSettle();
+    expect(find.text('Science Lab'), findsOneWidget);
+  });
+
+  testWidgets('owner can review seeded join requests', (tester) async {
+    final repo = FakeCommunityDiscoveryRepository();
+    final created = await repo.createCommunity(name: 'Owners Club');
+    repo.seedJoinRequest(
+      created.id,
+      const CommunityMember(
+        userId: 'u-pending',
+        displayName: 'Pending Pat',
+        role: 'member',
+        status: CommunityMembershipStatus.pending,
+      ),
+    );
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      NanoLocaleScope(
+        locale: NanoAppLocale.en,
+        copy: const NanoCopy(NanoAppLocale.en),
+        child: MaterialApp(
+          theme: NanoTheme.senior(),
+          home: CommunitiesHubPage(repository: repo),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Owners Club'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Join requests'));
+    await tester.pumpAndSettle();
+    expect(find.text('Pending Pat'), findsOneWidget);
+    await tester.tap(find.text('Accept'));
+    await tester.pumpAndSettle();
+    expect(find.text('No pending requests'), findsOneWidget);
+  });
+
   testWidgets('senior shell shows Communities destination', (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
     addTearDown(() => tester.binding.setSurfaceSize(null));

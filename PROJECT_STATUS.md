@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** COM-02 Community Creation and Roles
+- **Current module:** COM-03 Join Requests and Invitations
 - **Current status:** DONE (owner approved)
-- **Current branch:** module/COM-02-community-creation
+- **Current branch:** module/COM-03-join-invitations
 
 ## Release progress
 
-- R9: COM-01..COM-02 DONE
+- R9: COM-01..COM-03 DONE
 
 ## Owner next step
 
-NEXT starts COM-03 Join Requests and Invitations.
+NEXT starts COM-04 Text Messages, Replies, Mentions, and Reactions.

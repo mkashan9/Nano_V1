@@ -110,8 +110,8 @@ class NanoCopy {
   String get flex => isUrdu ? 'فلیکس' : 'Flex';
   String get communities => isUrdu ? 'کمیونٹیز' : 'Communities';
   String get communitiesHubHint => isUrdu
-      ? 'کمیونٹی بنائیں یا دریافت میں تلاش کریں۔ جوائن جلد آ رہا ہے۔'
-      : 'Create a community or browse Discover. Joining arrives soon.';
+      ? 'کمیونٹی بنائیں، جوائن کریں، یا دعوت کوڈ استعمال کریں۔'
+      : 'Create, join, or redeem an invite code.';
   String get communitiesMyTab => isUrdu ? 'میری' : 'My';
   String get communitiesDiscoverTab => isUrdu ? 'دریافت' : 'Discover';
   String get communitiesSearchHint =>
@@ -119,8 +119,8 @@ class NanoCopy {
   String get communitiesMyEmptyTitle =>
       isUrdu ? 'ابھی کوئی کمیونٹی نہیں' : 'No communities yet';
   String get communitiesMyEmptyBody => isUrdu
-      ? 'نیا بنائیں، یا دریافت میں تلاش کریں۔'
-      : 'Create one, or find something in Discover.';
+      ? 'نیا بنائیں، دریافت میں جوائن کریں، یا دعوت کوڈ استعمال کریں۔'
+      : 'Create one, join from Discover, or use an invite code.';
   String get communitiesDiscoverEmptyTitle =>
       isUrdu ? 'کچھ نہیں ملا' : 'Nothing to show';
   String get communitiesDiscoverEmptyBody => isUrdu
@@ -133,9 +133,25 @@ class NanoCopy {
       isUrdu ? 'ابھی کوئی قواعد نہیں۔' : 'No rules posted yet.';
   String get communitiesYouAreMember =>
       isUrdu ? 'آپ رکن ہیں۔' : 'You are a member.';
-  String get communitiesJoinDeferredHint => isUrdu
-      ? 'جوائن اگلے ماڈیول میں آئے گا۔'
-      : 'Joining arrives in a later module.';
+  String get communitiesJoin => isUrdu ? 'جوائن' : 'Join';
+  String get communitiesRequestJoin =>
+      isUrdu ? 'جوائن کی درخواست' : 'Request to join';
+  String get communitiesPending =>
+      isUrdu ? 'درخواست زیرِ التوا ہے' : 'Join request pending';
+  String get communitiesLeave => isUrdu ? 'چھوڑیں' : 'Leave';
+  String get communitiesInvite => isUrdu ? 'دعوت کوڈ' : 'Invite code';
+  String get communitiesInviteCreated =>
+      isUrdu ? 'دعوت کوڈ تیار ہے' : 'Invite code ready';
+  String get communitiesRedeemTitle =>
+      isUrdu ? 'دعوت کوڈ استعمال کریں' : 'Redeem invite';
+  String get communitiesRedeemHint =>
+      isUrdu ? 'کوڈ درج کریں' : 'Enter invite code';
+  String get communitiesJoinRequests =>
+      isUrdu ? 'جوائن درخواستیں' : 'Join requests';
+  String get communitiesAccept => isUrdu ? 'منظور' : 'Accept';
+  String get communitiesReject => isUrdu ? 'مسترد' : 'Reject';
+  String get communitiesNoJoinRequests =>
+      isUrdu ? 'کوئی التوا درخواست نہیں' : 'No pending requests';
   String get communitiesCreate => isUrdu ? 'بنائیں' : 'Create';
   String get communitiesCreateTitle =>
       isUrdu ? 'نئی کمیونٹی' : 'New community';
