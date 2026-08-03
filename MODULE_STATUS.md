@@ -140,4 +140,5 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | VIS-07 | Senior Games Visual Replication | R11 | DONE | VIS-06, GME-01, FND-02 |
 | VIS-08 | Senior Profile Visual Replication | R11 | DONE | VIS-07, STU-05, FND-02 |
 | VIS-09 | Senior Communities Visual Replication | R11 | USER_TEST | VIS-08, COM-01, FND-02 |
+| CMP-04 | Humanoid Companion Identity and Voice | R4 | USER_TEST | MED-09, MED-06, CMP-03 |
 

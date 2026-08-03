@@ -1,14 +1,16 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** VIS-09 Senior Communities Visual Replication
+- **Current module:** CMP-04 Humanoid Companion Identity, Voice, Reactions, and Placement
 - **Current status:** USER_TEST
-- **Current branch:** module/VIS-09-senior-communities-visual
+- **Current branch:** module/CMP-04-humanoid-companion
+- **Worktree:** d:/nano-cmp04-worktree (VIS-09 dirty work left untouched in d:/nano)
 
 ## Release progress
 
 - R0–R10 functional catalog: DONE
-- R11: VIS-01…VIS-08 DONE → VIS-09 USER_TEST (final visual module)
+- R11 visual modules: VIS-01…VIS-09 (VIS-09 may still be USER_TEST/DONE on main tree)
+- R1 companion enrichment: CMP-04 ACTIVE
 
 ## Owner next step
 
-Review Senior Communities vs `UI_reference/four_12/Communities.jpeg`, then `NEXT` / `FIX` / `STATUS`.
+Complete USER_TEST for CMP-04 after implementation lands (gallery, profile portrait, voice default, fallbacks).

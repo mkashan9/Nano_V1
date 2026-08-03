@@ -71,6 +71,7 @@ Source: `docs/handbook/NANO_HANDBOOK.md` ← `Nano_Product_and_Implementation_Ha
 | Handbook CMP-01 Nori companion | CMP-01 | student_app | Nori reactions on quiz results + gallery | CompanionRuntime,CompanionStage (no DB) | unit+widget | DONE |
 | Handbook 10.1 controlled variants and reaction rules | CMP-02 | student_app | Nori modes, story cards | CompanionMode,CompanionRules (no DB) | unit+widget | DONE |
 | Handbook CMP-01 companion placement and enrichment | CMP-03 | student_app | Nori on home, learning, progress at junior/senior density | CompanionPlacement,CompanionController (no DB) | unit+widget | DONE |
+| Handbook 10.1 humanoid companion identity and male voice | CMP-04 | packages+student_app | CompanionPosePack, portrait, gentle_young_male voice | narration_voices | unit+widget | USER_TEST |
 | Handbook 10.2/10.5 generated asset adapters, hashing, provenance | MED-01 | edge+packages | none (server module) | generation_providers,generated_assets,generation_attempts | SQL+unit | DONE |
 | Handbook MED-01 Media asset delivery | MED-03,MED-04,MED-05 | edge+admin | providers | generated_assets | quota/hash | PARTIAL |
 | Handbook NOT-01 Notifications inbox | STU-06,NOT-01,NOT-02,ADM-07 | student_app | Inbox | notifications | push/deeplink | BACKLOG |

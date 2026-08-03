@@ -1,0 +1,89 @@
+id: CMP-04
+name: "Humanoid Companion Identity, Voice, Reactions, and Placement"
+release: R1 companion enrichment
+status: USER_TEST
+dependencies:
+  - CMP-03
+  - MED-12
+  - MED-09
+  - MED-06
+applications:
+  - student_app
+  - packages
+  - docs
+  - automation
+  - supabase
+allowed_paths:
+  - docs/
+  - automation/
+  - docs/modules/CMP-04/
+  - docs/test-reports/companion/CMP-04/
+  - docs/audits/
+  - automation/modules/CMP-04.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - HANDBOOK_TRACEABILITY.md
+  - AGENTS.md
+  - apps/student_app/
+  - packages/nano_domain/
+  - packages/nano_design_system/
+  - packages/nano_data/
+  - packages/nano_media/
+  - assets/avatar/
+  - assets/companion/
+  - assets/legacy/
+  - tools/
+  - supabase/migrations/
+  - supabase/functions/
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "Companion identity: one consistent guide character"
+  - "Junior vs Senior companion frequency and placement"
+  - "Classroom Mode and reduced motion suppress non-essential media"
+  - "Server authority for celebrations and XP"
+ui_references:
+  - CompanionSlot
+  - CompanionStage
+  - JuniorHome
+  - SeniorHome
+  - JuniorProfile
+database_scope:
+  - narration_voices
+server_functions:
+  - generate-asset
+acceptance:
+  - Master avatar preserved; transparent cutout exists
+  - Active runtime uses humanoid CompanionPosePack, not purple mascot
+  - Student profile avatar remains separate from companion
+  - Junior profile fox replaced by humanoid portrait
+  - Default voice id is gentle_young_male_c48e8683; Aoede not active default
+  - Captions work with sound off
+  - Missing clip/voice falls back safely
+  - Dev gallery /dev/companion-cmp04 (debug only)
+  - Tests pass; USER_TEST docs ready
+required_tests:
+  - packages/nano_design_system/test/nori_pose_pack_test.dart
+  - packages/nano_domain/test/companion_runtime_test.dart
+  - packages/nano_domain/test/companion_identity_test.dart
+security_checks:
+  - no_secrets_in_diff
+  - no_provider_keys_in_flutter
+  - companion_cannot_author_scores
+accessibility_checks:
+  - captions_when_sound_off
+  - static_art_under_reduced_motion
+  - classroom_mode_suppresses_non_essential
+manual_test_steps:
+  - Open /dev/companion-cmp04 and review identity pack
+  - Junior profile: humanoid portrait top-right; student avatar top-left
+  - Home greeting once per session; no purple bean
+  - Sound off: captions only
+  - Reduced motion: static poses only
+  - Classroom Mode: essential only
+rollback_notes: "Revert module branch; restore previous narration_voices default via migration reverse if applied"
+requires_owner_test: true

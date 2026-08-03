@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] SAFE-03 Rate Limits, Restricted Content, and Link Rules
+- [ ] CMP-04 Humanoid Companion Identity and Voice
 
 ## Completed
 
