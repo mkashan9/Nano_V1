@@ -41,7 +41,7 @@ Demo chrome stays opt-in (`debug_tools` / `NANO_DEBUG_TOOLS`).
 | VIS-06 | Senior Learning | `four_12/Learning_stack.jpeg` | `/screenshot/senior_learning` | VIS-05, LRN-01 | BACKLOG |
 | VIS-07 | Senior Games | `four_12/games.jpeg` | `/screenshot/senior_games` | VIS-06, GME-01 | BACKLOG |
 | VIS-08 | Senior Profile | `four_12/profile.jpeg` | `/screenshot/senior_profile` | VIS-07, STU-05 | DONE |
-| VIS-09 | Senior Communities | `four_12/Communities.jpeg` | `/screenshot/senior_communities` | VIS-08, COM-01 | ACTIVE |
+| VIS-09 | Senior Communities | `four_12/Communities.jpeg` | `/screenshot/senior_communities` | VIS-08, COM-01 | USER_TEST |
 
 **Order rationale:** finish Junior shell (matches kids refs) before Senior denser layouts; Communities last (Senior-only).
 

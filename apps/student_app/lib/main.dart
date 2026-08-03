@@ -30,6 +30,7 @@ void main() {
     'senior_learning' => '/screenshot/senior_learning',
     'senior_games' => '/screenshot/senior_games',
     'senior_profile' => '/screenshot/senior_profile',
+    'senior_communities' => '/screenshot/senior_communities',
     _ => '/screenshot/junior_home',
   };
   AuthRepository? authRepository;

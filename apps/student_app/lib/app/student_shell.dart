@@ -28,6 +28,7 @@ import 'package:student_app/features/profile/presentation/student_profile_page.d
 import 'package:student_app/features/flex/presentation/flex_home_page.dart';
 import 'package:student_app/features/games/presentation/games_catalog_page.dart';
 import 'package:student_app/features/communities/presentation/communities_hub_page.dart';
+import 'package:student_app/features/communities/presentation/senior_communities_page.dart';
 import 'package:student_app/features/notifications/presentation/notifications_inbox_page.dart';
 
 class StudentShell extends StatelessWidget {
@@ -779,13 +780,32 @@ class StudentCommunitiesTab extends StatelessWidget {
     super.key,
     this.repository,
     this.messagingRepository,
+    this.useVisualLayout = true,
   });
 
   final CommunityDiscoveryRepository? repository;
   final CommunityMessagingRepository? messagingRepository;
+  /// When true (default), shows VIS-09 visual Communities surface.
+  final bool useVisualLayout;
 
   @override
   Widget build(BuildContext context) {
+    if (useVisualLayout) {
+      return SeniorCommunitiesPage(
+        onCreateProject: () {
+          // Fall through to functional create sheet via legacy hub when needed.
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => CommunitiesHubPage(
+                repository: repository ?? FakeCommunityDiscoveryRepository(),
+                messagingRepository: messagingRepository ??
+                    FakeCommunityMessagingRepository(),
+              ),
+            ),
+          );
+        },
+      );
+    }
     return CommunitiesHubPage(
       repository: repository ?? FakeCommunityDiscoveryRepository(),
       messagingRepository:

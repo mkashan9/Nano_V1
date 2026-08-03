@@ -1,7 +1,7 @@
 id: VIS-09
 name: "Senior Communities Visual Replication"
 release: R11
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - VIS-08
   - COM-01

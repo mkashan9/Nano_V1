@@ -43,6 +43,8 @@ export 'src/components/profile/senior_streak_banner.dart';
 export 'src/components/profile/senior_week_goal_card.dart';
 export 'src/components/profile/senior_achievement_hex_card.dart';
 export 'src/components/profile/senior_top_builder_card.dart';
+export 'src/components/communities/senior_communities_header.dart';
+export 'src/components/communities/senior_community_cards.dart';
 export 'src/components/cards/senior_progress_card.dart';
 export 'src/components/cards/admin_metric_card.dart';
 export 'src/components/cards/teacher_task_card.dart';
