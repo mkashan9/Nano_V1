@@ -1,7 +1,7 @@
 id: PAR-01
 name: "Weekly Parent Guidance Card"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-05
 applications:
