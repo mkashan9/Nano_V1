@@ -1,7 +1,7 @@
 id: PAR-03
 name: "Guardian Link Foundations"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - PAR-01
   - AUTH-04
@@ -20,6 +20,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -30,16 +33,23 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Learner can create a guardian invite code
+  - Demo accept creates an active link
+  - Revoke removes active access for that guardian
+  - Unlinked guardian fails GuardianAccessPolicy checks
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/guardian_link_test.dart
+  - packages/nano_data/test/guardian_link_repository_test.dart
+  - apps/student_app/test/guardian_link_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Me → Guardian links → Create invite → Demo accept → Revoke
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

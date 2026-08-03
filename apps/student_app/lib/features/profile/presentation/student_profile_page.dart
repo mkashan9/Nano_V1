@@ -3,6 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/league/presentation/league_board_page.dart';
+import 'package:student_app/features/parent/presentation/guardian_link_page.dart';
 import 'package:student_app/features/parent/presentation/parent_guidance_page.dart';
 import 'package:student_app/features/profile/presentation/social_identity_section.dart';
 import 'package:student_app/features/share/presentation/social_share_sheet.dart';
@@ -32,6 +33,7 @@ class StudentProfilePage extends StatefulWidget {
     this.schoolLinkRepository,
     this.onSchoolLinked,
     this.parentGuidanceRepository,
+    this.guardianLinkRepository,
   });
 
   final StudentProfileRepository repository;
@@ -72,6 +74,9 @@ class StudentProfilePage extends StatefulWidget {
 
   /// PAR-01: weekly parent guidance card.
   final ParentGuidanceRepository? parentGuidanceRepository;
+
+  /// PAR-03: guardian invite / link foundations.
+  final GuardianLinkRepository? guardianLinkRepository;
 
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
@@ -291,6 +296,20 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     );
   }
 
+  void _openGuardianLinks() {
+    final profile = _profile;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => GuardianLinkPage(
+          repository:
+              widget.guardianLinkRepository ?? FakeGuardianLinkRepository(),
+          childUserId: widget.principal.userId ?? 'local-child',
+          childDisplayName: profile?.displayName ?? widget.principal.displayName,
+        ),
+      ),
+    );
+  }
+
   Future<void> _setPrivacy(PrivacySettings next) async {
     setState(() => _privacy = next);
     try {
@@ -466,6 +485,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                   ? null
                   : _confirmSchoolLink,
               onOpenParentGuidance: _openParentGuidance,
+              onOpenGuardianLinks: _openGuardianLinks,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
               safetyReportRepository: widget.safetyReportRepository,
@@ -509,6 +529,7 @@ class _ProfileBody extends StatelessWidget {
     this.onPreviewSchool,
     this.onConfirmSchoolLink,
     this.onOpenParentGuidance,
+    this.onOpenGuardianLinks,
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
@@ -547,6 +568,7 @@ class _ProfileBody extends StatelessWidget {
   final VoidCallback? onPreviewSchool;
   final VoidCallback? onConfirmSchoolLink;
   final VoidCallback? onOpenParentGuidance;
+  final VoidCallback? onOpenGuardianLinks;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
@@ -680,6 +702,14 @@ class _ProfileBody extends StatelessWidget {
           subtitle: Text(copy.parentGuidancePrivacyHint),
           trailing: const Icon(Icons.chevron_right),
           onTap: onOpenParentGuidance,
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.link_outlined),
+          title: Text(copy.guardianLinkTitle),
+          subtitle: Text(copy.guardianLinkHint),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onOpenGuardianLinks,
         ),
         const SizedBox(height: NanoSpacing.lg),
         Text(copy.progressLabel, style: theme.textTheme.titleLarge),
