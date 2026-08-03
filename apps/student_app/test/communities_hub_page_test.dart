@@ -24,18 +24,34 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Communities'), findsOneWidget);
     expect(find.text('Study Circle'), findsOneWidget);
+    expect(find.text('Create'), findsOneWidget);
 
     await tester.tap(find.text('Discover'));
     await tester.pumpAndSettle();
     expect(find.text('Science Lab'), findsOneWidget);
+  });
 
-    await tester.tap(find.text('Science Lab'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Rules'), findsOneWidget);
-    expect(
-      find.textContaining('Joining and creating communities'),
-      findsOneWidget,
+  testWidgets('create community lands on My list', (tester) async {
+    final repo = FakeCommunityDiscoveryRepository();
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      NanoLocaleScope(
+        locale: NanoAppLocale.en,
+        copy: const NanoCopy(NanoAppLocale.en),
+        child: MaterialApp(
+          theme: NanoTheme.senior(),
+          home: CommunitiesHubPage(repository: repo),
+        ),
+      ),
     );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, 'Chess Club');
+    await tester.tap(find.widgetWithText(FilledButton, 'Create').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Chess Club'), findsWidgets);
   });
 
   testWidgets('senior shell shows Communities destination', (tester) async {
