@@ -1,0 +1,54 @@
+id: VIS-07
+name: "Senior Games Visual Replication"
+release: R11
+status: BACKLOG
+dependencies:
+  - VIS-06
+  - GME-01
+  - FND-02
+applications:
+  - student_app
+  - packages
+  - docs
+  - automation
+allowed_paths:
+  - docs/
+  - automation/
+  - docs/modules/VIS-07/
+  - docs/audits/
+  - docs/test-reports/visual/
+  - automation/modules/VIS-07.yaml
+  - automation/scripts/
+  - UI_reference/manifest.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - apps/student_app/
+  - assets/generated/
+  - assets/provenance/
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/NANO_HANDBOOK.md §8.2"
+ui_references:
+  - UI_reference/four_12/games.jpeg
+database_scope: []
+server_functions: []
+acceptance:
+  - Senior Games matched to reference at 740×1600 with evidence
+  - Screenshot + compare pipeline for senior_games
+  - Owner manual test steps provided
+required_tests:
+  - documentation_review
+security_checks:
+  - no_secrets_in_diff
+accessibility_checks:
+  - semantic_labels_on_controls
+manual_test_steps:
+  - Review docs/test-reports/visual/VIS-07/senior_games/ against UI_reference/four_12/games.jpeg
+rollback_notes: "Revert module branch commits"
+requires_owner_test: true
