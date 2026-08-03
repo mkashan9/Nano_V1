@@ -1,15 +1,16 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** VIS-02 Junior Learning Stack Visual Replication
-- **Current status:** DONE (merging)
-- **Current branch:** module/VIS-02-junior-learning-visual
+- **Current module:** VIS-03 Junior Games Visual Replication
+- **Current status:** USER_TEST
+- **Current branch:** module/VIS-03-junior-games-visual
 
 ## Release progress
 
 - R0–R10 functional catalog: DONE
-- R11 visual track: VIS-01…VIS-09 planned (`docs/audits/VIS_TRACK_PLAN.md`)
-  - VIS-01 DONE, VIS-02 DONE → next VIS-03
+- R11 visual track (`docs/audits/VIS_TRACK_PLAN.md`):
+  - VIS-01 DONE, VIS-02 DONE, VIS-03 USER_TEST
+  - VIS-04…VIS-09 BACKLOG
 
 ## Owner next step
 
-After merge, VIS-03 Junior Games starts.
+Manual visual review (docs/modules/VIS-03/MANUAL_TEST.md), then NEXT / FIX / STATUS.

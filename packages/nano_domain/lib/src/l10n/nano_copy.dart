@@ -45,6 +45,10 @@ class NanoCopy {
       ? 'کھیلنا اگلے ماڈیول میں آئے گا۔'
       : 'Play opens in a later module.';
   String get gamesPlay => isUrdu ? 'کھیلیں' : 'Play';
+
+  String get gamesTodaysLabel => isUrdu ? 'آج کا' : "Today's";
+
+  String get gamesAdventureLabel => isUrdu ? 'مہم جوئی!' : 'Adventure!';
   String get gamesClose => isUrdu ? 'بند کریں' : 'Close';
   String get gamesHostIntro => isUrdu
       ? 'محفوظ میزبان میں کھیلیں۔ تصدیق شدہ نتائج XP دیتے ہیں۔'

@@ -16,6 +16,8 @@ export 'src/components/home/junior_subject_world_card.dart';
 export 'src/components/learning/junior_learning_prompt_header.dart';
 export 'src/components/learning/junior_learning_world_carousel_card.dart';
 export 'src/components/learning/junior_learning_continue_card.dart';
+export 'src/components/games/junior_games_prompt_header.dart';
+export 'src/components/games/junior_game_world_card.dart';
 export 'src/components/cards/senior_progress_card.dart';
 export 'src/components/cards/admin_metric_card.dart';
 export 'src/components/cards/teacher_task_card.dart';

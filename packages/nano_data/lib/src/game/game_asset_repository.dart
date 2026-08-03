@@ -38,6 +38,62 @@ class FakeGameAssetRepository implements GameAssetRepository {
                   ),
                 ],
               ),
+              'v-math-island': const GameAssetManifest(
+                gameVersionId: 'v-math-island',
+                totalBytes: 200000,
+                assets: [
+                  GameAssetDescriptor(
+                    assetId: 'a-math-island',
+                    gameVersionId: 'v-math-island',
+                    assetKey: 'pack',
+                    contentHash: 'sha256:math_island_v1',
+                    byteSize: 200000,
+                    sourceUri: 'fixture://math_island/pack',
+                  ),
+                ],
+              ),
+              'v-word-forest': const GameAssetManifest(
+                gameVersionId: 'v-word-forest',
+                totalBytes: 200000,
+                assets: [
+                  GameAssetDescriptor(
+                    assetId: 'a-word-forest',
+                    gameVersionId: 'v-word-forest',
+                    assetKey: 'pack',
+                    contentHash: 'sha256:word_forest_v1',
+                    byteSize: 200000,
+                    sourceUri: 'fixture://word_forest/pack',
+                  ),
+                ],
+              ),
+              'v-science-ocean': const GameAssetManifest(
+                gameVersionId: 'v-science-ocean',
+                totalBytes: 200000,
+                assets: [
+                  GameAssetDescriptor(
+                    assetId: 'a-science-ocean',
+                    gameVersionId: 'v-science-ocean',
+                    assetKey: 'pack',
+                    contentHash: 'sha256:science_ocean_v1',
+                    byteSize: 200000,
+                    sourceUri: 'fixture://science_ocean/pack',
+                  ),
+                ],
+              ),
+              'v-puzzle-castle': const GameAssetManifest(
+                gameVersionId: 'v-puzzle-castle',
+                totalBytes: 200000,
+                assets: [
+                  GameAssetDescriptor(
+                    assetId: 'a-puzzle-castle',
+                    gameVersionId: 'v-puzzle-castle',
+                    assetKey: 'pack',
+                    contentHash: 'sha256:puzzle_castle_v1',
+                    byteSize: 200000,
+                    sourceUri: 'fixture://puzzle_castle/pack',
+                  ),
+                ],
+              ),
             };
 
   final Map<String, GameAssetManifest> _seed;

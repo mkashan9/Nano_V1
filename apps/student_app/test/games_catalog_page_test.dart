@@ -10,6 +10,18 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(900, 1600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+    final numberRush = const CatalogGame(
+      gameId: 'g-number',
+      versionId: 'v-number',
+      slug: 'number_rush',
+      category: GameCategory.practice,
+      titleEn: 'Number Rush',
+      summaryEn: 'Practice counting under a gentle timer.',
+      sortOrder: 10,
+      minGrade: 1,
+      maxGrade: 5,
+      entryRef: 'fixture://number_rush',
+    );
     final local = FakeGameLocalStorageRepository();
     await tester.pumpWidget(
       NanoLocaleScope(
@@ -18,7 +30,7 @@ void main() {
         child: MaterialApp(
           theme: NanoTheme.junior(),
           home: GamesCatalogPage(
-            repository: FakeGameCatalogRepository(),
+            repository: FakeGameCatalogRepository(seed: [numberRush]),
             sessionRepository: FakeGameSessionRepository(),
             assetRepository: FakeGameAssetRepository(),
             localStorageRepository: local,
@@ -48,6 +60,18 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(900, 1600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+    final numberRush = const CatalogGame(
+      gameId: 'g-number',
+      versionId: 'v-number',
+      slug: 'number_rush',
+      category: GameCategory.practice,
+      titleEn: 'Number Rush',
+      summaryEn: 'Practice counting under a gentle timer.',
+      sortOrder: 10,
+      minGrade: 1,
+      maxGrade: 5,
+      entryRef: 'fixture://number_rush',
+    );
     final local = FakeGameLocalStorageRepository(
       seed: {
         'v-number': GameLocalInstall(
@@ -66,7 +90,7 @@ void main() {
         child: MaterialApp(
           theme: NanoTheme.junior(),
           home: GamesCatalogPage(
-            repository: FakeGameCatalogRepository(),
+            repository: FakeGameCatalogRepository(seed: [numberRush]),
             assetRepository: FakeGameAssetRepository(),
             localStorageRepository: local,
             gradeLevel: 3,

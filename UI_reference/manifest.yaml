@@ -94,17 +94,33 @@ references:
     path: UI_reference/kids/games.jpeg
     experience: junior
     probable_screen: Games
-    target_route: /games
+    target_route: /screenshot/junior_games
     reference_width: 740
     reference_height: 1600
     aspect_ratio: 0.463
     device_type: phone
-    module_id: GME-01
-    implementation_status: BACKLOG
+    module_id: VIS-03
+    implementation_status: USER_TEST
     manual_review_status: PENDING
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards]
+    primary_matching_reference: true
+    main_layout_regions: [prompt_header, games_grid, bottom_nav]
+    main_reusable_components:
+      - junior_games_prompt_header
+      - junior_game_world_card
+      - bottom_nav
     navigation_type: bottom_tabs
+    card_types: [game_world]
+    avatar_or_companion_placement: prompt_fox
+    required_illustration_assets:
+      - junior_games_fox
+      - junior_games_math_island
+      - junior_games_word_forest
+      - junior_games_science_ocean
+      - junior_games_puzzle_castle
+    regions:
+      prompt_header: [24, 32, 692, 120]
+      games_grid: [24, 160, 692, 960]
+      bottom_navigation: [0, 1450, 740, 150]
     missing_assets: []
     unclear_elements: []
 
