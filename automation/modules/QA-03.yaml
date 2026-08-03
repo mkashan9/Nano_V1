@@ -1,7 +1,7 @@
 id: QA-03
 name: "Offline and Poor-Network Testing"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - SYNC-01
 applications:
