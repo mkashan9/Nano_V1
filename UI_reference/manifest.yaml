@@ -154,19 +154,48 @@ references:
     path: UI_reference/four_12/profile.jpeg
     experience: senior
     probable_screen: Profile
-    target_route: /profile
+    target_route: /screenshot/senior_profile
     reference_width: 740
     reference_height: 1600
     aspect_ratio: 0.463
     device_type: phone
-    module_id: STU-05
-    implementation_status: BACKLOG
-    manual_review_status: PENDING
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, avatar_slot]
+    module_id: VIS-08
+    implementation_status: DONE
+    manual_review_status: APPROVED
+    main_layout_regions:
+      - header
+      - streak
+      - metrics_grid
+      - this_week
+      - achievements
+      - top_builders
+      - learning_journey
+      - bottom_nav
+    main_reusable_components:
+      - senior_profile_header
+      - senior_streak_banner
+      - senior_dashboard_stat_card
+      - senior_week_goal_card
+      - senior_achievement_hex_card
+      - senior_top_builder_card
+      - senior_learning_paths_panel
+      - nav_bar
     navigation_type: bottom_tabs
     missing_assets: []
-    unclear_elements: []
+    unclear_elements:
+      - Friends and builders are visual fixtures until social backends land
+    asset_ids:
+      - senior_profile_ayaan
+      - senior_profile_journey_portal
+    region_boxes_px:
+      header: [24, 20, 692, 180]
+      streak: [24, 210, 692, 70]
+      metrics: [24, 290, 692, 220]
+      this_week: [0, 520, 740, 170]
+      achievements: [0, 700, 740, 240]
+      top_builders: [0, 950, 740, 150]
+      learning_journey: [0, 1110, 740, 280]
+      bottom_navigation: [0, 1450, 740, 150]
 
   - id: junior_games
     path: UI_reference/kids/games.jpeg

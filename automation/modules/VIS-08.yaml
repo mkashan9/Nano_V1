@@ -1,7 +1,7 @@
 id: VIS-08
 name: "Senior Profile Visual Replication"
 release: R11
-status: BACKLOG
+status: DONE
 dependencies:
   - VIS-07
   - STU-05
