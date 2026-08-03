@@ -35,10 +35,7 @@ void main() {
 
   testWidgets('shows the caption for the reaction', (tester) async {
     await pumpStage(tester, reactionFor(CompanionEvent.appOpen));
-    expect(
-      find.textContaining('is here whenever you are ready'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('help you learn, play'), findsOneWidget);
     expect(find.byType(CompanionSlot), findsOneWidget);
   });
 
@@ -48,8 +45,9 @@ void main() {
     expect(find.byType(Text), findsNothing);
   });
 
-  testWidgets('keeps the art but drops the caption when captions are off',
-      (tester) async {
+  testWidgets('keeps the art but drops the caption when captions are off', (
+    tester,
+  ) async {
     await pumpStage(
       tester,
       reactionFor(
@@ -61,8 +59,9 @@ void main() {
     expect(find.textContaining('Nori'), findsNothing);
   });
 
-  testWidgets('uses the learner companion name in the semantic label',
-      (tester) async {
+  testWidgets('uses the learner companion name in the semantic label', (
+    tester,
+  ) async {
     await pumpStage(
       tester,
       reactionFor(CompanionEvent.appOpen, companionName: 'Bao'),
@@ -92,8 +91,9 @@ void main() {
     expect(seniorSize.width, lessThan(juniorSize.width));
   });
 
-  testWidgets('dismiss action is offered only when a handler is given',
-      (tester) async {
+  testWidgets('dismiss action is offered only when a handler is given', (
+    tester,
+  ) async {
     var dismissed = false;
     await tester.pumpWidget(
       MaterialApp(

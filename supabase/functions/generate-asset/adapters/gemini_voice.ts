@@ -6,11 +6,15 @@ import {
   type ProviderAdapter,
 } from './types.ts';
 
-// MED-03: the Learning Guide's voice.
+// MED-03: Learning Guide voice via Gemini (legacy path).
 //
-// Gemini's speech models expose a set of named voices, one of which is Aoede, and
-// return raw signed 16-bit little-endian PCM rather than a playable file. Two
-// consequences shape this adapter:
+// CMP-04: production companion voice is Fish `gentle_young_male_c48e8683`.
+// When Gemini is used as an approximation, prefer a male prebuilt voice.
+// VOICE_APPROXIMATION_USED — see migration cmp04_gentle_young_male_voice.sql.
+export const geminiCompanionApproximationVoiceName = 'Puck';
+//
+// Gemini speech models return raw signed 16-bit little-endian PCM rather than a
+// playable file. Two consequences shape this adapter:
 //
 //   * The bytes are wrapped in a WAV header here. Nothing downstream should have
 //     to know that a provider handed us a headerless stream.

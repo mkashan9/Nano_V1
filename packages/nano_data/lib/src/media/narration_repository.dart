@@ -99,11 +99,12 @@ class FakeNarrationRepository implements NarrationRepository {
       version: line.version,
       audio: NarrationAudio(
         storageBucket: 'generated-assets',
-        storagePath: 'voice/narration_${line.slug}/${line.locale.name}/hash.wav',
+        storagePath:
+            'voice/narration_${line.slug}/${line.locale.name}/hash.wav',
         contentType: 'audio/wav',
         byteSize: 4096,
         checksum: 'sha256:${line.slug}',
-        voiceId: voiceId ?? 'aoede',
+        voiceId: voiceId ?? CompanionVoiceProfile.defaultVoiceId,
       ),
     );
     _lines[index] = recorded;
@@ -120,19 +121,19 @@ class FakeNarrationRepository implements NarrationRepository {
   }
 
   GeneratedAsset _assetFor(NarrationLine line) => GeneratedAsset(
-        id: 'narration-${line.slug}-${line.locale.name}',
-        kind: GeneratedAssetKind.voice,
-        slot: 'narration_${line.slug}',
-        locale: line.locale.name,
-        aspectRatio: '1:1',
-        status: GeneratedAssetStatus.ready,
-        moderation: GeneratedAssetModeration.approved,
-        storageBucket: line.audio?.storageBucket,
-        storagePath: line.audio?.storagePath,
-        contentType: line.audio?.contentType,
-        byteSize: line.audio?.byteSize,
-        checksum: line.audio?.checksum,
-      );
+    id: 'narration-${line.slug}-${line.locale.name}',
+    kind: GeneratedAssetKind.voice,
+    slot: 'narration_${line.slug}',
+    locale: line.locale.name,
+    aspectRatio: '1:1',
+    status: GeneratedAssetStatus.ready,
+    moderation: GeneratedAssetModeration.approved,
+    storageBucket: line.audio?.storageBucket,
+    storagePath: line.audio?.storagePath,
+    contentType: line.audio?.contentType,
+    byteSize: line.audio?.byteSize,
+    checksum: line.audio?.checksum,
+  );
 }
 
 class SupabaseNarrationRepository implements NarrationRepository {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nano_domain/nano_domain.dart';
 
 import '../companion/nori_living_art.dart';
-import '../companion/nori_pose_pack.dart';
+import '../companion/companion_pose_pack.dart';
 import '../l10n/nano_locale_scope.dart';
 import '../tokens/nano_motion.dart';
 import '../tokens/nano_radii.dart';
@@ -84,9 +84,8 @@ class CompanionStage extends StatelessWidget {
     required bool storyCard,
   }) {
     return switch (placement) {
-      null || CompanionPlacement.inline => storyCard
-          ? (prominent ? 120 : 96)
-          : (prominent ? 96 : 56),
+      null || CompanionPlacement.inline =>
+        storyCard ? (prominent ? 120 : 96) : (prominent ? 96 : 56),
       CompanionPlacement.hero =>
         storyCard ? (prominent ? 140 : 104) : (prominent ? 120 : 96),
       CompanionPlacement.aside =>
@@ -103,13 +102,13 @@ class CompanionStage extends StatelessWidget {
 
     final resolvedLocale =
         locale ?? NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
-    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-        NanoCopy(resolvedLocale);
+    final copy =
+        NanoLocaleScope.maybeOf(context)?.copy ?? NanoCopy(resolvedLocale);
     final name = companionName ?? current.companionName;
     final caption = current.captionFor(resolvedLocale, companionName: name);
-    final storyCard =
-        current.presentation == CompanionPresentation.storyCard;
-    final artSize = size ??
+    final storyCard = current.presentation == CompanionPresentation.storyCard;
+    final artSize =
+        size ??
         artSizeFor(
           placement: placement,
           prominent: current.prominent,
@@ -119,7 +118,9 @@ class CompanionStage extends StatelessWidget {
     return AnimatedSwitcher(
       duration: NanoMotion.resolve(context, NanoMotion.normal),
       child: KeyedSubtree(
-        key: ValueKey('${current.assetKey}|${current.presentation.name}|$caption'),
+        key: ValueKey(
+          '${current.assetKey}|${current.presentation.name}|$caption',
+        ),
         child: storyCard
             ? _StoryCard(
                 reaction: current,
@@ -268,7 +269,11 @@ class _StoryCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _ModeBadge(reaction: reaction, copy: copy, name: companionName),
+                  _ModeBadge(
+                    reaction: reaction,
+                    copy: copy,
+                    name: companionName,
+                  ),
                   const Spacer(),
                   if (onListen != null)
                     _ListenButton(copy: copy, onListen: onListen!),
@@ -345,7 +350,11 @@ class _CaptionBubble extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _ModeBadge(reaction: reaction, copy: copy, name: companionName),
+                  _ModeBadge(
+                    reaction: reaction,
+                    copy: copy,
+                    name: companionName,
+                  ),
                   if (onListen != null) ...[
                     const Spacer(),
                     _ListenButton(copy: copy, onListen: onListen!),
@@ -445,13 +454,13 @@ class _CompanionArt extends StatelessWidget {
   final Widget? clipView;
 
   IconData get _moodIcon => switch (reaction.mood) {
-        CompanionMood.greeting => Icons.waving_hand_rounded,
-        CompanionMood.idle => Icons.pets_rounded,
-        CompanionMood.point => Icons.explore_rounded,
-        CompanionMood.thinking => Icons.psychology_rounded,
-        CompanionMood.gentleRetry => Icons.refresh_rounded,
-        CompanionMood.celebration => Icons.celebration_rounded,
-      };
+    CompanionMood.greeting => Icons.waving_hand_rounded,
+    CompanionMood.idle => Icons.pets_rounded,
+    CompanionMood.point => Icons.explore_rounded,
+    CompanionMood.thinking => Icons.psychology_rounded,
+    CompanionMood.gentleRetry => Icons.refresh_rounded,
+    CompanionMood.celebration => Icons.celebration_rounded,
+  };
 
   /// What sits inside the mode ring, best first (MED-08, extended by MED-09).
   ///
@@ -489,16 +498,17 @@ class _CompanionArt extends StatelessWidget {
 
   /// The pose that ships with the app (MED-09).
   Widget _bundled(Color accent) => Image.asset(
-        NoriPosePack.assetFor(reaction.mood),
-        package: NoriPosePack.package,
-        fit: BoxFit.cover,
-        width: size,
-        height: size,
-        errorBuilder: (context, error, stack) => _icon(accent),
-      );
+    CompanionPosePack.assetFor(reaction.mood),
+    package: CompanionPosePack.package,
+    fit: BoxFit.cover,
+    width: size,
+    height: size,
+    errorBuilder: (context, error, stack) => _icon(accent),
+  );
 
-  Widget _icon(Color accent) =>
-      Center(child: Icon(_moodIcon, size: size / 2, color: accent));
+  Widget _icon(Color accent) => Center(
+    child: Icon(_moodIcon, size: size / 2, color: accent),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -565,10 +575,7 @@ class _CompanionArt extends StatelessWidget {
           : Semantics(
               button: true,
               label: copy.companionPlayClipLabel,
-              child: GestureDetector(
-                onTap: onPlayClip,
-                child: art,
-              ),
+              child: GestureDetector(onTap: onPlayClip, child: art),
             ),
     );
   }

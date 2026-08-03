@@ -9,16 +9,27 @@ enum CompanionEvent {
   appOpen,
   home,
   learningEntry,
+  subjectSelected,
+  topicOpened,
   newWorld,
   videoStart,
   videoComplete,
+  longVideoRefresh,
   quizStart,
   quizQuestion,
   quizComplete,
+  quizCorrect,
+  quizWrong,
+  quizRepeatedMistake,
+  hintOffered,
   resultPassed,
   resultNeedsReview,
   achievement,
   levelUp,
+  gameCompleted,
+  personalBest,
+  missionCompleted,
+  streakMilestone,
   returnFromInactivity,
   emptyState,
   idle;
@@ -31,14 +42,16 @@ enum CompanionEvent {
 
   /// Moments the learner must not miss, so they ignore cooldowns.
   bool get isEssential => switch (this) {
-        CompanionEvent.quizComplete ||
-        CompanionEvent.resultPassed ||
-        CompanionEvent.resultNeedsReview ||
-        CompanionEvent.achievement ||
-        CompanionEvent.levelUp =>
-          true,
-        _ => false,
-      };
+    CompanionEvent.quizComplete ||
+    CompanionEvent.resultPassed ||
+    CompanionEvent.resultNeedsReview ||
+    CompanionEvent.achievement ||
+    CompanionEvent.levelUp ||
+    CompanionEvent.missionCompleted ||
+    CompanionEvent.streakMilestone ||
+    CompanionEvent.personalBest => true,
+    _ => false,
+  };
 }
 
 /// The core reaction set: greeting, idle, point, thinking, gentle retry, and a
@@ -52,26 +65,34 @@ enum CompanionMood {
   celebration;
 
   static CompanionMood forEvent(CompanionEvent event) => switch (event) {
-        CompanionEvent.appOpen ||
-        CompanionEvent.home ||
-        CompanionEvent.returnFromInactivity =>
-          CompanionMood.greeting,
-        CompanionEvent.learningEntry ||
-        CompanionEvent.newWorld ||
-        CompanionEvent.videoStart ||
-        CompanionEvent.quizStart ||
-        CompanionEvent.emptyState =>
-          CompanionMood.point,
-        CompanionEvent.quizQuestion => CompanionMood.thinking,
-        CompanionEvent.resultNeedsReview => CompanionMood.gentleRetry,
-        CompanionEvent.videoComplete ||
-        CompanionEvent.quizComplete ||
-        CompanionEvent.resultPassed ||
-        CompanionEvent.achievement ||
-        CompanionEvent.levelUp =>
-          CompanionMood.celebration,
-        CompanionEvent.idle => CompanionMood.idle,
-      };
+    CompanionEvent.appOpen ||
+    CompanionEvent.home ||
+    CompanionEvent.returnFromInactivity => CompanionMood.greeting,
+    CompanionEvent.learningEntry ||
+    CompanionEvent.subjectSelected ||
+    CompanionEvent.topicOpened ||
+    CompanionEvent.newWorld ||
+    CompanionEvent.videoStart ||
+    CompanionEvent.quizStart ||
+    CompanionEvent.emptyState ||
+    CompanionEvent.hintOffered => CompanionMood.point,
+    CompanionEvent.quizQuestion ||
+    CompanionEvent.longVideoRefresh => CompanionMood.thinking,
+    CompanionEvent.resultNeedsReview ||
+    CompanionEvent.quizWrong ||
+    CompanionEvent.quizRepeatedMistake => CompanionMood.gentleRetry,
+    CompanionEvent.videoComplete ||
+    CompanionEvent.quizComplete ||
+    CompanionEvent.quizCorrect ||
+    CompanionEvent.resultPassed ||
+    CompanionEvent.achievement ||
+    CompanionEvent.levelUp ||
+    CompanionEvent.gameCompleted ||
+    CompanionEvent.personalBest ||
+    CompanionEvent.missionCompleted ||
+    CompanionEvent.streakMilestone => CompanionMood.celebration,
+    CompanionEvent.idle => CompanionMood.idle,
+  };
 }
 
 /// Asset ladder from the handbook: local art first, generated clips last.
@@ -89,11 +110,7 @@ enum CompanionAssetTier {
 /// `{name}` is replaced with the learner's companion name so a renamed
 /// companion never talks about itself in the third person.
 class CompanionScript {
-  const CompanionScript({
-    required this.id,
-    required this.text,
-    this.textUr,
-  });
+  const CompanionScript({required this.id, required this.text, this.textUr});
 
   final String id;
   final String text;
@@ -106,8 +123,8 @@ class CompanionScript {
   /// The line before any name is filled in.
   String templateFor(NanoAppLocale locale) =>
       locale == NanoAppLocale.ur && (textUr?.isNotEmpty ?? false)
-          ? textUr!
-          : text;
+      ? textUr!
+      : text;
 
   /// Whether the line names the learner's companion (MED-03).
   ///
@@ -125,59 +142,76 @@ abstract final class CompanionScriptBook {
   static const core = <CompanionMood, List<CompanionScript>>{
     CompanionMood.greeting: [
       CompanionScript(
+        id: 'onboarding-1',
+        text: 'Hey. I’m here to help you learn, play, and keep moving forward.',
+        textUr: 'سلام۔ میں سیکھنے، کھیلنے اور آگے بڑھنے میں مدد کے لیے ہوں۔',
+      ),
+      CompanionScript(
         id: 'greeting-1',
-        text: 'Hello! {name} is here whenever you are ready.',
-        textUr: 'سلام! {name} آپ کے ساتھ ہے۔',
+        text: 'Welcome back. Ready for your next step?',
+        textUr: 'خوش آمدید۔ اگلے قدم کے لیے تیار؟',
       ),
       CompanionScript(
         id: 'greeting-2',
-        text: 'Good to see you again.',
-        textUr: 'آپ کو دوبارہ دیکھ کر خوشی ہوئی۔',
+        text: 'Good to see you again. We can continue whenever you’re ready.',
+        textUr: 'آپ کو دوبارہ دیکھ کر خوشی ہوئی۔ جب چاہیں جاری رکھیں۔',
       ),
     ],
     CompanionMood.idle: [
       CompanionScript(
-        id: 'idle-1',
-        text: 'Take your time.',
-        textUr: 'آرام سے کریں۔',
+        id: 'video-start-1',
+        text: 'Take your time. I’ll be here when you finish.',
       ),
+      CompanionScript(id: 'idle-1', text: 'Take your time.'),
     ],
     CompanionMood.point: [
       CompanionScript(
-        id: 'point-1',
-        text: 'Start here.',
-        textUr: 'یہاں سے شروع کریں۔',
+        id: 'learning-entry-1',
+        text:
+            'Pick something that looks interesting, and we’ll start from there.',
       ),
+      CompanionScript(id: 'point-1', text: 'Start here.'),
       CompanionScript(
-        id: 'point-2',
-        text: 'This one is next.',
-        textUr: 'اگلا یہ ہے۔',
+        id: 'quiz-intro-1',
+        text: 'Let’s see what you remember. One question at a time.',
       ),
     ],
     CompanionMood.thinking: [
       CompanionScript(
-        id: 'thinking-1',
-        text: 'Read it once more, then choose.',
-        textUr: 'ایک بار پھر پڑھیں، پھر انتخاب کریں۔',
+        id: 'refresh-1',
+        text: 'Quick break. Stretch, breathe, and continue when you’re ready.',
       ),
+      CompanionScript(id: 'thinking-1', text: 'Read it once, then choose.'),
     ],
     CompanionMood.gentleRetry: [
       CompanionScript(
         id: 'retry-1',
-        text: 'Some of these need another look. We can try again.',
-        textUr: 'کچھ سوال دوبارہ دیکھنے ہیں۔ ہم پھر کوشش کریں گے۔',
+        text: 'That one was tricky. Take another look. You’ve got this.',
+        textUr: 'یہ مشکل تھا۔ دوبارہ دیکھیں۔ آپ کر سکتے ہیں۔',
+      ),
+      CompanionScript(
+        id: 'retry-2',
+        text: 'Let’s slow it down. Look for the clue before choosing again.',
+        textUr: 'آہستہ کریں۔ دوبارہ انتخاب سے پہلے اشارہ تلاش کریں۔',
       ),
     ],
     CompanionMood.celebration: [
       CompanionScript(
-        id: 'celebration-1',
-        text: 'Nicely done!',
-        textUr: 'بہت خوب!',
+        id: 'video-complete-1',
+        text:
+            'Nice work. You finished the lesson. Let’s check what you remember.',
       ),
       CompanionScript(
-        id: 'celebration-2',
-        text: 'That was good work.',
-        textUr: 'یہ اچھا کام تھا۔',
+        id: 'quiz-complete-1',
+        text: 'Well done. You stayed focused and finished strong.',
+      ),
+      CompanionScript(
+        id: 'achievement-1',
+        text: 'You earned this. Keep going.',
+      ),
+      CompanionScript(
+        id: 'level-up-1',
+        text: 'Level up. You earned it, one step at a time.',
       ),
     ],
   };
@@ -298,12 +332,8 @@ class CompanionReaction {
     required CompanionMode mode,
     required CompanionMood mood,
     required CompanionAssetTier tier,
-  }) =>
-      '${mode.name}_${mood.name}_${tier.name}';
+  }) => '${mode.name}_${mood.name}_${tier.name}';
 
-  String captionFor(NanoAppLocale locale, {String? companionName}) =>
-      script.textFor(
-        locale,
-        companionName: companionName ?? this.companionName,
-      );
+  String captionFor(NanoAppLocale locale, {String? companionName}) => script
+      .textFor(locale, companionName: companionName ?? this.companionName);
 }

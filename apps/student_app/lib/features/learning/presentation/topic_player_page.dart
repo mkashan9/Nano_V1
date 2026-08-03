@@ -101,16 +101,16 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
       widget.refreshPromptsEnabled ?? !_a11y.classroomMode;
 
   int get _creditGate => CheckpointPolicy.creditGate(
-        _checkpoints,
-        answeredIds: _answered,
-        durationSeconds: _topic.durationSeconds,
-      );
+    _checkpoints,
+    answeredIds: _answered,
+    durationSeconds: _topic.durationSeconds,
+  );
 
   int get _seekCeiling => CheckpointPolicy.seekCeiling(
-        policy: _topic.seekPolicy,
-        watchedSeconds: _topic.watchedSeconds,
-        durationSeconds: _topic.durationSeconds,
-      );
+    policy: _topic.seekPolicy,
+    watchedSeconds: _topic.watchedSeconds,
+    durationSeconds: _topic.durationSeconds,
+  );
 
   @override
   void initState() {
@@ -277,6 +277,12 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
       _pending = checkpoint;
     });
     _sendHeartbeat();
+    if (CompanionFeatureFlags.longVideoRefreshEnabled) {
+      NanoCompanionScope.maybeOf(context)?.report(
+        CompanionEvent.longVideoRefresh,
+        surface: CompanionSurface.learning,
+      );
+    }
   }
 
   Future<void> _answer(
@@ -297,8 +303,8 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
       if (!mounted) return;
       // The prompt was answered locally; the gate stays until the server
       // agrees, so say so rather than pretending credit will flow.
-      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-          NanoCopy(NanoAppLocale.en);
+      final copy =
+          NanoLocaleScope.maybeOf(context)?.copy ?? NanoCopy(NanoAppLocale.en);
       setState(() {
         _answered.remove(checkpoint.id);
         _notice = copy.topicSaveFailed;
@@ -359,8 +365,8 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
       });
     } catch (_) {
       if (!mounted) return;
-      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-          NanoCopy(NanoAppLocale.en);
+      final copy =
+          NanoLocaleScope.maybeOf(context)?.copy ?? NanoCopy(NanoAppLocale.en);
       setState(() {
         _busy = false;
         _notice = copy.topicSaveFailed;
@@ -370,15 +376,16 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-        NanoCopy(NanoAppLocale.en);
+    final copy =
+        NanoLocaleScope.maybeOf(context)?.copy ?? NanoCopy(NanoAppLocale.en);
     final locale = NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
     final theme = Theme.of(context);
     final cue = _topic.captions.cueAt(_position);
     final canComplete = _topic.meetsCompletionThreshold && !_topic.isCompleted;
     final chapter = CheckpointPolicy.chapterAt(_topic.chapters, _position);
     final gate = _creditGate;
-    final gated = gate < _topic.durationSeconds &&
+    final gated =
+        gate < _topic.durationSeconds &&
         _topic.watchedSeconds >= gate &&
         !_topic.isCompleted;
     final pending = _pending;
@@ -405,8 +412,9 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
             Row(
               children: [
                 IconButton(
-                  onPressed:
-                      _topic.hasVideo && pending == null ? _togglePlay : null,
+                  onPressed: _topic.hasVideo && pending == null
+                      ? _togglePlay
+                      : null,
                   icon: Icon(_playing ? Icons.pause : Icons.play_arrow),
                   tooltip: _playing ? copy.pauseLabel : copy.playLabel,
                 ),
@@ -423,8 +431,10 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                           ? (value) {
                               // Content may forbid skipping ahead, so the
                               // scrubber stops where the server would clamp.
-                              final target =
-                                  value.round().clamp(0, _seekCeiling);
+                              final target = value.round().clamp(
+                                0,
+                                _seekCeiling,
+                              );
                               setState(() => _position = target);
                               // The decoder follows the clamped position, never
                               // the raw gesture, so no-skip-ahead holds on the
@@ -488,11 +498,8 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
                 copy: copy,
                 locale: locale,
                 junior: widget.junior,
-                onContinue: () => _answer(
-                  pending,
-                  pending.defaultResponse,
-                  resume: true,
-                ),
+                onContinue: () =>
+                    _answer(pending, pending.defaultResponse, resume: true),
                 onBreak: () => _answer(
                   pending,
                   CheckpointResponse.postponed,
@@ -541,7 +548,8 @@ class _TopicPlayerPageState extends State<TopicPlayerPage> {
               const SizedBox(height: NanoSpacing.sm),
               OutlinedButton(
                 onPressed: () {
-                  final locale = NanoLocaleScope.maybeOf(context)?.locale ??
+                  final locale =
+                      NanoLocaleScope.maybeOf(context)?.locale ??
                       NanoAppLocale.en;
                   final title = _topic.titleFor(locale);
                   final repo = widget.learnerQuizRepository!;

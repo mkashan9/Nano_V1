@@ -16,8 +16,9 @@ void main() {
     test('a different seed can pick a different line from the same mood', () {
       final junior = CompanionRuntime.forExperience(junior: true);
       final first = junior.notify(CompanionEvent.home, now: t0).reaction!;
-      final second =
-          junior.notify(CompanionEvent.home, now: t0, seed: 1).reaction!;
+      final second = junior
+          .notify(CompanionEvent.home, now: t0, seed: 1)
+          .reaction!;
       expect(first.mood, CompanionMood.greeting);
       expect(second.mood, CompanionMood.greeting);
       expect(first.script.id, isNot(second.script.id));
@@ -32,20 +33,17 @@ void main() {
       }
     });
 
-    test('captions use the chosen companion name and Urdu when asked', () {
+    test('captions stay pre-recordable in English', () {
       final reaction = CompanionRuntime.forExperience(
         junior: true,
         companionName: 'Bao',
-      ).notify(CompanionEvent.appOpen, now: t0).reaction!;
-      expect(reaction.captionFor(NanoAppLocale.en), contains('Bao'));
-      expect(
-        reaction.captionFor(NanoAppLocale.ur, companionName: 'Bao'),
-        contains('Bao'),
-      );
-      expect(
-        reaction.captionFor(NanoAppLocale.ur),
-        isNot(reaction.captionFor(NanoAppLocale.en)),
-      );
+      ).notify(CompanionEvent.appOpen, now: t0, seed: 0).reaction!;
+      expect(reaction.captionFor(NanoAppLocale.en), isNot(contains('{')));
+      expect(reaction.script.isPersonalised, isFalse);
+      final second = CompanionRuntime.forExperience(
+        junior: true,
+      ).notify(CompanionEvent.appOpen, now: t0, seed: 1).reaction!;
+      expect(second.script.id, 'greeting-1');
     });
   });
 
@@ -76,8 +74,9 @@ void main() {
 
   group('cooldowns', () {
     test('suppress a repeated ordinary moment until the window passes', () {
-      final shown = CompanionRuntime.forExperience(junior: true)
-          .notify(CompanionEvent.home, now: t0);
+      final shown = CompanionRuntime.forExperience(
+        junior: true,
+      ).notify(CompanionEvent.home, now: t0);
       final tooSoon = shown.notify(
         CompanionEvent.home,
         now: t0.add(const Duration(seconds: 2)),
@@ -94,8 +93,9 @@ void main() {
     });
 
     test('never block essential outcomes', () {
-      final first = CompanionRuntime.forExperience(junior: true)
-          .notify(CompanionEvent.resultPassed, now: t0);
+      final first = CompanionRuntime.forExperience(
+        junior: true,
+      ).notify(CompanionEvent.resultPassed, now: t0);
       expect(
         first.isSuppressed(
           CompanionEvent.resultPassed,
@@ -106,9 +106,9 @@ void main() {
     });
 
     test('survive a dismiss', () {
-      final dismissed = CompanionRuntime.forExperience(junior: true)
-          .notify(CompanionEvent.home, now: t0)
-          .dismiss();
+      final dismissed = CompanionRuntime.forExperience(
+        junior: true,
+      ).notify(CompanionEvent.home, now: t0).dismiss();
       expect(dismissed.isVisible, isFalse);
       expect(
         dismissed.isSuppressed(
@@ -147,8 +147,7 @@ void main() {
     test('muted sound keeps the caption and drops the voice', () {
       final reaction = CompanionRuntime.forExperience(
         junior: true,
-        preferences:
-            const AccessibilityPreferences(soundEnabled: false),
+        preferences: const AccessibilityPreferences(soundEnabled: false),
       ).notify(CompanionEvent.appOpen, now: t0).reaction!;
       expect(reaction.speaks, isFalse);
       expect(reaction.showsCaption, isTrue);
@@ -182,19 +181,21 @@ void main() {
       expect(reaction.tier, CompanionAssetTier.staticArt);
     });
 
-    test('a clip mood falls back to a local tier when clips are unavailable',
-        () {
-      final offline = CompanionRuntime.forExperience(junior: true)
-          .notify(CompanionEvent.resultPassed, now: t0)
-          .reaction!;
-      expect(offline.tier.isLocal, isTrue);
+    test(
+      'a clip mood falls back to a local tier when clips are unavailable',
+      () {
+        final offline = CompanionRuntime.forExperience(
+          junior: true,
+        ).notify(CompanionEvent.resultPassed, now: t0).reaction!;
+        expect(offline.tier.isLocal, isTrue);
 
-      final enriched = CompanionRuntime.forExperience(
-        junior: true,
-        clipsAvailable: true,
-      ).notify(CompanionEvent.resultPassed, now: t0).reaction!;
-      expect(enriched.tier, CompanionAssetTier.shortClip);
-    });
+        final enriched = CompanionRuntime.forExperience(
+          junior: true,
+          clipsAvailable: true,
+        ).notify(CompanionEvent.resultPassed, now: t0).reaction!;
+        expect(enriched.tier, CompanionAssetTier.shortClip);
+      },
+    );
 
     test('authoring one clip does not promise clips for every mood', () {
       // A greeting clip exists; celebrating must still fall to local art.
@@ -270,12 +271,13 @@ void main() {
   test('preferences can change without losing cooldown history', () {
     final runtime = CompanionRuntime.forExperience(junior: true)
         .notify(CompanionEvent.home, now: t0)
-        .withPreferences(
-          const AccessibilityPreferences(soundEnabled: false),
-        );
+        .withPreferences(const AccessibilityPreferences(soundEnabled: false));
     expect(runtime.preferences.soundEnabled, isFalse);
     expect(
-      runtime.isSuppressed(CompanionEvent.home, t0.add(const Duration(seconds: 1))),
+      runtime.isSuppressed(
+        CompanionEvent.home,
+        t0.add(const Duration(seconds: 1)),
+      ),
       isTrue,
     );
   });

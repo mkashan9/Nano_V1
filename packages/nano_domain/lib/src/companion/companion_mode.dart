@@ -34,7 +34,10 @@ enum CompanionMode {
   }) {
     // A milestone reads as Celebration Nori wherever it happens.
     if (event == CompanionEvent.levelUp ||
-        event == CompanionEvent.achievement) {
+        event == CompanionEvent.achievement ||
+        event == CompanionEvent.missionCompleted ||
+        event == CompanionEvent.streakMilestone ||
+        event == CompanionEvent.personalBest) {
       return CompanionMode.celebration;
     }
     // A new world is an Explorer reveal, even from the home screen.
@@ -47,8 +50,7 @@ enum CompanionMode {
       CompanionSurface.onboarding ||
       CompanionSurface.progress ||
       CompanionSurface.social ||
-      CompanionSurface.settings =>
-        CompanionMode.guide,
+      CompanionSurface.settings => CompanionMode.guide,
     };
   }
 }
@@ -81,11 +83,16 @@ class CompanionRules {
     required CompanionSurface surface,
     required CompanionEvent event,
   }) {
-    final rare = event == CompanionEvent.newWorld ||
+    final rare =
+        event == CompanionEvent.newWorld ||
         event == CompanionEvent.levelUp ||
+        event == CompanionEvent.streakMilestone ||
+        event == CompanionEvent.missionCompleted ||
         (event == CompanionEvent.appOpen &&
             surface == CompanionSurface.onboarding);
-    return rare ? CompanionPresentation.storyCard : CompanionPresentation.inline;
+    return rare
+        ? CompanionPresentation.storyCard
+        : CompanionPresentation.inline;
   }
 
   /// Only ordinary appearances are rationed.

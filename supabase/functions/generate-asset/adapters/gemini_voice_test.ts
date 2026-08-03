@@ -15,7 +15,7 @@ const request = {
   locale: 'en',
   aspectRatio: '1:1',
   promptHash: 'abc123',
-  voiceName: 'Aoede',
+  voiceName: 'Puck',
 };
 
 function pcm(...samples: number[]): Uint8Array {
@@ -106,7 +106,7 @@ Deno.test('the line is sent alone, in the registered voice', async () => {
   // A key in a query string ends up in logs; this one is a header.
   assertEquals(call.url.includes('test-key'), false);
   assertEquals(config.responseModalities, ['AUDIO']);
-  assertEquals(config.speechConfig.voiceConfig.prebuiltVoiceConfig.voiceName, 'Aoede');
+  assertEquals(config.speechConfig.voiceConfig.prebuiltVoiceConfig.voiceName, 'Puck');
   assertEquals(config.speechConfig.languageCode, 'ur-PK');
   // Only the line itself: a style instruction risks being read aloud.
   assertEquals(

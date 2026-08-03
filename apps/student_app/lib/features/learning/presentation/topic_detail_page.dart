@@ -52,6 +52,17 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
   var _busy = false;
   String? _error;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      NanoCompanionScope.maybeOf(
+        context,
+      )?.report(CompanionEvent.topicOpened, surface: CompanionSurface.learning);
+    });
+  }
+
   TopicAction get _action => TopicActionPolicy.forTopic(_topic);
 
   Future<void> _runAction() async {
@@ -78,8 +89,8 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
       });
     } catch (_) {
       if (!mounted) return;
-      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-          NanoCopy(NanoAppLocale.en);
+      final copy =
+          NanoLocaleScope.maybeOf(context)?.copy ?? NanoCopy(NanoAppLocale.en);
       setState(() {
         _busy = false;
         _error = copy.topicGateFailed;
@@ -113,8 +124,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
   Future<void> _openQuiz() async {
     final repo = widget.learnerQuizRepository;
     if (repo == null) return;
-    final locale =
-        NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
+    final locale = NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
     final title = _topic.titleFor(locale);
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -142,8 +152,8 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-        NanoCopy(NanoAppLocale.en);
+    final copy =
+        NanoLocaleScope.maybeOf(context)?.copy ?? NanoCopy(NanoAppLocale.en);
     final locale = NanoLocaleScope.maybeOf(context)?.locale ?? NanoAppLocale.en;
     final theme = Theme.of(context);
     final action = _action;
@@ -199,8 +209,10 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                 for (final objective in _topic.objectives)
                   Padding(
                     padding: const EdgeInsets.only(bottom: NanoSpacing.xs),
-                    child: Text('• $objective',
-                        style: theme.textTheme.bodyLarge),
+                    child: Text(
+                      '• $objective',
+                      style: theme.textTheme.bodyLarge,
+                    ),
                   ),
                 const SizedBox(height: NanoSpacing.lg),
               ],
@@ -212,8 +224,10 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                 for (final resource in _topic.resources)
                   Padding(
                     padding: const EdgeInsets.only(bottom: NanoSpacing.xs),
-                    child: Text('• $resource',
-                        style: theme.textTheme.bodyLarge),
+                    child: Text(
+                      '• $resource',
+                      style: theme.textTheme.bodyLarge,
+                    ),
                   ),
               const SizedBox(height: NanoSpacing.lg),
             ],
@@ -236,8 +250,7 @@ class _TopicDetailPageState extends State<TopicDetailPage> {
                   ? action.label(copy)
                   : '$title, ${copy.lockedBecause(_topic.blockingTitles.join(', '))}',
               child: FilledButton(
-                onPressed:
-                    action.isEnabled && !_busy ? _runAction : null,
+                onPressed: action.isEnabled && !_busy ? _runAction : null,
                 child: Text(action.label(copy)),
               ),
             ),

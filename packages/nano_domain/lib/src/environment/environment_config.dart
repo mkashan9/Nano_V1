@@ -1,3 +1,4 @@
+import '../companion/companion_identity.dart';
 import 'nano_environment.dart';
 import 'service_endpoint.dart';
 
@@ -62,7 +63,11 @@ class EnvironmentConfig {
       environment: env,
       supabaseUrl: supabaseUrl,
       supabaseAnonKey: supabaseAnonKey,
-      featureFlags: const {'diagnostics': true, 'games_kill_switch': false},
+      featureFlags: {
+        'diagnostics': true,
+        'games_kill_switch': false,
+        ...CompanionFeatureFlags.defaults,
+      },
     );
   }
 }

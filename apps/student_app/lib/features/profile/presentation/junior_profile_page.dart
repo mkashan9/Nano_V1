@@ -58,7 +58,9 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
       });
     } catch (_) {
       if (!mounted) return;
-      setState(() => _state = const NanoViewError(message: 'Profile unavailable'));
+      setState(
+        () => _state = const NanoViewError(message: 'Profile unavailable'),
+      );
     }
   }
 
@@ -120,8 +122,10 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
                 return ColoredBox(
                   color: NanoColors.canvas,
                   child: ListView(
-                    padding:
-                        const EdgeInsets.only(top: NanoSpacing.md, bottom: 24),
+                    padding: const EdgeInsets.only(
+                      top: NanoSpacing.md,
+                      bottom: 24,
+                    ),
                     children: [
                       JuniorProfileHeader(
                         displayName: profile.displayName,
@@ -132,17 +136,24 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
                             ? const AssetImage(JuniorProfileVisualAssets.avatar)
                             : null,
                         foxIllustration: widget.useVisualAssets
-                            ? const AssetImage(JuniorProfileVisualAssets.fox)
+                            ? AssetImage(
+                                CompanionPosePack.portraitAsset,
+                                package: CompanionPosePack.package,
+                              )
                             : null,
                       ),
                       const SizedBox(height: NanoSpacing.lg),
                       const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: NanoSpacing.md,
+                        ),
                         child: Row(
                           children: [
-                            Icon(Icons.menu_book_rounded,
-                                color: Color(0xFF9B6DFF), size: 20),
+                            Icon(
+                              Icons.menu_book_rounded,
+                              color: Color(0xFF9B6DFF),
+                              size: 20,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Recent Learning',
@@ -161,7 +172,8 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: NanoSpacing.md),
+                            horizontal: NanoSpacing.md,
+                          ),
                           itemCount: JuniorProfileFixtures.recent.length,
                           separatorBuilder: (_, __) =>
                               const SizedBox(width: NanoSpacing.sm),
@@ -177,12 +189,16 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
                       ),
                       const SizedBox(height: NanoSpacing.lg),
                       const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: NanoSpacing.md,
+                        ),
                         child: Row(
                           children: [
-                            Icon(Icons.calendar_month_rounded,
-                                color: Color(0xFF9B6DFF), size: 20),
+                            Icon(
+                              Icons.calendar_month_rounded,
+                              color: Color(0xFF9B6DFF),
+                              size: 20,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'My Weekly Journey',
@@ -197,11 +213,13 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
                       ),
                       const SizedBox(height: NanoSpacing.sm),
                       const JuniorWeeklyJourney(
-                          days: JuniorProfileFixtures.journey),
+                        days: JuniorProfileFixtures.journey,
+                      ),
                       const SizedBox(height: NanoSpacing.lg),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: NanoSpacing.md),
+                          horizontal: NanoSpacing.md,
+                        ),
                         child: IntrinsicHeight(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -219,18 +237,17 @@ class _JuniorProfilePageState extends State<JuniorProfilePage> {
                                   soundEnabled:
                                       prefs.accessibility.soundEnabled,
                                   darkModeEnabled: _darkMode,
-                                  languageLabel:
-                                      prefs.locale.tag.toUpperCase(),
+                                  languageLabel: prefs.locale.tag.toUpperCase(),
                                   onSoundChanged:
                                       widget.onPreferencesChanged == null
-                                          ? null
-                                          : _setSound,
+                                      ? null
+                                      : _setSound,
                                   onDarkModeChanged: (v) =>
                                       setState(() => _darkMode = v),
                                   onLanguageTap:
                                       widget.onPreferencesChanged == null
-                                          ? widget.onOpenAccessibility
-                                          : _cycleLocale,
+                                      ? widget.onOpenAccessibility
+                                      : _cycleLocale,
                                 ),
                               ),
                             ],

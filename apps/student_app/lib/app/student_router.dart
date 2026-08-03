@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nano_auth/nano_auth.dart';
@@ -19,6 +20,7 @@ import 'package:student_app/features/qa/presentation/screenshot_senior_learning_
 import 'package:student_app/features/qa/presentation/screenshot_senior_games_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_profile_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_communities_page.dart';
+import 'package:student_app/features/dev/presentation/companion_cmp04_gallery_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -38,7 +40,7 @@ GoRouter createStudentRouter({
   OnboardingProgress? onboardingProgress,
   ValueChanged<OnboardingProgress>? onOnboardingChanged,
   void Function(OnboardingProgress progress, ExperienceTrack track)?
-      onOnboardingCompleted,
+  onOnboardingCompleted,
   String? schoolName,
   StudentPreferencesRepository? preferencesRepository,
   StudentPreferences? preferences,
@@ -75,20 +77,18 @@ GoRouter createStudentRouter({
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
   final blocked = authBootstrap?.isBlocked ?? false;
-  final needsOnboarding = authenticated &&
+  final needsOnboarding =
+      authenticated &&
       !blocked &&
       onboardingRepository != null &&
       onboardingProgress?.isComplete != true;
   final resolvedInitial = !authenticated
       ? '/sign-in'
       : blocked
-          ? '/blocked'
-          : needsOnboarding
-              ? '/onboarding'
-              : DeepLinkResolver.resolve(
-                  principal,
-                  initialLocation ?? '/',
-                ).location;
+      ? '/blocked'
+      : needsOnboarding
+      ? '/onboarding'
+      : DeepLinkResolver.resolve(principal, initialLocation ?? '/').location;
 
   return GoRouter(
     initialLocation: resolvedInitial,
@@ -105,56 +105,53 @@ GoRouter createStudentRouter({
     routes: [
       GoRoute(
         path: '/screenshot/junior_home',
-        builder: (context, state) => ScreenshotJuniorHomePage(
-          repository: homeRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotJuniorHomePage(repository: homeRepository),
       ),
       GoRoute(
         path: '/screenshot/junior_learning',
-        builder: (context, state) => ScreenshotJuniorLearningPage(
-          repository: catalogRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotJuniorLearningPage(repository: catalogRepository),
       ),
       GoRoute(
         path: '/screenshot/junior_games',
-        builder: (context, state) => ScreenshotJuniorGamesPage(
-          repository: gameCatalogRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotJuniorGamesPage(repository: gameCatalogRepository),
       ),
       GoRoute(
         path: '/screenshot/junior_profile',
-        builder: (context, state) => ScreenshotJuniorProfilePage(
-          repository: profileRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotJuniorProfilePage(repository: profileRepository),
       ),
       GoRoute(
         path: '/screenshot/senior_home',
-        builder: (context, state) => ScreenshotSeniorHomePage(
-          repository: homeRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotSeniorHomePage(repository: homeRepository),
       ),
       GoRoute(
         path: '/screenshot/senior_learning',
-        builder: (context, state) => ScreenshotSeniorLearningPage(
-          repository: catalogRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotSeniorLearningPage(repository: catalogRepository),
       ),
       GoRoute(
         path: '/screenshot/senior_games',
-        builder: (context, state) => ScreenshotSeniorGamesPage(
-          repository: gameCatalogRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotSeniorGamesPage(repository: gameCatalogRepository),
       ),
       GoRoute(
         path: '/screenshot/senior_profile',
-        builder: (context, state) => ScreenshotSeniorProfilePage(
-          repository: profileRepository,
-        ),
+        builder: (context, state) =>
+            ScreenshotSeniorProfilePage(repository: profileRepository),
       ),
       GoRoute(
         path: '/screenshot/senior_communities',
         builder: (context, state) => const ScreenshotSeniorCommunitiesPage(),
       ),
+      if (kDebugMode || config.showDebugChrome)
+        GoRoute(
+          path: '/dev/companion-cmp04',
+          builder: (context, state) => const CompanionCmp04GalleryPage(),
+        ),
       GoRoute(
         path: '/sign-in',
         builder: (context, state) {
@@ -220,7 +217,8 @@ GoRouter createStudentRouter({
           }
           return OnboardingFlowPage(
             repository: repo,
-            progress: onboardingProgress ??
+            progress:
+                onboardingProgress ??
                 OnboardingProgress(userId: principal.userId ?? 'local'),
             principal: principal,
             schoolName: schoolName,
@@ -374,75 +372,75 @@ Widget _pageFor(
 }) {
   return switch (id) {
     'home' => StudentLearningTab(
-        principal: principal,
-        homeRepository: homeRepository,
-        catalogRepository: catalogRepository,
-        progressRepository: progressRepository,
-        checkpointRepository: checkpointRepository,
-        insightsRepository: insightsRepository,
-        learnerQuizRepository: learnerQuizRepository,
-        quizAttemptRepository: quizAttemptRepository,
-        inboxRepository: inboxRepository,
-        accessRepository: accessRepository,
-        companionName: companionName,
-        learnerDisplayName: principal.displayName,
-        shareCards: shareCards,
-        onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
-      ),
+      principal: principal,
+      homeRepository: homeRepository,
+      catalogRepository: catalogRepository,
+      progressRepository: progressRepository,
+      checkpointRepository: checkpointRepository,
+      insightsRepository: insightsRepository,
+      learnerQuizRepository: learnerQuizRepository,
+      quizAttemptRepository: quizAttemptRepository,
+      inboxRepository: inboxRepository,
+      accessRepository: accessRepository,
+      companionName: companionName,
+      learnerDisplayName: principal.displayName,
+      shareCards: shareCards,
+      onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
+    ),
     'learning' => StudentCatalogTab(
-        principal: principal,
-        catalogRepository: catalogRepository,
-        progressRepository: progressRepository,
-        checkpointRepository: checkpointRepository,
-        insightsRepository: insightsRepository,
-        learnerQuizRepository: learnerQuizRepository,
-        quizAttemptRepository: quizAttemptRepository,
-        companionName: companionName,
-        learnerDisplayName: principal.displayName,
-        shareCards: shareCards,
-      ),
+      principal: principal,
+      catalogRepository: catalogRepository,
+      progressRepository: progressRepository,
+      checkpointRepository: checkpointRepository,
+      insightsRepository: insightsRepository,
+      learnerQuizRepository: learnerQuizRepository,
+      quizAttemptRepository: quizAttemptRepository,
+      companionName: companionName,
+      learnerDisplayName: principal.displayName,
+      shareCards: shareCards,
+    ),
     'game' || 'games' => StudentGamesTab(
-        repository: gameCatalogRepository,
-        sessionRepository: gameSessionRepository,
-        assetRepository: gameAssetRepository,
-        localStorageRepository: gameLocalStorageRepository,
-        accessRepository: accessRepository,
-        accessibility: accessibility,
-        onAccessibilityChanged: onAccessibilityChanged,
-        independent: principal.role == AppRole.independentStudent,
-        gradeLevel: onboardingProgress?.selfReportedGradeLevel,
-        junior: principal.usesJuniorPresentation,
-      ),
+      repository: gameCatalogRepository,
+      sessionRepository: gameSessionRepository,
+      assetRepository: gameAssetRepository,
+      localStorageRepository: gameLocalStorageRepository,
+      accessRepository: accessRepository,
+      accessibility: accessibility,
+      onAccessibilityChanged: onAccessibilityChanged,
+      independent: principal.role == AppRole.independentStudent,
+      gradeLevel: onboardingProgress?.selfReportedGradeLevel,
+      junior: principal.usesJuniorPresentation,
+    ),
     'flex' => StudentFlexTab(
-        flexEligible: principal.flexEligible,
-        repository: flexRepository,
-        attendanceRepository: studentAttendanceRepository,
-        marksRepository: studentMarksRepository,
-        classroomRepository: studentClassroomRepository,
-      ),
+      flexEligible: principal.flexEligible,
+      repository: flexRepository,
+      attendanceRepository: studentAttendanceRepository,
+      marksRepository: studentMarksRepository,
+      classroomRepository: studentClassroomRepository,
+    ),
     'communities' => StudentCommunitiesTab(
-        repository: communityDiscoveryRepository,
-        messagingRepository: communityMessagingRepository,
-      ),
+      repository: communityDiscoveryRepository,
+      messagingRepository: communityMessagingRepository,
+    ),
     'profile' => StudentProfileTab(
-        principal: principal,
-        profileRepository: profileRepository,
-        insightsRepository: insightsRepository,
-        preferences: preferences,
-        onPreferencesChanged: onPreferencesChanged,
-        onAccessibilityChanged: onAccessibilityChanged,
-        onSignOut: onSignOut,
-        syncController: syncController,
-        shareCards: shareCards,
-        leagueRepository: leagueRepository,
-        socialIdentityRepository: socialIdentityRepository,
-        friendGraphRepository: friendGraphRepository,
-        safetyReportRepository: safetyReportRepository,
-        accessRepository: accessRepository,
-        schoolLinkRepository: schoolLinkRepository,
-        onSchoolLinked: onSchoolLinked,
-        showQaTools: showQaTools,
-      ),
+      principal: principal,
+      profileRepository: profileRepository,
+      insightsRepository: insightsRepository,
+      preferences: preferences,
+      onPreferencesChanged: onPreferencesChanged,
+      onAccessibilityChanged: onAccessibilityChanged,
+      onSignOut: onSignOut,
+      syncController: syncController,
+      shareCards: shareCards,
+      leagueRepository: leagueRepository,
+      socialIdentityRepository: socialIdentityRepository,
+      friendGraphRepository: friendGraphRepository,
+      safetyReportRepository: safetyReportRepository,
+      accessRepository: accessRepository,
+      schoolLinkRepository: schoolLinkRepository,
+      onSchoolLinked: onSchoolLinked,
+      showQaTools: showQaTools,
+    ),
     _ => Center(child: Text('Unknown tab: $id')),
   };
 }
