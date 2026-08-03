@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
-/// COM-04/05 community text + media messages.
+/// COM-04..06 community text + media + pins/search/gallery.
 abstract class CommunityMessagingRepository {
   Future<List<CommunityMessage>> listMessages(String communityId);
 
@@ -37,6 +37,23 @@ abstract class CommunityMessagingRepository {
   });
 
   Future<String?> signedMediaUrl(CommunityMessageAttachment attachment);
+
+  Future<CommunityMessage> pinMessage({
+    required String messageId,
+    required bool pinned,
+  });
+
+  Future<List<CommunityMessage>> listPins(String communityId);
+
+  Future<List<CommunityMessage>> searchMessages({
+    required String communityId,
+    required String query,
+  });
+
+  Future<List<CommunityMessageAttachment>> listGallery({
+    required String communityId,
+    CommunityMediaKind? kind,
+  });
 }
 
 class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
@@ -54,6 +71,9 @@ class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
               reactions: const [
                 MessageReactionSummary(emoji: '👍', count: 2),
               ],
+              isPinned: true,
+              pinnedAt: DateTime.utc(2026, 8, 1, 10, 1),
+              pinnedBy: 'u-owner',
             ),
             CommunityMessage(
               id: 'm-seed-2',
@@ -228,12 +248,95 @@ class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
         mentionUserIds: current.mentionUserIds,
         reactions: reactions,
         attachments: current.attachments,
+        isPinned: current.isPinned,
+        pinnedAt: current.pinnedAt,
+        pinnedBy: current.pinnedBy,
       );
       list[index] = updated;
       _messages[entry.key] = list;
       return updated;
     }
     throw StateError('Message not found');
+  }
+
+  CommunityMessage? _replaceMessage(CommunityMessage updated) {
+    for (final entry in _messages.entries) {
+      final list = [...entry.value];
+      final index = list.indexWhere((m) => m.id == updated.id);
+      if (index < 0) continue;
+      list[index] = updated;
+      _messages[entry.key] = list;
+      return updated;
+    }
+    return null;
+  }
+
+  @override
+  Future<CommunityMessage> pinMessage({
+    required String messageId,
+    required bool pinned,
+  }) async {
+    if (alwaysFail) throw StateError('Pin failed');
+    for (final entry in _messages.entries) {
+      final list = [...entry.value];
+      final index = list.indexWhere((m) => m.id == messageId);
+      if (index < 0) continue;
+      final current = list[index];
+      final updated = CommunityMessage(
+        id: current.id,
+        communityId: current.communityId,
+        authorId: current.authorId,
+        authorDisplayName: current.authorDisplayName,
+        body: current.body,
+        parentMessageId: current.parentMessageId,
+        createdAt: current.createdAt,
+        isSelf: current.isSelf,
+        mentionUserIds: current.mentionUserIds,
+        reactions: current.reactions,
+        attachments: current.attachments,
+        isPinned: pinned,
+        pinnedAt: pinned ? DateTime.now().toUtc() : null,
+        pinnedBy: pinned ? 'self' : null,
+      );
+      return _replaceMessage(updated)!;
+    }
+    throw StateError('Message not found');
+  }
+
+  @override
+  Future<List<CommunityMessage>> listPins(String communityId) async {
+    if (alwaysFail) throw StateError('Pins unavailable');
+    return [
+      for (final m in _messages[communityId] ?? const <CommunityMessage>[])
+        if (m.isPinned) m,
+    ];
+  }
+
+  @override
+  Future<List<CommunityMessage>> searchMessages({
+    required String communityId,
+    required String query,
+  }) async {
+    if (alwaysFail) throw StateError('Search failed');
+    final q = query.trim().toLowerCase();
+    if (q.length < 2) return const [];
+    return [
+      for (final m in _messages[communityId] ?? const <CommunityMessage>[])
+        if (m.body.toLowerCase().contains(q)) m,
+    ];
+  }
+
+  @override
+  Future<List<CommunityMessageAttachment>> listGallery({
+    required String communityId,
+    CommunityMediaKind? kind,
+  }) async {
+    if (alwaysFail) throw StateError('Gallery unavailable');
+    return [
+      for (final m in _messages[communityId] ?? const <CommunityMessage>[])
+        for (final a in m.attachments)
+          if (kind == null || a.kind == kind) a,
+    ];
   }
 
   @override
@@ -384,5 +487,72 @@ class SupabaseCommunityMessagingRepository
     return _client.storage
         .from(attachment.storageBucket)
         .createSignedUrl(attachment.storagePath, 3600);
+  }
+
+  @override
+  Future<CommunityMessage> pinMessage({
+    required String messageId,
+    required bool pinned,
+  }) async {
+    final raw = await _client.rpc(
+      'pin_community_message',
+      params: {
+        'p_message_id': messageId,
+        'p_pinned': pinned,
+      },
+    );
+    if (raw is! Map) throw StateError('Pin failed');
+    return CommunityMessage.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<List<CommunityMessage>> listPins(String communityId) async {
+    final raw = await _client.rpc(
+      'list_community_pins',
+      params: {'p_community_id': communityId},
+    );
+    if (raw is! List) return const [];
+    return [
+      for (final row in raw.whereType<Map>())
+        CommunityMessage.fromJson(Map<String, dynamic>.from(row)),
+    ];
+  }
+
+  @override
+  Future<List<CommunityMessage>> searchMessages({
+    required String communityId,
+    required String query,
+  }) async {
+    final raw = await _client.rpc(
+      'search_community_messages',
+      params: {
+        'p_community_id': communityId,
+        'p_query': query,
+      },
+    );
+    if (raw is! List) return const [];
+    return [
+      for (final row in raw.whereType<Map>())
+        CommunityMessage.fromJson(Map<String, dynamic>.from(row)),
+    ];
+  }
+
+  @override
+  Future<List<CommunityMessageAttachment>> listGallery({
+    required String communityId,
+    CommunityMediaKind? kind,
+  }) async {
+    final raw = await _client.rpc(
+      'list_community_gallery',
+      params: {
+        'p_community_id': communityId,
+        'p_kind': kind?.wire,
+      },
+    );
+    if (raw is! List) return const [];
+    return [
+      for (final row in raw.whereType<Map>())
+        CommunityMessageAttachment.fromJson(Map<String, dynamic>.from(row)),
+    ];
   }
 }

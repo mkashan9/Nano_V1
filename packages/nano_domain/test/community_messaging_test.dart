@@ -35,5 +35,21 @@ void main() {
     expect(message.hasMedia, isTrue);
     expect(message.attachments.single.kind, CommunityMediaKind.photo);
     expect(message.attachments.single.displayLabel, 'lab.jpg');
+    expect(message.isPinned, isFalse);
+  });
+
+  test('CommunityDetail pin and posting helpers', () {
+    const detail = CommunityDetail(
+      id: 'c1',
+      slug: 'c',
+      name: 'C',
+      summary: '',
+      rulesText: '',
+      myRole: 'moderator',
+      myStatus: CommunityMembershipStatus.active,
+      postingMode: 'admins_only',
+    );
+    expect(detail.canPin, isTrue);
+    expect(detail.isAdminsOnly, isTrue);
   });
 }

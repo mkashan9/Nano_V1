@@ -61,4 +61,27 @@ void main() {
     expect(sent.attachments.single.status, 'ready');
     expect(await repo.signedMediaUrl(sent.attachments.single), startsWith('fake://'));
   });
+
+  test('FakeCommunityMessagingRepository pins searches and gallery', () async {
+    final repo = FakeCommunityMessagingRepository();
+    final communityId = 'a1000000-0000-4000-8000-000000000001';
+    final pins = await repo.listPins(communityId);
+    expect(pins, isNotEmpty);
+    expect(pins.first.isPinned, isTrue);
+
+    final found = await repo.searchMessages(
+      communityId: communityId,
+      query: 'Welcome',
+    );
+    expect(found, isNotEmpty);
+
+    final gallery = await repo.listGallery(communityId: communityId);
+    expect(gallery.any((a) => a.kind == CommunityMediaKind.photo), isTrue);
+
+    final unpinned = await repo.pinMessage(
+      messageId: pins.first.id,
+      pinned: false,
+    );
+    expect(unpinned.isPinned, isFalse);
+  });
 }

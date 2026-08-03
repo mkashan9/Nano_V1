@@ -26,8 +26,18 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Welcome to Study Circle — ask anything.'), findsOneWidget);
+    expect(find.text('Welcome to Study Circle — ask anything.'), findsWidgets);
     expect(find.text('lab.jpg'), findsOneWidget);
+    expect(find.text('Pins'), findsWidgets);
+
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Welcome');
+    await tester.tap(find.byIcon(Icons.search).last);
+    await tester.pumpAndSettle();
+    expect(find.text('Ayesha'), findsWidgets);
+    Navigator.of(tester.element(find.text('Search messages'))).pop();
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.add_circle_outline));
     await tester.pumpAndSettle();

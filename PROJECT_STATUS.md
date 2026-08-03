@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** COM-05 Voice Messages, Photos, Videos, and Files
+- **Current module:** COM-06 Pinned Messages, Search, Gallery, and Archives
 - **Current status:** DONE (owner approved)
-- **Current branch:** module/COM-05-community-media
+- **Current branch:** module/COM-06-pins-search-gallery
 
 ## Release progress
 
-- R9: COM-01..COM-05 DONE
+- R9: COM-01..COM-06 DONE
 
 ## Owner next step
 
-NEXT starts COM-06 Pinned Messages, Search, Gallery, and Archives.
+NEXT starts STU-06 Student Notifications Inbox.

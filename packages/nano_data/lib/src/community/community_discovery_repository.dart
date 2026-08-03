@@ -1,7 +1,7 @@
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
-/// COM-01..03 communities: discovery, create, roles, join/invite.
+/// COM-01..06 communities: discovery, create, roles, join/invite, prefs.
 abstract class CommunityDiscoveryRepository {
   Future<List<CommunitySummary>> myCommunities();
 
@@ -39,6 +39,17 @@ abstract class CommunityDiscoveryRepository {
   Future<CommunityInvite> createInvite(String communityId);
 
   Future<CommunityDetail> redeemInvite(String code);
+
+  Future<CommunityDetail> setMemberPrefs({
+    required String communityId,
+    bool? muted,
+    bool? archived,
+  });
+
+  Future<CommunityDetail> setPostingMode({
+    required String communityId,
+    required String mode,
+  });
 }
 
 class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
@@ -140,7 +151,10 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
   @override
   Future<List<CommunitySummary>> myCommunities() async {
     if (alwaysFail) throw StateError('Communities unavailable');
-    return List.unmodifiable(_mine);
+    return List.unmodifiable([
+      for (final item in _mine)
+        if (!item.isArchived) item,
+    ]);
   }
 
   @override
@@ -395,6 +409,68 @@ class FakeCommunityDiscoveryRepository implements CommunityDiscoveryRepository {
     _details[target.id] = forced;
     return joinCommunity(target.id);
   }
+
+  @override
+  Future<CommunityDetail> setMemberPrefs({
+    required String communityId,
+    bool? muted,
+    bool? archived,
+  }) async {
+    if (alwaysFail) throw StateError('Prefs failed');
+    final existing = _details[communityId];
+    if (existing == null) throw StateError('Community not found');
+    final next = CommunityDetail(
+      id: existing.id,
+      slug: existing.slug,
+      name: existing.name,
+      summary: existing.summary,
+      rulesText: existing.rulesText,
+      visibility: existing.visibility,
+      memberCount: existing.memberCount,
+      myRole: existing.myRole,
+      myStatus: existing.myStatus,
+      joinedAt: existing.joinedAt,
+      createdAt: existing.createdAt,
+      postingMode: existing.postingMode,
+      isMuted: muted ?? existing.isMuted,
+      isArchived: archived ?? existing.isArchived,
+    );
+    _details[communityId] = next;
+    final summary = next.asSummary;
+    _mine.removeWhere((c) => c.id == communityId);
+    if (!next.isArchived && next.isMember) {
+      _mine.insert(0, summary);
+    }
+    return next;
+  }
+
+  @override
+  Future<CommunityDetail> setPostingMode({
+    required String communityId,
+    required String mode,
+  }) async {
+    if (alwaysFail) throw StateError('Posting mode failed');
+    final existing = _details[communityId];
+    if (existing == null) throw StateError('Community not found');
+    final next = CommunityDetail(
+      id: existing.id,
+      slug: existing.slug,
+      name: existing.name,
+      summary: existing.summary,
+      rulesText: existing.rulesText,
+      visibility: existing.visibility,
+      memberCount: existing.memberCount,
+      myRole: existing.myRole,
+      myStatus: existing.myStatus,
+      joinedAt: existing.joinedAt,
+      createdAt: existing.createdAt,
+      postingMode: mode,
+      isMuted: existing.isMuted,
+      isArchived: existing.isArchived,
+    );
+    _details[communityId] = next;
+    return next;
+  }
 }
 
 class SupabaseCommunityDiscoveryRepository
@@ -535,6 +611,39 @@ class SupabaseCommunityDiscoveryRepository
       params: {'p_code': code},
     );
     if (raw is! Map) throw StateError('Redeem failed');
+    return CommunityDetail.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<CommunityDetail> setMemberPrefs({
+    required String communityId,
+    bool? muted,
+    bool? archived,
+  }) async {
+    await _client.rpc(
+      'set_community_member_prefs',
+      params: {
+        'p_community_id': communityId,
+        'p_muted': muted,
+        'p_archived': archived,
+      },
+    );
+    return getDetail(communityId);
+  }
+
+  @override
+  Future<CommunityDetail> setPostingMode({
+    required String communityId,
+    required String mode,
+  }) async {
+    final raw = await _client.rpc(
+      'set_community_posting_mode',
+      params: {
+        'p_community_id': communityId,
+        'p_mode': mode,
+      },
+    );
+    if (raw is! Map) throw StateError('Posting mode failed');
     return CommunityDetail.fromJson(Map<String, dynamic>.from(raw));
   }
 
