@@ -1,14 +1,14 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** VIS-05 Senior Home Visual Replication
+- **Current module:** VIS-06 Senior Learning Stack Visual Replication
 - **Current status:** DONE (merging)
-- **Current branch:** module/VIS-05-senior-home-visual
+- **Current branch:** module/VIS-06-senior-learning-visual
 
 ## Release progress
 
 - R0–R10 functional catalog: DONE
-- R11: VIS-01…VIS-05 DONE → next VIS-06
+- R11: VIS-01…VIS-06 DONE → next VIS-07
 
 ## Owner next step
 
-After merge, VIS-06 Senior Learning starts.
+After merge, VIS-07 Senior Games starts.

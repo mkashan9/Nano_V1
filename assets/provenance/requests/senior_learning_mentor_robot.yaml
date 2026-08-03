@@ -1,0 +1,7 @@
+﻿id: senior_learning_mentor_robot
+purpose: VIS-06 Senior Learning visual asset
+reference_screen: senior_learning
+reference_image: UI_reference/four_12/Learning_stack.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/four_12/Learning_stack.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-06/senior_learning/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.8938,
+    "overall_mae": 0.083,
+    "layout_score": 0.8934,
+    "typography_score": 0.8554,
+    "color_score": 0.917,
+    "component_geometry_score": 0.87,
+    "asset_placement_score": 0.8355,
+    "asset_visual_similarity_score": 0.9045,
+    "overall_structural_similarity": 0.8938
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.8753,
+      "mae": 0.094
+    },
+    "hero": {
+      "ssim_proxy": 0.8355,
+      "mae": 0.1292
+    },
+    "subjects": {
+      "ssim_proxy": 0.9045,
+      "mae": 0.075
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.9115,
+      "mae": 0.07
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

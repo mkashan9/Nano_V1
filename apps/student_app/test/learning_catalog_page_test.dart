@@ -66,6 +66,7 @@ void main() {
       LearningCatalogPage(
         repository: FakeLearningCatalogRepository(seniorEligible: true),
         junior: false,
+        useVisualLayout: false,
       ),
       junior: false,
     );

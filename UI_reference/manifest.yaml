@@ -85,19 +85,45 @@ references:
     path: UI_reference/four_12/Learning_stack.jpeg
     experience: senior
     probable_screen: Learning Stack
-    target_route: /learning
+    target_route: /screenshot/senior_learning
     reference_width: 740
     reference_height: 1600
     aspect_ratio: 0.463
     device_type: phone
-    module_id: LRN-01
-    implementation_status: BACKLOG
+    module_id: VIS-06
+    implementation_status: IN_PROGRESS
     manual_review_status: PENDING
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards]
+    main_layout_regions:
+      - search
+      - mentor
+      - recently_learned
+      - categories
+      - learning_paths
+      - bottom_nav
+    main_reusable_components:
+      - senior_learning_search_bar
+      - senior_mentor_banner
+      - senior_recent_learned_card
+      - senior_category_card
+      - senior_learning_paths_panel
+      - nav_bar
     navigation_type: bottom_tabs
     missing_assets: []
-    unclear_elements: []
+    unclear_elements:
+      - Mentor chat is a placeholder CTA
+    asset_ids:
+      - senior_learning_mentor_robot
+      - senior_learning_path_mountain
+      - senior_learning_cat_programming
+      - senior_learning_cat_ai
+      - senior_learning_cat_science
+    region_boxes_px:
+      search: [24, 30, 692, 50]
+      mentor: [24, 100, 692, 180]
+      recently_learned: [0, 300, 740, 160]
+      categories: [0, 480, 740, 340]
+      learning_paths: [0, 840, 740, 220]
+      bottom_navigation: [0, 1450, 740, 150]
 
   - id: senior_profile
     path: UI_reference/four_12/profile.jpeg
