@@ -1,7 +1,7 @@
 id: IND-03
 name: "Trial, Free, and Paid States"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - IND-02
 applications:
