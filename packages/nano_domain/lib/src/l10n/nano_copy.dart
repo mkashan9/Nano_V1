@@ -109,6 +109,38 @@ class NanoCopy {
       };
   String get flex => isUrdu ? 'فلیکس' : 'Flex';
   String get communities => isUrdu ? 'کمیونٹیز' : 'Communities';
+  String get communitiesHubHint => isUrdu
+      ? 'کھلی کمیونٹیز تلاش کریں۔ بنانا اور جوائن بعد میں آئے گا۔'
+      : 'Browse open Communities. Create and join arrive in later modules.';
+  String get communitiesMyTab => isUrdu ? 'میری' : 'My';
+  String get communitiesDiscoverTab => isUrdu ? 'دریافت' : 'Discover';
+  String get communitiesSearchHint =>
+      isUrdu ? 'نام سے تلاش کریں' : 'Search by name';
+  String get communitiesMyEmptyTitle =>
+      isUrdu ? 'ابھی کوئی کمیونٹی نہیں' : 'No communities yet';
+  String get communitiesMyEmptyBody => isUrdu
+      ? 'دریافت میں کچھ تلاش کریں۔ جوائن جلد آ رہا ہے۔'
+      : 'Find something in Discover. Joining arrives soon.';
+  String get communitiesDiscoverEmptyTitle =>
+      isUrdu ? 'کچھ نہیں ملا' : 'Nothing to show';
+  String get communitiesDiscoverEmptyBody => isUrdu
+      ? 'دوسرا لفظ آزمائیں، یا بعد میں دوبارہ دیکھیں۔'
+      : 'Try another search, or check back later.';
+  String get communitiesLoadError =>
+      isUrdu ? 'کمیونٹیز لوڈ نہیں ہو سکیں' : 'Could not load Communities';
+  String get communitiesRulesHeading => isUrdu ? 'قواعد' : 'Rules';
+  String get communitiesRulesEmpty =>
+      isUrdu ? 'ابھی کوئی قواعد نہیں۔' : 'No rules posted yet.';
+  String get communitiesYouAreMember =>
+      isUrdu ? 'آپ رکن ہیں۔' : 'You are a member.';
+  String get communitiesJoinDeferredHint => isUrdu
+      ? 'جوائن اور نئی کمیونٹی بنانا اگلے ماڈیولز میں آئے گا۔'
+      : 'Joining and creating communities come in later modules.';
+  String communitiesMemberCount(int count) => isUrdu
+      ? '$count ارکان'
+      : count == 1
+          ? '1 member'
+          : '$count members';
   String get me => isUrdu ? 'میں' : 'Me';
   String get profile => isUrdu ? 'پروفائل' : 'Profile';
 

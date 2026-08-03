@@ -56,6 +56,7 @@ GoRouter createStudentRouter({
   GameSessionRepository? gameSessionRepository,
   GameAssetRepository? gameAssetRepository,
   GameLocalStorageRepository? gameLocalStorageRepository,
+  CommunityDiscoveryRepository? communityDiscoveryRepository,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -246,6 +247,7 @@ GoRouter createStudentRouter({
                     gameSessionRepository: gameSessionRepository,
                     gameAssetRepository: gameAssetRepository,
                     gameLocalStorageRepository: gameLocalStorageRepository,
+                    communityDiscoveryRepository: communityDiscoveryRepository,
                     onboardingProgress: onboardingProgress,
                   ),
                 ),
@@ -289,6 +291,7 @@ Widget _pageFor(
   GameSessionRepository? gameSessionRepository,
   GameAssetRepository? gameAssetRepository,
   GameLocalStorageRepository? gameLocalStorageRepository,
+  CommunityDiscoveryRepository? communityDiscoveryRepository,
   OnboardingProgress? onboardingProgress,
 }) {
   return switch (id) {
@@ -326,7 +329,9 @@ Widget _pageFor(
         marksRepository: studentMarksRepository,
         classroomRepository: studentClassroomRepository,
       ),
-    'communities' => const StudentCommunitiesTab(),
+    'communities' => StudentCommunitiesTab(
+        repository: communityDiscoveryRepository,
+      ),
     'profile' => StudentProfileTab(
         principal: principal,
         profileRepository: profileRepository,

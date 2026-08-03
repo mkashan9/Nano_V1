@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** SAFE-04 School and Global Community Controls
+- **Current module:** COM-01 Community Discovery
 - **Current status:** DONE (owner approved)
-- **Current branch:** module/SAFE-04-community-controls
+- **Current branch:** module/COM-01-community-discovery
 
 ## Release progress
 
-- R9: SOC-01..SOC-04, SAFE-01..SAFE-04 DONE
+- R9: SOC..SAFE DONE; COM-01 DONE
 
 ## Owner next step
 
-NEXT starts COM-01 Community Discovery.
+NEXT starts COM-02 Community Creation and Roles.
