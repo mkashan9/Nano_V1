@@ -1,7 +1,7 @@
 id: QA-02
 name: "Performance and Small-Device Testing"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - FND-03
 applications:
