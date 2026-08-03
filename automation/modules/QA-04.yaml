@@ -1,7 +1,7 @@
 id: QA-04
 name: "Accessibility Audit"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - FND-07
 applications:
