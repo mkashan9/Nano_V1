@@ -1,7 +1,7 @@
 id: NOT-01
 name: "Push Delivery and Deep Links"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-06
   - FND-04
@@ -20,6 +20,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -30,16 +33,24 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Fake device token can be registered and cleaned when invalid
+  - Push delivery inserts at most one inbox item per event id
+  - Lock-screen preview hides marks detail
+  - Deep links respect permission and fall back safely
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/push_delivery_test.dart
+  - packages/nano_data/test/push_delivery_repository_test.dart
+  - apps/student_app/test/push_delivery_inbox_test.dart
+  - apps/student_app/test/notifications_inbox_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Home bell → Simulate push → duplicate ignored → open deep link
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

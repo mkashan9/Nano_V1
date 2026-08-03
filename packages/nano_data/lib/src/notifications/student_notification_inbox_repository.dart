@@ -1,6 +1,6 @@
 import 'package:nano_domain/nano_domain.dart';
 
-/// STU-06 student in-app notification inbox.
+/// STU-06 student in-app notification inbox (+ NOT-01 push ingest).
 abstract class StudentNotificationInboxRepository {
   Future<List<InboxItem>> listInbox({InboxFilter filter = InboxFilter.all});
 
@@ -9,6 +9,15 @@ abstract class StudentNotificationInboxRepository {
   Future<InboxItem> markRead(String id);
 
   Future<InboxItem> markUnread(String id);
+
+  /// NOT-01: idempotent insert keyed by [sourceEventId].
+  Future<InboxItem> deliverFromPush({
+    required String sourceEventId,
+    required String category,
+    required String title,
+    required String body,
+    String deepLinkPath = '/',
+  });
 }
 
 class FakeStudentNotificationInboxRepository
@@ -55,6 +64,7 @@ class FakeStudentNotificationInboxRepository
 
   final List<InboxItem> _items;
   var alwaysFail = false;
+  var _seq = 0;
 
   @override
   Future<List<InboxItem>> listInbox({
@@ -88,5 +98,32 @@ class FakeStudentNotificationInboxRepository
     final updated = _items[index].copyWith(clearReadAt: true);
     _items[index] = updated;
     return updated;
+  }
+
+  @override
+  Future<InboxItem> deliverFromPush({
+    required String sourceEventId,
+    required String category,
+    required String title,
+    required String body,
+    String deepLinkPath = '/',
+  }) async {
+    if (alwaysFail) throw StateError('Push ingest failed');
+    for (final item in _items) {
+      if (item.sourceEventId == sourceEventId) return item;
+    }
+
+    _seq += 1;
+    final created = InboxItem(
+      id: 'push-$_seq',
+      category: category,
+      title: title,
+      body: body,
+      createdAt: DateTime.now().toUtc(),
+      deepLinkPath: deepLinkPath,
+      sourceEventId: sourceEventId,
+    );
+    _items.insert(0, created);
+    return created;
   }
 }

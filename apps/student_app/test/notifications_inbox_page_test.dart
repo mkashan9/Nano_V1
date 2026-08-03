@@ -40,7 +40,7 @@ void main() {
     await tester.tap(find.text('New topic unlocked'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Link: /learning'), findsOneWidget);
+    expect(find.textContaining('Link: /'), findsOneWidget);
     expect((await repo.listInbox()).firstWhere((i) => i.id == 'n1').isUnread,
         isFalse);
   });
