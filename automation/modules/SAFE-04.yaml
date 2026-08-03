@@ -4,9 +4,10 @@ release: R9
 status: USER_TEST
 dependencies:
   - SAFE-02
-  - SCH-01
+  - ADM-01
 dependency_notes: >
-  Platform + school opt-in for Communities; junior hard-blocked.
+  Open Communities for seniors (Discord-like). Schools do not gate.
+  Platform emergency kill switch default on. Junior hard-blocked.
   COM-01+ must call assert_communities_allowed.
 applications:
   - student_app
@@ -41,7 +42,6 @@ handbook_sections:
 ui_references: []
 database_scope:
   - public.platform_community_policy
-  - public.school_community_policies
 server_functions:
   - "nano_internal.current_user_communities_allowed"
   - "nano_internal.assert_communities_allowed"
@@ -49,15 +49,11 @@ server_functions:
   - "public.my_community_entitlements"
   - "public.get_platform_community_policy"
   - "public.upsert_platform_community_policy"
-  - "public.get_school_community_policy"
-  - "public.upsert_school_community_policy"
-  - "public.list_school_community_policies"
 acceptance:
-  - Platform and school communities default off
+  - Communities are open for seniors; schools do not gate
+  - Platform emergency switch defaults on
   - Junior / undecided never entitled
-  - School senior needs platform AND school opt-in
-  - Independent senior needs platform only
-  - Admin UIs can toggle policies
+  - Platform Community controls page for kill switch only
 required_tests:
   - supabase/tests/safe04_community_controls.sql
   - packages/nano_domain/test/community_controls_test.dart
@@ -68,12 +64,12 @@ security_checks:
   - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Toggle platform and school switches; verify junior exclusion and senior nav
+  - Confirm seniors free without school action; juniors blocked; kill switch works
 rollback_notes: >
-  Revert branch and migration. Entitlement RPCs and admin pages removed.
+  Revert branch and migrations. Entitlement RPCs and admin page removed.
 requires_owner_test: true
 owner_decisions_locked:
   scope: >
-    Policy tables, admin toggles, learner entitlements, assert helper for COM.
+    Open Communities for seniors; platform emergency kill switch; junior block.
   deferred: >
-    Mid-session entitlement refresh; teacher-facing controls.
+    Mid-session entitlement refresh; COM-01 create/discover UX.

@@ -1,11 +1,10 @@
 # SAFE-04 manual test
 
-1. Platform admin → Community controls: leave platform OFF. School admin →
-   Settings → Communities: enable school. Senior learner still must not see
-   Communities nav (platform off).
-2. Enable platform Communities. Senior school learner still blocked until school
-   toggle is on; then Communities appears after re-sign-in.
-3. Junior learner (or undecided track): Communities stays hidden even with both
-   switches on.
-4. Independent senior: only platform switch required (no school row).
+1. Senior school learner and independent senior: Communities nav available
+   without any school admin action (platform switch left ON).
+2. Platform admin → Community controls: turn OFF. After re-sign-in, seniors
+   lose Communities. Turn ON again to restore.
+3. Junior learner (or undecided track): Communities stays hidden even when
+   platform switch is ON.
+4. School Settings has Branding and Policies only — no Communities tab.
 5. Confirm junior catalog never lists Communities destination.

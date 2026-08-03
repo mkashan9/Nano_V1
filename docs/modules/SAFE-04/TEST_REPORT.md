@@ -9,4 +9,5 @@
 | `apps/admin_web/test/community_controls_page_test.dart` | RUN |
 | Owner manual test | PENDING |
 
-Remote migration `safe04_community_controls` applied to development project.
+Remote migrations: `safe04_community_controls`, `safe04_open_communities`.
+Owner decision: open Communities; schools unrelated.

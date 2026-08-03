@@ -243,14 +243,10 @@ class AdminDestinationPage extends StatelessWidget {
     if (destination.id == 'settings' &&
         principal.role == AppRole.schoolAdmin &&
         schoolDashboardRepository != null &&
-        schoolMarksPolicyRepository != null &&
-        communityControlsRepository != null &&
-        principal.schoolId != null) {
+        schoolMarksPolicyRepository != null) {
       return SchoolSettingsPage(
         dashboardRepository: schoolDashboardRepository!,
         marksPolicyRepository: schoolMarksPolicyRepository!,
-        communityControlsRepository: communityControlsRepository!,
-        schoolId: principal.schoolId!,
       );
     }
 

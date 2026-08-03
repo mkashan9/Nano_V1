@@ -1,23 +1,22 @@
 # SAFE-04 decisions
 
-## Defaults off
+## Owner override: open Communities
 
-Platform and school communities start disabled. Schools must opt in after the
-platform switch is on.
+Communities are independent of schools and teachers — like Discord. Students
+create and join freely. School admin has no Communities gate.
+
+(Handbook Phase 9 “behind school flags” does not apply; this owner decision
+wins.)
 
 ## Junior hard block
 
-Entitlement requires `student_onboarding.experience_track = 'senior'`.
-Missing or junior track never enables Communities, regardless of admin toggles.
+Entitlement still requires `student_onboarding.experience_track = 'senior'`.
+Missing or junior track never enables Communities.
 
-## Independent learners
+## Platform emergency switch
 
-Independent seniors need only the platform switch (no school row).
-
-## School students
-
-Require platform AND their school's opt-in, resolved via active student
-membership (profiles have no `school_id` column).
+`platform_community_policy` defaults **on**. Platform admins may disable
+Communities globally in an emergency. There is no per-school policy.
 
 ## Client flag is advisory
 
