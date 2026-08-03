@@ -117,7 +117,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | SAFE-04 | School and Global Community Controls | R9 | DONE | SAFE-02, ADM-01 |
 | IND-01 | Independent Student Home and Natural Navigation | R10 | DONE | STU-04, AUTH-04 |
 | IND-02 | Independent Access Rules and Entitlements | R10 | DONE | IND-01, SEC-03 |
-| IND-03 | Trial, Free, and Paid States | R10 | BACKLOG | IND-02 |
+| IND-03 | Trial, Free, and Paid States | R10 | DONE | IND-02 |
 | IND-04 | School Invitation and Account Linking | R10 | BACKLOG | IND-02, SCH-04 |
 | PAR-01 | Weekly Parent Guidance Card | R10 | BACKLOG | STU-05 |
 | PAR-02 | Superadmin Weekly PDF and Activity Upload | R10 | BACKLOG | PAR-01, ADM-01 |

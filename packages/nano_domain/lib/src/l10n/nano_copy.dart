@@ -2,6 +2,7 @@ import '../companion/companion_mode.dart';
 import '../game/game_assets.dart';
 import '../home/student_home_summary.dart';
 import '../independent/independent_access.dart';
+import '../independent/independent_plan.dart';
 import '../media/generated_asset.dart';
 import '../social/safety_report.dart';
 import '../teacher/teacher_attendance.dart';
@@ -1698,6 +1699,21 @@ class NanoCopy {
       : 'Games are not included in this access level';
   String get accessLearningAllowed =>
       isUrdu ? 'سیکھنا جاری رکھ سکتے ہیں' : 'You can keep learning';
+  String planKindLabel(IndependentPlanKind kind) => switch (kind) {
+        IndependentPlanKind.free => isUrdu ? 'مفت' : 'Free',
+        IndependentPlanKind.trial => isUrdu ? 'آزمائش' : 'Trial',
+        IndependentPlanKind.paid => isUrdu ? 'ادا شدہ' : 'Paid',
+        IndependentPlanKind.grace => isUrdu ? 'مہلت' : 'Grace',
+        IndependentPlanKind.expired => isUrdu ? 'ختم' : 'Expired',
+      };
+  String planDaysLeft(int days) => isUrdu
+      ? '$days دن باقی'
+      : (days == 1 ? '1 day left' : '$days days left');
+  String get planStartTrial =>
+      isUrdu ? 'مفت آزمائش شروع کریں' : 'Start free trial';
+  String get planExpiredHint => isUrdu
+      ? 'آزمائش ختم۔ سیکھنا کھلا ہے؛ کھیل بعد میں۔'
+      : 'Trial ended. Learning stays open; games pause for now.';
 
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';
