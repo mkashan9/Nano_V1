@@ -3,8 +3,10 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/games/presentation/game_host_page.dart';
+import 'package:student_app/features/games/visual/junior_games_visual_assets.dart';
 
 /// GME-01..04 Games catalog with Play + local save/update/free-space.
+/// Junior presentation (VIS-03) uses adventure header + 2×2 world cards.
 class GamesCatalogPage extends StatefulWidget {
   const GamesCatalogPage({
     super.key,
@@ -17,6 +19,7 @@ class GamesCatalogPage extends StatefulWidget {
     this.independent = false,
     this.gradeLevel,
     this.junior = false,
+    this.useVisualAssets = true,
   });
 
   final GameCatalogRepository repository;
@@ -28,6 +31,7 @@ class GamesCatalogPage extends StatefulWidget {
   final bool independent;
   final int? gradeLevel;
   final bool junior;
+  final bool useVisualAssets;
 
   @override
   State<GamesCatalogPage> createState() => _GamesCatalogPageState();
@@ -44,6 +48,13 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
       widget.assetRepository ?? FakeGameAssetRepository();
   GameLocalStorageRepository get _local =>
       widget.localStorageRepository ?? FakeGameLocalStorageRepository();
+
+  static const _juniorWorldSlugs = {
+    'math_island',
+    'word_forest',
+    'science_ocean',
+    'puzzle_castle',
+  };
 
   @override
   void initState() {
@@ -118,6 +129,17 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
     });
   }
 
+  Future<void> _play(CatalogGame game) async {
+    final status = _statuses[game.versionId] ??
+        GameLocalInstallStatus.notOnDevice;
+    if (status == GameLocalInstallStatus.notOnDevice ||
+        status == GameLocalInstallStatus.failed) {
+      await _save(game);
+    }
+    if (!mounted) return;
+    _open(game);
+  }
+
   void _open(CatalogGame game) {
     final sessions = widget.sessionRepository ?? FakeGameSessionRepository();
     Navigator.of(context).push(
@@ -132,6 +154,27 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
     );
   }
 
+  Color _badgeColor(String slug) => switch (slug) {
+        'math_island' => const Color(0xFF7B61FF),
+        'word_forest' => const Color(0xFF2FBF71),
+        'science_ocean' => const Color(0xFF3D8BFF),
+        'puzzle_castle' => const Color(0xFFFF4F9A),
+        _ => const Color(0xFF5B3CC4),
+      };
+
+  ImageProvider? _art(String slug) {
+    if (!widget.useVisualAssets) return null;
+    return switch (slug) {
+      'math_island' => const AssetImage(JuniorGamesVisualAssets.mathIsland),
+      'word_forest' => const AssetImage(JuniorGamesVisualAssets.wordForest),
+      'science_ocean' =>
+        const AssetImage(JuniorGamesVisualAssets.scienceOcean),
+      'puzzle_castle' =>
+        const AssetImage(JuniorGamesVisualAssets.puzzleCastle),
+      _ => null,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -140,44 +183,115 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
     final urdu = copy.isUrdu;
     final catalog = _catalog;
 
-    return NanoScaffold(
-      padBody: true,
+    return Scaffold(
+      backgroundColor: widget.junior ? NanoColors.canvas : null,
       body: NanoViewStateHost(
         state: _state,
         onRetry: _load,
         child: catalog == null
             ? const SizedBox.shrink()
-            : ListView(
-                children: [
-                  Text(copy.games, style: theme.textTheme.headlineSmall),
-                  const SizedBox(height: NanoSpacing.xs),
-                  Text(
-                    copy.gamesHostIntro,
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: NanoSpacing.xs),
-                  Text(
-                    copy.gamesStorageUsed(_storageBytes),
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: NanoSpacing.md),
-                  if (catalog.isEmpty)
-                    Text(copy.gamesEmpty, style: theme.textTheme.bodyMedium)
-                  else
-                    for (final game in catalog.games)
-                      _GameStorageTile(
-                        game: game,
-                        urdu: urdu,
-                        copy: copy,
-                        status: _statuses[game.versionId] ??
-                            GameLocalInstallStatus.notOnDevice,
-                        onPlay: () => _open(game),
-                        onSave: () => _save(game),
-                        onFree: () => _free(game),
-                      ),
-                ],
-              ),
+            : widget.junior
+                ? _buildJunior(context, copy, urdu, catalog)
+                : _buildSenior(context, copy, theme, urdu, catalog),
       ),
+    );
+  }
+
+  Widget _buildJunior(
+    BuildContext context,
+    NanoCopy copy,
+    bool urdu,
+    GameCatalog catalog,
+  ) {
+    final worlds = [
+      for (final game in catalog.games)
+        if (_juniorWorldSlugs.contains(game.slug)) game,
+    ];
+    final cards = worlds.isEmpty ? catalog.games.take(4).toList() : worlds;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        0,
+        NanoSpacing.md,
+        0,
+        NanoSpacing.xxl,
+      ),
+      children: [
+        JuniorGamesPromptHeader(
+          todaysLabel: copy.gamesTodaysLabel,
+          adventureLabel: copy.gamesAdventureLabel,
+          foxIllustration: widget.useVisualAssets
+              ? const AssetImage(JuniorGamesVisualAssets.fox)
+              : null,
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        if (cards.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(NanoSpacing.md),
+            child: Text(copy.gamesEmpty, style: Theme.of(context).textTheme.bodyMedium),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: cards.length.clamp(0, 4),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: NanoSpacing.sm,
+                crossAxisSpacing: NanoSpacing.sm,
+                childAspectRatio: 0.72,
+              ),
+              itemBuilder: (context, index) {
+                final game = cards[index];
+                return JuniorGameWorldCard(
+                  title: game.titleFor(urdu),
+                  playLabel: copy.playLabel,
+                  badgeColor: _badgeColor(game.slug),
+                  illustration: _art(game.slug),
+                  onPlay: () => _play(game),
+                );
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSenior(
+    BuildContext context,
+    NanoCopy copy,
+    ThemeData theme,
+    bool urdu,
+    GameCatalog catalog,
+  ) {
+    return ListView(
+      padding: const EdgeInsets.all(NanoSpacing.md),
+      children: [
+        Text(copy.games, style: theme.textTheme.headlineSmall),
+        const SizedBox(height: NanoSpacing.xs),
+        Text(copy.gamesHostIntro, style: theme.textTheme.bodyMedium),
+        const SizedBox(height: NanoSpacing.xs),
+        Text(
+          copy.gamesStorageUsed(_storageBytes),
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: NanoSpacing.md),
+        if (catalog.isEmpty)
+          Text(copy.gamesEmpty, style: theme.textTheme.bodyMedium)
+        else
+          for (final game in catalog.games)
+            _GameStorageTile(
+              game: game,
+              urdu: urdu,
+              copy: copy,
+              status: _statuses[game.versionId] ??
+                  GameLocalInstallStatus.notOnDevice,
+              onPlay: () => _open(game),
+              onSave: () => _save(game),
+              onFree: () => _free(game),
+            ),
+      ],
     );
   }
 }

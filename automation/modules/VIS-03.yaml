@@ -1,7 +1,7 @@
 id: VIS-03
 name: "Junior Games Visual Replication"
 release: R11
-status: BACKLOG
+status: DONE
 dependencies:
   - VIS-02
   - GME-01
@@ -43,6 +43,8 @@ acceptance:
   - Screenshot + compare pipeline for junior_games
   - Owner manual test steps provided
 required_tests:
+  - apps/student_app/test/games_catalog_page_test.dart
+  - apps/student_app/test/screenshot_junior_games_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff

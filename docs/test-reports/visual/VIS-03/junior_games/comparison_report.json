@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/kids/games.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-03/junior_games/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.6411,
+    "overall_mae": 0.2701,
+    "layout_score": 0.8707,
+    "typography_score": 0.7063,
+    "color_score": 0.7299,
+    "component_geometry_score": 0.5487,
+    "asset_placement_score": 0.5729,
+    "asset_visual_similarity_score": 0.5246,
+    "overall_structural_similarity": 0.6411
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.8397,
+      "mae": 0.1208
+    },
+    "hero": {
+      "ssim_proxy": 0.5729,
+      "mae": 0.3235
+    },
+    "subjects": {
+      "ssim_proxy": 0.5246,
+      "mae": 0.3567
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.9017,
+      "mae": 0.0742
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

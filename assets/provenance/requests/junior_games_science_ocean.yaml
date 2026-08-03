@@ -1,0 +1,7 @@
+﻿id: junior_games_science_ocean
+purpose: VIS-03 Junior Games visual asset
+reference_screen: junior_games
+reference_image: UI_reference/kids/games.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

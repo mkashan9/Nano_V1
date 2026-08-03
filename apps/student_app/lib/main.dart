@@ -24,6 +24,7 @@ void main() {
   );
   final screenshotLocation = switch (screenshotScreen) {
     'junior_learning' => '/screenshot/junior_learning',
+    'junior_games' => '/screenshot/junior_games',
     _ => '/screenshot/junior_home',
   };
   AuthRepository? authRepository;
