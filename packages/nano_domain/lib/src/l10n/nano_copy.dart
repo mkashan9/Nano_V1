@@ -1011,6 +1011,23 @@ class NanoCopy {
       : '$count performance check(s) failed';
   String get performanceAuditRun =>
       isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
+  String get offlineNetworkAuditTitle =>
+      isUrdu ? 'آف لائن اور کمزور نیٹ ورک' : 'Offline & poor network';
+  String get offlineNetworkAuditSubtitle => isUrdu
+      ? 'ڈرافٹ، کیش، تنازعات، اور بھروسہ مند سرور نتائج۔'
+      : 'Drafts, cache, conflicts, and server-trusted outcomes.';
+  String get offlineNetworkAuditAllPassed =>
+      isUrdu ? 'تمام آف لائن جانچیں پاس' : 'All offline checks passed';
+  String offlineNetworkAuditHasFailures(int count) => isUrdu
+      ? '$count آف لائن جانچ ناکام'
+      : '$count offline check(s) failed';
+  String get offlineNetworkAuditRun =>
+      isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
+  String get offlineNetworkAuditOpenSync =>
+      isUrdu ? 'آف لائن پیش منظر کھولیں' : 'Open offline preview';
+  String get offlineNetworkQualityOffline => isUrdu ? 'آف لائن' : 'Offline';
+  String get offlineNetworkQualityPoor => isUrdu ? 'کمزور' : 'Poor';
+  String get offlineNetworkQualityOk => isUrdu ? 'ٹھیک' : 'OK';
   String get analyticsPageTitle =>
       isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
   String get analyticsPageSubtitle => isUrdu
