@@ -1,7 +1,7 @@
 id: QA-01
 name: "Security Hardening"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - SEC-03
 applications:

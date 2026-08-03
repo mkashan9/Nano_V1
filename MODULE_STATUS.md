@@ -125,7 +125,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | NOT-01 | Push Delivery and Deep Links | R10 | DONE | STU-06, FND-04 |
 | NOT-02 | Quiet Hours, Category Controls, and Digest | R10 | DONE | NOT-01 |
 | ANA-01 | Product Analytics and School Health | R10 | DONE | ADM-08, SCH-07 |
-| QA-01 | Security Hardening | R10 | USER_TEST | SEC-03 |
+| QA-01 | Security Hardening | R10 | DONE | SEC-03 |
 | QA-02 | Performance and Small-Device Testing | R10 | BACKLOG | FND-03 |
 | QA-03 | Offline and Poor-Network Testing | R10 | BACKLOG | SYNC-01 |
 | QA-04 | Accessibility Audit | R10 | BACKLOG | FND-07 |
