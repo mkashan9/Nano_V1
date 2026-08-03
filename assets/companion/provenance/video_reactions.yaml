@@ -1,0 +1,24 @@
+identity_version: nano_humanoid_companion_v1
+clips:
+  onboarding_greeting:
+    status: VIDEO_REVIEW_REQUIRED
+    static_fallback: greeting_wave
+    provider: wan_i2v
+    reason: generation deferred; static+motion fallback
+  quiz_completion:
+    status: VIDEO_REVIEW_REQUIRED
+    static_fallback: celebrate
+  level_up:
+    status: VIDEO_REVIEW_REQUIRED
+    static_fallback: celebrate
+  long_video_refresh:
+    status: VIDEO_REVIEW_REQUIRED
+    static_fallback: listening
+  return_from_inactivity:
+    status: VIDEO_REVIEW_REQUIRED
+    static_fallback: greeting_wave
+  gentle_retry:
+    status: VIDEO_REVIEW_REQUIRED
+    static_fallback: gentle_retry
+video_jobs_used: 0
+video_jobs_max: 12

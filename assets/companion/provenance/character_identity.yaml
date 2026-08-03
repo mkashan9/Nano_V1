@@ -1,0 +1,9 @@
+identity_version: nano_humanoid_companion_v1
+source_master: assets/avatar/avatar.png
+preserved_master: assets/companion/master/avatar_master_original.png
+cutout: assets/companion/master/avatar_master_cutout.png
+cutout_sha256: 5230088e50084c3de4d891522cadf13969012acd1971a0b1004e318b047b50a9
+default_companion_name: Nori
+palette: blue-white-silver-cyan
+personality: calm_young_male_mentor
+created: 2026-08-04

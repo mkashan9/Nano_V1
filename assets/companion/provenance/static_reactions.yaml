@@ -1,0 +1,30 @@
+identity_version: nano_humanoid_companion_v1
+poses:
+  neutral:
+    status: accepted
+    full_webp: assets/companion/app/avatar_neutral_full.webp
+    tool: local_flood_fill_pil
+  greeting_wave:
+    status: accepted
+    full_webp: assets/companion/app/avatar_greeting_wave_full.webp
+    tool: cursor_GenerateImage+local_cutout
+  point_right:
+    status: accepted
+    full_webp: assets/companion/app/avatar_point_right_full.webp
+    tool: cursor_GenerateImage+local_cutout
+  thinking:
+    status: ASSET_REVIEW_REQUIRED
+    full_webp: assets/companion/app/avatar_thinking_full.webp
+    tool: master_cutout_fallback
+  gentle_retry:
+    status: ASSET_REVIEW_REQUIRED
+    full_webp: assets/companion/app/avatar_gentle_retry_full.webp
+    tool: master_cutout_fallback
+  celebrate:
+    status: accepted
+    full_webp: assets/companion/app/avatar_celebrate_full.webp
+    tool: cursor_GenerateImage+local_cutout
+  listening:
+    status: ASSET_REVIEW_REQUIRED
+    full_webp: assets/companion/app/avatar_listening_full.webp
+    tool: master_cutout_fallback

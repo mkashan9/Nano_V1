@@ -1,0 +1,7 @@
+{
+  "image_calls_used": 7,
+  "image_calls_max": 14,
+  "video_jobs_used": 0,
+  "video_jobs_max": 12,
+  "notes": "7 initial pose gens; neutral from master cutout not counted as regen"
+}
