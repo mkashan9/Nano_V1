@@ -5,7 +5,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// COM-04/05 community chat: text, replies, mentions, reactions, media.
+/// COM-04..06 community chat: text, media, pins, search, gallery.
 class CommunityChatPage extends StatefulWidget {
   const CommunityChatPage({
     super.key,
@@ -13,12 +13,14 @@ class CommunityChatPage extends StatefulWidget {
     required this.communityName,
     required this.messagingRepository,
     this.discoveryRepository,
+    this.canPin = false,
   });
 
   final String communityId;
   final String communityName;
   final CommunityMessagingRepository messagingRepository;
   final CommunityDiscoveryRepository? discoveryRepository;
+  final bool canPin;
 
   @override
   State<CommunityChatPage> createState() => _CommunityChatPageState();
@@ -30,6 +32,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
   final _composer = TextEditingController();
   NanoViewState _state = const NanoViewLoading();
   List<CommunityMessage> _messages = const [];
+  List<CommunityMessage> _pins = const [];
   List<CommunityMember> _members = const [];
   final List<CommunityMessageAttachment> _pendingAttachments = [];
   CommunityMessage? _replyTo;
@@ -53,6 +56,8 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
     try {
       final messages =
           await widget.messagingRepository.listMessages(widget.communityId);
+      final pins =
+          await widget.messagingRepository.listPins(widget.communityId);
       List<CommunityMember> members = const [];
       final discovery = widget.discoveryRepository;
       if (discovery != null) {
@@ -61,6 +66,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
       if (!mounted) return;
       setState(() {
         _messages = messages;
+        _pins = pins;
         _members = members.where((m) => !m.isSelf).toList();
         _state = const NanoViewReady();
       });
@@ -165,6 +171,87 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
     }
   }
 
+  Future<void> _pin(CommunityMessage message, bool pinned) async {
+    setState(() => _busy = true);
+    try {
+      await widget.messagingRepository.pinMessage(
+        messageId: message.id,
+        pinned: pinned,
+      );
+      await _load();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _openSearch(NanoCopy copy) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return _SearchSheet(
+          copy: copy,
+          onSearch: (query) => widget.messagingRepository.searchMessages(
+            communityId: widget.communityId,
+            query: query,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openGallery(NanoCopy copy) async {
+    final items = await widget.messagingRepository.listGallery(
+      communityId: widget.communityId,
+    );
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.5,
+            child: Padding(
+              padding: const EdgeInsets.all(NanoSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    copy.communitiesGallery,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: NanoSpacing.md),
+                  Expanded(
+                    child: items.isEmpty
+                        ? Center(child: Text(copy.communitiesNoGallery))
+                        : ListView.separated(
+                            itemCount: items.length,
+                            separatorBuilder: (_, __) =>
+                                const Divider(height: 1),
+                            itemBuilder: (context, index) {
+                              final item = items[index];
+                              return ListTile(
+                                leading: Icon(_iconFor(item.kind)),
+                                title: Text(item.displayLabel),
+                                subtitle: Text(item.kind.wire),
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _pickReaction(CommunityMessage message) {
     showModalBottomSheet<void>(
       context: context,
@@ -252,9 +339,39 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
     final bottom = MediaQuery.viewInsetsOf(context).bottom;
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.communityName)),
+      appBar: AppBar(
+        title: Text(widget.communityName),
+        actions: [
+          IconButton(
+            tooltip: copy.communitiesSearchMessages,
+            onPressed: _busy ? null : () => _openSearch(copy),
+            icon: const Icon(Icons.search),
+          ),
+          IconButton(
+            tooltip: copy.communitiesGallery,
+            onPressed: _busy ? null : () => _openGallery(copy),
+            icon: const Icon(Icons.photo_library_outlined),
+          ),
+        ],
+      ),
       body: Column(
         children: [
+          if (_pins.isNotEmpty)
+            Material(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: ListTile(
+                dense: true,
+                leading: const Icon(Icons.push_pin),
+                title: Text(copy.communitiesPins),
+                subtitle: Text(
+                  _pins.first.body.isEmpty && _pins.first.attachments.isNotEmpty
+                      ? _pins.first.attachments.first.displayLabel
+                      : _pins.first.body,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
           Expanded(
             child: NanoViewStateHost(
               state: _state,
@@ -271,9 +388,11 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
                           messages: _messages,
                           copy: copy,
                           iconFor: _iconFor,
+                          canPin: widget.canPin,
                           onReply: () => setState(() => _replyTo = message),
                           onReact: () => _pickReaction(message),
                           onToggle: (emoji) => _react(message, emoji),
+                          onPin: () => _pin(message, !message.isPinned),
                         );
                       },
                     ),
@@ -413,18 +532,22 @@ class _MessageTile extends StatelessWidget {
     required this.messages,
     required this.copy,
     required this.iconFor,
+    required this.canPin,
     required this.onReply,
     required this.onReact,
     required this.onToggle,
+    required this.onPin,
   });
 
   final CommunityMessage message;
   final List<CommunityMessage> messages;
   final NanoCopy copy;
   final IconData Function(CommunityMediaKind kind) iconFor;
+  final bool canPin;
   final VoidCallback onReply;
   final VoidCallback onReact;
   final ValueChanged<String> onToggle;
+  final VoidCallback onPin;
 
   @override
   Widget build(BuildContext context) {
@@ -449,6 +572,13 @@ class _MessageTile extends StatelessWidget {
                 : message.authorDisplayName,
             style: Theme.of(context).textTheme.labelLarge,
           ),
+          if (message.isPinned) ...[
+            const SizedBox(height: NanoSpacing.xs),
+            Text(
+              copy.communitiesPins,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ],
           if (parent != null) ...[
             const SizedBox(height: NanoSpacing.xs),
             Text(
@@ -506,9 +636,102 @@ class _MessageTile extends StatelessWidget {
                 onPressed: onReact,
                 child: Text(copy.communitiesReact),
               ),
+              if (canPin)
+                TextButton(
+                  onPressed: onPin,
+                  child: Text(
+                    message.isPinned
+                        ? copy.communitiesUnpin
+                        : copy.communitiesPin,
+                  ),
+                ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SearchSheet extends StatefulWidget {
+  const _SearchSheet({
+    required this.copy,
+    required this.onSearch,
+  });
+
+  final NanoCopy copy;
+  final Future<List<CommunityMessage>> Function(String query) onSearch;
+
+  @override
+  State<_SearchSheet> createState() => _SearchSheetState();
+}
+
+class _SearchSheetState extends State<_SearchSheet> {
+  final _controller = TextEditingController();
+  List<CommunityMessage> _results = const [];
+  var _busy = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _run() async {
+    setState(() => _busy = true);
+    try {
+      final results = await widget.onSearch(_controller.text);
+      if (!mounted) return;
+      setState(() => _results = results);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottom = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        NanoSpacing.lg,
+        NanoSpacing.lg,
+        NanoSpacing.lg,
+        NanoSpacing.lg + bottom,
+      ),
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.55,
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: widget.copy.communitiesSearchMessages,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: _busy ? null : _run,
+                ),
+              ),
+              textInputAction: TextInputAction.search,
+              onSubmitted: (_) => _run(),
+            ),
+            const SizedBox(height: NanoSpacing.md),
+            Expanded(
+              child: _results.isEmpty
+                  ? Center(child: Text(widget.copy.communitiesChatEmpty))
+                  : ListView.separated(
+                      itemCount: _results.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final message = _results[index];
+                        return ListTile(
+                          title: Text(message.authorDisplayName),
+                          subtitle: Text(message.body),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

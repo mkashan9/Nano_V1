@@ -53,6 +53,9 @@ class CommunitySummary {
     this.myRole,
     this.myStatus = CommunityMembershipStatus.none,
     this.joinedAt,
+    this.postingMode = 'open',
+    this.isMuted = false,
+    this.isArchived = false,
   });
 
   final String id;
@@ -64,6 +67,9 @@ class CommunitySummary {
   final String? myRole;
   final CommunityMembershipStatus myStatus;
   final DateTime? joinedAt;
+  final String postingMode;
+  final bool isMuted;
+  final bool isArchived;
 
   bool get isMember => myStatus == CommunityMembershipStatus.active;
 
@@ -78,6 +84,9 @@ class CommunitySummary {
       myRole: json['my_role'] as String?,
       myStatus: CommunityMembershipStatus.parse(json['my_status'] as String?),
       joinedAt: _parseTime(json['joined_at']),
+      postingMode: json['posting_mode'] as String? ?? 'open',
+      isMuted: json['is_muted'] as bool? ?? false,
+      isArchived: json['is_archived'] as bool? ?? false,
     );
   }
 }
@@ -95,6 +104,9 @@ class CommunityDetail {
     this.myStatus = CommunityMembershipStatus.none,
     this.joinedAt,
     this.createdAt,
+    this.postingMode = 'open',
+    this.isMuted = false,
+    this.isArchived = false,
   });
 
   final String id;
@@ -108,6 +120,9 @@ class CommunityDetail {
   final CommunityMembershipStatus myStatus;
   final DateTime? joinedAt;
   final DateTime? createdAt;
+  final String postingMode;
+  final bool isMuted;
+  final bool isArchived;
 
   bool get isMember => myStatus == CommunityMembershipStatus.active;
 
@@ -121,6 +136,9 @@ class CommunityDetail {
         myRole: myRole,
         myStatus: myStatus,
         joinedAt: joinedAt,
+        postingMode: postingMode,
+        isMuted: isMuted,
+        isArchived: isArchived,
       );
 
   factory CommunityDetail.fromJson(Map<String, dynamic> json) {
@@ -136,6 +154,9 @@ class CommunityDetail {
       myStatus: CommunityMembershipStatus.parse(json['my_status'] as String?),
       joinedAt: _parseTime(json['joined_at']),
       createdAt: _parseTime(json['created_at']),
+      postingMode: json['posting_mode'] as String? ?? 'open',
+      isMuted: json['is_muted'] as bool? ?? false,
+      isArchived: json['is_archived'] as bool? ?? false,
     );
   }
 
@@ -143,6 +164,13 @@ class CommunityDetail {
       myRole == 'owner' || myRole == 'admin';
 
   bool get canInvite => canManageRoles;
+
+  bool get canPin =>
+      myRole == 'owner' || myRole == 'admin' || myRole == 'moderator';
+
+  bool get canSetPostingMode => canManageRoles;
+
+  bool get isAdminsOnly => postingMode == 'admins_only';
 
   bool get isPending => myStatus == CommunityMembershipStatus.pending;
 

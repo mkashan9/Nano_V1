@@ -111,6 +111,9 @@ class CommunityMessage {
     this.mentionUserIds = const [],
     this.reactions = const [],
     this.attachments = const [],
+    this.isPinned = false,
+    this.pinnedAt,
+    this.pinnedBy,
   });
 
   final String id;
@@ -124,6 +127,9 @@ class CommunityMessage {
   final List<String> mentionUserIds;
   final List<MessageReactionSummary> reactions;
   final List<CommunityMessageAttachment> attachments;
+  final bool isPinned;
+  final DateTime? pinnedAt;
+  final String? pinnedBy;
 
   bool get isReply => parentMessageId != null && parentMessageId!.isNotEmpty;
 
@@ -164,6 +170,9 @@ class CommunityMessage {
                 ),
             ]
           : const [],
+      isPinned: json['is_pinned'] as bool? ?? false,
+      pinnedAt: _parseTime(json['pinned_at']),
+      pinnedBy: json['pinned_by'] as String?,
     );
   }
 }

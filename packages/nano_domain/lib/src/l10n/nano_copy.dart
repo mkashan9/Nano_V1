@@ -177,6 +177,24 @@ class NanoCopy {
   String get communitiesAttachVoice => isUrdu ? 'آواز' : 'Voice';
   String get communitiesAttachVideo => isUrdu ? 'ویڈیو' : 'Video';
   String get communitiesAttachFile => isUrdu ? 'فائل' : 'File';
+  String get communitiesPin => isUrdu ? 'پن' : 'Pin';
+  String get communitiesUnpin => isUrdu ? 'پن ہٹائیں' : 'Unpin';
+  String get communitiesPins => isUrdu ? 'پن شدہ' : 'Pins';
+  String get communitiesSearchMessages =>
+      isUrdu ? 'پیغامات تلاش کریں' : 'Search messages';
+  String get communitiesGallery => isUrdu ? 'گیلری' : 'Gallery';
+  String get communitiesArchive => isUrdu ? 'آرکائیو' : 'Archive';
+  String get communitiesUnarchive => isUrdu ? 'آرکائیو ہٹائیں' : 'Unarchive';
+  String get communitiesMute => isUrdu ? 'خاموش' : 'Mute';
+  String get communitiesUnmute => isUrdu ? 'آواز آن' : 'Unmute';
+  String get communitiesAdminsOnly =>
+      isUrdu ? 'صرف ایڈمن پوسٹ' : 'Admins only posting';
+  String get communitiesOpenPosting =>
+      isUrdu ? 'سب پوسٹ کر سکتے ہیں' : 'Open posting';
+  String get communitiesNoPins =>
+      isUrdu ? 'کوئی پن شدہ پیغام نہیں' : 'No pinned messages';
+  String get communitiesNoGallery =>
+      isUrdu ? 'ابھی کوئی میڈیا نہیں' : 'No media yet';
   String get communitiesYou => isUrdu ? 'آپ' : 'you';
   String communitiesYourRole(String role) => isUrdu
       ? 'آپ کا کردار: ${communitiesRoleLabel(role)}'

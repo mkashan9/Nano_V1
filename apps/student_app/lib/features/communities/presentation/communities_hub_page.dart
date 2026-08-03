@@ -541,6 +541,50 @@ class _CommunityDetailSheetState extends State<_CommunityDetailSheet> {
     }
   }
 
+  Future<void> _setPrefs({bool? muted, bool? archived}) async {
+    setState(() => _busy = true);
+    try {
+      final next = await widget.repository.setMemberPrefs(
+        communityId: _detail.id,
+        muted: muted,
+        archived: archived,
+      );
+      if (!mounted) return;
+      setState(() => _detail = next);
+      widget.onChanged();
+      if (archived == true && mounted) {
+        Navigator.pop(context);
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _togglePostingMode() async {
+    setState(() => _busy = true);
+    try {
+      final next = await widget.repository.setPostingMode(
+        communityId: _detail.id,
+        mode: _detail.isAdminsOnly ? 'open' : 'admins_only',
+      );
+      if (!mounted) return;
+      setState(() => _detail = next);
+      widget.onChanged();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -592,6 +636,7 @@ class _CommunityDetailSheetState extends State<_CommunityDetailSheet> {
                                 messagingRepository:
                                     widget.messagingRepository,
                                 discoveryRepository: widget.repository,
+                                canPin: _detail.canPin,
                               ),
                             ),
                           );
@@ -615,6 +660,41 @@ class _CommunityDetailSheetState extends State<_CommunityDetailSheet> {
                 OutlinedButton(
                   onPressed: _busy ? null : _leave,
                   child: Text(copy.communitiesLeave),
+                ),
+              ],
+              if (_detail.isMember) ...[
+                const SizedBox(height: NanoSpacing.sm),
+                OutlinedButton(
+                  onPressed: _busy
+                      ? null
+                      : () => _setPrefs(muted: !_detail.isMuted),
+                  child: Text(
+                    _detail.isMuted
+                        ? copy.communitiesUnmute
+                        : copy.communitiesMute,
+                  ),
+                ),
+                const SizedBox(height: NanoSpacing.sm),
+                OutlinedButton(
+                  onPressed: _busy
+                      ? null
+                      : () => _setPrefs(archived: !_detail.isArchived),
+                  child: Text(
+                    _detail.isArchived
+                        ? copy.communitiesUnarchive
+                        : copy.communitiesArchive,
+                  ),
+                ),
+              ],
+              if (_detail.canSetPostingMode) ...[
+                const SizedBox(height: NanoSpacing.sm),
+                OutlinedButton(
+                  onPressed: _busy ? null : _togglePostingMode,
+                  child: Text(
+                    _detail.isAdminsOnly
+                        ? copy.communitiesOpenPosting
+                        : copy.communitiesAdminsOnly,
+                  ),
                 ),
               ],
               if (_detail.canInvite) ...[

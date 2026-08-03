@@ -1,15 +1,23 @@
 id: COM-06
 name: "Pinned Messages, Search, Gallery, and Archives"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - COM-04
+dependency_notes: >
+  Gallery uses COM-05 attachments. Pins/search/archive/mute/admins-only posting.
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/COM-06/
@@ -18,27 +26,46 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for COM-06"
+  - "Handbook COM-01 Senior Communities (pins/search/gallery/archive slice)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.community_messages
+  - public.community_member_prefs
+  - public.communities
+server_functions:
+  - "public.pin_community_message"
+  - "public.list_community_pins"
+  - "public.search_community_messages"
+  - "public.list_community_gallery"
+  - "public.set_community_member_prefs"
+  - "public.set_community_posting_mode"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Mods can pin/unpin; pins list in chat
+  - Members can search message bodies
+  - Gallery lists ready attachments
+  - Archive hides from My; mute preference stored
+  - Admins-only posting enforced on send
 required_tests:
-  - documentation_review
+  - supabase/tests/com06_pins_search_gallery.sql
+  - packages/nano_domain/test/community_messaging_test.dart
+  - packages/nano_data/test/community_messaging_repository_test.dart
+  - apps/student_app/test/community_chat_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Pin, search, gallery, archive, admins-only posting
+rollback_notes: >
+  Revert branch and migration.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Pins, search, gallery, archive/mute prefs, admins-only posting.
+  deferred: >
+    Push mute, announcements type, media viewer, realtime.
