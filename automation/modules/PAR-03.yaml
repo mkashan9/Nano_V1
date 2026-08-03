@@ -1,7 +1,7 @@
 id: PAR-03
 name: "Guardian Link Foundations"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - PAR-01
   - AUTH-04
