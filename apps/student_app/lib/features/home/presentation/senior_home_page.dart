@@ -17,6 +17,7 @@ class SeniorHomePage extends StatefulWidget {
     this.companionName = 'Nori',
     this.flexEligible = false,
     this.independent = false,
+    this.accessEntitlements,
     this.onContinue,
     this.onSubjectTap,
     this.onOpenFlex,
@@ -36,6 +37,9 @@ class SeniorHomePage extends StatefulWidget {
 
   /// IND-01: independent home fills the Flex slot with a play/learn spotlight.
   final bool independent;
+
+  /// IND-02: access tier drives the calm warning banner for independents.
+  final IndependentEntitlements? accessEntitlements;
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
   final VoidCallback? onOpenFlex;
@@ -106,6 +110,7 @@ class _SeniorHomePageState extends State<SeniorHomePage> {
               onRetry: _load,
               flexEligible: widget.flexEligible,
               independent: widget.independent,
+              accessEntitlements: widget.accessEntitlements,
               onContinue: widget.onContinue,
               onSubjectTap: widget.onSubjectTap,
               onOpenFlex: widget.onOpenFlex,
@@ -124,6 +129,7 @@ class _SeniorHomeContent extends StatelessWidget {
     required this.onRetry,
     required this.flexEligible,
     required this.independent,
+    this.accessEntitlements,
     this.onContinue,
     this.onSubjectTap,
     this.onOpenFlex,
@@ -137,6 +143,7 @@ class _SeniorHomeContent extends StatelessWidget {
   final VoidCallback onRetry;
   final bool flexEligible;
   final bool independent;
+  final IndependentEntitlements? accessEntitlements;
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
   final VoidCallback? onOpenFlex;
@@ -218,9 +225,14 @@ class _SeniorHomeContent extends StatelessWidget {
                 copy.xpToNextLevel(level.xpToNextLevel),
                 style: theme.textTheme.bodySmall,
               ),
-              if (summary.notice == HomeNoticeKind.accessWarning) ...[
+              if (summary.notice == HomeNoticeKind.accessWarning ||
+                  (accessEntitlements?.showsAccessWarning ?? false)) ...[
                 const SizedBox(height: NanoSpacing.md),
-                NanoOfflineBanner(message: copy.accessWarning),
+                NanoOfflineBanner(
+                  message: accessEntitlements?.isReduced == true
+                      ? copy.accessReducedWarning
+                      : copy.accessWarning,
+                ),
               ],
               if (summary.notice == HomeNoticeKind.streakGentle) ...[
                 const SizedBox(height: NanoSpacing.md),

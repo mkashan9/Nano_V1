@@ -27,6 +27,7 @@ class StudentProfilePage extends StatefulWidget {
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
+    this.accessRepository,
   });
 
   final StudentProfileRepository repository;
@@ -58,6 +59,9 @@ class StudentProfilePage extends StatefulWidget {
   /// SAFE-01: report peer with optional block.
   final SafetyReportRepository? safetyReportRepository;
 
+  /// IND-02: independent access entitlements card.
+  final IndependentAccessRepository? accessRepository;
+
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
 }
@@ -68,6 +72,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   PrivacySettings? _privacy;
   List<DeviceSession> _sessions = const [];
   LeagueStatus? _league;
+  IndependentEntitlements? _access;
   var _joiningLeague = false;
   var _signingOut = false;
   String? _revokingId;
@@ -99,6 +104,12 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
       if (leagues != null) {
         league = await leagues.currentStatus();
       }
+      IndependentEntitlements? access;
+      if (widget.principal.role == AppRole.independentStudent) {
+        final accessRepo =
+            widget.accessRepository ?? FakeIndependentAccessRepository();
+        access = await accessRepo.loadAccess(userId: userId);
+      }
       final prefs = widget.preferences;
       if (!mounted) return;
       setState(() {
@@ -111,6 +122,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
         _privacy = privacy;
         _sessions = sessions;
         _league = league;
+        _access = access;
         _state = const NanoViewReady();
       });
     } catch (_) {
@@ -307,6 +319,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               onOpenLeagueBoard: widget.leagueRepository == null
                   ? null
                   : _openLeagueBoard,
+              access: _access,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
               safetyReportRepository: widget.safetyReportRepository,
@@ -338,6 +351,7 @@ class _ProfileBody extends StatelessWidget {
     this.joiningLeague = false,
     this.onJoinLeague,
     this.onOpenLeagueBoard,
+    this.access,
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
@@ -364,6 +378,7 @@ class _ProfileBody extends StatelessWidget {
   final bool joiningLeague;
   final VoidCallback? onJoinLeague;
   final VoidCallback? onOpenLeagueBoard;
+  final IndependentEntitlements? access;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
@@ -420,6 +435,29 @@ class _ProfileBody extends StatelessWidget {
           '${profile.companionName} · ${profile.locale.tag.toUpperCase()}',
           style: theme.textTheme.bodySmall,
         ),
+        if (access != null) ...[
+          const SizedBox(height: NanoSpacing.md),
+          Text(copy.accessStatusLabel, style: theme.textTheme.titleMedium),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              access!.isReduced
+                  ? Icons.lock_outline
+                  : Icons.verified_user_outlined,
+            ),
+            title: Text(copy.accessTierLabel(access!.tier)),
+            subtitle: Text(
+              [
+                access!.planLabel,
+                if (access!.allows(IndependentFeature.games))
+                  copy.games
+                else
+                  copy.accessGamesBlocked,
+                copy.accessLearningAllowed,
+              ].join(' · '),
+            ),
+          ),
+        ],
         const SizedBox(height: NanoSpacing.lg),
         Text(copy.progressLabel, style: theme.textTheme.titleLarge),
         const SizedBox(height: NanoSpacing.sm),
