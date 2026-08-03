@@ -3,8 +3,32 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
+/// Asset paths for VIS-01 Junior Home illustrations (student_app package).
+abstract final class JuniorHomeVisualAssets {
+  static const avatar = 'assets/visual/junior/junior_avatar_ali.png';
+  static const continueHero =
+      'assets/visual/junior/junior_continue_fox_hero.png';
+  static const math = 'assets/visual/junior/junior_subject_math.png';
+  static const english = 'assets/visual/junior/junior_subject_english.png';
+  static const science = 'assets/visual/junior/junior_subject_science.png';
+  static const stories = 'assets/visual/junior/junior_subject_stories.png';
+
+  static ImageProvider? forSubject(String subjectId) {
+    return switch (subjectId) {
+      'subject-math' => const AssetImage(math),
+      'english' => const AssetImage(english),
+      'subject-science' => const AssetImage(science),
+      'stories' => const AssetImage(stories),
+      _ => null,
+    };
+  }
+}
+
 /// STU-03 Junior Home: what happened, what to do next, how it is going —
 /// composed as a few large actions with minimal reading.
+///
+/// VIS-01 visual layout matches `UI_reference/kids/home.jpeg` by default.
+/// Set [showCompanionStage] / [showMissions] for expanded handbook surfaces.
 class JuniorHomePage extends StatefulWidget {
   const JuniorHomePage({
     super.key,
@@ -15,6 +39,9 @@ class JuniorHomePage extends StatefulWidget {
     this.onContinue,
     this.onSubjectTap,
     this.onNotifications,
+    this.showCompanionStage = false,
+    this.showMissions = false,
+    this.useVisualAssets = true,
   });
 
   final StudentHomeRepository repository;
@@ -24,6 +51,9 @@ class JuniorHomePage extends StatefulWidget {
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
   final VoidCallback? onNotifications;
+  final bool showCompanionStage;
+  final bool showMissions;
+  final bool useVisualAssets;
 
   @override
   State<JuniorHomePage> createState() => _JuniorHomePageState();
@@ -65,7 +95,6 @@ class _JuniorHomePageState extends State<JuniorHomePage> {
     if (!summary.hasContent) {
       return const NanoViewEmpty();
     }
-    // Cached data still shows content, with a timestamp above it.
     return summary.fromCache
         ? NanoViewOffline(lastUpdatedLabel: summary.freshnessLabel)
         : const NanoViewReady();
@@ -74,7 +103,7 @@ class _JuniorHomePageState extends State<JuniorHomePage> {
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
-        NanoCopy(NanoAppLocale.en);
+        const NanoCopy(NanoAppLocale.en);
     final summary = _summary;
     return NanoViewStateHost(
       state: _state,
@@ -87,6 +116,9 @@ class _JuniorHomePageState extends State<JuniorHomePage> {
               onContinue: widget.onContinue,
               onSubjectTap: widget.onSubjectTap,
               onNotifications: widget.onNotifications,
+              showCompanionStage: widget.showCompanionStage,
+              showMissions: widget.showMissions,
+              useVisualAssets: widget.useVisualAssets,
             ),
     );
   }
@@ -96,6 +128,9 @@ class _JuniorHomeContent extends StatelessWidget {
   const _JuniorHomeContent({
     required this.summary,
     required this.copy,
+    required this.showCompanionStage,
+    required this.showMissions,
+    required this.useVisualAssets,
     this.onContinue,
     this.onSubjectTap,
     this.onNotifications,
@@ -103,6 +138,9 @@ class _JuniorHomeContent extends StatelessWidget {
 
   final StudentHomeSummary summary;
   final NanoCopy copy;
+  final bool showCompanionStage;
+  final bool showMissions;
+  final bool useVisualAssets;
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
   final VoidCallback? onNotifications;
@@ -122,87 +160,77 @@ class _JuniorHomeContent extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
             children: [
               const SizedBox(height: NanoSpacing.md),
-              // CMP-03: Junior leads with the companion above the greeting.
-              // Seed 1 is the greeting that names nobody. The first variant
-              // greets the learner using their chosen name for Nori, and a
-              // personalised line can never be recorded (ADR-0008) — so home,
-              // the one screen every session starts on, uses the greeting the
-              // Guide can actually say aloud.
-              const CompanionSurfaceStage(
-                surface: CompanionSurface.home,
-                junior: true,
-                entryEvent: CompanionEvent.home,
-                seed: 1,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          copy.greeting(summary.learnerName),
-                          style: theme.textTheme.headlineMedium,
-                        ),
-                        Text(
-                          '${summary.streakDays} ${copy.streakLabel}',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                  XpChip(xp: summary.xp),
-                  if (onNotifications != null)
-                    IconButton(
-                      onPressed: onNotifications,
-                      tooltip: copy.notificationsLabel,
-                      icon: Badge(
-                        isLabelVisible: summary.unreadNotifications > 0,
-                        label: Text('${summary.unreadNotifications}'),
-                        child: const Icon(Icons.notifications_outlined),
-                      ),
-                    ),
-                ],
+              if (showCompanionStage)
+                const CompanionSurfaceStage(
+                  surface: CompanionSurface.home,
+                  junior: true,
+                  entryEvent: CompanionEvent.home,
+                  seed: 1,
+                ),
+              JuniorHomeHeader(
+                greeting: copy.greeting(summary.learnerName),
+                badgeValue: summary.streakDays,
+                avatar: useVisualAssets
+                    ? const AssetImage(JuniorHomeVisualAssets.avatar)
+                    : null,
+                onAvatarTap: onNotifications,
               ),
               if (summary.notice == HomeNoticeKind.accessWarning) ...[
                 const SizedBox(height: NanoSpacing.md),
-                NanoOfflineBanner(message: copy.accessWarning),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                  child: NanoOfflineBanner(message: copy.accessWarning),
+                ),
               ],
               if (summary.notice == HomeNoticeKind.streakGentle) ...[
                 const SizedBox(height: NanoSpacing.md),
-                NanoOfflineBanner(message: copy.streakWelcomeBack),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                  child: NanoOfflineBanner(message: copy.streakWelcomeBack),
+                ),
               ],
               const SizedBox(height: NanoSpacing.lg),
               if (continueItem != null)
-                JuniorActionCard(
+                JuniorContinueHeroCard(
+                  eyebrow: copy.isUrdu ? copy.continueLearning : 'Continue Learning',
                   title: continueItem.title,
-                  subtitle:
-                      '${copy.keepGoing} · ${copy.percentDone(continueItem.percentComplete)}',
-                  backgroundColor: NanoColors.worldStories,
-                  onTap: onContinue == null
+                  startLabel: copy.startLabel,
+                  illustration: useVisualAssets
+                      ? const AssetImage(JuniorHomeVisualAssets.continueHero)
+                      : null,
+                  onStart: onContinue == null
                       ? null
                       : () => onContinue!(continueItem),
                 ),
-              if (summary.juniorMissions.isNotEmpty) ...[
+              if (showMissions && summary.juniorMissions.isNotEmpty) ...[
                 const SizedBox(height: NanoSpacing.lg),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        copy.todaysMission,
-                        style: theme.textTheme.titleLarge,
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          copy.todaysMission,
+                          style: theme.textTheme.titleLarge,
+                        ),
                       ),
-                    ),
-                    XpChip(
-                      xp: summary.missionXpAvailable,
-                      label: copy.missionXpAvailable,
-                    ),
-                  ],
+                      XpChip(
+                        xp: summary.missionXpAvailable,
+                        label: copy.missionXpAvailable,
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: NanoSpacing.sm),
                 for (final mission in summary.juniorMissions)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: NanoSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: NanoSpacing.md,
+                      vertical: NanoSpacing.xs,
+                    ),
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.flag_outlined),
@@ -215,30 +243,34 @@ class _JuniorHomeContent extends StatelessWidget {
                   ),
               ],
               if (summary.subjects.isNotEmpty) ...[
-                const SizedBox(height: NanoSpacing.md),
-                Text(copy.subjects, style: theme.textTheme.titleLarge),
-                const SizedBox(height: NanoSpacing.sm),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: summary.subjects.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: NanoSpacing.sm,
-                    crossAxisSpacing: NanoSpacing.sm,
-                    childAspectRatio: 1.05,
+                const SizedBox(height: NanoSpacing.lg),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: summary.subjects.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns.clamp(2, 4),
+                      mainAxisSpacing: NanoSpacing.md,
+                      crossAxisSpacing: NanoSpacing.md,
+                      childAspectRatio: 0.95,
+                    ),
+                    itemBuilder: (context, index) {
+                      final subject = summary.subjects[index];
+                      return JuniorSubjectWorldCard(
+                        title: subject.title,
+                        backgroundColor: Color(subject.worldColorValue),
+                        illustration: useVisualAssets
+                            ? JuniorHomeVisualAssets.forSubject(subject.id)
+                            : null,
+                        onTap: onSubjectTap == null
+                            ? null
+                            : () => onSubjectTap!(subject),
+                      );
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    final subject = summary.subjects[index];
-                    return JuniorActionCard(
-                      title: subject.title,
-                      subtitle: subject.shortPrompt,
-                      backgroundColor: Color(subject.worldColorValue),
-                      onTap: onSubjectTap == null
-                          ? null
-                          : () => onSubjectTap!(subject),
-                    );
-                  },
                 ),
               ],
             ],

@@ -119,7 +119,7 @@ class AdminShell extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                if (config.environment.showDebugTools)
+                if (config.showDebugChrome)
                   Material(
                     color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Padding(

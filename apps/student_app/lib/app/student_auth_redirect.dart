@@ -18,6 +18,11 @@ String? studentAuthRedirect({
     '/blocked',
   };
 
+  // VIS-01 deterministic capture routes — never gated by auth/onboarding.
+  if (path.startsWith('/screenshot/')) {
+    return null;
+  }
+
   if (requireAuth && !isAuthenticated) {
     return const {'/sign-in', '/sign-up', '/recover'}.contains(path)
         ? null

@@ -61,4 +61,18 @@ void main() {
       '/',
     );
   });
+
+  test('screenshot routes bypass auth and onboarding gates', () {
+    expect(
+      studentAuthRedirect(
+        path: '/screenshot/junior_home',
+        requireAuth: true,
+        isAuthenticated: false,
+        isBlocked: false,
+        needsOnboarding: true,
+        principal: junior,
+      ),
+      isNull,
+    );
+  });
 }

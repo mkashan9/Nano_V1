@@ -41,6 +41,7 @@ class StudentProfilePage extends StatefulWidget {
     this.guardianLinkRepository,
     this.notificationPreferencesRepository,
     this.pushDeliveryRepository,
+    this.showQaTools = false,
   });
 
   final StudentProfileRepository repository;
@@ -88,6 +89,9 @@ class StudentProfilePage extends StatefulWidget {
   /// NOT-02: quiet hours / category mute / digest.
   final NotificationPreferencesRepository? notificationPreferencesRepository;
   final PushDeliveryRepository? pushDeliveryRepository;
+
+  /// When true, show QA-02..QA-05 smoke checklist tiles on Me.
+  final bool showQaTools;
 
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
@@ -546,6 +550,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               onOpenParentGuidance: _openParentGuidance,
               onOpenGuardianLinks: _openGuardianLinks,
               onOpenNotificationPreferences: _openNotificationPreferences,
+              showQaTools: widget.showQaTools,
               onOpenPerformanceAudit: _openPerformanceAudit,
               onOpenOfflineNetworkAudit: _openOfflineNetworkAudit,
               onOpenAccessibilityAudit: _openAccessibilityAudit,
@@ -595,6 +600,7 @@ class _ProfileBody extends StatelessWidget {
     this.onOpenParentGuidance,
     this.onOpenGuardianLinks,
     this.onOpenNotificationPreferences,
+    this.showQaTools = false,
     this.onOpenPerformanceAudit,
     this.onOpenOfflineNetworkAudit,
     this.onOpenAccessibilityAudit,
@@ -639,6 +645,7 @@ class _ProfileBody extends StatelessWidget {
   final VoidCallback? onOpenParentGuidance;
   final VoidCallback? onOpenGuardianLinks;
   final VoidCallback? onOpenNotificationPreferences;
+  final bool showQaTools;
   final VoidCallback? onOpenPerformanceAudit;
   final VoidCallback? onOpenOfflineNetworkAudit;
   final VoidCallback? onOpenAccessibilityAudit;
@@ -793,38 +800,40 @@ class _ProfileBody extends StatelessWidget {
           trailing: const Icon(Icons.chevron_right),
           onTap: onOpenNotificationPreferences,
         ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.speed_outlined),
-          title: Text(copy.performanceAuditTitle),
-          subtitle: Text(copy.performanceAuditSubtitle),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: onOpenPerformanceAudit,
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.wifi_off_outlined),
-          title: Text(copy.offlineNetworkAuditTitle),
-          subtitle: Text(copy.offlineNetworkAuditSubtitle),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: onOpenOfflineNetworkAudit,
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.accessibility_new_outlined),
-          title: Text(copy.accessibilityAuditTitle),
-          subtitle: Text(copy.accessibilityAuditSubtitle),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: onOpenAccessibilityAudit,
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.translate_outlined),
-          title: Text(copy.bidiLayoutAuditTitle),
-          subtitle: Text(copy.bidiLayoutAuditSubtitle),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: onOpenBidiLayoutAudit,
-        ),
+        if (showQaTools) ...[
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.speed_outlined),
+            title: Text(copy.performanceAuditTitle),
+            subtitle: Text(copy.performanceAuditSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: onOpenPerformanceAudit,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.wifi_off_outlined),
+            title: Text(copy.offlineNetworkAuditTitle),
+            subtitle: Text(copy.offlineNetworkAuditSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: onOpenOfflineNetworkAudit,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.accessibility_new_outlined),
+            title: Text(copy.accessibilityAuditTitle),
+            subtitle: Text(copy.accessibilityAuditSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: onOpenAccessibilityAudit,
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.translate_outlined),
+            title: Text(copy.bidiLayoutAuditTitle),
+            subtitle: Text(copy.bidiLayoutAuditSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: onOpenBidiLayoutAudit,
+          ),
+        ],
         const SizedBox(height: NanoSpacing.lg),
         Text(copy.progressLabel, style: theme.textTheme.titleLarge),
         const SizedBox(height: NanoSpacing.sm),

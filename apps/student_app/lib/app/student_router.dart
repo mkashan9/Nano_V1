@@ -10,6 +10,7 @@ import 'package:student_app/features/auth/presentation/recover_password_page.dar
 import 'package:student_app/features/auth/presentation/sign_in_page.dart';
 import 'package:student_app/features/auth/presentation/sign_up_page.dart';
 import 'package:student_app/features/onboarding/presentation/onboarding_flow_page.dart';
+import 'package:student_app/features/qa/presentation/screenshot_junior_home_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -94,6 +95,12 @@ GoRouter createStudentRouter({
       );
     },
     routes: [
+      GoRoute(
+        path: '/screenshot/junior_home',
+        builder: (context, state) => ScreenshotJuniorHomePage(
+          repository: homeRepository,
+        ),
+      ),
       GoRoute(
         path: '/sign-in',
         builder: (context, state) {
@@ -259,6 +266,7 @@ GoRouter createStudentRouter({
                     schoolLinkRepository: schoolLinkRepository,
                     onSchoolLinked: onSchoolLinked,
                     onboardingProgress: onboardingProgress,
+                    showQaTools: config.showDebugChrome,
                   ),
                 ),
               ],
@@ -308,6 +316,7 @@ Widget _pageFor(
   SchoolLinkRepository? schoolLinkRepository,
   ValueChanged<SessionPrincipal>? onSchoolLinked,
   OnboardingProgress? onboardingProgress,
+  bool showQaTools = false,
 }) {
   return switch (id) {
     'home' || 'learning' => StudentLearningTab(
@@ -368,6 +377,7 @@ Widget _pageFor(
         accessRepository: accessRepository,
         schoolLinkRepository: schoolLinkRepository,
         onSchoolLinked: onSchoolLinked,
+        showQaTools: showQaTools,
       ),
     _ => Center(child: Text('Unknown tab: $id')),
   };

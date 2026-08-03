@@ -60,7 +60,7 @@ class TeacherShell extends StatelessWidget {
         actions: [
           if (liveAuth && onSignOut != null)
             TextButton(onPressed: onSignOut, child: const Text('Sign out')),
-          if (config.environment.showDebugTools)
+          if (config.showDebugChrome)
             Padding(
               padding: const EdgeInsets.all(12),
               child: Chip(label: Text(config.environment.name.toUpperCase())),

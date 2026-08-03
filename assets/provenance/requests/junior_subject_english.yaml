@@ -1,0 +1,7 @@
+id: junior_subject_english
+purpose: English subject world card art
+reference_screen: junior_home
+status: ASSET_REVIEW_REQUIRED
+notes: First pass had readable letters; v2 still may contain faint marks — owner review.
+provider: cursor_generate_image
+prompt_version: 2

@@ -1,0 +1,18 @@
+id: junior_continue_fox_hero
+purpose: Continue Learning hero illustration
+reference_screen: junior_home
+reference_image: UI_reference/kids/home.jpeg
+style_description: Claymation fox with backpack on forest path
+composition: character right, empty left for text
+subject: orange fox
+pose: walking forward
+background: forest dusk purple-blue
+required_colors: ["orange fox", "green backpack", "forest"]
+forbidden_elements: [text, logos, watermarks]
+target_width: 1024
+target_height: 576
+transparent_background: false
+provider: cursor_generate_image
+prompt_version: 1
+fallback_asset: null
+status: ACCEPTED
