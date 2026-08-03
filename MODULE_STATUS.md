@@ -127,7 +127,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | ANA-01 | Product Analytics and School Health | R10 | DONE | ADM-08, SCH-07 |
 | QA-01 | Security Hardening | R10 | DONE | SEC-03 |
 | QA-02 | Performance and Small-Device Testing | R10 | DONE | FND-03 |
-| QA-03 | Offline and Poor-Network Testing | R10 | BACKLOG | SYNC-01 |
+| QA-03 | Offline and Poor-Network Testing | R10 | USER_TEST | SYNC-01 |
 | QA-04 | Accessibility Audit | R10 | BACKLOG | FND-07 |
 | QA-05 | Urdu and Bidirectional Layout Audit | R10 | BACKLOG | FND-06 |
 | QA-06 | Pilot Release Preparation | R10 | BACKLOG | QA-01, QA-02, QA-03, QA-04, QA-05 |

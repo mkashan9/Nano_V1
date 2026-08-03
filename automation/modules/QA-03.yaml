@@ -1,15 +1,12 @@
 id: QA-03
 name: "Offline and Poor-Network Testing"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SYNC-01
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
-  - supabase
   - docs
   - automation
 allowed_paths:
@@ -22,6 +19,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -32,16 +32,22 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Offline/poor-network smoke checklist is executable from Me
+  - Trusted mutations stay blocked offline (SYNC-01 / ADR-0007)
+  - Drafts, cache, conflict, and poor-latency retry guidance are covered
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/offline_network_audit_test.dart
+  - packages/nano_data/test/offline_network_audit_repository_test.dart
+  - apps/student_app/test/offline_network_audit_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Me → Offline & poor network → all checks passed; Poor toggle still passes
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true
