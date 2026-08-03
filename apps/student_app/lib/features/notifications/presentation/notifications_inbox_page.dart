@@ -3,14 +3,20 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// STU-06 student notifications inbox (in-app only; push is NOT-01).
+/// STU-06 inbox + NOT-01 push ingest / permission-aware deep links.
 class NotificationsInboxPage extends StatefulWidget {
   const NotificationsInboxPage({
     super.key,
     required this.repository,
+    this.principal,
+    this.pushDelivery,
+    this.onOpenDeepLink,
   });
 
   final StudentNotificationInboxRepository repository;
+  final SessionPrincipal? principal;
+  final PushDeliveryRepository? pushDelivery;
+  final ValueChanged<String>? onOpenDeepLink;
 
   @override
   State<NotificationsInboxPage> createState() => _NotificationsInboxPageState();
@@ -21,11 +27,30 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> {
   InboxFilter _filter = InboxFilter.all;
   List<InboxItem> _items = const [];
   var _busy = false;
+  late final PushDeliveryRepository _push;
+  late final SessionPrincipal _principal;
 
   @override
   void initState() {
     super.initState();
+    _principal = widget.principal ?? SessionPrincipal.seniorSchool();
+    final inbox = widget.repository;
+    _push = widget.pushDelivery ??
+        FakePushDeliveryRepository(inbox: inbox);
+    _bootstrapToken();
     _load();
+  }
+
+  Future<void> _bootstrapToken() async {
+    try {
+      await _push.registerToken(
+        userId: _principal.userId ?? 'local-student',
+        token: 'fake-device-token-01',
+        platform: 'fake',
+      );
+    } catch (_) {
+      // Preview shells can still list the inbox without a token.
+    }
   }
 
   @override
@@ -71,8 +96,52 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> {
       if (!mounted) return;
       final copy = NanoLocaleScope.maybeOf(context)?.copy ??
           const NanoCopy(NanoAppLocale.en);
+      final resolution =
+          DeepLinkResolver.resolve(_principal, item.deepLinkPath);
+      widget.onOpenDeepLink?.call(resolution.location);
+      final message = resolution.fellBack
+          ? '${copy.inboxDeepLinkFallback}: ${resolution.location}'
+          : '${copy.inboxDeepLinkHint}: ${resolution.location}';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${copy.inboxDeepLinkHint}: ${item.deepLinkPath}')),
+        SnackBar(content: Text(message)),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _simulatePush() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    try {
+      final result = await _push.deliver(
+        PushEvent(
+          eventId: 'evt-learning-force',
+          recipientUserId: _principal.userId ?? 'local-student',
+          category: 'learning',
+          title: 'Push: topic ready',
+          body: 'Forces is waiting in Learning.',
+          deepLinkPath: '/learning',
+        ),
+      );
+      if (!mounted) return;
+      await _load();
+      if (!mounted) return;
+      final message = switch (result.outcome) {
+        PushDeliveryOutcome.delivered => copy.inboxPushDelivered,
+        PushDeliveryOutcome.duplicated => copy.inboxPushDuplicated,
+        PushDeliveryOutcome.noActiveToken => 'No active device token',
+        PushDeliveryOutcome.rejected => 'Push rejected',
+      };
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
       );
     } catch (error) {
       if (!mounted) return;
@@ -90,7 +159,15 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> {
         const NanoCopy(NanoAppLocale.en);
 
     return Scaffold(
-      appBar: AppBar(title: Text(copy.notificationsLabel)),
+      appBar: AppBar(
+        title: Text(copy.notificationsLabel),
+        actions: [
+          TextButton(
+            onPressed: _busy ? null : _simulatePush,
+            child: Text(copy.inboxSimulatePush),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(

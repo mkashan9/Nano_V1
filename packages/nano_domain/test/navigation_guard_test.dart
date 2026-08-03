@@ -123,4 +123,16 @@ void main() {
     expect(result.fellBack, isTrue);
     expect(result.location, '/');
   });
+
+  test('notification aliases map learning and me', () {
+    final learning =
+        DeepLinkResolver.resolve(SessionPrincipal.seniorSchool(), '/learning');
+    expect(learning.fellBack, isFalse);
+    expect(learning.location, '/');
+
+    final me =
+        DeepLinkResolver.resolve(SessionPrincipal.seniorSchool(), '/me');
+    expect(me.fellBack, isFalse);
+    expect(me.location, '/profile');
+  });
 }

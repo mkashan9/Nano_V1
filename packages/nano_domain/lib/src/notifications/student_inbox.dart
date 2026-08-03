@@ -14,6 +14,7 @@ class InboxItem {
     required this.createdAt,
     this.readAt,
     this.deepLinkPath = '/',
+    this.sourceEventId,
   });
 
   final String id;
@@ -23,6 +24,9 @@ class InboxItem {
   final DateTime createdAt;
   final DateTime? readAt;
   final String deepLinkPath;
+
+  /// NOT-01: source push/event id used for dedupe across retries.
+  final String? sourceEventId;
 
   bool get isUnread => readAt == null;
 
@@ -35,6 +39,7 @@ class InboxItem {
       createdAt: createdAt,
       readAt: clearReadAt ? null : (readAt ?? this.readAt),
       deepLinkPath: deepLinkPath,
+      sourceEventId: sourceEventId,
     );
   }
 
@@ -50,6 +55,7 @@ class InboxItem {
           ? null
           : DateTime.tryParse('${json['read_at']}'),
       deepLinkPath: json['deep_link_path'] as String? ?? '/',
+      sourceEventId: json['source_event_id'] as String?,
     );
   }
 }

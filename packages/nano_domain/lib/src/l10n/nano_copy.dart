@@ -1131,6 +1131,18 @@ class NanoCopy {
   String get inboxLoadError =>
       isUrdu ? 'اطلاعات لوڈ نہیں ہو سکیں' : 'Could not load notifications';
   String get inboxDeepLinkHint => isUrdu ? 'لنک' : 'Link';
+  String get inboxDeepLinkFallback => isUrdu
+      ? 'مقصد دستیاب نہیں — محفوظ اسکرین کھلی'
+      : 'Target unavailable — opened a safe screen';
+  String get inboxSimulatePush =>
+      isUrdu ? 'پش بھیجیں (ڈیمو)' : 'Simulate push';
+  String get inboxPushDelivered =>
+      isUrdu ? 'پش ان باکس میں آ گیا' : 'Push delivered to inbox';
+  String get inboxPushDuplicated => isUrdu
+      ? 'ڈپلیکیٹ پش نظرانداز'
+      : 'Duplicate push ignored';
+  String get inboxRegisterToken =>
+      isUrdu ? 'ڈیوائس ٹوکن رجسٹر' : 'Register device token';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>
       isUrdu ? '$percent% مکمل' : '$percent% done';

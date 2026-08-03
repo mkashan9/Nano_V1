@@ -327,6 +327,7 @@ class StudentLearningTab extends StatelessWidget {
         builder: (_) => NotificationsInboxPage(
           repository:
               inboxRepository ?? FakeStudentNotificationInboxRepository(),
+          principal: principal,
         ),
       ),
     );
