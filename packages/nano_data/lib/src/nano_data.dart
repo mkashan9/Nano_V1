@@ -60,5 +60,6 @@ export 'notifications/student_notification_inbox_repository.dart';
 export 'independent/independent_access_repository.dart';
 export 'independent/school_link_repository.dart';
 export 'parent/parent_guidance_repository.dart';
+export 'parent/weekly_guidance_admin_repository.dart';
 export 'community/community_discovery_repository.dart';
 export 'community/community_messaging_repository.dart';

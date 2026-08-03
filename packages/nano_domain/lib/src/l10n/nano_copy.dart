@@ -1746,6 +1746,19 @@ class NanoCopy {
   String get parentGuidancePrivacyHint => isUrdu
       ? 'نمبر اور نجی نوٹس یہاں نہیں دکھتے۔'
       : 'Marks and private notes are never shown here.';
+  String get parentGuidanceAdminTitle =>
+      isUrdu ? 'والدین رہنمائی' : 'Parent guidance';
+  String get parentGuidanceAdminNew =>
+      isUrdu ? 'نیا مسودہ' : 'New draft';
+  String get parentGuidanceAdminAttachPdf =>
+      isUrdu ? 'PDF منسلک کریں' : 'Attach PDF';
+  String get parentGuidanceAdminPublish => isUrdu ? 'شائع کریں' : 'Publish';
+  String get parentGuidanceAdminTips =>
+      isUrdu ? 'سرگرمیاں (ایک فی لائن)' : 'Activities (one per line)';
+  String get parentGuidanceAdminPdfName =>
+      isUrdu ? 'PDF فائل کا نام' : 'PDF file name';
+  String get parentGuidanceAdminEmpty =>
+      isUrdu ? 'ابھی کوئی پیکیج نہیں' : 'No weekly packages yet';
 
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';
@@ -1884,6 +1897,7 @@ class NanoCopy {
         'gamification' => gamification,
         'gameAdmin' => gameAdmin,
         'notifications' => notificationsLabel,
+        'parentGuidance' => parentGuidanceAdminTitle,
         'moderation' => moderation,
         'communityControls' => platformCommunitiesTitle,
         'analytics' => analytics,

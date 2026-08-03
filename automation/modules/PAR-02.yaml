@@ -1,12 +1,12 @@
 id: PAR-02
 name: "Superadmin Weekly PDF and Activity Upload"
 release: R10
-status: BACKLOG
+status: DONE
 dependencies:
   - PAR-01
   - ADM-01
 applications:
-  - student_app
+  - admin_web
   - packages
   - docs
   - automation
@@ -20,6 +20,10 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - apps/admin_web/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -30,16 +34,23 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Superadmin can create a weekly package draft
+  - PDF filename attach and activity tips work in fake repo
+  - Publish requires title, body, week key, and PDF
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/weekly_guidance_package_test.dart
+  - packages/nano_data/test/weekly_guidance_admin_repository_test.dart
+  - apps/admin_web/test/parent_guidance_admin_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Superadmin → Parent guidance → New draft → attach PDF name → publish
+  - Confirm publish without PDF is rejected
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

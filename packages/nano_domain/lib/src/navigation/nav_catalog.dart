@@ -246,6 +246,13 @@ abstract final class NavCatalog {
       requiredPermission: 'platform.notifications',
     ),
     NavDestination(
+      id: 'parentGuidance',
+      label: 'Parent guidance',
+      path: '/parent-guidance',
+      iconName: 'family_restroom',
+      requiredPermission: 'platform.parentGuidance',
+    ),
+    NavDestination(
       id: 'moderation',
       label: 'Moderation',
       path: '/moderation',

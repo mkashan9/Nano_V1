@@ -152,6 +152,7 @@ class SessionPrincipal {
           'platform.gamification',
           'platform.games',
           'platform.notifications',
+          'platform.parentGuidance',
           'platform.moderation',
           'platform.communities',
           'platform.analytics',

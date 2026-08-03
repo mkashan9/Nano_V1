@@ -120,7 +120,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | IND-03 | Trial, Free, and Paid States | R10 | DONE | IND-02 |
 | IND-04 | School Invitation and Account Linking | R10 | DONE | IND-02, SCH-04 |
 | PAR-01 | Weekly Parent Guidance Card | R10 | DONE | STU-05 |
-| PAR-02 | Superadmin Weekly PDF and Activity Upload | R10 | BACKLOG | PAR-01, ADM-01 |
+| PAR-02 | Superadmin Weekly PDF and Activity Upload | R10 | DONE | PAR-01, ADM-01 |
 | PAR-03 | Guardian Link Foundations | R10 | BACKLOG | PAR-01, AUTH-04 |
 | NOT-01 | Push Delivery and Deep Links | R10 | BACKLOG | STU-06, FND-04 |
 | NOT-02 | Quiet Hours, Category Controls, and Digest | R10 | BACKLOG | NOT-01 |
