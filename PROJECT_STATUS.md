@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
 - **Current module:** COM-05 Voice Messages, Photos, Videos, and Files
-- **Current status:** USER_TEST
+- **Current status:** DONE (owner approved)
 - **Current branch:** module/COM-05-community-media
 
 ## Release progress
 
-- R9: COM-01..COM-04 DONE; COM-05 in USER_TEST
+- R9: COM-01..COM-05 DONE
 
 ## Owner next step
 
-Manual test COM-05 (`docs/modules/COM-05/MANUAL_TEST.md`), then NEXT / FIX / STATUS.
+NEXT starts COM-06 Pinned Messages, Search, Gallery, and Archives.
