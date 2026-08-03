@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
 - **Current module:** COM-03 Join Requests and Invitations
-- **Current status:** USER_TEST
+- **Current status:** DONE (owner approved)
 - **Current branch:** module/COM-03-join-invitations
 
 ## Release progress
 
-- R9: COM-01..COM-02 DONE; COM-03 in USER_TEST
+- R9: COM-01..COM-03 DONE
 
 ## Owner next step
 
-Manual test COM-03 (`docs/modules/COM-03/MANUAL_TEST.md`), then NEXT / FIX / STATUS.
+NEXT starts COM-04 Text Messages, Replies, Mentions, and Reactions.

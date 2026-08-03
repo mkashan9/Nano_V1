@@ -1,7 +1,7 @@
 id: COM-03
 name: "Join Requests and Invitations"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - COM-02
 dependency_notes: >
