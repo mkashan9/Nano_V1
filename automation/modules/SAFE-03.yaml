@@ -1,7 +1,7 @@
 id: SAFE-03
 name: "Rate Limits, Restricted Content, and Link Rules"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - SAFE-01
 dependency_notes: >
