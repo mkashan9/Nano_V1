@@ -4,6 +4,7 @@ import 'package:admin_web/features/games/presentation/game_admin_page.dart';
 import 'package:admin_web/features/gamification/presentation/gamification_admin_page.dart';
 import 'package:admin_web/features/moderation/presentation/moderation_hub_page.dart';
 import 'package:admin_web/features/notifications/presentation/notification_admin_page.dart';
+import 'package:admin_web/features/parent/presentation/parent_guidance_admin_page.dart';
 import 'package:admin_web/features/platform/presentation/community_controls_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
 import 'package:admin_web/features/school/presentation/academic_structure_page.dart';
@@ -38,6 +39,7 @@ class AdminShell extends StatelessWidget {
     this.gamificationAdminRepository,
     this.gameAdminRepository,
     this.notificationAdminRepository,
+    this.weeklyGuidanceAdminRepository,
     this.assetReviewRepository,
     this.moderationQueueRepository,
     this.platformDashboardRepository,
@@ -67,6 +69,7 @@ class AdminShell extends StatelessWidget {
   final GamificationAdminRepository? gamificationAdminRepository;
   final GameAdminRepository? gameAdminRepository;
   final NotificationAdminRepository? notificationAdminRepository;
+  final WeeklyGuidanceAdminRepository? weeklyGuidanceAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final ModerationQueueRepository? moderationQueueRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
@@ -193,6 +196,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.gamificationAdminRepository,
     this.gameAdminRepository,
     this.notificationAdminRepository,
+    this.weeklyGuidanceAdminRepository,
     this.assetReviewRepository,
     this.moderationQueueRepository,
     this.platformDashboardRepository,
@@ -217,6 +221,7 @@ class AdminDestinationPage extends StatelessWidget {
   final GamificationAdminRepository? gamificationAdminRepository;
   final GameAdminRepository? gameAdminRepository;
   final NotificationAdminRepository? notificationAdminRepository;
+  final WeeklyGuidanceAdminRepository? weeklyGuidanceAdminRepository;
   final AssetReviewRepository? assetReviewRepository;
   final ModerationQueueRepository? moderationQueueRepository;
   final PlatformDashboardRepository? platformDashboardRepository;
@@ -343,6 +348,14 @@ class AdminDestinationPage extends StatelessWidget {
         notificationAdminRepository != null) {
       return NotificationAdminPage(
         repository: notificationAdminRepository!,
+      );
+    }
+
+    if (destination.id == 'parentGuidance' &&
+        principal.role == AppRole.superadmin &&
+        weeklyGuidanceAdminRepository != null) {
+      return ParentGuidanceAdminPage(
+        repository: weeklyGuidanceAdminRepository!,
       );
     }
 

@@ -106,6 +106,7 @@ class NanoAdminApp extends StatefulWidget {
     this.gamificationAdminRepository,
     this.gameAdminRepository,
     this.notificationAdminRepository,
+    this.weeklyGuidanceAdminRepository,
     this.platformAnalyticsRepository,
     this.schoolDashboardRepository,
     this.academicStructureRepository,
@@ -134,6 +135,7 @@ class NanoAdminApp extends StatefulWidget {
   final GamificationAdminRepository? gamificationAdminRepository;
   final GameAdminRepository? gameAdminRepository;
   final NotificationAdminRepository? notificationAdminRepository;
+  final WeeklyGuidanceAdminRepository? weeklyGuidanceAdminRepository;
   final PlatformAnalyticsRepository? platformAnalyticsRepository;
   final SchoolDashboardRepository? schoolDashboardRepository;
   final AcademicStructureRepository? academicStructureRepository;
@@ -163,6 +165,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
   late final GamificationAdminRepository _gamificationAdminRepository;
   late final GameAdminRepository _gameAdminRepository;
   late final NotificationAdminRepository _notificationAdminRepository;
+  late final WeeklyGuidanceAdminRepository _weeklyGuidanceAdminRepository;
   late final PlatformAnalyticsRepository _platformAnalyticsRepository;
   late final SchoolDashboardRepository _schoolDashboardRepository;
   late final AcademicStructureRepository _academicStructureRepository;
@@ -207,6 +210,9 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
         widget.gameAdminRepository ?? FakeGameAdminRepository();
     _notificationAdminRepository =
         widget.notificationAdminRepository ?? FakeNotificationAdminRepository();
+    // PAR-02: fake-first PDF attach (filename only); live storage later.
+    _weeklyGuidanceAdminRepository = widget.weeklyGuidanceAdminRepository ??
+        FakeWeeklyGuidanceAdminRepository();
     _platformAnalyticsRepository =
         widget.platformAnalyticsRepository ?? FakePlatformAnalyticsRepository();
     _schoolDashboardRepository =
@@ -281,6 +287,7 @@ class _NanoAdminAppState extends State<NanoAdminApp> {
       gamificationAdminRepository: _gamificationAdminRepository,
       gameAdminRepository: _gameAdminRepository,
       notificationAdminRepository: _notificationAdminRepository,
+      weeklyGuidanceAdminRepository: _weeklyGuidanceAdminRepository,
       platformAnalyticsRepository: _platformAnalyticsRepository,
       schoolDashboardRepository: _schoolDashboardRepository,
       academicStructureRepository: _academicStructureRepository,
