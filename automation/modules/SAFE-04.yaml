@@ -1,7 +1,7 @@
-id: SAFE-04
+﻿id: SAFE-04
 name: "School and Global Community Controls"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - SAFE-02
   - ADM-01
