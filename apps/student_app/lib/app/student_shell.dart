@@ -23,6 +23,7 @@ import 'package:student_app/features/learning/presentation/learning_progress_pag
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
 import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
 import 'package:student_app/features/profile/presentation/junior_profile_page.dart';
+import 'package:student_app/features/profile/presentation/senior_profile_page.dart';
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 import 'package:student_app/features/flex/presentation/flex_home_page.dart';
 import 'package:student_app/features/games/presentation/games_catalog_page.dart';
@@ -813,6 +814,7 @@ class StudentProfileTab extends StatelessWidget {
     this.schoolLinkRepository,
     this.onSchoolLinked,
     this.showQaTools = false,
+    this.useVisualLayout = true,
   });
 
   final SessionPrincipal principal;
@@ -832,6 +834,8 @@ class StudentProfileTab extends StatelessWidget {
   final SchoolLinkRepository? schoolLinkRepository;
   final ValueChanged<SessionPrincipal>? onSchoolLinked;
   final bool showQaTools;
+  /// When true (default), senior Me uses VIS-08 visual layout.
+  final bool useVisualLayout;
 
   @override
   Widget build(BuildContext context) {
@@ -870,6 +874,27 @@ class StudentProfileTab extends StatelessWidget {
               },
       );
     }
+    final openAccessibility = onAccessibilityChanged == null
+        ? null
+        : () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => AccessibilitySettingsPage(
+                  onChanged: onAccessibilityChanged!,
+                ),
+              ),
+            );
+          };
+    if (useVisualLayout) {
+      return SeniorProfilePage(
+        repository: repository,
+        principal: principalForProfile,
+        preferences: preferences ??
+            StudentPreferences(userId: principalForProfile.userId!),
+        onPreferencesChanged: onPreferencesChanged,
+        onOpenAccessibility: openAccessibility,
+      );
+    }
     return StudentProfilePage(
       repository: repository,
       principal: principalForProfile,
@@ -885,17 +910,7 @@ class StudentProfileTab extends StatelessWidget {
       schoolLinkRepository: schoolLinkRepository,
       onSchoolLinked: onSchoolLinked,
       showQaTools: showQaTools,
-      onOpenAccessibility: onAccessibilityChanged == null
-          ? null
-          : () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => AccessibilitySettingsPage(
-                    onChanged: onAccessibilityChanged!,
-                  ),
-                ),
-              );
-            },
+      onOpenAccessibility: openAccessibility,
       onOpenProgress: insightsRepository == null
           ? null
           : () {

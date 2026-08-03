@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/four_12/profile.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-08/senior_profile/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.89,
+    "overall_mae": 0.0862,
+    "layout_score": 0.8983,
+    "typography_score": 0.875,
+    "color_score": 0.9138,
+    "component_geometry_score": 0.8772,
+    "asset_placement_score": 0.8646,
+    "asset_visual_similarity_score": 0.8898,
+    "overall_structural_similarity": 0.89
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.8854,
+      "mae": 0.0902
+    },
+    "hero": {
+      "ssim_proxy": 0.8646,
+      "mae": 0.1074
+    },
+    "subjects": {
+      "ssim_proxy": 0.8898,
+      "mae": 0.0863
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.9113,
+      "mae": 0.069
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

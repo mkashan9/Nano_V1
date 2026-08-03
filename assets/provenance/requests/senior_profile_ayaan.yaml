@@ -1,0 +1,7 @@
+﻿id: senior_profile_ayaan
+purpose: VIS-08 Senior Profile visual asset
+reference_screen: senior_profile
+reference_image: UI_reference/four_12/profile.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED
