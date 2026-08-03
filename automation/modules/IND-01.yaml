@@ -1,7 +1,7 @@
 id: IND-01
 name: "Independent Student Home and Natural Navigation"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-04
   - AUTH-04
