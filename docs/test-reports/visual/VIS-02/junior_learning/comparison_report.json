@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/kids/learning_stack.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-02/junior_learning/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.6129,
+    "overall_mae": 0.2895,
+    "layout_score": 0.8165,
+    "typography_score": 0.629,
+    "color_score": 0.7105,
+    "component_geometry_score": 0.5174,
+    "asset_placement_score": 0.5066,
+    "asset_visual_similarity_score": 0.5282,
+    "overall_structural_similarity": 0.6129
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.7514,
+      "mae": 0.1865
+    },
+    "hero": {
+      "ssim_proxy": 0.5066,
+      "mae": 0.3711
+    },
+    "subjects": {
+      "ssim_proxy": 0.5282,
+      "mae": 0.3519
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.8816,
+      "mae": 0.0901
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

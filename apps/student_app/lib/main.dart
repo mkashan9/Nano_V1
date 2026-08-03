@@ -18,6 +18,14 @@ void main() {
   final config = EnvironmentConfig.fromEnvironment();
   final screenshotMode =
       const bool.fromEnvironment('NANO_SCREENSHOT_MODE', defaultValue: false);
+  final screenshotScreen = const String.fromEnvironment(
+    'NANO_SCREENSHOT_SCREEN',
+    defaultValue: 'junior_home',
+  );
+  final screenshotLocation = switch (screenshotScreen) {
+    'junior_learning' => '/screenshot/junior_learning',
+    _ => '/screenshot/junior_home',
+  };
   AuthRepository? authRepository;
   OnboardingRepository? onboardingRepository;
   StudentPreferencesRepository? preferencesRepository;
@@ -117,7 +125,7 @@ void main() {
       voicePlayer: NanoAudioVoicePlayer(),
       clipPlayer: NanoVideoClipPlayer(),
       requireAuth: screenshotMode ? false : requireAuth,
-      initialLocation: screenshotMode ? '/screenshot/junior_home' : null,
+      initialLocation: screenshotMode ? screenshotLocation : null,
       initialAccessibility: screenshotMode
           ? const AccessibilityPreferences(reducedMotion: true)
           : AccessibilityPreferences.defaults,

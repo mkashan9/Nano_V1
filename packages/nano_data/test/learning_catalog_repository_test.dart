@@ -6,21 +6,27 @@ void main() {
   test('junior catalog hides senior-only subjects and locks addition', () async {
     final repo = FakeLearningCatalogRepository();
     final catalog = await repo.loadCatalog();
-    expect(catalog.subjects.map((s) => s.slug), ['math']);
-    final math = catalog.subjects.single;
+    expect(
+      catalog.subjects.map((s) => s.slug),
+      ['math', 'english', 'stories', 'space'],
+    );
+    final math = catalog.subjects.firstWhere((s) => s.slug == 'math');
+    expect(math.title, 'Numbers');
     expect(math.topics.last.isLocked, isTrue);
     expect(math.topics.last.blockingTitles, ['Counting to 20']);
-    expect(catalog.topicVersionIds, {
-      'tv-counting-1',
-      'tv-addition-1',
-    });
+    expect(catalog.topicVersionIds.contains('tv-counting-1'), isTrue);
+    expect(catalog.topicVersionIds.contains('tv-addition-1'), isTrue);
+    expect(catalog.topicVersionIds.contains('tv-space-adventure-1'), isTrue);
   });
 
   test('senior catalog reveals science against the same math versions', () async {
     final junior = await FakeLearningCatalogRepository().loadCatalog();
     final senior =
         await FakeLearningCatalogRepository(seniorEligible: true).loadCatalog();
-    expect(senior.subjects.map((s) => s.slug), ['math', 'science']);
+    expect(
+      senior.subjects.map((s) => s.slug),
+      ['math', 'english', 'stories', 'space', 'science'],
+    );
     expect(
       junior.topicVersionIds.intersection(senior.topicVersionIds),
       junior.topicVersionIds,

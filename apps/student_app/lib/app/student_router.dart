@@ -11,6 +11,7 @@ import 'package:student_app/features/auth/presentation/sign_in_page.dart';
 import 'package:student_app/features/auth/presentation/sign_up_page.dart';
 import 'package:student_app/features/onboarding/presentation/onboarding_flow_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_junior_home_page.dart';
+import 'package:student_app/features/qa/presentation/screenshot_junior_learning_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -99,6 +100,12 @@ GoRouter createStudentRouter({
         path: '/screenshot/junior_home',
         builder: (context, state) => ScreenshotJuniorHomePage(
           repository: homeRepository,
+        ),
+      ),
+      GoRoute(
+        path: '/screenshot/junior_learning',
+        builder: (context, state) => ScreenshotJuniorLearningPage(
+          repository: catalogRepository,
         ),
       ),
       GoRoute(
@@ -319,7 +326,7 @@ Widget _pageFor(
   bool showQaTools = false,
 }) {
   return switch (id) {
-    'home' || 'learning' => StudentLearningTab(
+    'home' => StudentLearningTab(
         principal: principal,
         homeRepository: homeRepository,
         catalogRepository: catalogRepository,
@@ -333,9 +340,19 @@ Widget _pageFor(
         companionName: companionName,
         learnerDisplayName: principal.displayName,
         shareCards: shareCards,
-        // Home cards deep-link through the resolver, so an ineligible learner
-        // lands somewhere valid instead of on a dead route.
         onOpenFlex: () => _openDeepLink(context, principal, '/flex'),
+      ),
+    'learning' => StudentCatalogTab(
+        principal: principal,
+        catalogRepository: catalogRepository,
+        progressRepository: progressRepository,
+        checkpointRepository: checkpointRepository,
+        insightsRepository: insightsRepository,
+        learnerQuizRepository: learnerQuizRepository,
+        quizAttemptRepository: quizAttemptRepository,
+        companionName: companionName,
+        learnerDisplayName: principal.displayName,
+        shareCards: shareCards,
       ),
     'game' || 'games' => StudentGamesTab(
         repository: gameCatalogRepository,

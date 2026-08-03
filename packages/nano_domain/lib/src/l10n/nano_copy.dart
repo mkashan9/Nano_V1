@@ -1527,6 +1527,18 @@ class NanoCopy {
   String get retryLabel => isUrdu ? 'دوبارہ کوشش' : 'Try again';
 
   String get catalogTitle => isUrdu ? 'سیکھنے کا مواد' : 'Learning';
+
+  String get learningPrompt =>
+      isUrdu ? 'آج کیا سیکھیں؟' : 'What shall we learn?';
+
+  String get learningVoiceHint =>
+      isUrdu ? 'آواز سے تلاش جلد آ رہی ہے' : 'Voice search coming soon';
+
+  String get continueWhereStopped =>
+      isUrdu ? 'جہاں چھوڑا تھا وہیں سے جاری رکھیں' : 'Continue where you stopped';
+
+  String lessonLabel(int number) =>
+      isUrdu ? 'سبق $number' : 'Lesson $number';
   String get catalogSearchHint =>
       isUrdu ? 'مضمون یا ٹاپک تلاش کریں' : 'Search subjects and topics';
   String get catalogNoResults =>
@@ -2054,7 +2066,7 @@ class NanoCopy {
         _ => destinationId,
       };
 
-  /// Junior and independent use friendlier Home / Play / Me labels.
+  /// Junior visual track uses Home / Learn / Games / Profile (UI_reference).
   String studentNavLabel(
     String destinationId, {
     required bool junior,
@@ -2068,11 +2080,20 @@ class NanoCopy {
         _ => navLabel(destinationId),
       };
     }
+    if (junior) {
+      return switch (destinationId) {
+        'home' => home,
+        'learning' => isUrdu ? 'سیکھیں' : 'Learn',
+        'game' || 'games' => isUrdu ? 'گیمز' : 'Games',
+        'profile' => isUrdu ? 'پروفائل' : 'Profile',
+        _ => navLabel(destinationId),
+      };
+    }
     if (destinationId == 'profile') {
-      return junior ? me : profile;
+      return profile;
     }
     if (destinationId == 'game' || destinationId == 'games') {
-      return junior ? play : games;
+      return games;
     }
     return navLabel(destinationId);
   }

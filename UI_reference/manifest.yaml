@@ -150,19 +150,38 @@ references:
     path: UI_reference/kids/learning_stack.jpeg
     experience: junior
     probable_screen: Learning Stack
-    target_route: /learning
+    target_route: /screenshot/junior_learning
     reference_width: 740
     reference_height: 1600
     aspect_ratio: 0.463
     device_type: phone
-    module_id: LRN-01
-    implementation_status: BACKLOG
-    manual_review_status: PENDING
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards]
+    module_id: VIS-02
+    implementation_status: DONE
+    manual_review_status: APPROVED
+    primary_matching_reference: false
+    main_layout_regions: [prompt_header, world_carousel, continue_card, bottom_nav]
+    main_reusable_components:
+      - junior_learning_prompt_header
+      - junior_learning_world_carousel_card
+      - junior_learning_continue_card
+      - bottom_nav
     navigation_type: bottom_tabs
+    card_types: [world_carousel, continue_row]
+    avatar_or_companion_placement: prompt_fox_plus_speech
+    required_illustration_assets:
+      - junior_learning_fox
+      - junior_learning_numbers
+      - junior_learning_english
+      - junior_learning_stories
+      - junior_learning_space
+    regions:
+      prompt_header: [24, 32, 692, 120]
+      world_carousel: [40, 160, 660, 420]
+      continue_card: [24, 640, 692, 160]
+      bottom_navigation: [0, 1450, 740, 150]
     missing_assets: []
-    unclear_elements: []
+    unclear_elements:
+      - Search and mic are visual affordances; full voice search is deferred
 
   - id: junior_profile
     path: UI_reference/kids/profile.jpeg
