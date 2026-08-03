@@ -1,7 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:nano_domain/nano_domain.dart';
 import 'package:supabase/supabase.dart';
 
-/// COM-04 community text messages, replies, mentions, reactions.
+/// COM-04/05 community text + media messages.
 abstract class CommunityMessagingRepository {
   Future<List<CommunityMessage>> listMessages(String communityId);
 
@@ -10,12 +12,31 @@ abstract class CommunityMessagingRepository {
     required String body,
     String? parentMessageId,
     List<String> mentionUserIds = const [],
+    List<String> attachmentIds = const [],
   });
 
   Future<CommunityMessage> toggleReaction({
     required String messageId,
     required String emoji,
   });
+
+  Future<CommunityMessageAttachment> prepareMediaUpload({
+    required String communityId,
+    required CommunityMediaKind kind,
+    String? contentType,
+    int? byteSize,
+    String? originalFilename,
+    int? durationMs,
+  });
+
+  Future<void> uploadMediaBytes({
+    required String bucket,
+    required String path,
+    required List<int> bytes,
+    String? contentType,
+  });
+
+  Future<String?> signedMediaUrl(CommunityMessageAttachment attachment);
 }
 
 class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
@@ -43,13 +64,58 @@ class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
               parentMessageId: 'm-seed-1',
               createdAt: DateTime.utc(2026, 8, 1, 10, 5),
             ),
+            CommunityMessage(
+              id: 'm-seed-3',
+              communityId: 'a1000000-0000-4000-8000-000000000001',
+              authorId: 'u-owner',
+              authorDisplayName: 'Ayesha',
+              body: 'Lab photo from today',
+              createdAt: DateTime.utc(2026, 8, 1, 11),
+              attachments: const [
+                CommunityMessageAttachment(
+                  id: 'a-seed-photo',
+                  communityId: 'a1000000-0000-4000-8000-000000000001',
+                  messageId: 'm-seed-3',
+                  kind: CommunityMediaKind.photo,
+                  storageBucket: 'community-media',
+                  storagePath:
+                      'a1000000-0000-4000-8000-000000000001/u-owner/a-seed-photo.jpg',
+                  contentType: 'image/jpeg',
+                  originalFilename: 'lab.jpg',
+                ),
+              ],
+            ),
+            CommunityMessage(
+              id: 'm-seed-4',
+              communityId: 'a1000000-0000-4000-8000-000000000001',
+              authorId: 'u-friend',
+              authorDisplayName: 'Bilal',
+              body: '',
+              createdAt: DateTime.utc(2026, 8, 1, 11, 5),
+              attachments: const [
+                CommunityMessageAttachment(
+                  id: 'a-seed-voice',
+                  communityId: 'a1000000-0000-4000-8000-000000000001',
+                  messageId: 'm-seed-4',
+                  kind: CommunityMediaKind.voice,
+                  storageBucket: 'community-media',
+                  storagePath:
+                      'a1000000-0000-4000-8000-000000000001/u-friend/a-seed-voice.m4a',
+                  contentType: 'audio/mp4',
+                  durationMs: 4200,
+                  originalFilename: 'note.m4a',
+                ),
+              ],
+            ),
           ],
           ...?messages,
         };
 
   final Map<String, List<CommunityMessage>> _messages;
+  final Map<String, CommunityMessageAttachment> _pending = {};
   var alwaysFail = false;
   var _seq = 0;
+  var _attachSeq = 0;
 
   @override
   Future<List<CommunityMessage>> listMessages(String communityId) async {
@@ -63,13 +129,40 @@ class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
     required String body,
     String? parentMessageId,
     List<String> mentionUserIds = const [],
+    List<String> attachmentIds = const [],
   }) async {
     if (alwaysFail) throw StateError('Send failed');
     final trimmed = body.trim();
-    if (trimmed.isEmpty) throw StateError('Message required');
+    final attachments = <CommunityMessageAttachment>[
+      for (final id in attachmentIds)
+        if (_pending[id] != null) _pending[id]!,
+    ];
+    if (trimmed.isEmpty && attachments.isEmpty) {
+      throw StateError('Message required');
+    }
     _seq += 1;
+    final messageId = 'm-local-$_seq';
+    final linked = [
+      for (final a in attachments)
+        CommunityMessageAttachment(
+          id: a.id,
+          communityId: a.communityId,
+          messageId: messageId,
+          kind: a.kind,
+          storageBucket: a.storageBucket,
+          storagePath: a.storagePath,
+          contentType: a.contentType,
+          byteSize: a.byteSize,
+          durationMs: a.durationMs,
+          originalFilename: a.originalFilename,
+          status: 'ready',
+        ),
+    ];
+    for (final id in attachmentIds) {
+      _pending.remove(id);
+    }
     final message = CommunityMessage(
-      id: 'm-local-$_seq',
+      id: messageId,
       communityId: communityId,
       authorId: 'self',
       authorDisplayName: 'You',
@@ -78,6 +171,7 @@ class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
       createdAt: DateTime.now().toUtc(),
       isSelf: true,
       mentionUserIds: List.unmodifiable(mentionUserIds),
+      attachments: linked,
     );
     final list = [...(_messages[communityId] ?? const <CommunityMessage>[])];
     list.add(message);
@@ -133,12 +227,57 @@ class FakeCommunityMessagingRepository implements CommunityMessagingRepository {
         isSelf: current.isSelf,
         mentionUserIds: current.mentionUserIds,
         reactions: reactions,
+        attachments: current.attachments,
       );
       list[index] = updated;
       _messages[entry.key] = list;
       return updated;
     }
     throw StateError('Message not found');
+  }
+
+  @override
+  Future<CommunityMessageAttachment> prepareMediaUpload({
+    required String communityId,
+    required CommunityMediaKind kind,
+    String? contentType,
+    int? byteSize,
+    String? originalFilename,
+    int? durationMs,
+  }) async {
+    if (alwaysFail) throw StateError('Upload prepare failed');
+    _attachSeq += 1;
+    final id = 'a-local-$_attachSeq';
+    final attachment = CommunityMessageAttachment(
+      id: id,
+      communityId: communityId,
+      kind: kind,
+      storageBucket: 'community-media',
+      storagePath: '$communityId/self/$id.bin',
+      contentType: contentType,
+      byteSize: byteSize,
+      durationMs: durationMs,
+      originalFilename: originalFilename ?? '${kind.wire}-$_attachSeq',
+      status: 'pending',
+    );
+    _pending[id] = attachment;
+    return attachment;
+  }
+
+  @override
+  Future<void> uploadMediaBytes({
+    required String bucket,
+    required String path,
+    required List<int> bytes,
+    String? contentType,
+  }) async {
+    if (alwaysFail) throw StateError('Upload failed');
+  }
+
+  @override
+  Future<String?> signedMediaUrl(CommunityMessageAttachment attachment) async {
+    if (alwaysFail) throw StateError('Sign failed');
+    return 'fake://${attachment.storageBucket}/${attachment.storagePath}';
   }
 }
 
@@ -167,6 +306,7 @@ class SupabaseCommunityMessagingRepository
     required String body,
     String? parentMessageId,
     List<String> mentionUserIds = const [],
+    List<String> attachmentIds = const [],
   }) async {
     final raw = await _client.rpc(
       'send_community_message',
@@ -175,6 +315,7 @@ class SupabaseCommunityMessagingRepository
         'p_body': body,
         'p_parent_message_id': parentMessageId,
         'p_mention_ids': mentionUserIds.isEmpty ? null : mentionUserIds,
+        'p_attachment_ids': attachmentIds.isEmpty ? null : attachmentIds,
       },
     );
     if (raw is! Map) throw StateError('Send failed');
@@ -195,5 +336,53 @@ class SupabaseCommunityMessagingRepository
     );
     if (raw is! Map) throw StateError('Reaction failed');
     return CommunityMessage.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<CommunityMessageAttachment> prepareMediaUpload({
+    required String communityId,
+    required CommunityMediaKind kind,
+    String? contentType,
+    int? byteSize,
+    String? originalFilename,
+    int? durationMs,
+  }) async {
+    final raw = await _client.rpc(
+      'prepare_community_media_upload',
+      params: {
+        'p_community_id': communityId,
+        'p_kind': kind.wire,
+        'p_content_type': contentType,
+        'p_byte_size': byteSize,
+        'p_original_filename': originalFilename,
+        'p_duration_ms': durationMs,
+      },
+    );
+    if (raw is! Map) throw StateError('Upload prepare failed');
+    return CommunityMessageAttachment.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
+  Future<void> uploadMediaBytes({
+    required String bucket,
+    required String path,
+    required List<int> bytes,
+    String? contentType,
+  }) async {
+    await _client.storage.from(bucket).uploadBinary(
+          path,
+          Uint8List.fromList(bytes),
+          fileOptions: FileOptions(
+            contentType: contentType,
+            upsert: true,
+          ),
+        );
+  }
+
+  @override
+  Future<String?> signedMediaUrl(CommunityMessageAttachment attachment) async {
+    return _client.storage
+        .from(attachment.storageBucket)
+        .createSignedUrl(attachment.storagePath, 3600);
   }
 }

@@ -172,6 +172,11 @@ class NanoCopy {
   String get communitiesMention => isUrdu ? 'ذکر' : 'Mention';
   String get communitiesSend => isUrdu ? 'بھیجیں' : 'Send';
   String get communitiesReact => isUrdu ? 'ردعمل' : 'React';
+  String get communitiesAttach => isUrdu ? 'منسلک' : 'Attach';
+  String get communitiesAttachPhoto => isUrdu ? 'تصویر' : 'Photo';
+  String get communitiesAttachVoice => isUrdu ? 'آواز' : 'Voice';
+  String get communitiesAttachVideo => isUrdu ? 'ویڈیو' : 'Video';
+  String get communitiesAttachFile => isUrdu ? 'فائل' : 'File';
   String get communitiesYou => isUrdu ? 'آپ' : 'you';
   String communitiesYourRole(String role) => isUrdu
       ? 'آپ کا کردار: ${communitiesRoleLabel(role)}'

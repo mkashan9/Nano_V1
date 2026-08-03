@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** COM-04 Text Messages, Replies, Mentions, and Reactions
+- **Current module:** COM-05 Voice Messages, Photos, Videos, and Files
 - **Current status:** DONE (owner approved)
-- **Current branch:** module/COM-04-community-messages
+- **Current branch:** module/COM-05-community-media
 
 ## Release progress
 
-- R9: COM-01..COM-04 DONE
+- R9: COM-01..COM-05 DONE
 
 ## Owner next step
 
-NEXT starts COM-05 Voice Messages, Photos, Videos, and Files.
+NEXT starts COM-06 Pinned Messages, Search, Gallery, and Archives.
