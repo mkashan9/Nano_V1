@@ -75,6 +75,32 @@ void main() {
     expect(result.fellBack, isTrue);
   });
 
+  test('junior never sees communities even when flag is on', () {
+    final principal = SessionPrincipal.junior().copyWith(
+      featureFlags: const {'games': true, 'communities': true},
+    );
+    // Junior catalog has no communities destination.
+    expect(
+      NavCatalog.visibleFor(principal).any((d) => d.id == 'communities'),
+      isFalse,
+    );
+  });
+
+  test('senior communities destination requires feature flag', () {
+    final off = SessionPrincipal.seniorSchool().copyWith(
+      featureFlags: const {'games': true, 'communities': false},
+    );
+    expect(
+      NavCatalog.visibleFor(off).any((d) => d.id == 'communities'),
+      isFalse,
+    );
+    final on = SessionPrincipal.seniorSchool();
+    expect(
+      NavCatalog.visibleFor(on).any((d) => d.id == 'communities'),
+      isTrue,
+    );
+  });
+
   test('unknown deep link falls back to home', () {
     final result =
         DeepLinkResolver.resolve(SessionPrincipal.junior(), '/not-a-route');

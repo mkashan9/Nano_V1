@@ -556,6 +556,14 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       // An independent learner keeps one role whatever their age, so the track
       // is the only thing that can tell a six-year-old from a sixteen-year-old.
       experienceTrack: track,
+      // SAFE-04: juniors never get Communities; seniors wait for server policy
+      // on the next live bootstrap (factory flag is preview-only).
+      featureFlags: {
+        ...upgraded.featureFlags,
+        'communities': track == ExperienceTrack.senior
+            ? (upgraded.featureFlags['communities'] ?? false)
+            : false,
+      },
     );
     setState(() {
       _onboarding = progress;

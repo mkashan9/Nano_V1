@@ -1,19 +1,13 @@
 # PROJECT_STATUS
 
-## Current state
-
-- **Current release:** R9 Social
-- **Current module:** SAFE-03 Rate Limits, Restricted Content, and Link Rules
+- **Current module:** SAFE-04 School and Global Community Controls
 - **Current status:** USER_TEST
-- **Current branch:** module/SAFE-03-rate-limits-content
-- **Last completed module:** SAFE-02
-- **Application name:** Nano
+- **Current branch:** module/SAFE-04-community-controls
 
-## Releases
+## Release progress
 
-- R1–R8: complete
-- R9: SOC-01..SOC-04, SAFE-01, SAFE-02 DONE; SAFE-03 USER_TEST
+- R9: SOC-01..SOC-04, SAFE-01..SAFE-03 DONE; SAFE-04 USER_TEST
 
-## Owner decision waiting
+## Owner next step
 
-Run docs/modules/SAFE-03/MANUAL_TEST.md. Trigger restricted term, blocked link, and rate-limit paths.
+Run docs/modules/SAFE-04/MANUAL_TEST.md. Toggle platform/school Communities; confirm junior exclusion and senior entitlement after re-sign-in.

@@ -4,6 +4,7 @@ import 'package:admin_web/features/games/presentation/game_admin_page.dart';
 import 'package:admin_web/features/gamification/presentation/gamification_admin_page.dart';
 import 'package:admin_web/features/moderation/presentation/moderation_hub_page.dart';
 import 'package:admin_web/features/notifications/presentation/notification_admin_page.dart';
+import 'package:admin_web/features/platform/presentation/community_controls_page.dart';
 import 'package:admin_web/features/platform/presentation/platform_dashboard_page.dart';
 import 'package:admin_web/features/school/presentation/academic_structure_page.dart';
 import 'package:admin_web/features/school/presentation/school_branding_settings_page.dart';
@@ -50,6 +51,7 @@ class AdminShell extends StatelessWidget {
     this.schoolReportsRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
+    this.communityControlsRepository,
   });
 
   final EnvironmentConfig config;
@@ -78,6 +80,7 @@ class AdminShell extends StatelessWidget {
   final SchoolReportsRepository? schoolReportsRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
+  final CommunityControlsRepository? communityControlsRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +206,7 @@ class AdminDestinationPage extends StatelessWidget {
     this.schoolReportsRepository,
     this.schoolAdminRepository,
     this.platformUserRepository,
+    this.communityControlsRepository,
   });
 
   final NavDestination destination;
@@ -226,6 +230,7 @@ class AdminDestinationPage extends StatelessWidget {
   final SchoolReportsRepository? schoolReportsRepository;
   final SchoolAdminRepository? schoolAdminRepository;
   final PlatformUserRepository? platformUserRepository;
+  final CommunityControlsRepository? communityControlsRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -238,10 +243,14 @@ class AdminDestinationPage extends StatelessWidget {
     if (destination.id == 'settings' &&
         principal.role == AppRole.schoolAdmin &&
         schoolDashboardRepository != null &&
-        schoolMarksPolicyRepository != null) {
+        schoolMarksPolicyRepository != null &&
+        communityControlsRepository != null &&
+        principal.schoolId != null) {
       return SchoolSettingsPage(
         dashboardRepository: schoolDashboardRepository!,
         marksPolicyRepository: schoolMarksPolicyRepository!,
+        communityControlsRepository: communityControlsRepository!,
+        schoolId: principal.schoolId!,
       );
     }
 
@@ -357,6 +366,14 @@ class AdminDestinationPage extends StatelessWidget {
       return ModerationHubPage(
         assetReviewRepository: assetReviewRepository,
         moderationQueueRepository: moderationQueueRepository,
+      );
+    }
+
+    if (destination.id == 'communityControls' &&
+        principal.role == AppRole.superadmin &&
+        communityControlsRepository != null) {
+      return CommunityControlsPage(
+        repository: communityControlsRepository!,
       );
     }
 

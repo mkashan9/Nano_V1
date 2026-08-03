@@ -181,7 +181,34 @@ class SupabaseAuthRepository implements AuthRepository {
       }
     }
 
-    final SessionPrincipal principal = switch (accountKind) {
+    ExperienceTrack? experienceTrack;
+    var communitiesEnabled = false;
+    if (accountKind == 'school_student' ||
+        accountKind == 'independent_student') {
+      final onboardingRows = await client
+          .from('student_onboarding')
+          .select('experience_track')
+          .eq('user_id', userId)
+          .limit(1);
+      if (onboardingRows.isNotEmpty) {
+        final raw = onboardingRows.first['experience_track'] as String?;
+        experienceTrack = switch (raw) {
+          'senior' => ExperienceTrack.senior,
+          'junior' => ExperienceTrack.junior,
+          _ => null,
+        };
+      }
+      try {
+        final raw = await client.rpc('my_community_entitlements');
+        if (raw is Map) {
+          communitiesEnabled = raw['communities_enabled'] == true;
+        }
+      } catch (_) {
+        communitiesEnabled = false;
+      }
+    }
+
+    SessionPrincipal principal = switch (accountKind) {
       'independent_student' => SessionPrincipal.independent(displayName: name)
           .copyWith(userId: userId, isAuthenticated: true),
       'teacher' => SessionPrincipal.teacher(displayName: name).copyWith(
@@ -198,12 +225,31 @@ class SupabaseAuthRepository implements AuthRepository {
           userId: userId,
           isAuthenticated: true,
         ),
+      _ when experienceTrack == ExperienceTrack.senior =>
+        SessionPrincipal.seniorSchool(
+          displayName: name,
+          flexEligible: schoolId != null,
+        ).copyWith(
+          userId: userId,
+          schoolId: schoolId,
+          isAuthenticated: true,
+        ),
       _ => SessionPrincipal.junior(displayName: name).copyWith(
           userId: userId,
           schoolId: schoolId,
           isAuthenticated: true,
         ),
     };
+
+    if (accountKind == 'school_student' ||
+        accountKind == 'independent_student') {
+      final flags = Map<String, bool>.from(principal.featureFlags);
+      flags['communities'] = communitiesEnabled;
+      principal = principal.copyWith(
+        featureFlags: flags,
+        experienceTrack: experienceTrack,
+      );
+    }
 
     return AuthBootstrap(
       principal: principal,

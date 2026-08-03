@@ -165,6 +165,38 @@ class NanoCopy {
       isUrdu ? 'برانڈنگ محفوظ ہو گئی' : 'Branding saved';
   String get schoolSettingsBrandingTab => isUrdu ? 'برانڈنگ' : 'Branding';
   String get schoolSettingsPoliciesTab => isUrdu ? 'پالیسیاں' : 'Policies';
+  String get schoolSettingsCommunitiesTab =>
+      isUrdu ? 'کمیونٹیز' : 'Communities';
+  String get schoolCommunitiesTitle =>
+      isUrdu ? 'اسکول کمیونٹیز' : 'School Communities';
+  String get schoolCommunitiesHint => isUrdu
+      ? 'سینئر سیکھنے والوں کے لیے کمیونٹیز اسکول کی رضا سے آن ہوتی ہیں۔ جونیئر ہمیشہ بند رہتے ہیں۔'
+      : 'Communities stay off until this school opts in. Junior learners never see them.';
+  String get schoolCommunitiesToggle =>
+      isUrdu ? 'کمیونٹیز فعال کریں' : 'Enable Communities';
+  String get schoolCommunitiesOn => isUrdu
+      ? 'اسکول کے سینئر سیکھنے والے (اگر پلیٹ فارم بھی آن ہو) کمیونٹیز دیکھ سکتے ہیں۔'
+      : 'Senior learners at this school can use Communities when the platform switch is on.';
+  String get schoolCommunitiesOff => isUrdu
+      ? 'اس اسکول کے لیے کمیونٹیز بند ہیں۔'
+      : 'Communities are off for this school.';
+  String get platformCommunitiesTitle =>
+      isUrdu ? 'کمیونٹی کنٹرولز' : 'Community controls';
+  String get platformCommunitiesHint => isUrdu
+      ? 'پلیٹ فارم سوئچ تمام اسکولوں پر لاگو ہوتا ہے؛ ہر اسکول پھر الگ سے اجازت دیتا ہے۔'
+      : 'The platform switch is required everywhere. Each school still opts in separately.';
+  String get platformCommunitiesToggle =>
+      isUrdu ? 'پلیٹ فارم کمیونٹیز' : 'Platform Communities';
+  String get platformCommunitiesOn => isUrdu
+      ? 'پلیٹ فارم کمیونٹیز آن ہیں۔ اسکول کی اجازت اب بھی درکار ہے۔'
+      : 'Platform Communities are on. Schools must still opt in.';
+  String get platformCommunitiesOff => isUrdu
+      ? 'پلیٹ فارم کمیونٹیز بند ہیں۔'
+      : 'Platform Communities are off.';
+  String get platformCommunitiesSchoolsHeading =>
+      isUrdu ? 'اسکول پالیسیاں' : 'School policies';
+  String get platformCommunitiesNoSchools =>
+      isUrdu ? 'ابھی کوئی اسکول نہیں۔' : 'No schools yet.';
   String get policiesPageTitle =>
       isUrdu ? 'نمبر اور نتائج کی پالیسیاں' : 'Marks and result policies';
   String get policiesPageSubtitle => isUrdu
@@ -1689,6 +1721,7 @@ class NanoCopy {
         'gameAdmin' => gameAdmin,
         'notifications' => notificationsLabel,
         'moderation' => moderation,
+        'communityControls' => platformCommunitiesTitle,
         'analytics' => analytics,
         'audit' => audit,
         _ => destinationId,

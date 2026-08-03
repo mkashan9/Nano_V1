@@ -1,19 +1,29 @@
 id: SAFE-04
 name: "School and Global Community Controls"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SAFE-02
   - SCH-01
+dependency_notes: >
+  Platform + school opt-in for Communities; junior hard-blocked.
+  COM-01+ must call assert_communities_allowed.
 applications:
   - student_app
-  - teacher_app
   - admin_web
   - packages
   - supabase
   - docs
   - automation
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_auth/
+  - packages/nano_testing/
+  - apps/admin_web/
+  - apps/student_app/lib/main.dart
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/SAFE-04/
@@ -22,27 +32,48 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for SAFE-04"
+  - "Handbook SAFE-01 Community safety / junior exclusion"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.platform_community_policy
+  - public.school_community_policies
+server_functions:
+  - "nano_internal.current_user_communities_allowed"
+  - "nano_internal.assert_communities_allowed"
+  - "nano_internal.current_user_is_senior_learner"
+  - "public.my_community_entitlements"
+  - "public.get_platform_community_policy"
+  - "public.upsert_platform_community_policy"
+  - "public.get_school_community_policy"
+  - "public.upsert_school_community_policy"
+  - "public.list_school_community_policies"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Platform and school communities default off
+  - Junior / undecided never entitled
+  - School senior needs platform AND school opt-in
+  - Independent senior needs platform only
+  - Admin UIs can toggle policies
 required_tests:
-  - documentation_review
+  - supabase/tests/safe04_community_controls.sql
+  - packages/nano_domain/test/community_controls_test.dart
+  - packages/nano_data/test/community_controls_repository_test.dart
+  - apps/admin_web/test/community_controls_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Toggle platform and school switches; verify junior exclusion and senior nav
+rollback_notes: >
+  Revert branch and migration. Entitlement RPCs and admin pages removed.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Policy tables, admin toggles, learner entitlements, assert helper for COM.
+  deferred: >
+    Mid-session entitlement refresh; teacher-facing controls.

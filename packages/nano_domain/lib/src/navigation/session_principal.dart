@@ -153,6 +153,7 @@ class SessionPrincipal {
           'platform.games',
           'platform.notifications',
           'platform.moderation',
+          'platform.communities',
           'platform.analytics',
           'platform.audit',
         },
