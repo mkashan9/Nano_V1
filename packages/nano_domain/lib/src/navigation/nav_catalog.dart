@@ -253,6 +253,13 @@ abstract final class NavCatalog {
       requiredPermission: 'platform.moderation',
     ),
     NavDestination(
+      id: 'communityControls',
+      label: 'Community controls',
+      path: '/community-controls',
+      iconName: 'groups',
+      requiredPermission: 'platform.communities',
+    ),
+    NavDestination(
       id: 'analytics',
       label: 'Analytics',
       path: '/analytics',

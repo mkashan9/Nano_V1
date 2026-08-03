@@ -37,6 +37,7 @@ GoRouter createAdminRouter({
   SchoolReportsRepository? schoolReportsRepository,
   SchoolAdminRepository? schoolAdminRepository,
   PlatformUserRepository? platformUserRepository,
+  CommunityControlsRepository? communityControlsRepository,
 }) {
   final visible = NavCatalog.visibleFor(principal);
   final destinations = visible.isNotEmpty
@@ -148,6 +149,7 @@ GoRouter createAdminRouter({
             schoolReportsRepository: schoolReportsRepository,
             schoolAdminRepository: schoolAdminRepository,
             platformUserRepository: platformUserRepository,
+            communityControlsRepository: communityControlsRepository,
           );
         },
         branches: [
@@ -179,6 +181,7 @@ GoRouter createAdminRouter({
                     schoolReportsRepository: schoolReportsRepository,
                     schoolAdminRepository: schoolAdminRepository,
                     platformUserRepository: platformUserRepository,
+                    communityControlsRepository: communityControlsRepository,
                   ),
                 ),
               ],

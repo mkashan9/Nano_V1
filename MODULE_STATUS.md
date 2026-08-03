@@ -1,10 +1,10 @@
-# MODULE_STATUS
+﻿# MODULE_STATUS
 
 Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 
 | ID | Name | Release | Status | Dependencies |
 |----|------|---------|--------|--------------|
-| AUD-01 | Repository and Security Audit | R0 | DONE | — |
+| AUD-01 | Repository and Security Audit | R0 | DONE | â€” |
 | FND-01 | Workspace, Configuration, and Environments | R0 | DONE | AUD-01 |
 | FND-02 | Shared Design System | R0 | DONE | FND-01 |
 | FND-03 | Junior and Senior Responsive Foundations | R0 | DONE | FND-02 |
@@ -114,7 +114,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | SAFE-01 | Reporting and Blocking | R9 | DONE | SEC-03, STU-04 |
 | SAFE-02 | Moderation Queue and Evidence | R9 | DONE | SAFE-01, ADM-01 |
 | SAFE-03 | Rate Limits, Restricted Content, and Link Rules | R9 | DONE | SAFE-01 |
-| SAFE-04 | School and Global Community Controls | R9 | ACTIVE | SAFE-02, SCH-01 |
+| SAFE-04 | School and Global Community Controls | R9 | DONE | SAFE-02, ADM-01 |
 | IND-01 | Independent Student Home and Natural Navigation | R10 | BACKLOG | STU-04, AUTH-04 |
 | IND-02 | Independent Access Rules and Entitlements | R10 | BACKLOG | IND-01, SEC-03 |
 | IND-03 | Trial, Free, and Paid States | R10 | BACKLOG | IND-02 |

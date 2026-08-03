@@ -1,19 +1,13 @@
-# PROJECT_STATUS
+﻿# PROJECT_STATUS
 
-## Current state
+- **Current module:** SAFE-04 School and Global Community Controls
+- **Current status:** DONE (owner approved)
+- **Current branch:** module/SAFE-04-community-controls
 
-- **Current release:** R9 Social
-- **Current module:** SAFE-03 Rate Limits, Restricted Content, and Link Rules
-- **Current status:** USER_TEST
-- **Current branch:** module/SAFE-03-rate-limits-content
-- **Last completed module:** SAFE-02
-- **Application name:** Nano
+## Release progress
 
-## Releases
+- R9: SOC-01..SOC-04, SAFE-01..SAFE-04 DONE
 
-- R1–R8: complete
-- R9: SOC-01..SOC-04, SAFE-01, SAFE-02 DONE; SAFE-03 USER_TEST
+## Owner next step
 
-## Owner decision waiting
-
-Run docs/modules/SAFE-03/MANUAL_TEST.md. Trigger restricted term, blocked link, and rate-limit paths.
+NEXT starts COM-01 Community Discovery.

@@ -8,6 +8,7 @@ export 'admin/school_student_repository.dart';
 export 'admin/school_teacher_repository.dart';
 export 'admin/teacher_assignment_repository.dart';
 export 'admin/school_marks_policy_repository.dart';
+export 'admin/community_controls_repository.dart';
 export 'admin/school_reports_repository.dart';
 export 'admin/academic_structure_repository.dart';
 export 'admin/school_dashboard_repository.dart';

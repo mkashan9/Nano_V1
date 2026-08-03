@@ -540,7 +540,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       track: track,
       independent: _principal.role == AppRole.independentStudent,
     );
-    final upgraded = switch (role) {
+    final base = switch (role) {
       AppRole.juniorStudent =>
         SessionPrincipal.junior(displayName: _principal.displayName),
       AppRole.seniorStudent => SessionPrincipal.seniorSchool(
@@ -548,14 +548,22 @@ class _NanoStudentAppState extends State<NanoStudentApp>
           flexEligible: _principal.schoolId != null,
         ),
       _ => SessionPrincipal.independent(displayName: _principal.displayName),
-    }
-        .copyWith(
+    };
+    final upgraded = base.copyWith(
       userId: _principal.userId,
       schoolId: _principal.schoolId,
       isAuthenticated: _principal.isAuthenticated,
       // An independent learner keeps one role whatever their age, so the track
       // is the only thing that can tell a six-year-old from a sixteen-year-old.
       experienceTrack: track,
+      // SAFE-04: juniors never get Communities; seniors wait for server policy
+      // on the next live bootstrap (factory flag is preview-only).
+      featureFlags: {
+        ...base.featureFlags,
+        'communities': track == ExperienceTrack.senior
+            ? (base.featureFlags['communities'] ?? false)
+            : false,
+      },
     );
     setState(() {
       _onboarding = progress;
