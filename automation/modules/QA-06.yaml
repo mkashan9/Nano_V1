@@ -1,7 +1,7 @@
 id: QA-06
 name: "Pilot Release Preparation"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - QA-01
   - QA-02
