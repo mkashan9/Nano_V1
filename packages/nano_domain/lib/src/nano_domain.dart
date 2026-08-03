@@ -52,6 +52,7 @@ export 'home/student_home_summary.dart';
 export 'independent/independent_access.dart';
 export 'independent/independent_plan.dart';
 export 'independent/school_link.dart';
+export 'parent/parent_guidance.dart';
 export 'flex/flex_hub.dart';
 export 'flex/student_attendance.dart';
 export 'flex/student_marks.dart';
