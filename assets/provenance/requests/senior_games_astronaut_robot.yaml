@@ -1,0 +1,7 @@
+﻿id: senior_games_astronaut_robot
+purpose: VIS-07 Senior Games visual asset
+reference_screen: senior_games
+reference_image: UI_reference/four_12/games.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED
