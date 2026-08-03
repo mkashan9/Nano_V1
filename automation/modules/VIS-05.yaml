@@ -1,7 +1,7 @@
 id: VIS-05
 name: "Senior Home Visual Replication"
 release: R11
-status: USER_TEST
+status: DONE
 dependencies:
   - VIS-04
   - STU-04
