@@ -158,6 +158,10 @@ class _PlatformDashboardPageState extends State<PlatformDashboardPage> {
                             onPressed: () => context.go('/audit'),
                             child: Text(copy.audit),
                           ),
+                          OutlinedButton(
+                            onPressed: () => context.go('/pilot'),
+                            child: Text(copy.pilot),
+                          ),
                         ],
                       ),
                       const SizedBox(height: NanoSpacing.lg),

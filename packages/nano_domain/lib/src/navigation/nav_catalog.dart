@@ -280,6 +280,13 @@ abstract final class NavCatalog {
       iconName: 'history',
       requiredPermission: 'platform.audit',
     ),
+    NavDestination(
+      id: 'pilot',
+      label: 'Pilot',
+      path: '/pilot',
+      iconName: 'fact_check',
+      requiredPermission: 'platform.audit',
+    ),
   ];
 
   static List<NavDestination> catalogFor(AppRole role) => switch (role) {

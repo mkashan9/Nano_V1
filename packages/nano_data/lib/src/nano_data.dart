@@ -51,6 +51,7 @@ export 'qa/performance_audit_repository.dart';
 export 'qa/offline_network_audit_repository.dart';
 export 'qa/accessibility_audit_repository.dart';
 export 'qa/bidi_layout_audit_repository.dart';
+export 'qa/pilot_release_repository.dart';
 export 'xp/achievement_repository.dart';
 export 'xp/mission_repository.dart';
 export 'xp/share_card_repository.dart';

@@ -35,6 +35,10 @@ void main() {
           path: '/audit',
           builder: (_, __) => const SizedBox.shrink(),
         ),
+        GoRoute(
+          path: '/pilot',
+          builder: (_, __) => const SizedBox.shrink(),
+        ),
       ],
     );
 
