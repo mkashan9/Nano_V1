@@ -1135,6 +1135,14 @@ class NanoCopy {
   String get reportSuspendLabel => isUrdu ? 'معطل' : 'Suspend';
   String get reportResolvedLabel =>
       isUrdu ? 'رپورٹ بند ہو گئی' : 'Report closed';
+  String get safetyRateLimitedLabel => isUrdu
+      ? 'بہت زیادہ کوششیں۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔'
+      : 'Too many attempts. Please wait and try again.';
+  String get safetyRestrictedContentLabel => isUrdu
+      ? 'پیغام میں ممنوع مواد ہے۔'
+      : 'That message contains restricted content.';
+  String get safetyLinkBlockedLabel =>
+      isUrdu ? 'یہ لنک اجازت نہیں۔' : 'That link is not allowed.';
   String get friendsTitle => isUrdu ? 'دوست' : 'Friends';
   String get friendsTab => isUrdu ? 'دوست' : 'Friends';
   String get requestsTab => isUrdu ? 'درخواستیں' : 'Requests';
