@@ -18,6 +18,7 @@ import 'package:student_app/features/qa/presentation/screenshot_senior_home_page
 import 'package:student_app/features/qa/presentation/screenshot_senior_learning_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_games_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_profile_page.dart';
+import 'package:student_app/features/qa/presentation/screenshot_senior_communities_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -149,6 +150,10 @@ GoRouter createStudentRouter({
         builder: (context, state) => ScreenshotSeniorProfilePage(
           repository: profileRepository,
         ),
+      ),
+      GoRoute(
+        path: '/screenshot/senior_communities',
+        builder: (context, state) => const ScreenshotSeniorCommunitiesPage(),
       ),
       GoRoute(
         path: '/sign-in',

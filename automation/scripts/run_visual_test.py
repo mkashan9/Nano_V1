@@ -90,6 +90,15 @@ SCREENS = {
             "test/screenshot_senior_profile_test.dart",
         ),
     },
+    "senior_communities": {
+        "module": "VIS-09",
+        "folder": "senior_communities",
+        "reference": ("four_12", "Communities.jpeg"),
+        "standin": "render_vis09_layout_standin.py",
+        "tests": (
+            "test/screenshot_senior_communities_test.dart",
+        ),
+    },
 }
 
 
@@ -135,7 +144,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--screen",
-        default="senior_profile",
+        default="senior_communities",
         choices=sorted(SCREENS),
     )
     parser.add_argument(
