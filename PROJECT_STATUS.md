@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** COM-02 Community Creation and Roles
-- **Current status:** DONE (owner approved)
-- **Current branch:** module/COM-02-community-creation
+- **Current module:** COM-03 Join Requests and Invitations
+- **Current status:** USER_TEST
+- **Current branch:** module/COM-03-join-invitations
 
 ## Release progress
 
-- R9: COM-01..COM-02 DONE
+- R9: COM-01..COM-02 DONE; COM-03 in USER_TEST
 
 ## Owner next step
 
-NEXT starts COM-03 Join Requests and Invitations.
+Manual test COM-03 (`docs/modules/COM-03/MANUAL_TEST.md`), then NEXT / FIX / STATUS.

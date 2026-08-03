@@ -3,7 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// COM-01/02 Communities hub: My + Discover + create + roles.
+/// COM-01..03 Communities hub: My + Discover + create + join/invite + roles.
 class CommunitiesHubPage extends StatefulWidget {
   const CommunitiesHubPage({
     super.key,
@@ -97,6 +97,23 @@ class _CommunitiesHubPageState extends State<CommunitiesHubPage>
     );
   }
 
+  Future<void> _redeem() async {
+    final joined = await showModalBottomSheet<CommunityDetail>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => _RedeemInviteSheet(
+        repository: widget.repository,
+      ),
+    );
+    if (joined == null || !mounted) return;
+    await _load();
+    _tabs.animateTo(0);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(joined.name)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -114,6 +131,10 @@ class _CommunitiesHubPageState extends State<CommunitiesHubPage>
                   copy.communities,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ),
+              TextButton(
+                onPressed: _redeem,
+                child: Text(copy.communitiesRedeemTitle),
               ),
               FilledButton.icon(
                 onPressed: _create,
@@ -350,7 +371,81 @@ class _CreateCommunitySheetState extends State<_CreateCommunitySheet> {
   }
 }
 
-class _CommunityDetailSheet extends StatelessWidget {
+class _RedeemInviteSheet extends StatefulWidget {
+  const _RedeemInviteSheet({required this.repository});
+
+  final CommunityDiscoveryRepository repository;
+
+  @override
+  State<_RedeemInviteSheet> createState() => _RedeemInviteSheetState();
+}
+
+class _RedeemInviteSheetState extends State<_RedeemInviteSheet> {
+  final _code = TextEditingController();
+  var _busy = false;
+
+  @override
+  void dispose() {
+    _code.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    setState(() => _busy = true);
+    try {
+      final joined = await widget.repository.redeemInvite(_code.text);
+      if (!mounted) return;
+      Navigator.pop(context, joined);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    final bottom = MediaQuery.viewInsetsOf(context).bottom;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        NanoSpacing.lg,
+        NanoSpacing.lg,
+        NanoSpacing.lg,
+        NanoSpacing.lg + bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            copy.communitiesRedeemTitle,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: NanoSpacing.md),
+          TextField(
+            controller: _code,
+            decoration: InputDecoration(labelText: copy.communitiesRedeemHint),
+            textCapitalization: TextCapitalization.characters,
+            enabled: !_busy,
+          ),
+          const SizedBox(height: NanoSpacing.lg),
+          FilledButton(
+            onPressed: _busy ? null : _submit,
+            child: Text(copy.communitiesJoin),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommunityDetailSheet extends StatefulWidget {
   const _CommunityDetailSheet({
     required this.detail,
     required this.repository,
@@ -360,6 +455,84 @@ class _CommunityDetailSheet extends StatelessWidget {
   final CommunityDetail detail;
   final CommunityDiscoveryRepository repository;
   final VoidCallback onChanged;
+
+  @override
+  State<_CommunityDetailSheet> createState() => _CommunityDetailSheetState();
+}
+
+class _CommunityDetailSheetState extends State<_CommunityDetailSheet> {
+  late CommunityDetail _detail;
+  var _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _detail = widget.detail;
+  }
+
+  Future<void> _join() async {
+    setState(() => _busy = true);
+    try {
+      final next = await widget.repository.joinCommunity(_detail.id);
+      if (!mounted) return;
+      setState(() => _detail = next);
+      widget.onChanged();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _leave() async {
+    setState(() => _busy = true);
+    try {
+      await widget.repository.leaveCommunity(_detail.id);
+      if (!mounted) return;
+      widget.onChanged();
+      Navigator.pop(context);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _invite() async {
+    setState(() => _busy = true);
+    try {
+      final invite = await widget.repository.createInvite(_detail.id);
+      if (!mounted) return;
+      final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+          const NanoCopy(NanoAppLocale.en);
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(copy.communitiesInviteCreated),
+          content: SelectableText(invite.code),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(copy.cancelLabel),
+            ),
+          ],
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -373,14 +546,18 @@ class _CommunityDetailSheet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(detail.name, style: Theme.of(context).textTheme.titleLarge),
+              Text(_detail.name, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: NanoSpacing.xs),
-              Text(detail.summary),
+              Text(_detail.summary),
               const SizedBox(height: NanoSpacing.sm),
-              Text(copy.communitiesMemberCount(detail.memberCount)),
-              if (detail.myRole != null) ...[
+              Text(copy.communitiesMemberCount(_detail.memberCount)),
+              if (_detail.myRole != null) ...[
                 const SizedBox(height: NanoSpacing.xs),
-                Text(copy.communitiesYourRole(detail.myRole!)),
+                Text(copy.communitiesYourRole(_detail.myRole!)),
+              ],
+              if (_detail.isPending) ...[
+                const SizedBox(height: NanoSpacing.sm),
+                Text(copy.communitiesPending),
               ],
               const SizedBox(height: NanoSpacing.lg),
               Text(
@@ -389,30 +566,71 @@ class _CommunityDetailSheet extends StatelessWidget {
               ),
               const SizedBox(height: NanoSpacing.xs),
               Text(
-                detail.rulesText.isEmpty
+                _detail.rulesText.isEmpty
                     ? copy.communitiesRulesEmpty
-                    : detail.rulesText,
+                    : _detail.rulesText,
               ),
-              if (detail.canManageRoles) ...[
+              if (_detail.canJoin) ...[
                 const SizedBox(height: NanoSpacing.lg),
+                FilledButton(
+                  onPressed: _busy ? null : _join,
+                  child: Text(
+                    _detail.visibility == CommunityVisibility.private
+                        ? copy.communitiesRequestJoin
+                        : copy.communitiesJoin,
+                  ),
+                ),
+              ],
+              if (_detail.canLeave) ...[
+                const SizedBox(height: NanoSpacing.sm),
                 OutlinedButton(
-                  onPressed: () async {
-                    await showModalBottomSheet<void>(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (context) => _MembersSheet(
-                        communityId: detail.id,
-                        repository: repository,
-                        callerRole: detail.myRole ?? 'member',
-                      ),
-                    );
-                    onChanged();
-                  },
+                  onPressed: _busy ? null : _leave,
+                  child: Text(copy.communitiesLeave),
+                ),
+              ],
+              if (_detail.canInvite) ...[
+                const SizedBox(height: NanoSpacing.sm),
+                OutlinedButton(
+                  onPressed: _busy ? null : _invite,
+                  child: Text(copy.communitiesInvite),
+                ),
+              ],
+              if (_detail.canManageRoles) ...[
+                const SizedBox(height: NanoSpacing.sm),
+                OutlinedButton(
+                  onPressed: _busy
+                      ? null
+                      : () async {
+                          await showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => _JoinRequestsSheet(
+                              communityId: _detail.id,
+                              repository: widget.repository,
+                            ),
+                          );
+                          widget.onChanged();
+                        },
+                  child: Text(copy.communitiesJoinRequests),
+                ),
+                const SizedBox(height: NanoSpacing.sm),
+                OutlinedButton(
+                  onPressed: _busy
+                      ? null
+                      : () async {
+                          await showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => _MembersSheet(
+                              communityId: _detail.id,
+                              repository: widget.repository,
+                              callerRole: _detail.myRole ?? 'member',
+                            ),
+                          );
+                          widget.onChanged();
+                        },
                   child: Text(copy.communitiesManageRoles),
                 ),
-              ] else if (!detail.isMember) ...[
-                const SizedBox(height: NanoSpacing.lg),
-                Text(copy.communitiesJoinDeferredHint),
               ],
               const SizedBox(height: NanoSpacing.md),
               Align(
@@ -420,6 +638,127 @@ class _CommunityDetailSheet extends StatelessWidget {
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(copy.cancelLabel),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _JoinRequestsSheet extends StatefulWidget {
+  const _JoinRequestsSheet({
+    required this.communityId,
+    required this.repository,
+  });
+
+  final String communityId;
+  final CommunityDiscoveryRepository repository;
+
+  @override
+  State<_JoinRequestsSheet> createState() => _JoinRequestsSheetState();
+}
+
+class _JoinRequestsSheetState extends State<_JoinRequestsSheet> {
+  NanoViewState _state = const NanoViewLoading();
+  List<CommunityMember> _requests = const [];
+  var _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _state = const NanoViewLoading());
+    try {
+      final requests =
+          await widget.repository.listJoinRequests(widget.communityId);
+      if (!mounted) return;
+      setState(() {
+        _requests = requests;
+        _state = const NanoViewReady();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _state = const NanoViewError());
+    }
+  }
+
+  Future<void> _respond(CommunityMember request, bool accept) async {
+    setState(() => _busy = true);
+    try {
+      final next = await widget.repository.respondJoinRequest(
+        communityId: widget.communityId,
+        userId: request.userId,
+        accept: accept,
+      );
+      if (!mounted) return;
+      setState(() => _requests = next);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.55,
+        child: Padding(
+          padding: const EdgeInsets.all(NanoSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                copy.communitiesJoinRequests,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: NanoSpacing.md),
+              Expanded(
+                child: NanoViewStateHost(
+                  state: _state,
+                  onRetry: _load,
+                  child: _requests.isEmpty
+                      ? Center(child: Text(copy.communitiesNoJoinRequests))
+                      : ListView.separated(
+                          itemCount: _requests.length,
+                          separatorBuilder: (_, __) => const Divider(height: 1),
+                          itemBuilder: (context, index) {
+                            final request = _requests[index];
+                            return ListTile(
+                              title: Text(request.displayName),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextButton(
+                                    onPressed: _busy
+                                        ? null
+                                        : () => _respond(request, true),
+                                    child: Text(copy.communitiesAccept),
+                                  ),
+                                  TextButton(
+                                    onPressed: _busy
+                                        ? null
+                                        : () => _respond(request, false),
+                                    child: Text(copy.communitiesReject),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ),
             ],
