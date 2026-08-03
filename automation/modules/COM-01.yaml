@@ -1,7 +1,7 @@
-id: COM-01
+﻿id: COM-01
 name: "Community Discovery"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-04
   - SAFE-01
