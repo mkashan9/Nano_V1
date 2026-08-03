@@ -299,6 +299,7 @@ class StudentLearningTab extends StatelessWidget {
     this.learnerQuizRepository,
     this.quizAttemptRepository,
     this.inboxRepository,
+    this.accessRepository,
     this.companionName,
     this.learnerDisplayName,
     this.shareCards,
@@ -314,6 +315,7 @@ class StudentLearningTab extends StatelessWidget {
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
   final StudentNotificationInboxRepository? inboxRepository;
+  final IndependentAccessRepository? accessRepository;
   final String? companionName;
   final String? learnerDisplayName;
   final ShareCardRepository? shareCards;
@@ -416,34 +418,14 @@ class StudentLearningTab extends StatelessWidget {
       if (repository == null) {
         return const SeniorHomeFoundation();
       }
-      return SeniorHomePage(
+      return _IndependentAwareSeniorHome(
         repository: repository,
-        learnerName: principal.displayName.isEmpty
-            ? StudentHomeFixtures.studentName
-            : principal.displayName,
-        userId: principal.userId ?? 'local',
+        principal: principal,
+        accessRepository: accessRepository,
         companionName: companionName ?? 'Nori',
-        flexEligible: NavCatalog.visibleFor(principal)
-            .any((dest) => dest.id == 'flex'),
-        independent: principal.role == AppRole.independentStudent,
         onOpenFlex: onOpenFlex,
-        onOpenSpotlight: (spotlight) {
-          final resolved =
-              DeepLinkResolver.resolve(principal, spotlight.deepLinkPath);
-          context.go(resolved.location);
-          if (resolved.fellBack && context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  '${spotlight.deepLinkPath} is unavailable — opened Home instead',
-                ),
-              ),
-            );
-          }
-        },
         onSubjectTap: (subject) => _openSubject(context, subject),
         onContinue: (_) => _continueLearning(context),
-        onOpenUpdate: () {},
         onNotifications: () => _openNotifications(context),
       );
     }
@@ -465,6 +447,95 @@ class StudentLearningTab extends StatelessWidget {
   }
 }
 
+/// IND-02: loads independent entitlements so Home can show a calm access banner.
+class _IndependentAwareSeniorHome extends StatefulWidget {
+  const _IndependentAwareSeniorHome({
+    required this.repository,
+    required this.principal,
+    required this.companionName,
+    this.accessRepository,
+    this.onOpenFlex,
+    this.onSubjectTap,
+    this.onContinue,
+    this.onNotifications,
+  });
+
+  final StudentHomeRepository repository;
+  final SessionPrincipal principal;
+  final String companionName;
+  final IndependentAccessRepository? accessRepository;
+  final VoidCallback? onOpenFlex;
+  final ValueChanged<LearningSubject>? onSubjectTap;
+  final ValueChanged<ContinueLearningItem>? onContinue;
+  final VoidCallback? onNotifications;
+
+  @override
+  State<_IndependentAwareSeniorHome> createState() =>
+      _IndependentAwareSeniorHomeState();
+}
+
+class _IndependentAwareSeniorHomeState
+    extends State<_IndependentAwareSeniorHome> {
+  IndependentEntitlements? _access;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccess();
+  }
+
+  Future<void> _loadAccess() async {
+    if (widget.principal.role != AppRole.independentStudent) return;
+    final repo =
+        widget.accessRepository ?? FakeIndependentAccessRepository();
+    try {
+      final access = await repo.loadAccess(
+        userId: widget.principal.userId ?? 'local',
+      );
+      if (!mounted) return;
+      setState(() => _access = access);
+    } catch (_) {
+      // Home still renders; banner is optional.
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final principal = widget.principal;
+    return SeniorHomePage(
+      repository: widget.repository,
+      learnerName: principal.displayName.isEmpty
+          ? StudentHomeFixtures.studentName
+          : principal.displayName,
+      userId: principal.userId ?? 'local',
+      companionName: widget.companionName,
+      flexEligible:
+          NavCatalog.visibleFor(principal).any((dest) => dest.id == 'flex'),
+      independent: principal.role == AppRole.independentStudent,
+      accessEntitlements: _access,
+      onOpenFlex: widget.onOpenFlex,
+      onOpenSpotlight: (spotlight) {
+        final resolved =
+            DeepLinkResolver.resolve(principal, spotlight.deepLinkPath);
+        context.go(resolved.location);
+        if (resolved.fellBack && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${spotlight.deepLinkPath} is unavailable — opened Home instead',
+              ),
+            ),
+          );
+        }
+      },
+      onSubjectTap: widget.onSubjectTap,
+      onContinue: widget.onContinue,
+      onOpenUpdate: () {},
+      onNotifications: widget.onNotifications,
+    );
+  }
+}
+
 class StudentGamesTab extends StatelessWidget {
   const StudentGamesTab({
     super.key,
@@ -472,6 +543,7 @@ class StudentGamesTab extends StatelessWidget {
     this.sessionRepository,
     this.assetRepository,
     this.localStorageRepository,
+    this.accessRepository,
     this.accessibility = AccessibilityPreferences.defaults,
     this.onAccessibilityChanged,
     this.independent = false,
@@ -483,6 +555,7 @@ class StudentGamesTab extends StatelessWidget {
   final GameSessionRepository? sessionRepository;
   final GameAssetRepository? assetRepository;
   final GameLocalStorageRepository? localStorageRepository;
+  final IndependentAccessRepository? accessRepository;
   final AccessibilityPreferences accessibility;
   final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
   final bool independent;
@@ -491,17 +564,134 @@ class StudentGamesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GamesCatalogPage(
-      repository: repository ?? FakeGameCatalogRepository(),
-      sessionRepository: sessionRepository ?? FakeGameSessionRepository(),
-      assetRepository: assetRepository ?? FakeGameAssetRepository(),
-      localStorageRepository:
-          localStorageRepository ?? FakeGameLocalStorageRepository(),
+    if (!independent) {
+      return GamesCatalogPage(
+        repository: repository ?? FakeGameCatalogRepository(),
+        sessionRepository: sessionRepository ?? FakeGameSessionRepository(),
+        assetRepository: assetRepository ?? FakeGameAssetRepository(),
+        localStorageRepository:
+            localStorageRepository ?? FakeGameLocalStorageRepository(),
+        accessibility: accessibility,
+        onAccessibilityChanged: onAccessibilityChanged,
+        independent: independent,
+        gradeLevel: gradeLevel,
+        junior: junior,
+      );
+    }
+    return _AccessGatedGames(
+      catalogRepository: repository,
+      sessionRepository: sessionRepository,
+      assetRepository: assetRepository,
+      localStorageRepository: localStorageRepository,
+      accessRepository: accessRepository,
       accessibility: accessibility,
       onAccessibilityChanged: onAccessibilityChanged,
-      independent: independent,
       gradeLevel: gradeLevel,
       junior: junior,
+    );
+  }
+}
+
+class _AccessGatedGames extends StatefulWidget {
+  const _AccessGatedGames({
+    this.catalogRepository,
+    this.sessionRepository,
+    this.assetRepository,
+    this.localStorageRepository,
+    this.accessRepository,
+    this.accessibility = AccessibilityPreferences.defaults,
+    this.onAccessibilityChanged,
+    this.gradeLevel,
+    this.junior = false,
+  });
+
+  final GameCatalogRepository? catalogRepository;
+  final GameSessionRepository? sessionRepository;
+  final GameAssetRepository? assetRepository;
+  final GameLocalStorageRepository? localStorageRepository;
+  final IndependentAccessRepository? accessRepository;
+  final AccessibilityPreferences accessibility;
+  final ValueChanged<AccessibilityPreferences>? onAccessibilityChanged;
+  final int? gradeLevel;
+  final bool junior;
+
+  @override
+  State<_AccessGatedGames> createState() => _AccessGatedGamesState();
+}
+
+class _AccessGatedGamesState extends State<_AccessGatedGames> {
+  NanoViewState _state = const NanoViewLoading();
+  IndependentEntitlements? _access;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _state = const NanoViewLoading());
+    try {
+      final repo =
+          widget.accessRepository ?? FakeIndependentAccessRepository();
+      final access = await repo.loadAccess(userId: 'local');
+      if (!mounted) return;
+      setState(() {
+        _access = access;
+        _state = const NanoViewReady();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _state = const NanoViewError());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    final access = _access;
+    return NanoViewStateHost(
+      state: _state,
+      onRetry: _load,
+      child: access == null
+          ? const SizedBox.shrink()
+          : !access.allows(IndependentFeature.games)
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(NanoSpacing.lg),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          copy.accessGamesBlocked,
+                          style: Theme.of(context).textTheme.titleLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: NanoSpacing.sm),
+                        Text(
+                          copy.accessLearningAllowed,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : GamesCatalogPage(
+                  repository:
+                      widget.catalogRepository ?? FakeGameCatalogRepository(),
+                  sessionRepository: widget.sessionRepository ??
+                      FakeGameSessionRepository(),
+                  assetRepository:
+                      widget.assetRepository ?? FakeGameAssetRepository(),
+                  localStorageRepository: widget.localStorageRepository ??
+                      FakeGameLocalStorageRepository(),
+                  accessibility: widget.accessibility,
+                  onAccessibilityChanged: widget.onAccessibilityChanged,
+                  independent: true,
+                  gradeLevel: widget.gradeLevel,
+                  junior: widget.junior,
+                ),
     );
   }
 }
@@ -523,6 +713,7 @@ class StudentFlexTab extends StatelessWidget {
   final StudentClassroomRepository? classroomRepository;
   final bool flexEligible;
   final FlexHubSectionKind? initialSection;
+
 
   @override
   Widget build(BuildContext context) {
@@ -573,6 +764,7 @@ class StudentProfileTab extends StatelessWidget {
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
+    this.accessRepository,
   });
 
   final SessionPrincipal principal;
@@ -588,6 +780,7 @@ class StudentProfileTab extends StatelessWidget {
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
+  final IndependentAccessRepository? accessRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -617,6 +810,7 @@ class StudentProfileTab extends StatelessWidget {
       socialIdentityRepository: socialIdentityRepository,
       friendGraphRepository: friendGraphRepository,
       safetyReportRepository: safetyReportRepository,
+      accessRepository: accessRepository,
       onOpenAccessibility: onAccessibilityChanged == null
           ? null
           : () {

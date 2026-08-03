@@ -1,6 +1,7 @@
 import '../companion/companion_mode.dart';
 import '../game/game_assets.dart';
 import '../home/student_home_summary.dart';
+import '../independent/independent_access.dart';
 import '../media/generated_asset.dart';
 import '../social/safety_report.dart';
 import '../teacher/teacher_attendance.dart';
@@ -1681,6 +1682,22 @@ class NanoCopy {
   String get accessWarning => isUrdu
       ? 'آپ کی رسائی جلد ختم ہو رہی ہے۔ سیکھنا جاری رکھیں۔'
       : 'Your access is ending soon. You can keep learning for now.';
+  String get accessReducedWarning => isUrdu
+      ? 'آپ کی رسائی محدود ہے۔ سیکھنا کھلا ہے؛ کھیل بعد میں۔'
+      : 'Access is reduced. Learning stays open; games are paused for now.';
+  String get accessStatusLabel => isUrdu ? 'رسائی' : 'Access';
+  String accessTierLabel(IndependentAccessTier tier) => switch (tier) {
+        IndependentAccessTier.full => isUrdu ? 'مکمل' : 'Full access',
+        IndependentAccessTier.limited =>
+          isUrdu ? 'جلد ختم' : 'Ending soon',
+        IndependentAccessTier.restricted =>
+          isUrdu ? 'محدود' : 'Reduced access',
+      };
+  String get accessGamesBlocked => isUrdu
+      ? 'کھیل اس رسائی میں دستیاب نہیں'
+      : 'Games are not included in this access level';
+  String get accessLearningAllowed =>
+      isUrdu ? 'سیکھنا جاری رکھ سکتے ہیں' : 'You can keep learning';
 
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';

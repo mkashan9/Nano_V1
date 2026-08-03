@@ -59,6 +59,7 @@ GoRouter createStudentRouter({
   CommunityDiscoveryRepository? communityDiscoveryRepository,
   CommunityMessagingRepository? communityMessagingRepository,
   StudentNotificationInboxRepository? inboxRepository,
+  IndependentAccessRepository? accessRepository,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -252,6 +253,7 @@ GoRouter createStudentRouter({
                     communityDiscoveryRepository: communityDiscoveryRepository,
                     communityMessagingRepository: communityMessagingRepository,
                     inboxRepository: inboxRepository,
+                    accessRepository: accessRepository,
                     onboardingProgress: onboardingProgress,
                   ),
                 ),
@@ -298,6 +300,7 @@ Widget _pageFor(
   CommunityDiscoveryRepository? communityDiscoveryRepository,
   CommunityMessagingRepository? communityMessagingRepository,
   StudentNotificationInboxRepository? inboxRepository,
+  IndependentAccessRepository? accessRepository,
   OnboardingProgress? onboardingProgress,
 }) {
   return switch (id) {
@@ -311,6 +314,7 @@ Widget _pageFor(
         learnerQuizRepository: learnerQuizRepository,
         quizAttemptRepository: quizAttemptRepository,
         inboxRepository: inboxRepository,
+        accessRepository: accessRepository,
         companionName: companionName,
         learnerDisplayName: principal.displayName,
         shareCards: shareCards,
@@ -323,6 +327,7 @@ Widget _pageFor(
         sessionRepository: gameSessionRepository,
         assetRepository: gameAssetRepository,
         localStorageRepository: gameLocalStorageRepository,
+        accessRepository: accessRepository,
         accessibility: accessibility,
         onAccessibilityChanged: onAccessibilityChanged,
         independent: principal.role == AppRole.independentStudent,
@@ -354,6 +359,7 @@ Widget _pageFor(
         socialIdentityRepository: socialIdentityRepository,
         friendGraphRepository: friendGraphRepository,
         safetyReportRepository: safetyReportRepository,
+        accessRepository: accessRepository,
       ),
     _ => Center(child: Text('Unknown tab: $id')),
   };
