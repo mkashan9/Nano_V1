@@ -3,6 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/league/presentation/league_board_page.dart';
+import 'package:student_app/features/qa/presentation/performance_audit_page.dart';
 import 'package:student_app/features/notifications/presentation/notification_preferences_page.dart';
 import 'package:student_app/features/parent/presentation/guardian_link_page.dart';
 import 'package:student_app/features/parent/presentation/parent_guidance_page.dart';
@@ -333,6 +334,14 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     );
   }
 
+  void _openPerformanceAudit() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const PerformanceAuditPage(),
+      ),
+    );
+  }
+
   Future<void> _setPrivacy(PrivacySettings next) async {
     setState(() => _privacy = next);
     try {
@@ -510,6 +519,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               onOpenParentGuidance: _openParentGuidance,
               onOpenGuardianLinks: _openGuardianLinks,
               onOpenNotificationPreferences: _openNotificationPreferences,
+              onOpenPerformanceAudit: _openPerformanceAudit,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
               safetyReportRepository: widget.safetyReportRepository,
@@ -555,6 +565,7 @@ class _ProfileBody extends StatelessWidget {
     this.onOpenParentGuidance,
     this.onOpenGuardianLinks,
     this.onOpenNotificationPreferences,
+    this.onOpenPerformanceAudit,
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
@@ -595,6 +606,7 @@ class _ProfileBody extends StatelessWidget {
   final VoidCallback? onOpenParentGuidance;
   final VoidCallback? onOpenGuardianLinks;
   final VoidCallback? onOpenNotificationPreferences;
+  final VoidCallback? onOpenPerformanceAudit;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
@@ -744,6 +756,14 @@ class _ProfileBody extends StatelessWidget {
           subtitle: Text(copy.notificationPrefsHint),
           trailing: const Icon(Icons.chevron_right),
           onTap: onOpenNotificationPreferences,
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.speed_outlined),
+          title: Text(copy.performanceAuditTitle),
+          subtitle: Text(copy.performanceAuditSubtitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onOpenPerformanceAudit,
         ),
         const SizedBox(height: NanoSpacing.lg),
         Text(copy.progressLabel, style: theme.textTheme.titleLarge),

@@ -999,6 +999,18 @@ class NanoCopy {
   String securityHardeningHasFailures(int count) => isUrdu
       ? '$count جانچ ناکام'
       : '$count check(s) failed';
+  String get performanceAuditTitle =>
+      isUrdu ? 'کارکردگی اور چھوٹی اسکرین' : 'Performance & small device';
+  String get performanceAuditSubtitle => isUrdu
+      ? '360px اسموک، کالم کثافت، اور ٹیکسٹ اسکیل۔'
+      : '360px smoke, column density, and text-scale budgets.';
+  String get performanceAuditAllPassed =>
+      isUrdu ? 'تمام کارکردگی جانچیں پاس' : 'All performance checks passed';
+  String performanceAuditHasFailures(int count) => isUrdu
+      ? '$count کارکردگی جانچ ناکام'
+      : '$count performance check(s) failed';
+  String get performanceAuditRun =>
+      isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
   String get analyticsPageTitle =>
       isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
   String get analyticsPageSubtitle => isUrdu
