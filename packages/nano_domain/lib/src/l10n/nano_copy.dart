@@ -1056,6 +1056,19 @@ class NanoCopy {
       isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
   String get bidiLayoutAuditOpenPreview =>
       isUrdu ? 'زبان کا پیش منظر کھولیں' : 'Open locale preview';
+  String get pilotReleaseTitle =>
+      isUrdu ? 'پائلٹ ریلیز تیاری' : 'Pilot release readiness';
+  String get pilotReleaseSubtitle => isUrdu
+      ? 'QA گیٹس، فیچر فلیگز، بیک اپ، اور پائلٹ اسکرپٹس۔'
+      : 'QA gates, feature flags, backup, and pilot scripts.';
+  String get pilotReleaseAllPassed =>
+      isUrdu ? 'تمام پائلٹ گیٹس پاس' : 'All pilot gates passed';
+  String pilotReleaseHasFailures(int count) => isUrdu
+      ? '$count پائلٹ گیٹ ناکام'
+      : '$count pilot gate(s) failed';
+  String get pilotReleaseRun =>
+      isUrdu ? 'دوبارہ چلائیں' : 'Re-run checklist';
+  String get pilot => isUrdu ? 'پائلٹ' : 'Pilot';
   String get analyticsPageTitle =>
       isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
   String get analyticsPageSubtitle => isUrdu
@@ -2037,6 +2050,7 @@ class NanoCopy {
         'communityControls' => platformCommunitiesTitle,
         'analytics' => analytics,
         'audit' => audit,
+        'pilot' => pilot,
         _ => destinationId,
       };
 

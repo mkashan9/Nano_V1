@@ -1,7 +1,7 @@
 id: QA-06
 name: "Pilot Release Preparation"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - QA-01
   - QA-02
@@ -9,11 +9,8 @@ dependencies:
   - QA-04
   - QA-05
 applications:
-  - student_app
-  - teacher_app
   - admin_web
   - packages
-  - supabase
   - docs
   - automation
 allowed_paths:
@@ -26,6 +23,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/admin_web/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -36,16 +36,22 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Pilot readiness checklist is executable for superadmin
+  - QA-01..QA-05 gates are represented on the checklist
+  - Ops gates cover flags, kill switch, RLS, backup, and pilot scripts
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/pilot_release_test.dart
+  - packages/nano_data/test/pilot_release_repository_test.dart
+  - apps/admin_web/test/pilot_release_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Superadmin → Pilot → all pilot gates passed
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true
