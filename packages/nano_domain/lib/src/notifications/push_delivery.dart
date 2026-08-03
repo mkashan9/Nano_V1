@@ -70,6 +70,8 @@ enum PushDeliveryOutcome {
   duplicated,
   noActiveToken,
   rejected,
+  suppressedMuted,
+  heldForDigest,
 }
 
 class PushDeliveryResult {

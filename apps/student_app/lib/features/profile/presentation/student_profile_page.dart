@@ -3,6 +3,7 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/league/presentation/league_board_page.dart';
+import 'package:student_app/features/notifications/presentation/notification_preferences_page.dart';
 import 'package:student_app/features/parent/presentation/guardian_link_page.dart';
 import 'package:student_app/features/parent/presentation/parent_guidance_page.dart';
 import 'package:student_app/features/profile/presentation/social_identity_section.dart';
@@ -34,6 +35,8 @@ class StudentProfilePage extends StatefulWidget {
     this.onSchoolLinked,
     this.parentGuidanceRepository,
     this.guardianLinkRepository,
+    this.notificationPreferencesRepository,
+    this.pushDeliveryRepository,
   });
 
   final StudentProfileRepository repository;
@@ -77,6 +80,10 @@ class StudentProfilePage extends StatefulWidget {
 
   /// PAR-03: guardian invite / link foundations.
   final GuardianLinkRepository? guardianLinkRepository;
+
+  /// NOT-02: quiet hours / category mute / digest.
+  final NotificationPreferencesRepository? notificationPreferencesRepository;
+  final PushDeliveryRepository? pushDeliveryRepository;
 
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
@@ -310,6 +317,22 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
     );
   }
 
+  void _openNotificationPreferences() {
+    final inbox = FakeStudentNotificationInboxRepository();
+    final push = widget.pushDeliveryRepository ??
+        FakePushDeliveryRepository(inbox: inbox);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => NotificationPreferencesPage(
+          preferencesRepository: widget.notificationPreferencesRepository ??
+              FakeNotificationPreferencesRepository(),
+          userId: widget.principal.userId ?? 'local-student',
+          pushDelivery: push,
+        ),
+      ),
+    );
+  }
+
   Future<void> _setPrivacy(PrivacySettings next) async {
     setState(() => _privacy = next);
     try {
@@ -486,6 +509,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                   : _confirmSchoolLink,
               onOpenParentGuidance: _openParentGuidance,
               onOpenGuardianLinks: _openGuardianLinks,
+              onOpenNotificationPreferences: _openNotificationPreferences,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
               safetyReportRepository: widget.safetyReportRepository,
@@ -530,6 +554,7 @@ class _ProfileBody extends StatelessWidget {
     this.onConfirmSchoolLink,
     this.onOpenParentGuidance,
     this.onOpenGuardianLinks,
+    this.onOpenNotificationPreferences,
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
@@ -569,6 +594,7 @@ class _ProfileBody extends StatelessWidget {
   final VoidCallback? onConfirmSchoolLink;
   final VoidCallback? onOpenParentGuidance;
   final VoidCallback? onOpenGuardianLinks;
+  final VoidCallback? onOpenNotificationPreferences;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
@@ -710,6 +736,14 @@ class _ProfileBody extends StatelessWidget {
           subtitle: Text(copy.guardianLinkHint),
           trailing: const Icon(Icons.chevron_right),
           onTap: onOpenGuardianLinks,
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.notifications_active_outlined),
+          title: Text(copy.notificationPrefsTitle),
+          subtitle: Text(copy.notificationPrefsHint),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onOpenNotificationPreferences,
         ),
         const SizedBox(height: NanoSpacing.lg),
         Text(copy.progressLabel, style: theme.textTheme.titleLarge),

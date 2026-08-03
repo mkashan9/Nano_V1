@@ -1143,6 +1143,30 @@ class NanoCopy {
       : 'Duplicate push ignored';
   String get inboxRegisterToken =>
       isUrdu ? 'ڈیوائس ٹوکن رجسٹر' : 'Register device token';
+  String get notificationPrefsTitle =>
+      isUrdu ? 'نوٹیفیکیشن ترجیحات' : 'Notification preferences';
+  String get notificationPrefsHint => isUrdu
+      ? 'خاموش اوقات، زمرے، اور ڈائجسٹ۔'
+      : 'Quiet hours, categories, and digest.';
+  String get notificationPrefsQuiet =>
+      isUrdu ? 'خاموش اوقات' : 'Quiet hours';
+  String get notificationPrefsQuietWindow =>
+      isUrdu ? 'رات 9 بجے — صبح 7 بجے' : '9:00 PM – 7:00 AM';
+  String get notificationPrefsDigest =>
+      isUrdu ? 'ڈائجسٹ میں جمع کریں' : 'Bundle into digest';
+  String get notificationPrefsCategories =>
+      isUrdu ? 'زمرے خاموش کریں' : 'Mute categories';
+  String get notificationPrefsMandatoryHint => isUrdu
+      ? 'اکاؤنٹ اور سیکیورٹی نوٹسز خاموش نہیں ہو سکتے۔'
+      : 'Account and security notices cannot be muted.';
+  String get notificationPrefsFlushDigest =>
+      isUrdu ? 'ڈائجسٹ بھیجیں' : 'Flush digest';
+  String get notificationPrefsSaved =>
+      isUrdu ? 'ترجیحات محفوظ ہو گئیں' : 'Preferences saved';
+  String get inboxPushSuppressed =>
+      isUrdu ? 'زمرہ خاموش ہے' : 'Category muted';
+  String get inboxPushHeldDigest =>
+      isUrdu ? 'ڈائجسٹ کے لیے رکھا گیا' : 'Held for digest';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>
       isUrdu ? '$percent% مکمل' : '$percent% done';

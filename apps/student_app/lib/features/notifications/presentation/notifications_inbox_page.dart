@@ -139,6 +139,8 @@ class _NotificationsInboxPageState extends State<NotificationsInboxPage> {
         PushDeliveryOutcome.duplicated => copy.inboxPushDuplicated,
         PushDeliveryOutcome.noActiveToken => 'No active device token',
         PushDeliveryOutcome.rejected => 'Push rejected',
+        PushDeliveryOutcome.suppressedMuted => copy.inboxPushSuppressed,
+        PushDeliveryOutcome.heldForDigest => copy.inboxPushHeldDigest,
       };
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
