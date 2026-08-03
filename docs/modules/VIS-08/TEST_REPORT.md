@@ -1,6 +1,6 @@
 # VIS-08 test report
 
-Status: **USER_TEST** — await owner review.
+Status: **DONE** — owner approved.
 
 ## Automated
 

@@ -160,8 +160,8 @@ references:
     aspect_ratio: 0.463
     device_type: phone
     module_id: VIS-08
-    implementation_status: IN_PROGRESS
-    manual_review_status: PENDING
+    implementation_status: DONE
+    manual_review_status: APPROVED
     main_layout_regions:
       - header
       - streak
