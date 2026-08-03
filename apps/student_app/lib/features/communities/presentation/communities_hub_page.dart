@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/communities/presentation/community_chat_page.dart';
 
-/// COM-01..03 Communities hub: My + Discover + create + join/invite + roles.
+/// COM-01..04 Communities hub: discovery, join, roles, and chat entry.
 class CommunitiesHubPage extends StatefulWidget {
   const CommunitiesHubPage({
     super.key,
     required this.repository,
+    this.messagingRepository,
   });
 
   final CommunityDiscoveryRepository repository;
+  final CommunityMessagingRepository? messagingRepository;
 
   @override
   State<CommunitiesHubPage> createState() => _CommunitiesHubPageState();
@@ -69,6 +72,8 @@ class _CommunitiesHubPageState extends State<CommunitiesHubPage>
         builder: (context) => _CommunityDetailSheet(
           detail: detail,
           repository: widget.repository,
+          messagingRepository: widget.messagingRepository ??
+              FakeCommunityMessagingRepository(),
           onChanged: _load,
         ),
       );
@@ -449,11 +454,13 @@ class _CommunityDetailSheet extends StatefulWidget {
   const _CommunityDetailSheet({
     required this.detail,
     required this.repository,
+    required this.messagingRepository,
     required this.onChanged,
   });
 
   final CommunityDetail detail;
   final CommunityDiscoveryRepository repository;
+  final CommunityMessagingRepository messagingRepository;
   final VoidCallback onChanged;
 
   @override
@@ -570,6 +577,28 @@ class _CommunityDetailSheetState extends State<_CommunityDetailSheet> {
                     ? copy.communitiesRulesEmpty
                     : _detail.rulesText,
               ),
+              if (_detail.isMember) ...[
+                const SizedBox(height: NanoSpacing.lg),
+                FilledButton(
+                  onPressed: _busy
+                      ? null
+                      : () {
+                          Navigator.pop(context);
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (context) => CommunityChatPage(
+                                communityId: _detail.id,
+                                communityName: _detail.name,
+                                messagingRepository:
+                                    widget.messagingRepository,
+                                discoveryRepository: widget.repository,
+                              ),
+                            ),
+                          );
+                        },
+                  child: Text(copy.communitiesOpenChat),
+                ),
+              ],
               if (_detail.canJoin) ...[
                 const SizedBox(height: NanoSpacing.lg),
                 FilledButton(
