@@ -1,16 +1,13 @@
 id: ANA-01
 name: "Product Analytics and School Health"
 release: R10
-status: BACKLOG
+status: DONE
 dependencies:
   - ADM-08
   - SCH-07
 applications:
-  - student_app
-  - teacher_app
   - admin_web
   - packages
-  - supabase
   - docs
   - automation
 allowed_paths:
@@ -23,6 +20,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/admin_web/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -33,16 +33,24 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Documented analytics event taxonomy is visible and privacy-safe
+  - School health score is computed from documented inputs
+  - Platform analytics and school reports show health without PII
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/school_health_test.dart
+  - packages/nano_data/test/analytics_health_repository_test.dart
+  - apps/admin_web/test/platform_analytics_page_test.dart
+  - apps/admin_web/test/school_reports_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Superadmin Analytics → school health + taxonomy
+  - School admin Reports → school health card
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

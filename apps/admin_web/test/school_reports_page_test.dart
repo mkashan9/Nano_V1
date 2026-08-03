@@ -25,6 +25,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Reports'), findsWidgets);
+    expect(find.text('School health'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Ms. Khan'), 400);
     expect(find.text('Ms. Khan'), findsOneWidget);
     expect(find.text('Assignment coverage'), findsOneWidget);
     expect(find.text('Teacher workload'), findsOneWidget);

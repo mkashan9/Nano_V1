@@ -1,15 +1,15 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** NOT-02 Quiet Hours, Category Controls, and Digest
+- **Current module:** ANA-01 Product Analytics and School Health
 - **Current status:** DONE (owner approved)
-- **Current branch:** module/NOT-02-quiet-digest
+- **Current branch:** module/ANA-01-analytics-health
 
 ## Release progress
 
 - R9: COM-01..COM-06 DONE
 - R2: STU-06 DONE
-- R10: IND-01..IND-04 DONE; PAR-01..PAR-03 DONE; NOT-01..NOT-02 DONE
+- R10: IND..PAR..NOT DONE; ANA-01 DONE
 
 ## Owner next step
 
-NEXT starts ANA-01 Product Analytics and School Health.
+NEXT starts QA-01 Security Hardening.

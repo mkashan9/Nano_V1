@@ -26,6 +26,9 @@ void main() {
 
     expect(find.text('Platform analytics'), findsOneWidget);
     expect(find.text('Active schools'), findsOneWidget);
+    expect(find.text('School health scores'), findsOneWidget);
+    expect(find.text('Event taxonomy'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Last 7 days'), 400);
     expect(find.text('Last 7 days'), findsOneWidget);
   });
 }

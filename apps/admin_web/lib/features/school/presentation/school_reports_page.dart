@@ -3,14 +3,16 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// SCH-07 Reports destination: privacy-safe school operational summary.
+/// SCH-07 Reports destination + ANA-01 school health score.
 class SchoolReportsPage extends StatefulWidget {
   const SchoolReportsPage({
     super.key,
     required this.repository,
+    this.healthRepository,
   });
 
   final SchoolReportsRepository repository;
+  final AnalyticsHealthRepository? healthRepository;
 
   @override
   State<SchoolReportsPage> createState() => _SchoolReportsPageState();
@@ -19,10 +21,13 @@ class SchoolReportsPage extends StatefulWidget {
 class _SchoolReportsPageState extends State<SchoolReportsPage> {
   NanoViewState _state = const NanoViewLoading();
   SchoolReportsSummary? _summary;
+  SchoolHealthSnapshot? _health;
+  late final AnalyticsHealthRepository _healthRepo;
 
   @override
   void initState() {
     super.initState();
+    _healthRepo = widget.healthRepository ?? FakeAnalyticsHealthRepository();
     _load();
   }
 
@@ -30,9 +35,13 @@ class _SchoolReportsPageState extends State<SchoolReportsPage> {
     setState(() => _state = const NanoViewLoading());
     try {
       final summary = await widget.repository.load();
+      final health = await _healthRepo.loadSchoolHealth(
+        schoolId: summary.schoolId,
+      );
       if (!mounted) return;
       setState(() {
         _summary = summary;
+        _health = health;
         _state = const NanoViewReady();
       });
     } catch (_) {
@@ -76,6 +85,21 @@ class _SchoolReportsPageState extends State<SchoolReportsPage> {
                     ),
                   ],
                   const SizedBox(height: 24),
+                  if (_health != null) ...[
+                    Text(
+                      copy.reportsHealthTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.monitor_heart_outlined),
+                      title: Text(
+                        '${copy.analyticsHealthScoreLabel} ${_health!.health.score}',
+                      ),
+                      subtitle: Text(_health!.health.band.name),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
