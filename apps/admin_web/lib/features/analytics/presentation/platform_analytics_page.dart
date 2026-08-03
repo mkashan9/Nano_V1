@@ -4,14 +4,16 @@ import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// ADM-08 Analytics hub: safe platform aggregates and 7-day activity.
+/// ADM-08 Analytics hub + ANA-01 school health / event taxonomy.
 class PlatformAnalyticsPage extends StatefulWidget {
   const PlatformAnalyticsPage({
     super.key,
     required this.repository,
+    this.healthRepository,
   });
 
   final PlatformAnalyticsRepository repository;
+  final AnalyticsHealthRepository? healthRepository;
 
   @override
   State<PlatformAnalyticsPage> createState() => _PlatformAnalyticsPageState();
@@ -20,10 +22,14 @@ class PlatformAnalyticsPage extends StatefulWidget {
 class _PlatformAnalyticsPageState extends State<PlatformAnalyticsPage> {
   NanoViewState _state = const NanoViewLoading();
   PlatformAnalytics? _analytics;
+  List<SchoolHealthSnapshot> _schoolHealth = const [];
+  List<AnalyticsEventDefinition> _taxonomy = const [];
+  late final AnalyticsHealthRepository _health;
 
   @override
   void initState() {
     super.initState();
+    _health = widget.healthRepository ?? FakeAnalyticsHealthRepository();
     _load();
   }
 
@@ -31,15 +37,27 @@ class _PlatformAnalyticsPageState extends State<PlatformAnalyticsPage> {
     setState(() => _state = const NanoViewLoading());
     try {
       final analytics = await widget.repository.load();
+      final schools = await _health.loadPlatformSchoolHealth();
+      final taxonomy = await _health.loadTaxonomy();
       if (!mounted) return;
       setState(() {
         _analytics = analytics;
+        _schoolHealth = schools;
+        _taxonomy = taxonomy;
         _state = const NanoViewReady();
       });
     } catch (_) {
       if (!mounted) return;
       setState(() => _state = const NanoViewError());
     }
+  }
+
+  String _bandLabel(NanoCopy copy, SchoolHealthBand band) {
+    return switch (band) {
+      SchoolHealthBand.healthy => copy.analyticsHealthBandHealthy,
+      SchoolHealthBand.watch => copy.analyticsHealthBandWatch,
+      SchoolHealthBand.critical => copy.analyticsHealthBandCritical,
+    };
   }
 
   @override
@@ -113,6 +131,42 @@ class _PlatformAnalyticsPageState extends State<PlatformAnalyticsPage> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: NanoSpacing.lg),
+                      Text(
+                        copy.analyticsSchoolHealthTitle,
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: NanoSpacing.sm),
+                      for (final school in _schoolHealth)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.monitor_heart_outlined),
+                          title: Text(school.schoolName),
+                          subtitle: Text(
+                            '${copy.analyticsHealthScoreLabel} '
+                            '${school.health.score} · '
+                            '${_bandLabel(copy, school.health.band)}',
+                          ),
+                        ),
+                      const SizedBox(height: NanoSpacing.lg),
+                      Text(
+                        copy.analyticsTaxonomyTitle,
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: NanoSpacing.xs),
+                      Text(
+                        copy.analyticsTaxonomyHint,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: NanoSpacing.sm),
+                      for (final event in _taxonomy)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(event.name),
+                          subtitle: Text(event.question),
+                          trailing: Text('${event.retentionDays}d'),
+                        ),
                       const SizedBox(height: NanoSpacing.lg),
                       Text(
                         copy.analyticsCatalogTitle,

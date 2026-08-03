@@ -996,6 +996,19 @@ class NanoCopy {
       : 'Safe aggregates only — no personal contact or marks.';
   String get analyticsHealthTitle =>
       isUrdu ? 'صحت' : 'Platform health';
+  String get analyticsSchoolHealthTitle =>
+      isUrdu ? 'اسکول صحت اسکور' : 'School health scores';
+  String get analyticsTaxonomyTitle =>
+      isUrdu ? 'ایونٹ ٹیکسانومی' : 'Event taxonomy';
+  String get analyticsTaxonomyHint => isUrdu
+      ? 'صرف دستاویزی پروڈکٹ سوالات — کوئی ذاتی شناخت نہیں۔'
+      : 'Documented product questions only — no personal identifiers.';
+  String get analyticsHealthBandHealthy => isUrdu ? 'صحت مند' : 'Healthy';
+  String get analyticsHealthBandWatch => isUrdu ? 'نگرانی' : 'Watch';
+  String get analyticsHealthBandCritical => isUrdu ? 'نازک' : 'Critical';
+  String get analyticsHealthScoreLabel => isUrdu ? 'اسکور' : 'Score';
+  String get reportsHealthTitle =>
+      isUrdu ? 'اسکول صحت' : 'School health';
   String get analyticsCatalogTitle =>
       isUrdu ? 'کیٹلاگ' : 'Catalog readiness';
   String get analyticsActivityTitle =>

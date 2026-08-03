@@ -1,15 +1,16 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** NOT-02 Quiet Hours, Category Controls, and Digest
-- **Current status:** DONE (owner approved)
-- **Current branch:** module/NOT-02-quiet-digest
+- **Current module:** ANA-01 Product Analytics and School Health
+- **Current status:** USER_TEST
+- **Current branch:** module/ANA-01-analytics-health
 
 ## Release progress
 
 - R9: COM-01..COM-06 DONE
 - R2: STU-06 DONE
-- R10: IND-01..IND-04 DONE; PAR-01..PAR-03 DONE; NOT-01..NOT-02 DONE
+- R10: IND..PAR..NOT DONE; ANA-01 USER_TEST
 
 ## Owner next step
 
-NEXT starts ANA-01 Product Analytics and School Health.
+Manual-test ANA-01 (Analytics school health + taxonomy; Reports health),
+then NEXT / FIX / STATUS.

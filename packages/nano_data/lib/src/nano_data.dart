@@ -4,6 +4,7 @@ export 'admin/learning_content_repository.dart';
 export 'admin/notification_admin_repository.dart';
 export 'admin/platform_analytics_repository.dart';
 export 'admin/platform_dashboard_repository.dart';
+export 'admin/analytics_health_repository.dart';
 export 'admin/school_student_repository.dart';
 export 'admin/school_teacher_repository.dart';
 export 'admin/teacher_assignment_repository.dart';

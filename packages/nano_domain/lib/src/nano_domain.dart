@@ -4,6 +4,7 @@ export 'admin/learning_content_ops.dart';
 export 'admin/notification_admin_ops.dart';
 export 'admin/platform_analytics.dart';
 export 'admin/platform_dashboard.dart';
+export 'admin/school_health.dart';
 export 'admin/school_student_ops.dart';
 export 'admin/school_teacher_ops.dart';
 export 'admin/teacher_assignment_ops.dart';
