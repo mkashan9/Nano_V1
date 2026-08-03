@@ -1,7 +1,7 @@
 id: ANA-01
 name: "Product Analytics and School Health"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - ADM-08
   - SCH-07
