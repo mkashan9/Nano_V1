@@ -3,6 +3,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'student_notification_inbox_repository.dart';
 
 /// NOT-01 device token + fake push delivery into the student inbox.
+/// NOT-02 optionally gates delivery with [NotificationPreferences].
 abstract class PushDeliveryRepository {
   Future<DeviceToken> registerToken({
     required String userId,
@@ -17,18 +18,28 @@ abstract class PushDeliveryRepository {
   Future<int> cleanupInvalidTokens();
 
   Future<PushDeliveryResult> deliver(PushEvent event);
+
+  /// NOT-02: flush held digest events into one inbox item.
+  Future<PushDeliveryResult?> flushDigest({required String userId});
 }
 
 class FakePushDeliveryRepository implements PushDeliveryRepository {
   FakePushDeliveryRepository({
     required this.inbox,
     List<DeviceToken>? tokens,
+    this.preferences = NotificationPreferences.defaults,
+    this.clock,
     this.alwaysFail = false,
   }) : _tokens = List.of(tokens ?? const []);
 
   final StudentNotificationInboxRepository inbox;
   final List<DeviceToken> _tokens;
+  NotificationPreferences preferences;
+  DateTime Function()? clock;
   bool alwaysFail;
+  final List<PushEvent> _digestQueue = [];
+
+  DateTime get _now => clock?.call() ?? DateTime.now().toUtc();
 
   @override
   Future<DeviceToken> registerToken({
@@ -96,6 +107,18 @@ class FakePushDeliveryRepository implements PushDeliveryRepository {
       body: event.body,
     );
 
+    final decision = NotificationPreferencePolicy.decide(
+      prefs: preferences,
+      category: event.category,
+      localNow: _now,
+    );
+    if (decision.action == NotificationDeliveryAction.suppressMuted) {
+      return PushDeliveryResult(
+        outcome: PushDeliveryOutcome.suppressedMuted,
+        lockScreenPreview: preview,
+      );
+    }
+
     final active = _tokens.any(
       (token) =>
           token.isActive && token.userId == event.recipientUserId,
@@ -119,6 +142,15 @@ class FakePushDeliveryRepository implements PushDeliveryRepository {
       );
     }
 
+    if (decision.action == NotificationDeliveryAction.holdForDigest) {
+      _digestQueue.removeWhere((item) => item.eventId == event.eventId);
+      _digestQueue.add(event);
+      return PushDeliveryResult(
+        outcome: PushDeliveryOutcome.heldForDigest,
+        lockScreenPreview: preview,
+      );
+    }
+
     final created = await inbox.deliverFromPush(
       sourceEventId: event.eventId,
       category: event.category,
@@ -130,6 +162,31 @@ class FakePushDeliveryRepository implements PushDeliveryRepository {
       outcome: PushDeliveryOutcome.delivered,
       inboxItemId: created.id,
       lockScreenPreview: preview,
+    );
+  }
+
+  @override
+  Future<PushDeliveryResult?> flushDigest({required String userId}) async {
+    if (alwaysFail) throw StateError('Digest flush failed');
+    final held = [
+      for (final event in _digestQueue)
+        if (event.recipientUserId == userId) event,
+    ];
+    if (held.isEmpty) return null;
+
+    _digestQueue.removeWhere((event) => event.recipientUserId == userId);
+    final titles = held.map((event) => event.title).join(', ');
+    final created = await inbox.deliverFromPush(
+      sourceEventId: 'digest-${held.map((e) => e.eventId).join('-')}',
+      category: 'digest',
+      title: 'Notification digest',
+      body: '${held.length} updates: $titles',
+      deepLinkPath: '/',
+    );
+    return PushDeliveryResult(
+      outcome: PushDeliveryOutcome.delivered,
+      inboxItemId: created.id,
+      lockScreenPreview: 'You have a new Nano update',
     );
   }
 }

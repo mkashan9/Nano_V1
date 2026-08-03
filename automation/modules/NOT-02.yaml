@@ -1,7 +1,7 @@
 id: NOT-02
 name: "Quiet Hours, Category Controls, and Digest"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - NOT-01
 applications:
@@ -19,6 +19,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -29,16 +32,22 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Quiet hours and digest preferences can be saved
+  - Non-mandatory categories can be muted; account/security cannot
+  - Quiet-hour events hold for digest and flush into one inbox item
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/notification_preferences_test.dart
+  - packages/nano_data/test/notification_preferences_repository_test.dart
+  - apps/student_app/test/notification_preferences_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Me → Notification preferences → quiet hours / mute / flush digest
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true
