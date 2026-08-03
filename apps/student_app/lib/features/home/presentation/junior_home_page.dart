@@ -160,7 +160,7 @@ class _JuniorHomeContent extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
             children: [
               const SizedBox(height: NanoSpacing.md),
-              if (showCompanionStage)
+              if (showCompanionStage && continueItem == null)
                 const CompanionSurfaceStage(
                   surface: CompanionSurface.home,
                   junior: true,
@@ -193,17 +193,41 @@ class _JuniorHomeContent extends StatelessWidget {
               ],
               const SizedBox(height: NanoSpacing.lg),
               if (continueItem != null)
-                JuniorContinueHeroCard(
-                  eyebrow: copy.isUrdu ? copy.continueLearning : 'Continue Learning',
-                  title: continueItem.title,
-                  startLabel: copy.startLabel,
-                  illustration: useVisualAssets
-                      ? const AssetImage(JuniorHomeVisualAssets.continueHero)
-                      : null,
-                  onStart: onContinue == null
-                      ? null
-                      : () => onContinue!(continueItem),
-                ),
+                showCompanionStage
+                    ? CompanionHomeHeroScene(
+                        entryEvent: CompanionEvent.home,
+                        seed: 1,
+                        hero: JuniorContinueHeroCard(
+                          eyebrow: copy.isUrdu
+                              ? copy.continueLearning
+                              : 'Continue Learning',
+                          title: continueItem.title,
+                          startLabel: copy.startLabel,
+                          illustration: useVisualAssets
+                              ? const AssetImage(
+                                  JuniorHomeVisualAssets.continueHero,
+                                )
+                              : null,
+                          onStart: onContinue == null
+                              ? null
+                              : () => onContinue!(continueItem),
+                        ),
+                      )
+                    : JuniorContinueHeroCard(
+                        eyebrow: copy.isUrdu
+                            ? copy.continueLearning
+                            : 'Continue Learning',
+                        title: continueItem.title,
+                        startLabel: copy.startLabel,
+                        illustration: useVisualAssets
+                            ? const AssetImage(
+                                JuniorHomeVisualAssets.continueHero,
+                              )
+                            : null,
+                        onStart: onContinue == null
+                            ? null
+                            : () => onContinue!(continueItem),
+                      ),
               if (showMissions && summary.juniorMissions.isNotEmpty) ...[
                 const SizedBox(height: NanoSpacing.lg),
                 Padding(

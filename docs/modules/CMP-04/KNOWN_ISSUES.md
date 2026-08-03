@@ -2,10 +2,8 @@
 
 | Issue | Status | Notes |
 |-------|--------|--------|
-| Owner voice sample `option_A_gentle_young_male__c48e8683.mp3` | Missing on disk | Searched Downloads/Desktop/repo; mark `VOICE_GENERATION_BLOCKED` until supplied. Voice id + migration still ship with `PENDING_OWNER_REFERENCE`. |
-| Fish clone reference | Pending | `provider_voice_name = PENDING_OWNER_REFERENCE` |
-| Gemini path | `VOICE_APPROXIMATION_USED` | Fallback voice name `Puck` (male); never Aoede |
-| Generated Tier-2 clips (6) | `VIDEO_REVIEW_REQUIRED` | Wan i2v not run in this pass; static + Tier-1 motion fallback active; `companion_generated_clips=false` |
-| Pose identity drift | Partial | greeting/point/celebrate accepted from gen; thinking/gentle_retry/listening use master cutout + `ASSET_REVIEW_REQUIRED` |
-| White-robe cutout edge | Watch | Flood-fill cutout; hair/sleeve edges need owner eye-check on contact sheet |
-| VIS-09 dirty tree | Isolated | Implementation only in `nano-cmp04-worktree` |
+| Wan / Gradio ZeroGPU | `ZEROGPU_QUOTA_EXCEEDED` | HF Space rejected jobs; retry after ~24h. Script: `tools/cmp04_generate_videos.py` (`frame_multiplier` must be int `16`). |
+| Fish Audio | `VOICE_GENERATION_BLOCKED` | `VOICE_PROVIDER_API_KEY` returns HTTP 401 Invalid Token. Owner sample MP3 still missing on disk. |
+| Tier-2 MP4 assets | Pending | Static + Tier-1 motion fallbacks active; `companion_generated_clips=false` until clips land in `assets/companion/video/`. |
+| Pose identity drift | Partial | Some poses use master cutout fallback (`ASSET_REVIEW_REQUIRED`). |
+| VIS-09 dirty tree | Isolated | Integration branch is `module/CMP-04-integrated-humanoid-companion` in `nano-cmp04-worktree`. |

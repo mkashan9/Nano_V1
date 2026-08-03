@@ -193,7 +193,14 @@ class JuniorProfileHeader extends StatelessWidget {
             height: 100,
             child: foxIllustration == null
                 ? const Icon(Icons.pets, size: 64, color: Colors.orange)
-                : Image(image: foxIllustration!, fit: BoxFit.contain),
+                : Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Image(
+                      image: foxIllustration!,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.bottomCenter,
+                    ),
+                  ),
           ),
         ],
       ),

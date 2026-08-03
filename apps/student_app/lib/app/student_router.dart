@@ -21,6 +21,7 @@ import 'package:student_app/features/qa/presentation/screenshot_senior_games_pag
 import 'package:student_app/features/qa/presentation/screenshot_senior_profile_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_communities_page.dart';
 import 'package:student_app/features/dev/presentation/companion_cmp04_gallery_page.dart';
+import 'package:student_app/features/dev/presentation/companion_review_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -151,6 +152,11 @@ GoRouter createStudentRouter({
         GoRoute(
           path: '/dev/companion-cmp04',
           builder: (context, state) => const CompanionCmp04GalleryPage(),
+        ),
+      if (kDebugMode || config.showDebugChrome)
+        GoRoute(
+          path: '/dev/companion-review',
+          builder: (context, state) => const CompanionReviewPage(),
         ),
       GoRoute(
         path: '/sign-in',

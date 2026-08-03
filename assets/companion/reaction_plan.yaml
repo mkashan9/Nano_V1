@@ -1,0 +1,114 @@
+identity_version: nano_humanoid_companion_v1
+voice_id: gentle_young_male_c48e8683
+video_provider: wan_i2v_space
+gradio_space: cinderholm/wan2-2-i2v-v3
+clips:
+  intro_speaking:
+    events: [appOpen]
+    junior: { tier: shortClip, placement: onboarding_scene, framing: full, speech: true }
+    senior: { tier: staticArt, placement: hidden }
+    duration_s: 4.5
+    reference: greeting_wave
+    motion: driftIn
+    line_en: "Hey. I'm here to help you learn, play, and keep moving forward."
+    static_fallback: greeting_wave
+  home_greeting_speaking:
+    events: [home]
+    junior: { tier: shortClip, placement: home_hero_lower_right, framing: half, speech: true }
+    senior: { tier: localAnimation, placement: home_chip, framing: portrait, speech: false }
+    duration_s: 3.5
+    reference: greeting_wave
+    motion: driftIn
+    line_en: "Welcome back. Ready for your next step?"
+    static_fallback: greeting_wave
+    cooldown: session_once
+  welcome_back_speaking:
+    events: [returnFromInactivity]
+    junior: { tier: shortClip, placement: home_hero_lower_right, framing: half, speech: true }
+    senior: { tier: shortClip, placement: home_chip, framing: portrait, speech: true }
+    duration_s: 3.0
+    reference: greeting_wave
+    motion: settle
+    line_en: "Good to see you again. We can continue whenever you're ready."
+    static_fallback: greeting_wave
+  guide_point:
+    events: [learningEntry, topicOpened, subjectSelected]
+    junior: { tier: shortClip, placement: featured_card_right, framing: half, speech: false }
+    senior: { tier: staticArt, placement: recommend_chip, framing: portrait, speech: false }
+    duration_s: 3.0
+    reference: point_right
+    motion: settle
+    line_en: "Pick something that looks interesting, and we'll start from there."
+    static_fallback: point_right
+  listening:
+    events: [videoStart, quizStart, quizQuestion]
+    junior: { tier: localAnimation, placement: player_mentor, framing: half, speech: false }
+    senior: { tier: staticArt, placement: player_mentor, framing: portrait, speech: false }
+    duration_s: 3.0
+    reference: listening
+    motion: hold
+    line_en: "Take your time. I'll be here when you finish."
+    static_fallback: listening
+  correct_small_celebration:
+    events: [quizCorrect]
+    junior: { tier: shortClip, placement: quiz_card_corner, framing: half, speech: false }
+    senior: { tier: localAnimation, placement: quiz_card_corner, framing: portrait, speech: false }
+    duration_s: 2.5
+    reference: celebrate
+    motion: settle
+    line_en: ""
+    static_fallback: celebrate
+  gentle_retry_speaking:
+    events: [quizRepeatedMistake, resultNeedsReview]
+    junior: { tier: shortClip, placement: quiz_stage, framing: half, speech: true }
+    senior: { tier: shortClip, placement: quiz_stage, framing: portrait, speech: true }
+    duration_s: 3.0
+    reference: gentle_retry
+    motion: dip
+    line_en: "That one was tricky. Take another look. You've got this."
+    static_fallback: gentle_retry
+    max_per_question: 1
+  lesson_complete_speaking:
+    events: [videoComplete]
+    junior: { tier: shortClip, placement: player_complete, framing: half, speech: true }
+    senior: { tier: shortClip, placement: player_complete, framing: portrait, speech: true }
+    duration_s: 3.5
+    reference: celebrate
+    motion: settle
+    line_en: "Nice work. You finished the lesson. Let's check what you remember."
+    static_fallback: celebrate
+  quiz_complete_speaking:
+    events: [quizComplete, resultPassed]
+    junior: { tier: shortClip, placement: result_panel, framing: half, speech: true }
+    senior: { tier: shortClip, placement: result_panel, framing: portrait, speech: true }
+    duration_s: 3.5
+    reference: celebrate
+    motion: pushIn
+    line_en: "Well done. You stayed focused and finished strong."
+    static_fallback: celebrate
+    authority: server
+  level_up_speaking:
+    events: [levelUp, achievement]
+    junior: { tier: shortClip, placement: achievement_stage, framing: full, speech: true }
+    senior: { tier: shortClip, placement: achievement_stage, framing: half, speech: true }
+    duration_s: 4.0
+    reference: celebrate
+    motion: pushIn
+    line_en: "Level up. You earned it, one step at a time."
+    static_fallback: celebrate
+    authority: server
+  long_video_refresh_speaking:
+    events: [longVideoRefresh]
+    junior: { tier: shortClip, placement: checkpoint_sheet, framing: half, speech: true }
+    senior: { tier: shortClip, placement: checkpoint_sheet, framing: portrait, speech: true }
+    duration_s: 3.5
+    reference: listening
+    motion: settle
+    line_en: "Quick break. Stretch, breathe, and continue when you're ready."
+    static_fallback: listening
+rejected:
+  - permanent_floating_bubble
+  - circle_avatar_companion
+  - communities_chat_overlay
+  - speech_every_correct_answer
+  - celebrate_before_trusted_result

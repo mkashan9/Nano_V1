@@ -28,3 +28,4 @@ flutter:
   # companion gets the same character.
   assets:
     - assets/companion/
+    - assets/companion/video/

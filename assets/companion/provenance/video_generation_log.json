@@ -1,0 +1,24 @@
+{
+  "provider": "cinderholm/wan2-2-i2v-v3",
+  "status": "ZEROGPU_QUOTA_EXCEEDED",
+  "detail": "You have exceeded your ZeroGPU quota. Try again later. Authenticate with HF token for more quota.",
+  "retry_after_hint": "~24h from 2026-08-03T20:55Z",
+  "videos_generated": 0,
+  "videos_required": 11,
+  "fallback": "static_pose_plus_local_motion",
+  "jobs_attempted_before_quota": 12,
+  "frame_multiplier_fix": "must be int 16 not string",
+  "clips_pending": [
+    "intro_speaking",
+    "home_greeting_speaking",
+    "welcome_back_speaking",
+    "guide_point",
+    "listening",
+    "correct_small_celebration",
+    "gentle_retry_speaking",
+    "lesson_complete_speaking",
+    "quiz_complete_speaking",
+    "level_up_speaking",
+    "long_video_refresh_speaking"
+  ]
+}

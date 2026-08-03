@@ -1,0 +1,8 @@
+{
+  "voice_id": "gentle_young_male_c48e8683",
+  "status": "VOICE_GENERATION_BLOCKED",
+  "reason": "Fish Audio returned HTTP 401 Invalid Token for VOICE_PROVIDER_API_KEY",
+  "owner_sample": "option_A_gentle_young_male__c48e8683.mp3 not found on disk",
+  "lines_generated": 0,
+  "fallback": "captions_only"
+}
