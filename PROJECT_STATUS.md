@@ -1,13 +1,13 @@
 ﻿# PROJECT_STATUS
 
 - **Current module:** COM-02 Community Creation and Roles
-- **Current status:** USER_TEST
+- **Current status:** DONE (owner approved)
 - **Current branch:** module/COM-02-community-creation
 
 ## Release progress
 
-- R9: COM-01 DONE; COM-02 USER_TEST
+- R9: COM-01..COM-02 DONE
 
 ## Owner next step
 
-Run docs/modules/COM-02/MANUAL_TEST.md. Create a community; confirm owner role.
+NEXT starts COM-03 Join Requests and Invitations.

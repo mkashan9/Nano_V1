@@ -1,7 +1,7 @@
-id: COM-02
+﻿id: COM-02
 name: "Community Creation and Roles"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - COM-01
 dependency_notes: >
