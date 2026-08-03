@@ -1,7 +1,7 @@
 id: COM-06
 name: "Pinned Messages, Search, Gallery, and Archives"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - COM-04
 dependency_notes: >

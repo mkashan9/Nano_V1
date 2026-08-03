@@ -110,7 +110,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | COM-03 | Join Requests and Invitations | R9 | DONE | COM-02 |
 | COM-04 | Text Messages, Replies, Mentions, and Reactions | R9 | DONE | COM-03, SAFE-03 |
 | COM-05 | Voice Messages, Photos, Videos, and Files | R9 | DONE | COM-04, MED-02, SAFE-02 |
-| COM-06 | Pinned Messages, Search, Gallery, and Archives | R9 | USER_TEST | COM-04 |
+| COM-06 | Pinned Messages, Search, Gallery, and Archives | R9 | DONE | COM-04 |
 | SAFE-01 | Reporting and Blocking | R9 | DONE | SEC-03, STU-04 |
 | SAFE-02 | Moderation Queue and Evidence | R9 | DONE | SAFE-01, ADM-01 |
 | SAFE-03 | Rate Limits, Restricted Content, and Link Rules | R9 | DONE | SAFE-01 |
