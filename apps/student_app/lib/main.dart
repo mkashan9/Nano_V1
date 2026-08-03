@@ -28,6 +28,7 @@ void main() {
     'junior_profile' => '/screenshot/junior_profile',
     'senior_home' => '/screenshot/senior_home',
     'senior_learning' => '/screenshot/senior_learning',
+    'senior_games' => '/screenshot/senior_games',
     _ => '/screenshot/junior_home',
   };
   AuthRepository? authRepository;

@@ -1,7 +1,7 @@
 id: VIS-07
 name: "Senior Games Visual Replication"
 release: R11
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - VIS-06
   - GME-01

@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/four_12/games.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-07/senior_games/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.8606,
+    "overall_mae": 0.1102,
+    "layout_score": 0.8964,
+    "typography_score": 0.8606,
+    "color_score": 0.8898,
+    "component_geometry_score": 0.8407,
+    "asset_placement_score": 0.8356,
+    "asset_visual_similarity_score": 0.8457,
+    "overall_structural_similarity": 0.8606
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.8856,
+      "mae": 0.0896
+    },
+    "hero": {
+      "ssim_proxy": 0.8356,
+      "mae": 0.1302
+    },
+    "subjects": {
+      "ssim_proxy": 0.8457,
+      "mae": 0.1217
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.9073,
+      "mae": 0.0736
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

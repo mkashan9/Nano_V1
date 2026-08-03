@@ -4,9 +4,12 @@ import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/features/games/presentation/game_host_page.dart';
 import 'package:student_app/features/games/visual/junior_games_visual_assets.dart';
+import 'package:student_app/features/games/visual/senior_games_visual_assets.dart';
+import 'package:student_app/features/games/fixtures/senior_games_visual_fixtures.dart';
 
 /// GME-01..04 Games catalog with Play + local save/update/free-space.
 /// Junior presentation (VIS-03) uses adventure header + 2×2 world cards.
+/// Senior visual stack (VIS-07) matches four_12/games.jpeg when [useVisualLayout].
 class GamesCatalogPage extends StatefulWidget {
   const GamesCatalogPage({
     super.key,
@@ -20,6 +23,7 @@ class GamesCatalogPage extends StatefulWidget {
     this.gradeLevel,
     this.junior = false,
     this.useVisualAssets = true,
+    this.useVisualLayout = true,
   });
 
   final GameCatalogRepository repository;
@@ -32,6 +36,7 @@ class GamesCatalogPage extends StatefulWidget {
   final int? gradeLevel;
   final bool junior;
   final bool useVisualAssets;
+  final bool useVisualLayout;
 
   @override
   State<GamesCatalogPage> createState() => _GamesCatalogPageState();
@@ -184,7 +189,10 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
     final catalog = _catalog;
 
     return Scaffold(
-      backgroundColor: widget.junior ? NanoColors.canvas : null,
+      backgroundColor:
+          widget.junior || (!widget.junior && widget.useVisualLayout)
+              ? NanoColors.canvas
+              : null,
       body: NanoViewStateHost(
         state: _state,
         onRetry: _load,
@@ -192,8 +200,253 @@ class _GamesCatalogPageState extends State<GamesCatalogPage> {
             ? const SizedBox.shrink()
             : widget.junior
                 ? _buildJunior(context, copy, urdu, catalog)
-                : _buildSenior(context, copy, theme, urdu, catalog),
+                : widget.useVisualLayout
+                    ? _buildSeniorVisual(context, copy, catalog)
+                    : _buildSenior(context, copy, theme, urdu, catalog),
       ),
+    );
+  }
+
+  Widget _buildSeniorVisual(
+    BuildContext context,
+    NanoCopy copy,
+    GameCatalog catalog,
+  ) {
+    final liveGames = catalog.games;
+    return ListView(
+      padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
+      children: [
+        const SizedBox(height: NanoSpacing.md),
+        SeniorGamesHeader(
+          lineOne: SeniorGamesVisualFixtures.lineOne,
+          lineTwo: SeniorGamesVisualFixtures.lineTwo,
+          subtitle: SeniorGamesVisualFixtures.subtitle,
+          illustration: widget.useVisualAssets
+              ? const AssetImage(SeniorGamesVisualAssets.astronaut)
+              : null,
+          onGiftTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Rewards coming soon')),
+            );
+          },
+        ),
+        const SizedBox(height: NanoSpacing.md),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: SeniorGamesVisualFixtures.games.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: NanoSpacing.sm,
+              crossAxisSpacing: NanoSpacing.sm,
+              childAspectRatio: 0.78,
+            ),
+            itemBuilder: (context, index) {
+              final item = SeniorGamesVisualFixtures.games[index];
+              final live = liveGames.isEmpty
+                  ? null
+                  : liveGames[index % liveGames.length];
+              return SeniorGameCard(
+                title: item.title,
+                category: item.category,
+                xpLabel: 'XP ${item.xp}',
+                playLabel: copy.playLabel,
+                accent: item.accent,
+                difficultyFilled: item.difficulty,
+                illustration: widget.useVisualAssets && item.asset != null
+                    ? AssetImage(item.asset!)
+                    : null,
+                onPlay: live == null ? null : () => _play(live),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.sm),
+        const Center(
+          child: Text(
+            'View all games >',
+            style: TextStyle(
+              color: Color(0xFFB39DFF),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        SizedBox(
+          height: 148,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            itemCount: SeniorGamesVisualFixtures.challenges.length,
+            separatorBuilder: (_, __) => const SizedBox(width: NanoSpacing.sm),
+            itemBuilder: (context, index) {
+              final c = SeniorGamesVisualFixtures.challenges[index];
+              return SeniorChallengeChipCard(
+                title: c.title,
+                body: c.body,
+                ctaLabel: c.cta,
+                accent: c.accent,
+                icon: c.icon,
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Unlock Worlds',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Text(
+                'Your Progress',
+                style: TextStyle(
+                  color: Color(0xFFB39DFF),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.sm),
+        SizedBox(
+          height: 100,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            itemCount: SeniorGamesVisualFixtures.worlds.length,
+            separatorBuilder: (_, __) => const SizedBox(width: NanoSpacing.sm),
+            itemBuilder: (context, index) {
+              final w = SeniorGamesVisualFixtures.worlds[index];
+              return SeniorUnlockWorldCard(
+                label: w.label,
+                accent: w.accent,
+                locked: w.locked,
+                completed: w.completed,
+                progressLabel: w.progress,
+                icon: w.icon,
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Achievements',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final name in SeniorGamesVisualFixtures.achievements)
+                          Container(
+                            width: 56,
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1A1D33),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              children: [
+                                const Icon(Icons.hexagon,
+                                    color: Color(0xFF9B6DFF), size: 22),
+                                const SizedBox(height: 4),
+                                Text(
+                                  name.split(' ').first,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 9,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Real Rewards',
+                      style: TextStyle(
+                        color: Color(0xFFB39DFF),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    for (final r in SeniorGamesVisualFixtures.rewards)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Icon(r.icon, color: Colors.white54, size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    r.title,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    r.body,
+                                    style: const TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right,
+                                color: Colors.white38, size: 16),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

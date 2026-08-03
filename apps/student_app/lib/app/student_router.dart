@@ -16,6 +16,7 @@ import 'package:student_app/features/qa/presentation/screenshot_junior_games_pag
 import 'package:student_app/features/qa/presentation/screenshot_junior_profile_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_home_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_senior_learning_page.dart';
+import 'package:student_app/features/qa/presentation/screenshot_senior_games_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -134,6 +135,12 @@ GoRouter createStudentRouter({
         path: '/screenshot/senior_learning',
         builder: (context, state) => ScreenshotSeniorLearningPage(
           repository: catalogRepository,
+        ),
+      ),
+      GoRoute(
+        path: '/screenshot/senior_games',
+        builder: (context, state) => ScreenshotSeniorGamesPage(
+          repository: gameCatalogRepository,
         ),
       ),
       GoRoute(
