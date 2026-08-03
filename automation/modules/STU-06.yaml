@@ -1,7 +1,7 @@
 id: STU-06
 name: "Student Notifications Inbox"
 release: R2
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-05
 applications:
