@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/kids/profile.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-04/junior_profile/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.8264,
+    "overall_mae": 0.1313,
+    "layout_score": 0.884,
+    "typography_score": 0.8045,
+    "color_score": 0.8687,
+    "component_geometry_score": 0.7758,
+    "asset_placement_score": 0.7561,
+    "asset_visual_similarity_score": 0.7955,
+    "overall_structural_similarity": 0.8264
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.853,
+      "mae": 0.1104
+    },
+    "hero": {
+      "ssim_proxy": 0.7561,
+      "mae": 0.185
+    },
+    "subjects": {
+      "ssim_proxy": 0.7955,
+      "mae": 0.1546
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.915,
+      "mae": 0.0644
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

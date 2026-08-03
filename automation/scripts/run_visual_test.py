@@ -42,6 +42,15 @@ SCREENS = {
             "test/screenshot_junior_games_test.dart",
         ),
     },
+    "junior_profile": {
+        "module": "VIS-04",
+        "folder": "junior_profile",
+        "reference": ("kids", "profile.jpeg"),
+        "standin": "render_vis04_layout_standin.py",
+        "tests": (
+            "test/screenshot_junior_profile_test.dart",
+        ),
+    },
 }
 
 
@@ -87,7 +96,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--screen",
-        default="junior_games",
+        default="junior_profile",
         choices=sorted(SCREENS),
     )
     parser.add_argument(
