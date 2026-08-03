@@ -1,7 +1,7 @@
 id: PAR-01
 name: "Weekly Parent Guidance Card"
 release: R10
-status: BACKLOG
+status: DONE
 dependencies:
   - STU-05
 applications:
@@ -19,6 +19,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -29,16 +32,23 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Weekly parent guidance card opens from Me
+  - Card omits marks and private notes
+  - Unlinked guardian cannot load a child card
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/parent_guidance_test.dart
+  - packages/nano_data/test/parent_guidance_repository_test.dart
+  - apps/student_app/test/parent_guidance_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Me → For parents this week → tip visible
+  - Confirm privacy hint present
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

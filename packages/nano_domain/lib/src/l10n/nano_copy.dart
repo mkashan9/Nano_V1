@@ -1733,6 +1733,19 @@ class NanoCopy {
       : 'That school is not available right now';
   String schoolLinkPreviewLabel(String schoolName) =>
       isUrdu ? 'اسکول: $schoolName' : 'School: $schoolName';
+  String get parentGuidanceTitle =>
+      isUrdu ? 'والدین کے لیے اس ہفتے' : 'For parents this week';
+  String get parentGuidanceEmpty =>
+      isUrdu ? 'اس ہفتے کوئی رہنمائی نہیں' : 'No parent tip this week yet';
+  String get parentGuidanceOpen =>
+      isUrdu ? 'رہنمائی دیکھیں' : 'View parent tip';
+  String get parentGuidanceTips =>
+      isUrdu ? 'گھر کی سرگرمیاں' : 'Home activities';
+  String get parentGuidanceLoadError =>
+      isUrdu ? 'رہنمائی لوڈ نہیں ہوئی' : 'Could not load parent tip';
+  String get parentGuidancePrivacyHint => isUrdu
+      ? 'نمبر اور نجی نوٹس یہاں نہیں دکھتے۔'
+      : 'Marks and private notes are never shown here.';
 
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';
