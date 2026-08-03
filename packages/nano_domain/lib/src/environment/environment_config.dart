@@ -43,6 +43,12 @@ class EnvironmentConfig {
         );
       }
     }
+    // QA-01: never allow service-role material in the Flutter anon slot.
+    if (supabaseAnonKey.toLowerCase().contains('service_role')) {
+      throw StateError(
+        'SUPABASE_ANON_KEY must not contain service_role material.',
+      );
+    }
     return EnvironmentConfig(
       environment: env,
       supabaseUrl: supabaseUrl,

@@ -1,3 +1,4 @@
+import 'package:admin_web/features/security/presentation/security_hardening_page.dart';
 import 'package:admin_web/features/analytics/presentation/platform_analytics_page.dart';
 import 'package:admin_web/features/content/presentation/content_hub_page.dart';
 import 'package:admin_web/features/games/presentation/game_admin_page.dart';
@@ -364,6 +365,18 @@ class AdminDestinationPage extends StatelessWidget {
         platformAnalyticsRepository != null) {
       return PlatformAnalyticsPage(
         repository: platformAnalyticsRepository!,
+      );
+    }
+
+    if (destination.id == 'audit' && principal.role == AppRole.superadmin) {
+      return SecurityHardeningPage(
+        config: const EnvironmentConfig(
+          environment: NanoEnvironment.development,
+          supabaseUrl: 'https://example.supabase.co',
+          supabaseAnonKey: 'public-anon-preview-key',
+          featureFlags: {},
+        ),
+        principal: principal,
       );
     }
 

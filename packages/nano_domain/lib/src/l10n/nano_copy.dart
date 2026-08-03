@@ -989,6 +989,16 @@ class NanoCopy {
   String get content => isUrdu ? 'مواد' : 'Content';
   String get moderation => isUrdu ? 'نگرانی' : 'Moderation';
   String get analytics => isUrdu ? 'تجزیات' : 'Analytics';
+  String get securityHardeningTitle =>
+      isUrdu ? 'سیکیورٹی سخت کاری' : 'Security hardening';
+  String get securityHardeningSubtitle => isUrdu
+      ? 'کلائنٹ گیٹس، رسائی گارڈز، اور خفیہ مواد کی جانچ۔'
+      : 'Client gates, access guards, and secret-material checks.';
+  String get securityHardeningAllPassed =>
+      isUrdu ? 'تمام جانچیں پاس' : 'All checks passed';
+  String securityHardeningHasFailures(int count) => isUrdu
+      ? '$count جانچ ناکام'
+      : '$count check(s) failed';
   String get analyticsPageTitle =>
       isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
   String get analyticsPageSubtitle => isUrdu
@@ -1043,7 +1053,7 @@ class NanoCopy {
       isUrdu ? 'کوئز پاس' : 'Quiz passes';
   String get analyticsAuditEvents =>
       isUrdu ? 'آڈٹ واقعات' : 'Audit events';
-  String get audit => isUrdu ? 'آڈٹ' : 'Audit';
+  String get audit => isUrdu ? 'سیکیورٹی' : 'Security';
 
   String get loading => isUrdu ? 'لوڈ ہو رہا ہے' : 'Loading';
   String get emptyTitle => isUrdu ? 'ابھی کچھ نہیں' : 'Nothing here yet';
