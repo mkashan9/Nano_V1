@@ -8,11 +8,15 @@ void main() {
     expect(visible.any((d) => d.id == 'flex'), isFalse);
   });
 
-  test('independent nav copy uses Home Play Me', () {
+  test('independent nav copy uses Home Learn Play Me', () {
     const copy = NanoCopy(NanoAppLocale.en);
     expect(
-      copy.studentNavLabel('learning', junior: false, independent: true),
+      copy.studentNavLabel('home', junior: false, independent: true),
       'Home',
+    );
+    expect(
+      copy.studentNavLabel('learning', junior: false, independent: true),
+      'Learn',
     );
     expect(
       copy.studentNavLabel('games', junior: false, independent: true),
@@ -128,7 +132,7 @@ void main() {
     final learning =
         DeepLinkResolver.resolve(SessionPrincipal.seniorSchool(), '/learning');
     expect(learning.fellBack, isFalse);
-    expect(learning.location, '/');
+    expect(learning.location, '/learning');
 
     final me =
         DeepLinkResolver.resolve(SessionPrincipal.seniorSchool(), '/me');

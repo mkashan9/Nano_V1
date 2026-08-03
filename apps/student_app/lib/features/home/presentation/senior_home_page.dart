@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
+import 'package:student_app/features/home/fixtures/senior_home_visual_fixtures.dart';
+import 'package:student_app/features/home/visual/senior_home_visual_assets.dart';
 
 /// STU-04 Senior Home: level and XP, streak, latest update, what to continue,
 /// Today's Plan, and a Flex summary for school-eligible learners.
@@ -24,6 +26,8 @@ class SeniorHomePage extends StatefulWidget {
     this.onOpenSpotlight,
     this.onOpenUpdate,
     this.onNotifications,
+    this.useVisualLayout = true,
+    this.useVisualAssets = true,
   });
 
   final StudentHomeRepository repository;
@@ -46,6 +50,10 @@ class SeniorHomePage extends StatefulWidget {
   final ValueChanged<IndependentSpotlight>? onOpenSpotlight;
   final VoidCallback? onOpenUpdate;
   final VoidCallback? onNotifications;
+
+  /// VIS-05 reference layout. Set false to keep the STU-04 denser list chrome.
+  final bool useVisualLayout;
+  final bool useVisualAssets;
 
   @override
   State<SeniorHomePage> createState() => _SeniorHomePageState();
@@ -117,6 +125,8 @@ class _SeniorHomePageState extends State<SeniorHomePage> {
               onOpenSpotlight: widget.onOpenSpotlight,
               onOpenUpdate: widget.onOpenUpdate,
               onNotifications: widget.onNotifications,
+              useVisualLayout: widget.useVisualLayout,
+              useVisualAssets: widget.useVisualAssets,
             ),
     );
   }
@@ -129,6 +139,8 @@ class _SeniorHomeContent extends StatelessWidget {
     required this.onRetry,
     required this.flexEligible,
     required this.independent,
+    required this.useVisualLayout,
+    required this.useVisualAssets,
     this.accessEntitlements,
     this.onContinue,
     this.onSubjectTap,
@@ -143,6 +155,8 @@ class _SeniorHomeContent extends StatelessWidget {
   final VoidCallback onRetry;
   final bool flexEligible;
   final bool independent;
+  final bool useVisualLayout;
+  final bool useVisualAssets;
   final IndependentEntitlements? accessEntitlements;
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
@@ -153,6 +167,18 @@ class _SeniorHomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (useVisualLayout) {
+      return _SeniorVisualHome(
+        summary: summary,
+        useVisualAssets: useVisualAssets,
+        onContinue: onContinue,
+        onNotifications: onNotifications,
+      );
+    }
+    return _buildLegacy(context);
+  }
+
+  Widget _buildLegacy(BuildContext context) {
     final theme = Theme.of(context);
     final level = summary.level;
     final continueItem = summary.continueItem;
@@ -369,6 +395,229 @@ class _SeniorHomeContent extends StatelessWidget {
     );
   }
 }
+
+class _SeniorVisualHome extends StatelessWidget {
+  const _SeniorVisualHome({
+    required this.summary,
+    required this.useVisualAssets,
+    this.onContinue,
+    this.onNotifications,
+  });
+
+  final StudentHomeSummary summary;
+  final bool useVisualAssets;
+  final ValueChanged<ContinueLearningItem>? onContinue;
+  final VoidCallback? onNotifications;
+
+  @override
+  Widget build(BuildContext context) {
+    final continueItem = summary.continueItem;
+    return ColoredBox(
+      color: NanoColors.canvas,
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
+        children: [
+          const SizedBox(height: NanoSpacing.md),
+          SeniorHomeHeader(
+            headlinePrefix: SeniorHomeVisualFixtures.headlinePrefix,
+            headlineAccent: SeniorHomeVisualFixtures.headlineAccent,
+            streakDays: SeniorHomeVisualFixtures.streakDays,
+            streakCaption: SeniorHomeVisualFixtures.streakCaption,
+            rankTitle: SeniorHomeVisualFixtures.rankTitle,
+            rankLabel: SeniorHomeVisualFixtures.rankLabel,
+            avatar: useVisualAssets
+                ? const AssetImage(SeniorHomeVisualAssets.avatar)
+                : null,
+            hasUnread: summary.unreadNotifications > 0,
+            onNotifications: onNotifications,
+          ),
+          const SizedBox(height: NanoSpacing.lg),
+          SeniorContinueHeroCard(
+            eyebrow: SeniorHomeVisualFixtures.continueEyebrow,
+            title: SeniorHomeVisualFixtures.continueTitle,
+            projectTitle: SeniorHomeVisualFixtures.projectTitle,
+            progress: SeniorHomeVisualFixtures.projectProgress,
+            continueLabel: SeniorHomeVisualFixtures.continueLabel,
+            illustration: useVisualAssets
+                ? const AssetImage(SeniorHomeVisualAssets.continueHero)
+                : null,
+            onContinue: continueItem == null || onContinue == null
+                ? null
+                : () => onContinue!(continueItem),
+          ),
+          const SizedBox(height: NanoSpacing.lg),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    "Today's Mission",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                Text(
+                  'View All',
+                  style: TextStyle(
+                    color: Color(0xFFB39DFF),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          SizedBox(
+            height: 168,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+              itemCount: SeniorHomeVisualFixtures.missions.length,
+              separatorBuilder: (_, __) =>
+                  const SizedBox(width: NanoSpacing.sm),
+              itemBuilder: (context, index) {
+                final m = SeniorHomeVisualFixtures.missions[index];
+                return SeniorMissionChipCard(
+                  kindLabel: m.kind,
+                  title: m.title,
+                  xpLabel: 'Earn ${m.xp} XP',
+                  progressLabel: m.progress,
+                  accent: m.accent,
+                  icon: m.icon,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.lg),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: Text(
+              'Builder Dashboard',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: SeniorHomeVisualFixtures.dashboard.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: NanoSpacing.sm,
+                crossAxisSpacing: NanoSpacing.sm,
+                childAspectRatio: 1.55,
+              ),
+              itemBuilder: (context, index) {
+                final s = SeniorHomeVisualFixtures.dashboard[index];
+                final value = index == 0 ? '${summary.xp} XP' : s.value;
+                return SeniorDashboardStatCard(
+                  value: value,
+                  label: s.label,
+                  accent: s.accent,
+                  icon: s.icon,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.lg),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Continue Learning',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                Text(
+                  'View All',
+                  style: TextStyle(
+                    color: Color(0xFFB39DFF),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          for (final item in SeniorHomeVisualFixtures.learning)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                NanoSpacing.md,
+                0,
+                NanoSpacing.md,
+                NanoSpacing.sm,
+              ),
+              child: SeniorLearningRowCard(
+                title: item.title,
+                subjectTag: item.tag,
+                progress: item.progress,
+                difficultyLabel: item.difficulty,
+                timeLabel: item.time,
+                accent: item.accent,
+                icon: item.icon,
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Build Challenge',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                Text(
+                  SeniorHomeVisualFixtures.challengeTimer,
+                  style: const TextStyle(
+                    color: Color(0xFFB39DFF),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            child: SeniorChallengeCard(
+              badgeLabel: SeniorHomeVisualFixtures.challengeBadge,
+              title: SeniorHomeVisualFixtures.challengeTitle,
+              body: SeniorHomeVisualFixtures.challengeBody,
+              rewardLabel: SeniorHomeVisualFixtures.challengeReward,
+              illustration: useVisualAssets
+                  ? const AssetImage(SeniorHomeVisualAssets.challengeCalc)
+                  : null,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Legacy STU-04 helpers below.
 
 class _SubjectCard extends StatelessWidget {
   const _SubjectCard({required this.subject, this.onSubjectTap});

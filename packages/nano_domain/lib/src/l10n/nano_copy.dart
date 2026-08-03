@@ -2078,7 +2078,8 @@ class NanoCopy {
   }) {
     if (independent) {
       return switch (destinationId) {
-        'home' || 'learning' => home,
+        'home' => home,
+        'learning' => isUrdu ? 'سیکھیں' : 'Learn',
         'game' || 'games' => play,
         'profile' => me,
         _ => navLabel(destinationId),
@@ -2092,6 +2093,12 @@ class NanoCopy {
         'profile' => isUrdu ? 'پروفائل' : 'Profile',
         _ => navLabel(destinationId),
       };
+    }
+    if (destinationId == 'home') {
+      return home;
+    }
+    if (destinationId == 'learning') {
+      return isUrdu ? 'سیکھیں' : 'Learn';
     }
     if (destinationId == 'profile') {
       return profile;

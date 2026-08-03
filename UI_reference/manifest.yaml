@@ -40,19 +40,46 @@ references:
     path: UI_reference/four_12/home.jpeg
     experience: senior
     probable_screen: Home
-    target_route: /
+    target_route: /screenshot/senior_home
     reference_width: 740
     reference_height: 1600
     aspect_ratio: 0.463
     device_type: phone
-    module_id: STU-04
-    implementation_status: BACKLOG
+    module_id: VIS-05
+    implementation_status: IN_PROGRESS
     manual_review_status: PENDING
-    main_layout_regions: [header, hero, content, bottom_nav]
-    main_reusable_components: [nav_bar, continue_card, subject_cards]
+    main_layout_regions:
+      - header
+      - continue_hero
+      - missions
+      - dashboard
+      - continue_learning
+      - challenge
+      - bottom_nav
+    main_reusable_components:
+      - senior_home_header
+      - senior_continue_hero_card
+      - senior_mission_chip_card
+      - senior_dashboard_stat_card
+      - senior_learning_row_card
+      - senior_challenge_card
+      - nav_bar
     navigation_type: bottom_tabs
     missing_assets: []
-    unclear_elements: []
+    unclear_elements:
+      - Challenge countdown is fixture text until live challenges land
+    asset_ids:
+      - senior_avatar_builder
+      - senior_home_continue_hero
+      - senior_home_challenge_calc
+    region_boxes_px:
+      header: [0, 0, 740, 120]
+      continue_hero: [24, 120, 692, 220]
+      missions: [0, 360, 740, 160]
+      dashboard: [0, 540, 740, 280]
+      continue_learning: [0, 840, 740, 260]
+      challenge: [0, 1120, 740, 160]
+      bottom_navigation: [0, 1450, 740, 150]
 
   - id: senior_learning_stack
     path: UI_reference/four_12/Learning_stack.jpeg

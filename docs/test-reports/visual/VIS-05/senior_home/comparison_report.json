@@ -1,0 +1,42 @@
+{
+  "reference": "D:/nano/UI_reference/four_12/home.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-05/senior_home/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.862,
+    "overall_mae": 0.1082,
+    "layout_score": 0.8785,
+    "typography_score": 0.8117,
+    "color_score": 0.8918,
+    "component_geometry_score": 0.8212,
+    "asset_placement_score": 0.7694,
+    "asset_visual_similarity_score": 0.8729,
+    "overall_structural_similarity": 0.862
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.854,
+      "mae": 0.1147
+    },
+    "hero": {
+      "ssim_proxy": 0.7694,
+      "mae": 0.1787
+    },
+    "subjects": {
+      "ssim_proxy": 0.8729,
+      "mae": 0.1
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.9031,
+      "mae": 0.0786
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}

@@ -51,6 +51,16 @@ SCREENS = {
             "test/screenshot_junior_profile_test.dart",
         ),
     },
+    "senior_home": {
+        "module": "VIS-05",
+        "folder": "senior_home",
+        "reference": ("four_12", "home.jpeg"),
+        "standin": "render_vis05_layout_standin.py",
+        "tests": (
+            "test/screenshot_senior_home_test.dart",
+            "test/senior_home_page_test.dart",
+        ),
+    },
 }
 
 
@@ -96,7 +106,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--screen",
-        default="junior_profile",
+        default="senior_home",
         choices=sorted(SCREENS),
     )
     parser.add_argument(

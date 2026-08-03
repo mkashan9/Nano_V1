@@ -33,6 +33,7 @@ Widget _host({
           onSubjectTap: (_) {},
           onOpenUpdate: () {},
           onNotifications: () {},
+          useVisualLayout: false,
         ),
       ),
     ),
