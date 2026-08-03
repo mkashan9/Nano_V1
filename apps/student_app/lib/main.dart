@@ -16,6 +16,8 @@ import 'package:student_app/features/home/fixtures/student_home_fixtures.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final config = EnvironmentConfig.fromEnvironment();
+  final screenshotMode =
+      const bool.fromEnvironment('NANO_SCREENSHOT_MODE', defaultValue: false);
   AuthRepository? authRepository;
   OnboardingRepository? onboardingRepository;
   StudentPreferencesRepository? preferencesRepository;
@@ -114,7 +116,11 @@ void main() {
       // recording doubles and never reaches for a platform plugin (MED-08).
       voicePlayer: NanoAudioVoicePlayer(),
       clipPlayer: NanoVideoClipPlayer(),
-      requireAuth: requireAuth,
+      requireAuth: screenshotMode ? false : requireAuth,
+      initialLocation: screenshotMode ? '/screenshot/junior_home' : null,
+      initialAccessibility: screenshotMode
+          ? const AccessibilityPreferences(reducedMotion: true)
+          : AccessibilityPreferences.defaults,
     ),
   );
 }

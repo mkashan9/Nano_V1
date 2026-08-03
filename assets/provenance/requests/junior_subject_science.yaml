@@ -1,0 +1,6 @@
+id: junior_subject_science
+purpose: Science subject world card art
+reference_screen: junior_home
+status: ACCEPTED
+provider: cursor_generate_image
+prompt_version: 1

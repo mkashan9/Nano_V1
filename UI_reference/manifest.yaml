@@ -1,155 +1,183 @@
 # Nano UI reference manifest — do not alter original images
 references:
-  - path: UI_reference/four_12/Communities.jpeg
-    experience: Senior
+  - id: senior_communities
+    path: UI_reference/four_12/Communities.jpeg
+    experience: senior
     probable_screen: Communities
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /communities
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "COM-01"
+    device_type: phone
+    module_id: COM-01
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
     main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/four_12/games.jpeg
-    experience: Senior
+
+  - id: senior_games
+    path: UI_reference/four_12/games.jpeg
+    experience: senior
     probable_screen: Games
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /games
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "GME-01"
+    device_type: phone
+    module_id: GME-01
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    main_reusable_components: [nav_bar, cards]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/four_12/home.jpeg
-    experience: Senior
+
+  - id: senior_home
+    path: UI_reference/four_12/home.jpeg
+    experience: senior
     probable_screen: Home
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "STU-03 / STU-04"
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    device_type: phone
+    module_id: STU-04
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
+    main_layout_regions: [header, hero, content, bottom_nav]
+    main_reusable_components: [nav_bar, continue_card, subject_cards]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/four_12/Learning_stack.jpeg
-    experience: Senior
+
+  - id: senior_learning_stack
+    path: UI_reference/four_12/Learning_stack.jpeg
+    experience: senior
     probable_screen: Learning Stack
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /learning
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "LRN-01"
+    device_type: phone
+    module_id: LRN-01
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    main_reusable_components: [nav_bar, cards]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/four_12/profile.jpeg
-    experience: Senior
+
+  - id: senior_profile
+    path: UI_reference/four_12/profile.jpeg
+    experience: senior
     probable_screen: Profile
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /profile
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "STU-05"
+    device_type: phone
+    module_id: STU-05
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    main_reusable_components: [nav_bar, avatar_slot]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/kids/games.jpeg
-    experience: Junior
+
+  - id: junior_games
+    path: UI_reference/kids/games.jpeg
+    experience: junior
     probable_screen: Games
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /games
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "GME-01"
+    device_type: phone
+    module_id: GME-01
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    main_reusable_components: [nav_bar, cards]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/kids/home.jpeg
-    experience: Junior
+
+  - id: junior_home
+    path: UI_reference/kids/home.jpeg
+    experience: junior
     probable_screen: Home
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /screenshot/junior_home
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "STU-03 / STU-04"
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    device_type: phone
+    module_id: VIS-01
+    implementation_status: USER_TEST
+    manual_review_status: PENDING
+    primary_matching_reference: true
+    main_layout_regions: [header, hero, subjects, bottom_nav]
+    main_reusable_components:
+      - junior_home_header
+      - junior_continue_hero
+      - junior_subject_world_card
+      - bottom_nav
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
+    card_types: [continue_hero, subject_world]
+    avatar_or_companion_placement: header_avatar_plus_hero_illustration
+    required_illustration_assets:
+      - junior_avatar_ali
+      - junior_continue_fox_hero
+      - junior_subject_math
+      - junior_subject_english
+      - junior_subject_science
+      - junior_subject_stories
+    regions:
+      header: [24, 48, 692, 100]
+      hero: [24, 160, 692, 280]
+      subjects: [24, 460, 692, 900]
+      bottom_navigation: [0, 1450, 740, 150]
     missing_assets: []
-    unclear_elements: []
-  - path: UI_reference/kids/learning_stack.jpeg
-    experience: Junior
+    unclear_elements:
+      - Star badge may encode level vs streak; VIS-01 uses streakDays from fixtures (7)
+
+  - id: junior_learning_stack
+    path: UI_reference/kids/learning_stack.jpeg
+    experience: junior
     probable_screen: Learning Stack
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /learning
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "LRN-01"
+    device_type: phone
+    module_id: LRN-01
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    main_reusable_components: [nav_bar, cards]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []
-  - path: UI_reference/kids/profile.jpeg
-    experience: Junior
+
+  - id: junior_profile
+    path: UI_reference/kids/profile.jpeg
+    experience: junior
     probable_screen: Profile
-    width: 740
-    height: 1600
-    format: JPEG
+    target_route: /profile
+    reference_width: 740
+    reference_height: 1600
     aspect_ratio: 0.463
-    related_module_id: "STU-05"
+    device_type: phone
+    module_id: STU-05
+    implementation_status: BACKLOG
+    manual_review_status: PENDING
     main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, cards, avatar_slot]
-    typography_clues: [large_titles_junior, denser_senior]
-    spacing_clues: [generous_junior, compact_senior]
+    main_reusable_components: [nav_bar, avatar_slot]
     navigation_type: bottom_tabs
-    card_types: [content_cards]
-    avatar_or_companion_placement: content_adjacent_or_header
     missing_assets: []
     unclear_elements: []

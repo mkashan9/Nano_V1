@@ -10,6 +10,7 @@ import 'package:student_app/features/auth/presentation/recover_password_page.dar
 import 'package:student_app/features/auth/presentation/sign_in_page.dart';
 import 'package:student_app/features/auth/presentation/sign_up_page.dart';
 import 'package:student_app/features/onboarding/presentation/onboarding_flow_page.dart';
+import 'package:student_app/features/qa/presentation/screenshot_junior_home_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -94,6 +95,12 @@ GoRouter createStudentRouter({
       );
     },
     routes: [
+      GoRoute(
+        path: '/screenshot/junior_home',
+        builder: (context, state) => ScreenshotJuniorHomePage(
+          repository: homeRepository,
+        ),
+      ),
       GoRoute(
         path: '/sign-in',
         builder: (context, state) {

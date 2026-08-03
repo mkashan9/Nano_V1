@@ -5,46 +5,47 @@ Original images are never modified.
 
 Total references: **9**
 
-| Path | Experience | Screen | Size | Format | Aspect | Module |
-|------|------------|--------|------|--------|--------|--------|
-| `UI_reference/four_12/Communities.jpeg` | Senior | Communities | 740×1600 | JPEG | 0.463 | COM-01 |
-| `UI_reference/four_12/games.jpeg` | Senior | Games | 740×1600 | JPEG | 0.463 | GME-01 |
-| `UI_reference/four_12/home.jpeg` | Senior | Home | 740×1600 | JPEG | 0.463 | STU-03 / STU-04 |
-| `UI_reference/four_12/Learning_stack.jpeg` | Senior | Learning Stack | 740×1600 | JPEG | 0.463 | LRN-01 |
-| `UI_reference/four_12/profile.jpeg` | Senior | Profile | 740×1600 | JPEG | 0.463 | STU-05 |
-| `UI_reference/kids/games.jpeg` | Junior | Games | 740×1600 | JPEG | 0.463 | GME-01 |
-| `UI_reference/kids/home.jpeg` | Junior | Home | 740×1600 | JPEG | 0.463 | STU-03 / STU-04 |
-| `UI_reference/kids/learning_stack.jpeg` | Junior | Learning Stack | 740×1600 | JPEG | 0.463 | LRN-01 |
-| `UI_reference/kids/profile.jpeg` | Junior | Profile | 740×1600 | JPEG | 0.463 | STU-05 |
+| ID | Path | Experience | Screen | Size | Route | Module | Status |
+|----|------|------------|--------|------|-------|--------|--------|
+| senior_communities | `UI_reference/four_12/Communities.jpeg` | Senior | Communities | 740×1600 | `/communities` | COM-01 | BACKLOG |
+| senior_games | `UI_reference/four_12/games.jpeg` | Senior | Games | 740×1600 | `/games` | GME-01 | BACKLOG |
+| senior_home | `UI_reference/four_12/home.jpeg` | Senior | Home | 740×1600 | `/` | STU-04 | BACKLOG |
+| senior_learning_stack | `UI_reference/four_12/Learning_stack.jpeg` | Senior | Learning Stack | 740×1600 | `/learning` | LRN-01 | BACKLOG |
+| senior_profile | `UI_reference/four_12/profile.jpeg` | Senior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
+| junior_games | `UI_reference/kids/games.jpeg` | Junior | Games | 740×1600 | `/games` | GME-01 | BACKLOG |
+| junior_home | `UI_reference/kids/home.jpeg` | Junior | Home | 740×1600 | `/screenshot/junior_home` | **VIS-01** | ACTIVE |
+| junior_learning_stack | `UI_reference/kids/learning_stack.jpeg` | Junior | Learning Stack | 740×1600 | `/learning` | LRN-01 | BACKLOG |
+| junior_profile | `UI_reference/kids/profile.jpeg` | Junior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
+
+## Active primary matching reference
+
+**junior_home** — VIS-01 exact viewport 740×1600.
+
+Regions (`[x, y, width, height]`):
+
+| Region | Box |
+|--------|-----|
+| header | `[24, 48, 692, 100]` |
+| hero | `[24, 160, 692, 280]` |
+| subjects | `[24, 460, 692, 900]` |
+| bottom_navigation | `[0, 1450, 740, 150]` |
 
 ## Layout observations
 
 ### Junior (`kids/`)
 
-- Larger touch targets and shorter labels expected.
-- Strong visuals; companion/Nori presence likely near primary content.
-- No Communities reference present (handbook: Junior must not see Communities).
+- Larger touch targets and shorter labels.
+- Strong 3D claymation illustrations; avatar in header; companion art on continue hero.
+- No Communities reference (handbook: Junior must not see Communities).
 
 ### Senior (`four_12/`)
 
-- Higher information density than Junior.
-- Includes Communities screen.
-- Bottom navigation pattern across Home, Learning, Games, Profile (+ Communities).
+- Higher information density.
+- Includes Communities.
+- Bottom navigation across Home, Learning, Games, Profile (+ Communities).
 
-## Finding template
+## Catalog completeness
 
-```text
-Status: PASS | WARNING | FAIL | UNKNOWN
-Evidence:
-Risk:
-Required action:
-Blocking: YES | NO
-```
-
-### Catalog completeness
-
-Status: PASS
-Evidence: All image files under UI_reference inventoried with dimensions and screen hints.
-Risk: Low — screen names inferred from filenames.
-Required action: Refine region/component annotations during FND-02 / STU-03/04 modules.
+Status: PASS  
+Evidence: All image files under UI_reference inventoried with dimensions, routes, and VIS-01 regions.  
 Blocking: NO

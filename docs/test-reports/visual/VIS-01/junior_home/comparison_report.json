@@ -1,0 +1,42 @@
+{
+  "reference": "UI_reference/kids/home.jpeg",
+  "actual": "docs/test-reports/visual/VIS-01/junior_home/actual.png",
+  "size": {
+    "width": 740,
+    "height": 1600
+  },
+  "scores": {
+    "overall_ssim_proxy": 0.6324,
+    "overall_mae": 0.2756,
+    "layout_score": 0.8956,
+    "typography_score": 0.7633,
+    "color_score": 0.7244,
+    "component_geometry_score": 0.5516,
+    "asset_placement_score": 0.6107,
+    "asset_visual_similarity_score": 0.4926,
+    "overall_structural_similarity": 0.6324
+  },
+  "regions": {
+    "header": {
+      "ssim_proxy": 0.916,
+      "mae": 0.0637
+    },
+    "hero": {
+      "ssim_proxy": 0.6107,
+      "mae": 0.2942
+    },
+    "subjects": {
+      "ssim_proxy": 0.4926,
+      "mae": 0.3793
+    },
+    "bottom_navigation": {
+      "ssim_proxy": 0.8751,
+      "mae": 0.0951
+    }
+  },
+  "gate": {
+    "target_overall_ssim": 0.95,
+    "passed_auto": false,
+    "status": "REVIEW_REQUIRED"
+  }
+}
