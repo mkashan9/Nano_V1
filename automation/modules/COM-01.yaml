@@ -1,16 +1,25 @@
 id: COM-01
 name: "Community Discovery"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - STU-04
   - SAFE-01
+dependency_notes: >
+  Open Communities browse for seniors. SAFE-04 entitlements gate access.
+  Create/join deferred to COM-02/COM-03.
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/COM-01/
@@ -19,27 +28,42 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for COM-01"
+  - "Handbook COM-01 Senior Communities (discovery slice)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.communities
+  - public.community_memberships
+server_functions:
+  - "public.my_communities"
+  - "public.discover_public_communities"
+  - "public.get_community_detail"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Senior Communities tab shows My and Discover
+  - Public search and detail work via RPCs
+  - assert_communities_allowed gates discovery
+  - Juniors never see Communities
+  - Create/join deferred with clear copy
 required_tests:
-  - documentation_review
+  - supabase/tests/com01_community_discovery.sql
+  - packages/nano_domain/test/community_discovery_test.dart
+  - packages/nano_data/test/community_discovery_repository_test.dart
+  - apps/student_app/test/communities_hub_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Browse Discover as senior; confirm junior exclusion
+rollback_notes: >
+  Revert branch and migration. Communities tab returns to placeholder.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Discovery hub, public seed, detail read-only; open (no school gate).
+  deferred: >
+    Create (COM-02), join/invite (COM-03), chat (COM-04+).

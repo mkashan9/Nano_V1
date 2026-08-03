@@ -24,6 +24,7 @@ import 'package:student_app/features/learning/presentation/topic_detail_page.dar
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 import 'package:student_app/features/flex/presentation/flex_home_page.dart';
 import 'package:student_app/features/games/presentation/games_catalog_page.dart';
+import 'package:student_app/features/communities/presentation/communities_hub_page.dart';
 
 class StudentShell extends StatelessWidget {
   const StudentShell({
@@ -504,11 +505,18 @@ class StudentFlexTab extends StatelessWidget {
 }
 
 class StudentCommunitiesTab extends StatelessWidget {
-  const StudentCommunitiesTab({super.key});
+  const StudentCommunitiesTab({
+    super.key,
+    this.repository,
+  });
+
+  final CommunityDiscoveryRepository? repository;
 
   @override
   Widget build(BuildContext context) {
-    return const NavPlaceholderPage(title: 'Communities');
+    return CommunitiesHubPage(
+      repository: repository ?? FakeCommunityDiscoveryRepository(),
+    );
   }
 }
 
