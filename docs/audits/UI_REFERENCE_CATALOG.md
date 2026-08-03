@@ -12,7 +12,7 @@ Total references: **9**
 | senior_home | `UI_reference/four_12/home.jpeg` | Senior | Home | 740×1600 | `/` | STU-04 | BACKLOG |
 | senior_learning_stack | `UI_reference/four_12/Learning_stack.jpeg` | Senior | Learning Stack | 740×1600 | `/learning` | LRN-01 | BACKLOG |
 | senior_profile | `UI_reference/four_12/profile.jpeg` | Senior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
-| junior_games | `UI_reference/kids/games.jpeg` | Junior | Games | 740×1600 | `/screenshot/junior_games` | **VIS-03** | USER_TEST |
+| junior_games | `UI_reference/kids/games.jpeg` | Junior | Games | 740×1600 | `/screenshot/junior_games` | **VIS-03** | DONE |
 | junior_home | `UI_reference/kids/home.jpeg` | Junior | Home | 740×1600 | `/screenshot/junior_home` | **VIS-01** | DONE |
 | junior_learning_stack | `UI_reference/kids/learning_stack.jpeg` | Junior | Learning Stack | 740×1600 | `/screenshot/junior_learning` | **VIS-02** | DONE |
 | junior_profile | `UI_reference/kids/profile.jpeg` | Junior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |

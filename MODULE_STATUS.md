@@ -133,7 +133,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | QA-06 | Pilot Release Preparation | R10 | DONE | QA-01, QA-02, QA-03, QA-04, QA-05 |
 | VIS-01 | Junior Home Visual Replication | R11 | DONE | STU-03, FND-02 |
 | VIS-02 | Junior Learning Stack Visual Replication | R11 | DONE | VIS-01, LRN-01, FND-02 |
-| VIS-03 | Junior Games Visual Replication | R11 | USER_TEST | VIS-02, GME-01, FND-02 |
+| VIS-03 | Junior Games Visual Replication | R11 | DONE | VIS-02, GME-01, FND-02 |
 | VIS-04 | Junior Profile Visual Replication | R11 | BACKLOG | VIS-03, STU-05, FND-02 |
 | VIS-05 | Senior Home Visual Replication | R11 | BACKLOG | VIS-04, STU-04, FND-02 |
 | VIS-06 | Senior Learning Stack Visual Replication | R11 | BACKLOG | VIS-05, LRN-01, FND-02 |
