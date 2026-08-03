@@ -156,9 +156,9 @@ references:
     aspect_ratio: 0.463
     device_type: phone
     module_id: VIS-02
-    implementation_status: USER_TEST
-    manual_review_status: PENDING
-    primary_matching_reference: true
+    implementation_status: DONE
+    manual_review_status: APPROVED
+    primary_matching_reference: false
     main_layout_regions: [prompt_header, world_carousel, continue_card, bottom_nav]
     main_reusable_components:
       - junior_learning_prompt_header

@@ -14,7 +14,7 @@ Total references: **9**
 | senior_profile | `UI_reference/four_12/profile.jpeg` | Senior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
 | junior_games | `UI_reference/kids/games.jpeg` | Junior | Games | 740×1600 | `/games` | GME-01 | BACKLOG |
 | junior_home | `UI_reference/kids/home.jpeg` | Junior | Home | 740×1600 | `/screenshot/junior_home` | **VIS-01** | DONE |
-| junior_learning_stack | `UI_reference/kids/learning_stack.jpeg` | Junior | Learning Stack | 740×1600 | `/screenshot/junior_learning` | **VIS-02** | USER_TEST |
+| junior_learning_stack | `UI_reference/kids/learning_stack.jpeg` | Junior | Learning Stack | 740×1600 | `/screenshot/junior_learning` | **VIS-02** | DONE |
 | junior_profile | `UI_reference/kids/profile.jpeg` | Junior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
 
 ## Active primary matching reference
