@@ -1760,6 +1760,25 @@ class NanoCopy {
   String get parentGuidanceAdminEmpty =>
       isUrdu ? 'ابھی کوئی پیکیج نہیں' : 'No weekly packages yet';
 
+  String get guardianLinkTitle =>
+      isUrdu ? 'سرپرست لنکس' : 'Guardian links';
+  String get guardianLinkHint => isUrdu
+      ? 'دعوت کوڈ بنائیں تاکہ سرپرست آپ سے جڑ سکے۔'
+      : 'Create an invite code so a guardian can link to you.';
+  String get guardianLinkCreate =>
+      isUrdu ? 'دعوت کوڈ بنائیں' : 'Create invite';
+  String get guardianLinkCodeLabel =>
+      isUrdu ? 'دعوت کوڈ' : 'Invite code';
+  String get guardianLinkAcceptDemo =>
+      isUrdu ? 'ڈیمو: سرپرست کے طور پر قبول کریں' : 'Demo: accept as guardian';
+  String get guardianLinkAccept => isUrdu ? 'قبول کریں' : 'Accept invite';
+  String get guardianLinkEmpty =>
+      isUrdu ? 'ابھی کوئی سرپرست منسلک نہیں' : 'No guardians linked yet';
+  String get guardianLinkRevoke => isUrdu ? 'منسوخ کریں' : 'Revoke';
+  String get guardianLinkLinkedLabel => isUrdu ? 'منسلک سرپرست' : 'Linked guardians';
+  String get guardianLinkLoadError =>
+      isUrdu ? 'لنکس لوڈ نہیں ہوئے' : 'Could not load guardian links';
+
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';
   String get companionNameLabel => isUrdu ? 'ساتھی کا نام' : 'Guide name';
