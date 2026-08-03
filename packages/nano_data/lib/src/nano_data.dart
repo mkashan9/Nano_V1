@@ -46,6 +46,7 @@ export 'profile/student_profile_repository.dart';
 export 'preferences/student_preferences_repository.dart';
 export 'supabase/nano_supabase.dart';
 export 'sync/sync_store.dart';
+export 'security/security_hardening_repository.dart';
 export 'xp/achievement_repository.dart';
 export 'xp/mission_repository.dart';
 export 'xp/share_card_repository.dart';

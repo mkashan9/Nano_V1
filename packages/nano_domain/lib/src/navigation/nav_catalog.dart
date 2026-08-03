@@ -275,7 +275,7 @@ abstract final class NavCatalog {
     ),
     NavDestination(
       id: 'audit',
-      label: 'Audit',
+      label: 'Security',
       path: '/audit',
       iconName: 'history',
       requiredPermission: 'platform.audit',

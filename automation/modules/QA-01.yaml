@@ -1,15 +1,12 @@
 id: QA-01
 name: "Security Hardening"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - SEC-03
 applications:
-  - student_app
-  - teacher_app
   - admin_web
   - packages
-  - supabase
   - docs
   - automation
 allowed_paths:
@@ -22,6 +19,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/admin_web/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -32,16 +32,22 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Security hardening checklist is executable and visible to superadmin
+  - Flutter anon config rejects service_role material
+  - AccessGuard denial cases remain covered
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/security_hardening_test.dart
+  - packages/nano_data/test/security_hardening_repository_test.dart
+  - apps/admin_web/test/security_hardening_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Superadmin → Security → all checks passed
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true
