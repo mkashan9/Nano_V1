@@ -159,6 +159,7 @@ class NanoStudentApp extends StatefulWidget {
     this.gameLocalStorageRepository,
     this.communityDiscoveryRepository,
     this.communityMessagingRepository,
+    this.inboxRepository,
     this.voicePlayer,
     this.clipPlayer,
     this.syncController,
@@ -236,6 +237,7 @@ class NanoStudentApp extends StatefulWidget {
   final GameLocalStorageRepository? gameLocalStorageRepository;
   final CommunityDiscoveryRepository? communityDiscoveryRepository;
   final CommunityMessagingRepository? communityMessagingRepository;
+  final StudentNotificationInboxRepository? inboxRepository;
 
   /// MED-03: who plays a recording. `main` supplies a real one (MED-08); null
   /// means the listen control never appears, because a control that cannot work
@@ -647,6 +649,7 @@ class _NanoStudentAppState extends State<NanoStudentApp>
       gameLocalStorageRepository: widget.gameLocalStorageRepository,
       communityDiscoveryRepository: widget.communityDiscoveryRepository,
       communityMessagingRepository: widget.communityMessagingRepository,
+      inboxRepository: widget.inboxRepository,
     );
   }
 

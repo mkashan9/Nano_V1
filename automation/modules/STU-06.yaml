@@ -1,7 +1,7 @@
 id: STU-06
 name: "Student Notifications Inbox"
 release: R2
-status: BACKLOG
+status: DONE
 dependencies:
   - STU-05
 applications:
@@ -19,6 +19,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -29,16 +32,25 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - In-app inbox opens from Home bell
+  - All / Unread filter works
+  - Mark read on open
+  - Fake repository seeded for UI-first review
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/student_inbox_test.dart
+  - packages/nano_data/test/student_notification_inbox_repository_test.dart
+  - apps/student_app/test/notifications_inbox_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Open Home → tap notifications bell
+  - Filter All / Unread
+  - Tap unread item → confirm mark-read + deep-link hint
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true

@@ -25,7 +25,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | STU-03 | Junior Home | R2 | DONE | STU-02, FND-05 |
 | STU-04 | Senior Home | R2 | DONE | STU-02, FND-05 |
 | STU-05 | Student Profile and Settings | R2 | DONE | STU-03, STU-04 |
-| STU-06 | Student Notifications Inbox | R2 | BACKLOG | STU-05 |
+| STU-06 | Student Notifications Inbox | R2 | DONE | STU-05 |
 | LRN-01 | Learning Subject Catalog | R3 | DONE | STU-03, STU-04, SEC-02 |
 | LRN-02 | Topic List, Ordering, and Prerequisites | R3 | DONE | LRN-01 |
 | LRN-03 | Video Player, Resume, Captions, and Completion | R3 | DONE | LRN-02 |

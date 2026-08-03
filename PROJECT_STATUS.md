@@ -1,13 +1,14 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** COM-06 Pinned Messages, Search, Gallery, and Archives
+- **Current module:** STU-06 Student Notifications Inbox
 - **Current status:** DONE (owner approved)
-- **Current branch:** module/COM-06-pins-search-gallery
+- **Current branch:** module/STU-06-notifications-inbox
 
 ## Release progress
 
 - R9: COM-01..COM-06 DONE
+- R2: STU-06 DONE (in-app inbox; push deferred to NOT-01)
 
 ## Owner next step
 
-NEXT starts STU-06 Student Notifications Inbox.
+NEXT starts IND-01 Independent Student Home and Natural Navigation.

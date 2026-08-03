@@ -40,6 +40,7 @@ export 'social/social_share.dart';
 export 'social/safety_report.dart';
 export 'social/moderation_queue.dart';
 export 'social/safety_policy.dart';
+export 'notifications/student_inbox.dart';
 export 'community/community_discovery.dart';
 export 'community/community_messaging.dart';
 export 'media/asset_review.dart';

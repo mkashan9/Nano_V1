@@ -25,6 +25,7 @@ import 'package:student_app/features/profile/presentation/student_profile_page.d
 import 'package:student_app/features/flex/presentation/flex_home_page.dart';
 import 'package:student_app/features/games/presentation/games_catalog_page.dart';
 import 'package:student_app/features/communities/presentation/communities_hub_page.dart';
+import 'package:student_app/features/notifications/presentation/notifications_inbox_page.dart';
 
 class StudentShell extends StatelessWidget {
   const StudentShell({
@@ -293,6 +294,7 @@ class StudentLearningTab extends StatelessWidget {
     this.insightsRepository,
     this.learnerQuizRepository,
     this.quizAttemptRepository,
+    this.inboxRepository,
     this.companionName,
     this.learnerDisplayName,
     this.shareCards,
@@ -307,10 +309,22 @@ class StudentLearningTab extends StatelessWidget {
   final LearningInsightsRepository? insightsRepository;
   final LearnerQuizRepository? learnerQuizRepository;
   final QuizAttemptRepository? quizAttemptRepository;
+  final StudentNotificationInboxRepository? inboxRepository;
   final String? companionName;
   final String? learnerDisplayName;
   final ShareCardRepository? shareCards;
   final VoidCallback? onOpenFlex;
+
+  void _openNotifications(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => NotificationsInboxPage(
+          repository:
+              inboxRepository ?? FakeStudentNotificationInboxRepository(),
+        ),
+      ),
+    );
+  }
 
   void _openSubject(BuildContext context, LearningSubject subject) {
     final catalog = catalogRepository;
@@ -411,7 +425,7 @@ class StudentLearningTab extends StatelessWidget {
         onSubjectTap: (subject) => _openSubject(context, subject),
         onContinue: (_) => _continueLearning(context),
         onOpenUpdate: () {},
-        onNotifications: () {},
+        onNotifications: () => _openNotifications(context),
       );
     }
     if (repository == null) {
@@ -427,7 +441,7 @@ class StudentLearningTab extends StatelessWidget {
       companionName: companionName ?? 'Nori',
       onSubjectTap: (subject) => _openSubject(context, subject),
       onContinue: (_) => _continueLearning(context),
-      onNotifications: () {},
+      onNotifications: () => _openNotifications(context),
     );
   }
 }

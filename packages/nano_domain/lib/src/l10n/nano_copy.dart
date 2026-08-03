@@ -1121,6 +1121,13 @@ class NanoCopy {
       ? 'ابھی کوئی چیلنج نہیں۔'
       : 'No challenges yet.';
   String get notificationsLabel => isUrdu ? 'اطلاعات' : 'Notifications';
+  String get inboxFilterAll => isUrdu ? 'سب' : 'All';
+  String get inboxFilterUnread => isUrdu ? 'نہ پڑھی' : 'Unread';
+  String get inboxEmpty =>
+      isUrdu ? 'ابھی کوئی اطلاع نہیں' : 'No notifications yet';
+  String get inboxLoadError =>
+      isUrdu ? 'اطلاعات لوڈ نہیں ہو سکیں' : 'Could not load notifications';
+  String get inboxDeepLinkHint => isUrdu ? 'لنک' : 'Link';
   String get missionXpAvailable => isUrdu ? 'دستیاب XP' : 'XP to earn';
   String percentDone(int percent) =>
       isUrdu ? '$percent% مکمل' : '$percent% done';

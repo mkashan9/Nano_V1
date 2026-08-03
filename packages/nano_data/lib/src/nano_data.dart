@@ -56,5 +56,6 @@ export 'social/friend_graph_repository.dart';
 export 'social/safety_report_repository.dart';
 export 'social/moderation_queue_repository.dart';
 export 'social/safety_policy_repository.dart';
+export 'notifications/student_notification_inbox_repository.dart';
 export 'community/community_discovery_repository.dart';
 export 'community/community_messaging_repository.dart';
