@@ -58,5 +58,6 @@ export 'social/moderation_queue_repository.dart';
 export 'social/safety_policy_repository.dart';
 export 'notifications/student_notification_inbox_repository.dart';
 export 'independent/independent_access_repository.dart';
+export 'independent/school_link_repository.dart';
 export 'community/community_discovery_repository.dart';
 export 'community/community_messaging_repository.dart';
