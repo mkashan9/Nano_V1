@@ -110,4 +110,5 @@ export 'security/security_hardening.dart';
 export 'qa/performance_audit.dart';
 export 'qa/offline_network_audit.dart';
 export 'qa/accessibility_audit.dart';
+export 'qa/bidi_layout_audit.dart';
 export 'sync/sync_models.dart';

@@ -1042,6 +1042,20 @@ class NanoCopy {
       isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
   String get accessibilityAuditOpenSettings =>
       isUrdu ? 'رسائی ترتیبات کھولیں' : 'Open accessibility settings';
+  String get bidiLayoutAuditTitle =>
+      isUrdu ? 'اردو اور دو طرفہ ترتیب' : 'Urdu & bidirectional';
+  String get bidiLayoutAuditSubtitle => isUrdu
+      ? 'RTL، کاپی، اور چھوٹی اسکرین اوور فلو۔'
+      : 'RTL, copy, and small-phone overflow.';
+  String get bidiLayoutAuditAllPassed =>
+      isUrdu ? 'تمام اردو/بائیڈائی جانچیں پاس' : 'All bidi checks passed';
+  String bidiLayoutAuditHasFailures(int count) => isUrdu
+      ? '$count اردو/بائیڈائی جانچ ناکام'
+      : '$count bidi check(s) failed';
+  String get bidiLayoutAuditRun =>
+      isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
+  String get bidiLayoutAuditOpenPreview =>
+      isUrdu ? 'زبان کا پیش منظر کھولیں' : 'Open locale preview';
   String get analyticsPageTitle =>
       isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
   String get analyticsPageSubtitle => isUrdu

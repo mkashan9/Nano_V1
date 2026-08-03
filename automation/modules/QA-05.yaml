@@ -1,15 +1,12 @@
 id: QA-05
 name: "Urdu and Bidirectional Layout Audit"
 release: R10
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - FND-06
 applications:
   - student_app
-  - teacher_app
-  - admin_web
   - packages
-  - supabase
   - docs
   - automation
 allowed_paths:
@@ -22,6 +19,9 @@ allowed_paths:
   - TASKS.md
   - CHANGELOG.md
   - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
@@ -32,16 +32,22 @@ ui_references: []
 database_scope: []
 server_functions: []
 acceptance:
+  - Urdu/bidi smoke checklist is executable from Me
+  - Urdu defaults to RTL and English to LTR
+  - Small-phone (360px) + textScale 1.3 Urdu smoke is covered
   - Module documentation complete
   - Required tests listed and executed or marked NOT RUN with reason
   - No secrets exposed
   - Owner manual test steps provided
 required_tests:
+  - packages/nano_domain/test/bidi_layout_audit_test.dart
+  - packages/nano_data/test/bidi_layout_audit_repository_test.dart
+  - apps/student_app/test/bidi_layout_audit_page_test.dart
   - documentation_review
 security_checks:
   - no_secrets_in_diff
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
+  - Me → Urdu & bidirectional → Urdu RTL pass; English LTR pass
 rollback_notes: "Revert module branch commits"
 requires_owner_test: true
