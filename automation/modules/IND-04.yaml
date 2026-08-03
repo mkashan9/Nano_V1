@@ -1,7 +1,7 @@
 id: IND-04
 name: "School Invitation and Account Linking"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - IND-02
   - SCH-04
