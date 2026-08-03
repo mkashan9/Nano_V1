@@ -1,7 +1,7 @@
 id: PAR-02
 name: "Superadmin Weekly PDF and Activity Upload"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - PAR-01
   - ADM-01
