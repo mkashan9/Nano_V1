@@ -27,10 +27,18 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Welcome to Study Circle — ask anything.'), findsOneWidget);
+    expect(find.text('lab.jpg'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.add_circle_outline));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Photo'));
+    await tester.pumpAndSettle();
+    expect(find.text('photo-demo'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'Hello chat');
     await tester.tap(find.widgetWithText(FilledButton, 'Send'));
     await tester.pumpAndSettle();
     expect(find.text('Hello chat'), findsOneWidget);
+    expect(find.text('photo-demo'), findsWidgets);
   });
 }

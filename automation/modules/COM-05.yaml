@@ -1,17 +1,26 @@
 id: COM-05
 name: "Voice Messages, Photos, Videos, and Files"
 release: R9
-status: BACKLOG
+status: USER_TEST
 dependencies:
   - COM-04
   - MED-02
   - SAFE-02
+dependency_notes: >
+  Attachments on community messages via community-media bucket and signed URLs.
+  SAFE-03 gates captions; SAFE-02 evidence-ready attachment ids.
 applications:
   - student_app
   - packages
+  - supabase
   - docs
   - automation
 allowed_paths:
+  - packages/nano_domain/
+  - packages/nano_data/
+  - apps/student_app/
+  - supabase/migrations/
+  - supabase/tests/
   - docs/
   - automation/
   - docs/modules/COM-05/
@@ -20,27 +29,40 @@ allowed_paths:
   - PROJECT_STATUS.md
   - TASKS.md
   - CHANGELOG.md
-  - AGENTS.md
 forbidden_paths:
   - supabase/functions/.env.local
   - api_s.txt
   - github.txt
 handbook_sections:
-  - "See docs/handbook/HANDBOOK_TRACEABILITY.md for COM-05"
+  - "Handbook COM-01 Senior Communities (media slice)"
 ui_references: []
-database_scope: []
-server_functions: []
+database_scope:
+  - public.community_message_attachments
+  - storage.buckets.community-media
+server_functions:
+  - "public.prepare_community_media_upload"
+  - "public.send_community_message"
 acceptance:
-  - Module documentation complete
-  - Required tests listed and executed or marked NOT RUN with reason
-  - No secrets exposed
-  - Owner manual test steps provided
+  - Active member can prepare upload and send attachment with optional caption
+  - Messages list includes ready attachments
+  - community-media is private; membership-gated storage policies
+  - SAFE-03 still gates non-empty captions
 required_tests:
-  - documentation_review
+  - supabase/tests/com05_community_media.sql
+  - packages/nano_domain/test/community_messaging_test.dart
+  - packages/nano_data/test/community_messaging_repository_test.dart
+  - apps/student_app/test/community_chat_page_test.dart
 security_checks:
   - no_secrets_in_diff
+  - server_side_enforcement
 accessibility_checks: []
 manual_test_steps:
-  - Review module docs and status
-rollback_notes: "Revert module branch commits"
+  - Attach photo/voice fixture and send in chat
+rollback_notes: >
+  Revert branch and migration. Attachments table/bucket/RPCs removed.
 requires_owner_test: true
+owner_decisions_locked:
+  scope: >
+    Voice/photo/video/file attachments on community chat; fake-first attach UX.
+  deferred: >
+    Device pickers, inline players, malware worker, gallery/pins.

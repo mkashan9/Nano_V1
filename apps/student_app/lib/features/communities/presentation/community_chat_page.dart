@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:nano_data/nano_data.dart';
 import 'package:nano_design_system/nano_design_system.dart';
 import 'package:nano_domain/nano_domain.dart';
 
-/// COM-04 community text chat: messages, replies, mentions, reactions.
+/// COM-04/05 community chat: text, replies, mentions, reactions, media.
 class CommunityChatPage extends StatefulWidget {
   const CommunityChatPage({
     super.key,
@@ -29,6 +31,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
   NanoViewState _state = const NanoViewLoading();
   List<CommunityMessage> _messages = const [];
   List<CommunityMember> _members = const [];
+  final List<CommunityMessageAttachment> _pendingAttachments = [];
   CommunityMessage? _replyTo;
   CommunityMember? _mention;
   var _busy = false;
@@ -69,7 +72,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
 
   Future<void> _send() async {
     final body = _composer.text.trim();
-    if (body.isEmpty || _busy) return;
+    if ((body.isEmpty && _pendingAttachments.isEmpty) || _busy) return;
     setState(() => _busy = true);
     try {
       final mentions = <String>[
@@ -80,14 +83,54 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
         body: body,
         parentMessageId: _replyTo?.id,
         mentionUserIds: mentions,
+        attachmentIds: [
+          for (final a in _pendingAttachments) a.id,
+        ],
       );
       if (!mounted) return;
       _composer.clear();
       setState(() {
         _replyTo = null;
         _mention = null;
+        _pendingAttachments.clear();
       });
       await _load();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$error')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _attach(CommunityMediaKind kind) async {
+    setState(() => _busy = true);
+    try {
+      final contentType = switch (kind) {
+        CommunityMediaKind.photo => 'image/jpeg',
+        CommunityMediaKind.voice => 'audio/mp4',
+        CommunityMediaKind.video => 'video/mp4',
+        CommunityMediaKind.file => 'application/pdf',
+      };
+      final prepared = await widget.messagingRepository.prepareMediaUpload(
+        communityId: widget.communityId,
+        kind: kind,
+        contentType: contentType,
+        byteSize: 128,
+        originalFilename: '${kind.wire}-demo',
+        durationMs: kind == CommunityMediaKind.voice ? 3000 : null,
+      );
+      // Fake-first fixture bytes; live path uploads the same tiny payload.
+      await widget.messagingRepository.uploadMediaBytes(
+        bucket: prepared.storageBucket,
+        path: prepared.storagePath,
+        bytes: utf8.encode('nano-community-media'),
+        contentType: contentType,
+      );
+      if (!mounted) return;
+      setState(() => _pendingAttachments.add(prepared));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -148,6 +191,60 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
     );
   }
 
+  void _pickAttach(NanoCopy copy) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.image_outlined),
+                title: Text(copy.communitiesAttachPhoto),
+                onTap: () {
+                  Navigator.pop(context);
+                  _attach(CommunityMediaKind.photo);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.mic_none),
+                title: Text(copy.communitiesAttachVoice),
+                onTap: () {
+                  Navigator.pop(context);
+                  _attach(CommunityMediaKind.voice);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.videocam_outlined),
+                title: Text(copy.communitiesAttachVideo),
+                onTap: () {
+                  Navigator.pop(context);
+                  _attach(CommunityMediaKind.video);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.attach_file),
+                title: Text(copy.communitiesAttachFile),
+                onTap: () {
+                  Navigator.pop(context);
+                  _attach(CommunityMediaKind.file);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  IconData _iconFor(CommunityMediaKind kind) => switch (kind) {
+        CommunityMediaKind.photo => Icons.image_outlined,
+        CommunityMediaKind.voice => Icons.mic_none,
+        CommunityMediaKind.video => Icons.videocam_outlined,
+        CommunityMediaKind.file => Icons.insert_drive_file_outlined,
+      };
+
   @override
   Widget build(BuildContext context) {
     final copy = NanoLocaleScope.maybeOf(context)?.copy ??
@@ -173,6 +270,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
                           message: message,
                           messages: _messages,
                           copy: copy,
+                          iconFor: _iconFor,
                           onReply: () => setState(() => _replyTo = message),
                           onReact: () => _pickReaction(message),
                           onToggle: (emoji) => _react(message, emoji),
@@ -190,7 +288,11 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
                   '${copy.communitiesReplyingTo}: ${_replyTo!.authorDisplayName}',
                 ),
                 subtitle: Text(
-                  _replyTo!.body,
+                  _replyTo!.body.isEmpty
+                      ? (_replyTo!.attachments.isNotEmpty
+                          ? _replyTo!.attachments.first.displayLabel
+                          : '')
+                      : _replyTo!.body,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -212,6 +314,29 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
                 ),
               ),
             ),
+          if (_pendingAttachments.isNotEmpty)
+            SizedBox(
+              height: 48,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+                children: [
+                  for (final attachment in _pendingAttachments)
+                    Padding(
+                      padding: const EdgeInsets.only(right: NanoSpacing.sm),
+                      child: InputChip(
+                        avatar: Icon(_iconFor(attachment.kind), size: 18),
+                        label: Text(attachment.displayLabel),
+                        onDeleted: _busy
+                            ? null
+                            : () => setState(
+                                  () => _pendingAttachments.remove(attachment),
+                                ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           Padding(
             padding: EdgeInsets.fromLTRB(
               NanoSpacing.md,
@@ -221,6 +346,11 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
             ),
             child: Row(
               children: [
+                IconButton(
+                  tooltip: copy.communitiesAttach,
+                  onPressed: _busy ? null : () => _pickAttach(copy),
+                  icon: const Icon(Icons.add_circle_outline),
+                ),
                 if (_members.isNotEmpty)
                   IconButton(
                     tooltip: copy.communitiesMention,
@@ -282,6 +412,7 @@ class _MessageTile extends StatelessWidget {
     required this.message,
     required this.messages,
     required this.copy,
+    required this.iconFor,
     required this.onReply,
     required this.onReact,
     required this.onToggle,
@@ -290,6 +421,7 @@ class _MessageTile extends StatelessWidget {
   final CommunityMessage message;
   final List<CommunityMessage> messages;
   final NanoCopy copy;
+  final IconData Function(CommunityMediaKind kind) iconFor;
   final VoidCallback onReply;
   final VoidCallback onReact;
   final ValueChanged<String> onToggle;
@@ -320,14 +452,30 @@ class _MessageTile extends StatelessWidget {
           if (parent != null) ...[
             const SizedBox(height: NanoSpacing.xs),
             Text(
-              '${copy.communitiesReplyingTo} ${parent.authorDisplayName}: ${parent.body}',
+              '${copy.communitiesReplyingTo} ${parent.authorDisplayName}: ${parent.body.isEmpty && parent.attachments.isNotEmpty ? parent.attachments.first.displayLabel : parent.body}',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
-          const SizedBox(height: NanoSpacing.xs),
-          Text(message.body),
+          if (message.body.isNotEmpty) ...[
+            const SizedBox(height: NanoSpacing.xs),
+            Text(message.body),
+          ],
+          if (message.attachments.isNotEmpty) ...[
+            const SizedBox(height: NanoSpacing.xs),
+            Wrap(
+              spacing: NanoSpacing.xs,
+              runSpacing: NanoSpacing.xs,
+              children: [
+                for (final attachment in message.attachments)
+                  Chip(
+                    avatar: Icon(iconFor(attachment.kind), size: 18),
+                    label: Text(attachment.displayLabel),
+                  ),
+              ],
+            ),
+          ],
           if (message.mentionUserIds.isNotEmpty) ...[
             const SizedBox(height: NanoSpacing.xs),
             Text(
