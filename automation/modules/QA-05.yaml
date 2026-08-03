@@ -1,7 +1,7 @@
 id: QA-05
 name: "Urdu and Bidirectional Layout Audit"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - FND-06
 applications:
