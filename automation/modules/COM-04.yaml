@@ -1,7 +1,7 @@
 id: COM-04
 name: "Text Messages, Replies, Mentions, and Reactions"
 release: R9
-status: USER_TEST
+status: DONE
 dependencies:
   - COM-03
   - SAFE-03
