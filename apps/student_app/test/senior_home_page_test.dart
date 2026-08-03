@@ -9,7 +9,9 @@ import 'package:student_app/features/home/presentation/senior_home_page.dart';
 Widget _host({
   required StudentHomeRepository repository,
   bool flexEligible = false,
+  bool independent = false,
   VoidCallback? onOpenFlex,
+  ValueChanged<IndependentSpotlight>? onOpenSpotlight,
   ValueChanged<ContinueLearningItem>? onContinue,
   NanoAppLocale locale = NanoAppLocale.en,
 }) {
@@ -24,7 +26,9 @@ Widget _host({
           learnerName: 'Sara',
           userId: 'u1',
           flexEligible: flexEligible,
+          independent: independent,
           onOpenFlex: onOpenFlex,
+          onOpenSpotlight: onOpenSpotlight,
           onContinue: onContinue,
           onSubjectTap: (_) {},
           onOpenUpdate: () {},
@@ -87,6 +91,28 @@ void main() {
 
     expect(find.text('Flex'), findsNothing);
     expect(find.textContaining('tasks open'), findsNothing);
+  });
+
+  testWidgets('independent home shows play spotlight instead of Flex',
+      (tester) async {
+    IndependentSpotlight? opened;
+    await _pump(
+      tester,
+      _host(
+        repository: _repo(),
+        independent: true,
+        onOpenSpotlight: (item) => opened = item,
+      ),
+    );
+
+    expect(find.text('Flex'), findsNothing);
+    expect(find.text('Play next'), findsOneWidget);
+    expect(find.textContaining('Shape Sort'), findsOneWidget);
+    expect(find.textContaining('Ms Khan'), findsNothing);
+
+    await tester.tap(find.text('Play next'));
+    await tester.pumpAndSettle();
+    expect(opened?.deepLinkPath, '/games');
   });
 
   testWidgets('eligible learner sees the flex summary', (tester) async {

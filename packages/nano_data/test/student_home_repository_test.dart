@@ -63,6 +63,23 @@ void main() {
     expect(eligible.showsFlex, isTrue);
   });
 
+  test('independent home gets a play spotlight instead of Flex or school update',
+      () async {
+    final repo = FakeStudentHomeRepository(subjects: subjects);
+    final summary = await repo.loadHome(
+      userId: 'u1',
+      learnerName: 'Ali',
+      independent: true,
+    );
+    expect(summary.flex, isNull);
+    expect(summary.latestUpdate, isNull);
+    expect(summary.independentSpotlight?.title, 'Shape Sort');
+    expect(
+      summary.independentSpotlight?.kind,
+      IndependentSpotlightKind.play,
+    );
+  });
+
   test('a failing section still returns the rest of the home', () async {
     final repo = FakeStudentHomeRepository(
       subjects: subjects,

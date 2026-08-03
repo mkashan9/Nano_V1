@@ -27,7 +27,14 @@ enum HomeNoticeKind { none, maintenance, accessWarning, streakGentle }
 /// Independently loaded parts of the home, so one failure never blanks the
 /// whole screen (handbook STU-02: "Home renders with partial data when one
 /// source fails").
-enum HomeSection { continueLearning, missions, subjects, flex, updates }
+enum HomeSection {
+  continueLearning,
+  missions,
+  subjects,
+  flex,
+  updates,
+  independentSpotlight,
+}
 
 /// Flex snapshot for school-eligible seniors only.
 class FlexSummary {
@@ -40,6 +47,36 @@ class FlexSummary {
   final String? nextDueLabel;
 
   bool get hasWork => openTasks > 0;
+}
+
+/// IND-01: fills the school-only Flex slot for independents with a useful
+/// next action (play or learn) — never a lock or empty placeholder.
+enum IndependentSpotlightKind { play, learn }
+
+class IndependentSpotlight {
+  const IndependentSpotlight({
+    required this.kind,
+    required this.title,
+    required this.body,
+    this.deepLinkPath = '/games',
+  });
+
+  final IndependentSpotlightKind kind;
+  final String title;
+  final String body;
+  final String deepLinkPath;
+
+  factory IndependentSpotlight.fromJson(Map<String, dynamic> json) {
+    final kindRaw = '${json['kind'] ?? 'play'}';
+    return IndependentSpotlight(
+      kind: kindRaw == 'learn'
+          ? IndependentSpotlightKind.learn
+          : IndependentSpotlightKind.play,
+      title: json['title'] as String? ?? '',
+      body: json['body'] as String? ?? '',
+      deepLinkPath: json['deep_link_path'] as String? ?? '/games',
+    );
+  }
 }
 
 /// The latest relevant update: teacher feedback, a school notice, a result.
@@ -74,6 +111,7 @@ class StudentHomeSummary {
     this.fromCache = false,
     this.flex,
     this.latestUpdate,
+    this.independentSpotlight,
     this.failedSections = const {},
     this.levelProgress,
   });
@@ -97,6 +135,9 @@ class StudentHomeSummary {
 
   final HomeUpdate? latestUpdate;
 
+  /// IND-01: present for independents in place of Flex.
+  final IndependentSpotlight? independentSpotlight;
+
   /// Sections whose source failed. They render an inline notice instead of
   /// taking down the rest of the home.
   final Set<HomeSection> failedSections;
@@ -109,7 +150,8 @@ class StudentHomeSummary {
       subjects.isNotEmpty ||
       missions.isNotEmpty ||
       flex != null ||
-      latestUpdate != null;
+      latestUpdate != null ||
+      independentSpotlight != null;
 
   bool failed(HomeSection section) => failedSections.contains(section);
 
@@ -150,6 +192,7 @@ class StudentHomeSummary {
     bool? fromCache,
     FlexSummary? flex,
     HomeUpdate? latestUpdate,
+    IndependentSpotlight? independentSpotlight,
     Set<HomeSection>? failedSections,
     LevelProgress? levelProgress,
   }) {
@@ -167,6 +210,8 @@ class StudentHomeSummary {
       fromCache: fromCache ?? this.fromCache,
       flex: flex ?? this.flex,
       latestUpdate: latestUpdate ?? this.latestUpdate,
+      independentSpotlight:
+          independentSpotlight ?? this.independentSpotlight,
       failedSections: failedSections ?? this.failedSections,
       levelProgress: levelProgress ?? this.levelProgress,
     );

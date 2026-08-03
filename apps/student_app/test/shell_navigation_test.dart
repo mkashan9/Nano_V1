@@ -37,8 +37,11 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Flex'), findsNothing);
-    expect(find.text('Learning'), findsWidgets);
+    expect(find.text('Home'), findsWidgets);
+    expect(find.text('Play'), findsWidgets);
+    expect(find.text('Me'), findsWidgets);
     // Independent learners use the senior presentation, which leads with level.
     expect(find.textContaining('Level 3'), findsOneWidget);
+    expect(find.text('Play next'), findsOneWidget);
   });
 }
