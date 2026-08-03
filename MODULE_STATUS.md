@@ -132,4 +132,5 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | QA-05 | Urdu and Bidirectional Layout Audit | R10 | DONE | FND-06 |
 | QA-06 | Pilot Release Preparation | R10 | DONE | QA-01, QA-02, QA-03, QA-04, QA-05 |
 | VIS-01 | Junior Home Visual Replication | R11 | DONE | STU-03, FND-02 |
+| VIS-02 | Junior Learning Stack Visual Replication | R11 | USER_TEST | VIS-01, LRN-01, FND-02 |
 

@@ -1,0 +1,9 @@
+id: junior_learning_fox
+purpose: Junior Learning prompt mascot fox
+reference_screen: junior_learning
+reference_image: UI_reference/kids/learning_stack.jpeg
+style_description: 3D claymation friendly fox
+composition: centered waving fox
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

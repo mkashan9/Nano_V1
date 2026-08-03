@@ -1,0 +1,8 @@
+id: junior_learning_numbers
+purpose: Numbers world carousel card art
+reference_screen: junior_learning
+reference_image: UI_reference/kids/learning_stack.jpeg
+style_description: claymation smiling numbers on hills
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

@@ -43,10 +43,10 @@ void main() {
         onTopicOpen: opened.add,
       ),
     );
-    expect(find.text('Math'), findsOneWidget);
+    expect(find.text('Numbers'), findsOneWidget);
     expect(find.text('Science'), findsNothing);
 
-    await tester.tap(find.text('Math'));
+    await tester.tap(find.text('Numbers'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));
 
@@ -74,7 +74,7 @@ void main() {
     await tester.enterText(find.byType(TextField), 'living');
     await tester.pump();
     expect(find.text('Science'), findsOneWidget);
-    expect(find.text('Math'), findsNothing);
+    expect(find.text('Numbers'), findsNothing);
 
     await tester.enterText(find.byType(TextField), 'xyz');
     await tester.pump();
@@ -114,7 +114,7 @@ void main() {
       ),
       locale: NanoAppLocale.ur,
     );
-    expect(find.text('حساب'), findsWidgets);
+    expect(find.text('اعداد'), findsWidgets);
     expect(find.text('20 تک گنتی'), findsWidgets);
   });
 }

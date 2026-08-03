@@ -18,6 +18,7 @@ import 'package:student_app/features/home/presentation/junior_home_page.dart';
 import 'package:student_app/features/home/presentation/responsive_preview_page.dart';
 import 'package:student_app/features/home/presentation/senior_home_foundation.dart';
 import 'package:student_app/features/home/presentation/senior_home_page.dart';
+import 'package:student_app/features/learning/presentation/learning_catalog_page.dart';
 import 'package:student_app/features/learning/presentation/learning_progress_page.dart';
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
 import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
@@ -281,6 +282,50 @@ class StudentShell extends StatelessWidget {
           initialLocation: i == navigationShell.currentIndex,
         ),
       ),
+    );
+  }
+}
+
+class StudentCatalogTab extends StatelessWidget {
+  const StudentCatalogTab({
+    super.key,
+    required this.principal,
+    this.catalogRepository,
+    this.progressRepository,
+    this.checkpointRepository,
+    this.insightsRepository,
+    this.learnerQuizRepository,
+    this.quizAttemptRepository,
+    this.companionName,
+    this.learnerDisplayName,
+    this.shareCards,
+  });
+
+  final SessionPrincipal principal;
+  final LearningCatalogRepository? catalogRepository;
+  final LearningProgressRepository? progressRepository;
+  final CheckpointRepository? checkpointRepository;
+  final LearningInsightsRepository? insightsRepository;
+  final LearnerQuizRepository? learnerQuizRepository;
+  final QuizAttemptRepository? quizAttemptRepository;
+  final String? companionName;
+  final String? learnerDisplayName;
+  final ShareCardRepository? shareCards;
+
+  @override
+  Widget build(BuildContext context) {
+    final catalog = catalogRepository ?? FakeLearningCatalogRepository();
+    return LearningCatalogPage(
+      repository: catalog,
+      progressRepository: progressRepository,
+      checkpointRepository: checkpointRepository,
+      insightsRepository: insightsRepository,
+      learnerQuizRepository: learnerQuizRepository,
+      quizAttemptRepository: quizAttemptRepository,
+      companionName: companionName,
+      learnerDisplayName: learnerDisplayName ?? principal.displayName,
+      shareCards: shareCards,
+      junior: principal.usesJuniorPresentation,
     );
   }
 }

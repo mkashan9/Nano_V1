@@ -1,0 +1,7 @@
+id: junior_learning_english
+purpose: English world carousel peek art
+reference_screen: junior_learning
+reference_image: UI_reference/kids/learning_stack.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

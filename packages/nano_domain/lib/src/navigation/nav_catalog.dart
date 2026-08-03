@@ -11,15 +11,21 @@ abstract final class NavCatalog {
       iconName: 'home',
     ),
     NavDestination(
+      id: 'learning',
+      label: 'Learn',
+      path: '/learning',
+      iconName: 'menu_book',
+    ),
+    NavDestination(
       id: 'games',
-      label: 'Play',
+      label: 'Games',
       path: '/games',
       iconName: 'sports_esports',
       requiredFeatureFlag: 'games',
     ),
     NavDestination(
       id: 'profile',
-      label: 'Me',
+      label: 'Profile',
       path: '/profile',
       iconName: 'person',
     ),

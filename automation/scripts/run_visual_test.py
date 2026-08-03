@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run VIS-01 Junior Home visual capture + compare pipeline."""
+"""Run VIS visual capture + compare pipeline (junior_home / junior_learning)."""
 
 from __future__ import annotations
 
@@ -9,6 +9,30 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+
+SCREENS = {
+    "junior_home": {
+        "module": "VIS-01",
+        "folder": "junior_home",
+        "reference": ("kids", "home.jpeg"),
+        "standin": "render_vis01_layout_standin.py",
+        "tests": (
+            "test/junior_home_page_test.dart",
+            "test/screenshot_junior_home_test.dart",
+        ),
+    },
+    "junior_learning": {
+        "module": "VIS-02",
+        "folder": "junior_learning",
+        "reference": ("kids", "learning_stack.jpeg"),
+        "standin": "render_vis02_layout_standin.py",
+        "tests": (
+            "test/learning_catalog_page_test.dart",
+            "test/screenshot_junior_learning_test.dart",
+        ),
+    },
+}
 
 
 def find_flutter() -> str | None:
@@ -51,7 +75,11 @@ def run_cmd(cmd: list[str], cwd: Path | None = None) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--screen", default="junior_home")
+    parser.add_argument(
+        "--screen",
+        default="junior_learning",
+        choices=sorted(SCREENS),
+    )
     parser.add_argument(
         "--skip-tests",
         action="store_true",
@@ -59,27 +87,22 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    cfg = SCREENS[args.screen]
     root = Path(__file__).resolve().parents[2]
-    report = root / "docs" / "test-reports" / "visual" / "VIS-01" / "junior_home"
+    report = (
+        root / "docs" / "test-reports" / "visual" / cfg["module"] / cfg["folder"]
+    )
     report.mkdir(parents=True, exist_ok=True)
-    reference = root / "UI_reference" / "kids" / "home.jpeg"
+    ref_parts = cfg["reference"]
+    reference = root / "UI_reference" / ref_parts[0] / ref_parts[1]
     actual = report / "actual.png"
-    standin = root / "automation" / "scripts" / "render_vis01_layout_standin.py"
+    standin = root / "automation" / "scripts" / cfg["standin"]
     compare = root / "automation" / "scripts" / "compare_images.py"
-
-    if args.screen != "junior_home":
-        print(f"unsupported screen: {args.screen}", file=sys.stderr)
-        return 2
 
     if not args.skip_tests:
         flutter = find_flutter()
         if flutter:
-            cmd = [
-                flutter,
-                "test",
-                "test/junior_home_page_test.dart",
-                "test/screenshot_junior_home_test.dart",
-            ]
+            cmd = [flutter, "test", *cfg["tests"]]
             print("running:", " ".join(cmd))
             try:
                 run_cmd(cmd, cwd=root / "apps" / "student_app")

@@ -4,7 +4,7 @@ import 'package:nano_domain/nano_domain.dart';
 import 'package:student_app/main.dart';
 
 void main() {
-  testWidgets('junior shell shows Home Play Me tabs', (tester) async {
+  testWidgets('junior shell shows Home Learn Games Profile tabs', (tester) async {
     const config = EnvironmentConfig(
       environment: NanoEnvironment.development,
       supabaseUrl: '',
@@ -19,8 +19,9 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Home'), findsWidgets);
-    expect(find.text('Play'), findsOneWidget);
-    expect(find.text('Me'), findsOneWidget);
+    expect(find.text('Learn'), findsOneWidget);
+    expect(find.text('Games'), findsOneWidget);
+    expect(find.text('Profile'), findsOneWidget);
     expect(find.text('Flex'), findsNothing);
     expect(find.text('Animals Adventure'), findsOneWidget);
     await tester.dragUntilVisible(

@@ -1,0 +1,65 @@
+id: VIS-02
+name: "Junior Learning Stack Visual Replication"
+release: R11
+status: USER_TEST
+dependencies:
+  - VIS-01
+  - LRN-01
+  - FND-02
+applications:
+  - student_app
+  - packages
+  - docs
+  - automation
+allowed_paths:
+  - docs/
+  - automation/
+  - docs/modules/VIS-02/
+  - docs/audits/
+  - docs/test-reports/visual/
+  - automation/modules/VIS-02.yaml
+  - automation/scripts/
+  - UI_reference/manifest.yaml
+  - MODULE_STATUS.md
+  - PROJECT_STATUS.md
+  - TASKS.md
+  - CHANGELOG.md
+  - AGENTS.md
+  - packages/nano_domain/
+  - packages/nano_data/
+  - packages/nano_design_system/
+  - apps/student_app/
+  - assets/generated/
+  - assets/provenance/
+forbidden_paths:
+  - supabase/functions/.env.local
+  - api_s.txt
+  - github.txt
+handbook_sections:
+  - "See docs/handbook/NANO_HANDBOOK.md §8.2"
+ui_references:
+  - UI_reference/kids/learning_stack.jpeg
+database_scope: []
+server_functions: []
+acceptance:
+  - UI_reference inventory updated with regions and routes for Junior Learning Stack
+  - Screenshot mode and compare scripts produce evidence without manual capture
+  - Junior Learning matched at exact 740×1600 reference viewport with ≤8 iterations
+  - One smaller and one larger viewport checked for overflow/usability
+  - Required illustration assets generated or reviewed with provenance
+  - Demo scaffolding remains opt-in (debug chrome)
+  - Module documentation complete
+  - No secrets exposed
+  - Owner manual test steps provided
+required_tests:
+  - apps/student_app/test/learning_catalog_page_test.dart
+  - apps/student_app/test/screenshot_junior_learning_test.dart
+  - documentation_review
+security_checks:
+  - no_secrets_in_diff
+accessibility_checks:
+  - semantic_labels_on_controls
+manual_test_steps:
+  - Review docs/test-reports/visual/VIS-02/junior_learning/ against UI_reference/kids/learning_stack.jpeg
+rollback_notes: "Revert module branch commits"
+requires_owner_test: true
