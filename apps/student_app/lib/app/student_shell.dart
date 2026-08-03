@@ -63,7 +63,11 @@ class StudentShell extends StatelessWidget {
       for (final d in destinations)
         NanoBottomNavItem(
           id: d.id,
-          label: copy.studentNavLabel(d.id, junior: junior),
+          label: copy.studentNavLabel(
+            d.id,
+            junior: junior,
+            independent: principal.role == AppRole.independentStudent,
+          ),
           icon: nanoNavIcon(d.iconName),
         ),
     ];
@@ -421,7 +425,22 @@ class StudentLearningTab extends StatelessWidget {
         companionName: companionName ?? 'Nori',
         flexEligible: NavCatalog.visibleFor(principal)
             .any((dest) => dest.id == 'flex'),
+        independent: principal.role == AppRole.independentStudent,
         onOpenFlex: onOpenFlex,
+        onOpenSpotlight: (spotlight) {
+          final resolved =
+              DeepLinkResolver.resolve(principal, spotlight.deepLinkPath);
+          context.go(resolved.location);
+          if (resolved.fellBack && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  '${spotlight.deepLinkPath} is unavailable — opened Home instead',
+                ),
+              ),
+            );
+          }
+        },
         onSubjectTap: (subject) => _openSubject(context, subject),
         onContinue: (_) => _continueLearning(context),
         onOpenUpdate: () {},

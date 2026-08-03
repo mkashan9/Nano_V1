@@ -14,6 +14,7 @@ abstract class StudentHomeRepository {
     required String learnerName,
     String companionName,
     bool flexEligible,
+    bool independent,
   });
 }
 
@@ -69,6 +70,7 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
     required String learnerName,
     String companionName = 'Nori',
     bool flexEligible = false,
+    bool independent = false,
   }) async {
     loadCount++;
     if (delay > Duration.zero) {
@@ -129,7 +131,18 @@ class FakeStudentHomeRepository implements StudentHomeRepository {
       flex: !flexEligible || failed.contains(HomeSection.flex)
           ? null
           : const FlexSummary(openTasks: 3, nextDueLabel: 'Due Friday'),
-      latestUpdate: !includeUpdate || failed.contains(HomeSection.updates)
+      independentSpotlight: !independent ||
+              failed.contains(HomeSection.independentSpotlight)
+          ? null
+          : const IndependentSpotlight(
+              kind: IndependentSpotlightKind.play,
+              title: 'Shape Sort',
+              body: 'A quick play keeps your streak warm.',
+              deepLinkPath: '/games',
+            ),
+      latestUpdate: independent ||
+              !includeUpdate ||
+              failed.contains(HomeSection.updates)
           ? null
           : HomeUpdate(
               title: 'Ms Khan reviewed your quiz',

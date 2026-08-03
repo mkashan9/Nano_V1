@@ -57,6 +57,20 @@ void main() {
     );
   });
 
+  test('independent spotlight counts as content without Flex', () {
+    final s = StudentHomeSummary(
+      learnerName: 'Ali',
+      updatedAt: DateTime.utc(2026, 8, 3),
+      independentSpotlight: const IndependentSpotlight(
+        kind: IndependentSpotlightKind.play,
+        title: 'Shape Sort',
+        body: 'Warm up',
+      ),
+    );
+    expect(s.hasContent, isTrue);
+    expect(s.flex, isNull);
+  });
+
   test('freshness label degrades from minutes to days', () {
     final now = DateTime.now().toUtc();
     expect(summary(updatedAt: now).freshnessLabel, 'just now');

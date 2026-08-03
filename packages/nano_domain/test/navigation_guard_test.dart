@@ -8,6 +8,22 @@ void main() {
     expect(visible.any((d) => d.id == 'flex'), isFalse);
   });
 
+  test('independent nav copy uses Home Play Me', () {
+    const copy = NanoCopy(NanoAppLocale.en);
+    expect(
+      copy.studentNavLabel('learning', junior: false, independent: true),
+      'Home',
+    );
+    expect(
+      copy.studentNavLabel('games', junior: false, independent: true),
+      'Play',
+    );
+    expect(
+      copy.studentNavLabel('profile', junior: false, independent: true),
+      'Me',
+    );
+  });
+
   test('senior school student sees Flex when eligible', () {
     final principal = SessionPrincipal.seniorSchool(flexEligible: true);
     final visible = NavCatalog.visibleFor(principal);

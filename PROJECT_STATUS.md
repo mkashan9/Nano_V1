@@ -1,14 +1,15 @@
 ﻿# PROJECT_STATUS
 
-- **Current module:** STU-06 Student Notifications Inbox
-- **Current status:** DONE (owner approved)
-- **Current branch:** module/STU-06-notifications-inbox
+- **Current module:** IND-01 Independent Student Home and Natural Navigation
+- **Current status:** USER_TEST
+- **Current branch:** module/IND-01-independent-home
 
 ## Release progress
 
 - R9: COM-01..COM-06 DONE
-- R2: STU-06 DONE (in-app inbox; push deferred to NOT-01)
+- R2: STU-06 DONE
+- R10: IND-01 in USER_TEST
 
 ## Owner next step
 
-NEXT starts IND-01 Independent Student Home and Natural Navigation.
+Run `docs/modules/IND-01/MANUAL_TEST.md`, then NEXT / FIX / STATUS.

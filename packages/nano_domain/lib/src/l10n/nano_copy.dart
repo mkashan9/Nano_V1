@@ -1,5 +1,6 @@
 import '../companion/companion_mode.dart';
 import '../game/game_assets.dart';
+import '../home/student_home_summary.dart';
 import '../media/generated_asset.dart';
 import '../social/safety_report.dart';
 import '../teacher/teacher_attendance.dart';
@@ -1314,6 +1315,14 @@ class NanoCopy {
       isUrdu ? 'آج کے لیے کچھ باقی نہیں۔' : 'Nothing planned for today.';
   String get latestUpdate => isUrdu ? 'تازہ اپڈیٹ' : 'Latest update';
   String get flexTitle => isUrdu ? 'فلیکس' : 'Flex';
+  String get independentSpotlightTitle =>
+      isUrdu ? 'اگلا کھیلیں' : 'Play next';
+  String get independentSpotlightLearnTitle =>
+      isUrdu ? 'اگلا سیکھیں' : 'Learn next';
+  String independentSpotlightTag(IndependentSpotlightKind kind) =>
+      kind == IndependentSpotlightKind.learn
+          ? independentSpotlightLearnTitle
+          : independentSpotlightTitle;
   String get flexSubtitle => isUrdu
       ? 'حاضری، نمبر، اور کلاس روم — صرف اسکول والے طلبہ۔'
       : 'Attendance, marks, and classroom — for school-linked students.';
@@ -1817,12 +1826,24 @@ class NanoCopy {
         _ => destinationId,
       };
 
-  /// Junior profile/play labels differ from senior density labels.
-  String studentNavLabel(String destinationId, {required bool junior}) {
+  /// Junior and independent use friendlier Home / Play / Me labels.
+  String studentNavLabel(
+    String destinationId, {
+    required bool junior,
+    bool independent = false,
+  }) {
+    if (independent) {
+      return switch (destinationId) {
+        'home' || 'learning' => home,
+        'game' || 'games' => play,
+        'profile' => me,
+        _ => navLabel(destinationId),
+      };
+    }
     if (destinationId == 'profile') {
       return junior ? me : profile;
     }
-    if (destinationId == 'games' || destinationId == 'games') {
+    if (destinationId == 'game' || destinationId == 'games') {
       return junior ? play : games;
     }
     return navLabel(destinationId);

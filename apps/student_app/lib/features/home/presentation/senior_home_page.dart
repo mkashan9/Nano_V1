@@ -16,9 +16,11 @@ class SeniorHomePage extends StatefulWidget {
     this.userId = 'local',
     this.companionName = 'Nori',
     this.flexEligible = false,
+    this.independent = false,
     this.onContinue,
     this.onSubjectTap,
     this.onOpenFlex,
+    this.onOpenSpotlight,
     this.onOpenUpdate,
     this.onNotifications,
   });
@@ -31,9 +33,13 @@ class SeniorHomePage extends StatefulWidget {
   /// Client-side guard on top of the server entitlement. Independent learners
   /// never reach the Flex card.
   final bool flexEligible;
+
+  /// IND-01: independent home fills the Flex slot with a play/learn spotlight.
+  final bool independent;
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
   final VoidCallback? onOpenFlex;
+  final ValueChanged<IndependentSpotlight>? onOpenSpotlight;
   final VoidCallback? onOpenUpdate;
   final VoidCallback? onNotifications;
 
@@ -59,6 +65,7 @@ class _SeniorHomePageState extends State<SeniorHomePage> {
         learnerName: widget.learnerName,
         companionName: widget.companionName,
         flexEligible: widget.flexEligible,
+        independent: widget.independent,
       );
       if (!mounted) return;
       setState(() {
@@ -98,9 +105,11 @@ class _SeniorHomePageState extends State<SeniorHomePage> {
               copy: copy,
               onRetry: _load,
               flexEligible: widget.flexEligible,
+              independent: widget.independent,
               onContinue: widget.onContinue,
               onSubjectTap: widget.onSubjectTap,
               onOpenFlex: widget.onOpenFlex,
+              onOpenSpotlight: widget.onOpenSpotlight,
               onOpenUpdate: widget.onOpenUpdate,
               onNotifications: widget.onNotifications,
             ),
@@ -114,9 +123,11 @@ class _SeniorHomeContent extends StatelessWidget {
     required this.copy,
     required this.onRetry,
     required this.flexEligible,
+    required this.independent,
     this.onContinue,
     this.onSubjectTap,
     this.onOpenFlex,
+    this.onOpenSpotlight,
     this.onOpenUpdate,
     this.onNotifications,
   });
@@ -125,9 +136,11 @@ class _SeniorHomeContent extends StatelessWidget {
   final NanoCopy copy;
   final VoidCallback onRetry;
   final bool flexEligible;
+  final bool independent;
   final ValueChanged<ContinueLearningItem>? onContinue;
   final ValueChanged<LearningSubject>? onSubjectTap;
   final VoidCallback? onOpenFlex;
+  final ValueChanged<IndependentSpotlight>? onOpenSpotlight;
   final VoidCallback? onOpenUpdate;
   final VoidCallback? onNotifications;
 
@@ -138,6 +151,7 @@ class _SeniorHomeContent extends StatelessWidget {
     final continueItem = summary.continueItem;
     final flex = summary.flex;
     final update = summary.latestUpdate;
+    final spotlight = summary.independentSpotlight;
     return NanoResponsiveBuilder(
       builder: (context, windowSize, _) {
         final columns = NanoResponsive.subjectColumnsFor(
@@ -213,19 +227,21 @@ class _SeniorHomeContent extends StatelessWidget {
                 NanoOfflineBanner(message: copy.streakWelcomeBack),
               ],
               const SizedBox(height: NanoSpacing.lg),
-              if (update != null)
+              if (!independent && update != null)
                 TeacherTaskCard(
                   title: update.title,
                   subtitle: update.body,
                   onTap: onOpenUpdate,
                 )
-              else if (summary.failed(HomeSection.updates))
+              else if (!independent && summary.failed(HomeSection.updates))
                 _SectionNotice(
                   label: copy.latestUpdate,
                   copy: copy,
                   onRetry: onRetry,
                 ),
-              const SizedBox(height: NanoSpacing.lg),
+              if (!independent &&
+                  (update != null || summary.failed(HomeSection.updates)))
+                const SizedBox(height: NanoSpacing.lg),
               if (continueItem != null)
                 SeniorProgressCard(
                   title: continueItem.title,
@@ -256,6 +272,23 @@ class _SeniorHomeContent extends StatelessWidget {
                 const SizedBox(height: NanoSpacing.lg),
                 _SectionNotice(
                   label: copy.flexTitle,
+                  copy: copy,
+                  onRetry: onRetry,
+                ),
+              ] else if (independent && spotlight != null) ...[
+                const SizedBox(height: NanoSpacing.lg),
+                TeacherTaskCard(
+                  title: copy.independentSpotlightTag(spotlight.kind),
+                  subtitle: '${spotlight.title} — ${spotlight.body}',
+                  onTap: onOpenSpotlight == null
+                      ? null
+                      : () => onOpenSpotlight!(spotlight),
+                ),
+              ] else if (independent &&
+                  summary.failed(HomeSection.independentSpotlight)) ...[
+                const SizedBox(height: NanoSpacing.lg),
+                _SectionNotice(
+                  label: copy.independentSpotlightTitle,
                   copy: copy,
                   onRetry: onRetry,
                 ),
