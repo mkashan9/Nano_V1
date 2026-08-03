@@ -1028,6 +1028,20 @@ class NanoCopy {
   String get offlineNetworkQualityOffline => isUrdu ? 'آف لائن' : 'Offline';
   String get offlineNetworkQualityPoor => isUrdu ? 'کمزور' : 'Poor';
   String get offlineNetworkQualityOk => isUrdu ? 'ٹھیک' : 'OK';
+  String get accessibilityAuditTitle =>
+      isUrdu ? 'رسائی جانچ' : 'Accessibility audit';
+  String get accessibilityAuditSubtitle => isUrdu
+      ? 'ٹیکسٹ اسکیل، لیبلز، کیپشنز، اور لمس اہداف۔'
+      : 'Text scale, labels, captions, and touch targets.';
+  String get accessibilityAuditAllPassed =>
+      isUrdu ? 'تمام رسائی جانچیں پاس' : 'All accessibility checks passed';
+  String accessibilityAuditHasFailures(int count) => isUrdu
+      ? '$count رسائی جانچ ناکام'
+      : '$count accessibility check(s) failed';
+  String get accessibilityAuditRun =>
+      isUrdu ? 'دوبارہ چلائیں' : 'Re-run smoke';
+  String get accessibilityAuditOpenSettings =>
+      isUrdu ? 'رسائی ترتیبات کھولیں' : 'Open accessibility settings';
   String get analyticsPageTitle =>
       isUrdu ? 'پلیٹ فارم تجزیات' : 'Platform analytics';
   String get analyticsPageSubtitle => isUrdu
