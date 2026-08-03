@@ -1,14 +1,14 @@
 ﻿# PROJECT_STATUS
 
 - **Current module:** VIS-04 Junior Profile Visual Replication
-- **Current status:** USER_TEST
+- **Current status:** DONE (merging)
 - **Current branch:** module/VIS-04-junior-profile-visual
 
 ## Release progress
 
 - R0–R10 functional catalog: DONE
-- R11: VIS-01…VIS-03 DONE → VIS-04 in USER_TEST
+- R11: VIS-01…VIS-04 DONE → next VIS-05
 
 ## Owner next step
 
-Review `docs/modules/VIS-04/MANUAL_TEST.md` and visual evidence, then `NEXT` / `FIX` / `STATUS`.
+After merge, VIS-05 Senior Home starts.
