@@ -136,7 +136,7 @@ Only one module may be `ACTIVE`. Owner marks approval via `NEXT`.
 | VIS-03 | Junior Games Visual Replication | R11 | DONE | VIS-02, GME-01, FND-02 |
 | VIS-04 | Junior Profile Visual Replication | R11 | DONE | VIS-03, STU-05, FND-02 |
 | VIS-05 | Senior Home Visual Replication | R11 | DONE | VIS-04, STU-04, FND-02 |
-| VIS-06 | Senior Learning Stack Visual Replication | R11 | USER_TEST | VIS-05, LRN-01, FND-02 |
+| VIS-06 | Senior Learning Stack Visual Replication | R11 | DONE | VIS-05, LRN-01, FND-02 |
 | VIS-07 | Senior Games Visual Replication | R11 | BACKLOG | VIS-06, GME-01, FND-02 |
 | VIS-08 | Senior Profile Visual Replication | R11 | BACKLOG | VIS-07, STU-05, FND-02 |
 | VIS-09 | Senior Communities Visual Replication | R11 | BACKLOG | VIS-08, COM-01, FND-02 |

@@ -1,7 +1,7 @@
 id: VIS-06
 name: "Senior Learning Stack Visual Replication"
 release: R11
-status: USER_TEST
+status: DONE
 dependencies:
   - VIS-05
   - LRN-01
