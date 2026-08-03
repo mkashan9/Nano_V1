@@ -1,7 +1,7 @@
 id: NOT-02
 name: "Quiet Hours, Category Controls, and Digest"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - NOT-01
 applications:
