@@ -79,13 +79,15 @@ class StudentShell extends StatelessWidget {
       appBar: AppBar(
         title: Text(config.appDisplayName),
         actions: [
-          if (config.environment.showDebugTools)
+          if (liveAuth && onSignOut != null)
+            TextButton(onPressed: onSignOut, child: const Text('Sign out')),
+          if (config.showDebugChrome)
             EnvironmentBadge(environment: config.environment),
         ],
       ),
       body: Column(
         children: [
-          if (config.environment.showDebugTools)
+          if (config.showDebugChrome)
             Material(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: SingleChildScrollView(
@@ -148,16 +150,12 @@ class StudentShell extends StatelessWidget {
                           },
                         ),
                       ),
-                    if (liveAuth && onSignOut != null) ...[
-                      const SizedBox(width: NanoSpacing.sm),
-                      TextButton(onPressed: onSignOut, child: const Text('Sign out')),
-                    ],
                   ],
                 ),
               ),
             ),
           Expanded(child: navigationShell),
-          if (config.environment.showDebugTools)
+          if (config.showDebugChrome)
             SafeArea(
               top: false,
               child: Padding(
@@ -768,6 +766,7 @@ class StudentProfileTab extends StatelessWidget {
     this.accessRepository,
     this.schoolLinkRepository,
     this.onSchoolLinked,
+    this.showQaTools = false,
   });
 
   final SessionPrincipal principal;
@@ -786,6 +785,7 @@ class StudentProfileTab extends StatelessWidget {
   final IndependentAccessRepository? accessRepository;
   final SchoolLinkRepository? schoolLinkRepository;
   final ValueChanged<SessionPrincipal>? onSchoolLinked;
+  final bool showQaTools;
 
   @override
   Widget build(BuildContext context) {
@@ -818,6 +818,7 @@ class StudentProfileTab extends StatelessWidget {
       accessRepository: accessRepository,
       schoolLinkRepository: schoolLinkRepository,
       onSchoolLinked: onSchoolLinked,
+      showQaTools: showQaTools,
       onOpenAccessibility: onAccessibilityChanged == null
           ? null
           : () {

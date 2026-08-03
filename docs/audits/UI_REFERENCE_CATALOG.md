@@ -13,22 +13,13 @@ Total references: **9**
 | senior_learning_stack | `UI_reference/four_12/Learning_stack.jpeg` | Senior | Learning Stack | 740×1600 | `/learning` | LRN-01 | BACKLOG |
 | senior_profile | `UI_reference/four_12/profile.jpeg` | Senior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
 | junior_games | `UI_reference/kids/games.jpeg` | Junior | Games | 740×1600 | `/games` | GME-01 | BACKLOG |
-| junior_home | `UI_reference/kids/home.jpeg` | Junior | Home | 740×1600 | `/screenshot/junior_home` | **VIS-01** | ACTIVE |
+| junior_home | `UI_reference/kids/home.jpeg` | Junior | Home | 740×1600 | `/screenshot/junior_home` | **VIS-01** | DONE |
 | junior_learning_stack | `UI_reference/kids/learning_stack.jpeg` | Junior | Learning Stack | 740×1600 | `/learning` | LRN-01 | BACKLOG |
 | junior_profile | `UI_reference/kids/profile.jpeg` | Junior | Profile | 740×1600 | `/profile` | STU-05 | BACKLOG |
 
 ## Active primary matching reference
 
-**junior_home** — VIS-01 exact viewport 740×1600.
-
-Regions (`[x, y, width, height]`):
-
-| Region | Box |
-|--------|-----|
-| header | `[24, 48, 692, 100]` |
-| hero | `[24, 160, 692, 280]` |
-| subjects | `[24, 460, 692, 900]` |
-| bottom_navigation | `[0, 1450, 740, 150]` |
+None — VIS-01 Junior Home is DONE. Next visual target TBD (VIS-02).
 
 ## Layout observations
 

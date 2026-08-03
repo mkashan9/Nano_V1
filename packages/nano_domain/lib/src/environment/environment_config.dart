@@ -21,6 +21,15 @@ class EnvironmentConfig {
 
   bool isFeatureEnabled(String flag) => featureFlags[flag] ?? false;
 
+  /// Opt-in scaffolding chrome (persona switchers, gallery, QA audit tiles).
+  /// Off by default even in development — enable with feature flag
+  /// `debug_tools` or `--dart-define=NANO_DEBUG_TOOLS=true`.
+  bool get showDebugChrome {
+    if (!environment.showDebugTools) return false;
+    if (isFeatureEnabled('debug_tools')) return true;
+    return const bool.fromEnvironment('NANO_DEBUG_TOOLS', defaultValue: false);
+  }
+
   factory EnvironmentConfig.fromEnvironment({
     String environmentName = const String.fromEnvironment(
       'NANO_ENV',

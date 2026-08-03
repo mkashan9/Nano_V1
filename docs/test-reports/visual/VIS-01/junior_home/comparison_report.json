@@ -1,6 +1,6 @@
 {
-  "reference": "UI_reference/kids/home.jpeg",
-  "actual": "docs/test-reports/visual/VIS-01/junior_home/actual.png",
+  "reference": "D:/nano/UI_reference/kids/home.jpeg",
+  "actual": "D:/nano/docs/test-reports/visual/VIS-01/junior_home/actual.png",
   "size": {
     "width": 740,
     "height": 1600

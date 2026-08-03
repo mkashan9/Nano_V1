@@ -1,7 +1,7 @@
 id: VIS-01
 name: "Junior Home Visual Replication"
 release: R11
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-03
   - FND-02

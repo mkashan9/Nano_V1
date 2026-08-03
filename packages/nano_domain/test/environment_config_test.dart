@@ -30,5 +30,31 @@ void main() {
       expect(config.isFeatureEnabled('diagnostics'), isTrue);
       expect(config.appDisplayName, 'Nano');
     });
+
+    test('debug chrome is opt-in even in development', () {
+      const plain = EnvironmentConfig(
+        environment: NanoEnvironment.development,
+        supabaseUrl: '',
+        supabaseAnonKey: '',
+        featureFlags: {'diagnostics': true},
+      );
+      expect(plain.showDebugChrome, isFalse);
+
+      const enabled = EnvironmentConfig(
+        environment: NanoEnvironment.development,
+        supabaseUrl: '',
+        supabaseAnonKey: '',
+        featureFlags: {'debug_tools': true},
+      );
+      expect(enabled.showDebugChrome, isTrue);
+
+      const production = EnvironmentConfig(
+        environment: NanoEnvironment.production,
+        supabaseUrl: 'https://example.supabase.co',
+        supabaseAnonKey: 'anon',
+        featureFlags: {'debug_tools': true},
+      );
+      expect(production.showDebugChrome, isFalse);
+    });
   });
 }

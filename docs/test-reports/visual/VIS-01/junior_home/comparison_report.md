@@ -1,7 +1,7 @@
 # Comparison report
 
-- Reference: `UI_reference\kids\home.jpeg`
-- Actual: `docs\test-reports\visual\VIS-01\junior_home\actual.png`
+- Reference: `D:\nano\UI_reference\kids\home.jpeg`
+- Actual: `D:\nano\docs\test-reports\visual\VIS-01\junior_home\actual.png`
 - Overall SSIM proxy: **0.6324**
 - Layout: 0.8956
 - Typography: 0.7633

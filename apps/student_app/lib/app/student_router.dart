@@ -266,6 +266,7 @@ GoRouter createStudentRouter({
                     schoolLinkRepository: schoolLinkRepository,
                     onSchoolLinked: onSchoolLinked,
                     onboardingProgress: onboardingProgress,
+                    showQaTools: config.showDebugChrome,
                   ),
                 ),
               ],
@@ -315,6 +316,7 @@ Widget _pageFor(
   SchoolLinkRepository? schoolLinkRepository,
   ValueChanged<SessionPrincipal>? onSchoolLinked,
   OnboardingProgress? onboardingProgress,
+  bool showQaTools = false,
 }) {
   return switch (id) {
     'home' || 'learning' => StudentLearningTab(
@@ -375,6 +377,7 @@ Widget _pageFor(
         accessRepository: accessRepository,
         schoolLinkRepository: schoolLinkRepository,
         onSchoolLinked: onSchoolLinked,
+        showQaTools: showQaTools,
       ),
     _ => Center(child: Text('Unknown tab: $id')),
   };

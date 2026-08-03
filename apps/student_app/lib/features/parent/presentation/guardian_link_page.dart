@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nano_data/nano_data.dart';
@@ -139,10 +140,11 @@ class _GuardianLinkPageState extends State<GuardianLinkPage> {
                   icon: const Icon(Icons.copy_outlined),
                 ),
               ),
-              FilledButton.tonal(
-                onPressed: _busy ? null : _acceptDemo,
-                child: Text(copy.guardianLinkAcceptDemo),
-              ),
+              if (kDebugMode)
+                FilledButton.tonal(
+                  onPressed: _busy ? null : _acceptDemo,
+                  child: Text(copy.guardianLinkAcceptDemo),
+                ),
             ] else
               FilledButton(
                 onPressed: _busy ? null : _createInvite,
