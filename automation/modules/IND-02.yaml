@@ -1,7 +1,7 @@
 id: IND-02
 name: "Independent Access Rules and Entitlements"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - IND-01
   - SEC-03
