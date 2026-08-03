@@ -7,4 +7,4 @@
 | `packages/nano_data/test/push_delivery_repository_test.dart` | RUN |
 | `apps/student_app/test/push_delivery_inbox_test.dart` | RUN |
 | `apps/student_app/test/notifications_inbox_page_test.dart` | RUN |
-| Owner manual test | PENDING |
+| Owner manual test | PASSED (owner NEXT) |

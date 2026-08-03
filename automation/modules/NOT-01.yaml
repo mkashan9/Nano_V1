@@ -1,7 +1,7 @@
 id: NOT-01
 name: "Push Delivery and Deep Links"
 release: R10
-status: USER_TEST
+status: DONE
 dependencies:
   - STU-06
   - FND-04
