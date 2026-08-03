@@ -1,0 +1,7 @@
+﻿id: junior_profile_recent_math
+purpose: VIS-04 Junior Profile visual asset
+reference_screen: junior_profile
+reference_image: UI_reference/kids/profile.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

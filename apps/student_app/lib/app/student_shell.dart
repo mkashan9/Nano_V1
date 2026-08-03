@@ -22,6 +22,7 @@ import 'package:student_app/features/learning/presentation/learning_catalog_page
 import 'package:student_app/features/learning/presentation/learning_progress_page.dart';
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
 import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
+import 'package:student_app/features/profile/presentation/junior_profile_page.dart';
 import 'package:student_app/features/profile/presentation/student_profile_page.dart';
 import 'package:student_app/features/flex/presentation/flex_home_page.dart';
 import 'package:student_app/features/games/presentation/games_catalog_page.dart';
@@ -849,6 +850,26 @@ class StudentProfileTab extends StatelessWidget {
     final principalForProfile = principal.userId == null
         ? principal.copyWith(userId: TenancyFixtures.aliAlphaId)
         : principal;
+    if (principal.usesJuniorPresentation) {
+      return JuniorProfilePage(
+        repository: repository,
+        principal: principalForProfile,
+        preferences: preferences ??
+            StudentPreferences(userId: principalForProfile.userId!),
+        onPreferencesChanged: onPreferencesChanged,
+        onOpenAccessibility: onAccessibilityChanged == null
+            ? null
+            : () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => AccessibilitySettingsPage(
+                      onChanged: onAccessibilityChanged!,
+                    ),
+                  ),
+                );
+              },
+      );
+    }
     return StudentProfilePage(
       repository: repository,
       principal: principalForProfile,

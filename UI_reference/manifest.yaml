@@ -203,16 +203,35 @@ references:
     path: UI_reference/kids/profile.jpeg
     experience: junior
     probable_screen: Profile
-    target_route: /profile
+    target_route: /screenshot/junior_profile
     reference_width: 740
     reference_height: 1600
     aspect_ratio: 0.463
     device_type: phone
-    module_id: STU-05
-    implementation_status: BACKLOG
+    module_id: VIS-04
+    implementation_status: IN_PROGRESS
     manual_review_status: PENDING
-    main_layout_regions: [header, content, bottom_nav]
-    main_reusable_components: [nav_bar, avatar_slot]
+    main_layout_regions: [header, recent_learning, weekly_journey, parents_settings, bottom_nav]
+    main_reusable_components:
+      - junior_profile_header
+      - junior_recent_learning_card
+      - junior_weekly_journey
+      - junior_parents_card
+      - junior_settings_card
+      - nav_bar
     navigation_type: bottom_tabs
     missing_assets: []
-    unclear_elements: []
+    unclear_elements:
+      - Dark Mode toggle is visual-only until theme prefs land
+    asset_ids:
+      - junior_avatar_ali
+      - junior_profile_fox
+      - junior_profile_recent_math
+      - junior_profile_recent_science
+      - junior_profile_recent_reading
+    region_boxes_px:
+      header: [0, 0, 740, 160]
+      recent_learning: [0, 160, 740, 280]
+      weekly_journey: [0, 440, 740, 140]
+      parents_settings: [0, 580, 740, 320]
+      bottom_navigation: [0, 1450, 740, 150]
