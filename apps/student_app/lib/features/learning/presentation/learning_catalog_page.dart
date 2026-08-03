@@ -6,9 +6,11 @@ import 'package:student_app/features/learning/presentation/learning_progress_pag
 import 'package:student_app/features/learning/presentation/subject_topics_page.dart';
 import 'package:student_app/features/learning/presentation/topic_detail_page.dart';
 import 'package:student_app/features/learning/visual/junior_learning_visual_assets.dart';
+import 'package:student_app/features/learning/visual/senior_learning_visual_assets.dart';
+import 'package:student_app/features/learning/fixtures/senior_learning_visual_fixtures.dart';
 
 /// LRN-01 / VIS-02 catalog browse: illustration-led worlds for Junior,
-/// searchable list for Senior. Both shells read the same underlying version IDs.
+/// searchable list for Senior. VIS-06 adds a denser senior visual stack.
 class LearningCatalogPage extends StatefulWidget {
   const LearningCatalogPage({
     super.key,
@@ -23,6 +25,7 @@ class LearningCatalogPage extends StatefulWidget {
     this.shareCards,
     this.junior = true,
     this.useVisualAssets = true,
+    this.useVisualLayout = true,
     this.onTopicOpen,
   });
 
@@ -37,6 +40,9 @@ class LearningCatalogPage extends StatefulWidget {
   final ShareCardRepository? shareCards;
   final bool junior;
   final bool useVisualAssets;
+
+  /// VIS-06 reference layout for senior. Set false to keep LRN-01 list chrome.
+  final bool useVisualLayout;
   final ValueChanged<CatalogTopic>? onTopicOpen;
 
   @override
@@ -200,7 +206,9 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
                 .toList(growable: false)
             : catalog.search(_query.text);
     return Scaffold(
-      backgroundColor: widget.junior ? NanoColors.canvas : null,
+      backgroundColor: widget.junior || (!widget.junior && widget.useVisualLayout)
+          ? NanoColors.canvas
+          : null,
       body: NanoViewStateHost(
         state: _state,
         onRetry: _load,
@@ -208,8 +216,186 @@ class _LearningCatalogPageState extends State<LearningCatalogPage> {
             ? const SizedBox.shrink()
             : widget.junior
                 ? _buildJunior(context, copy, locale, catalog, visible)
-                : _buildSenior(context, copy, locale, visible),
+                : widget.useVisualLayout
+                    ? _buildSeniorVisual(context, copy, visible)
+                    : _buildSenior(context, copy, locale, visible),
       ),
+    );
+  }
+
+  Widget _buildSeniorVisual(
+    BuildContext context,
+    NanoCopy copy,
+    List<CatalogSubject> visible,
+  ) {
+    final q = _query.text.trim().toLowerCase();
+    final filteredCategories = q.isEmpty
+        ? SeniorLearningVisualFixtures.categories
+        : SeniorLearningVisualFixtures.categories
+            .where((c) => c.title.toLowerCase().contains(q))
+            .toList(growable: false);
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: NanoSpacing.xxl),
+      children: [
+        const SizedBox(height: NanoSpacing.md),
+        SeniorLearningSearchBar(
+          controller: _query,
+          hintText: SeniorLearningVisualFixtures.searchHint,
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: NanoSpacing.md),
+        SeniorMentorBanner(
+          greeting: SeniorLearningVisualFixtures.mentorGreeting,
+          titlePrefix: SeniorLearningVisualFixtures.mentorTitlePrefix,
+          titleAccent: SeniorLearningVisualFixtures.mentorTitleAccent,
+          body: SeniorLearningVisualFixtures.mentorBody,
+          ctaLabel: SeniorLearningVisualFixtures.mentorCta,
+          illustration: widget.useVisualAssets
+              ? const AssetImage(SeniorLearningVisualAssets.mentor)
+              : null,
+          onChat: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Mentor chat coming soon')),
+            );
+          },
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Recently Learned',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Text(
+                'View all',
+                style: TextStyle(
+                  color: Color(0xFFB39DFF),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.sm),
+        SizedBox(
+          height: 132,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+            itemCount: SeniorLearningVisualFixtures.recent.length,
+            separatorBuilder: (_, __) => const SizedBox(width: NanoSpacing.sm),
+            itemBuilder: (context, index) {
+              final item = SeniorLearningVisualFixtures.recent[index];
+              return SeniorRecentLearnedCard(
+                title: item.title,
+                progress: item.progress,
+                accent: item.accent,
+                icon: item.icon,
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: Text(
+            'Explore by Category',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 18,
+            ),
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.sm),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: filteredCategories.isEmpty
+              ? Text(copy.catalogNoResults,
+                  style: const TextStyle(color: Colors.white70))
+              : GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: filteredCategories.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: NanoSpacing.sm,
+                    crossAxisSpacing: NanoSpacing.sm,
+                    childAspectRatio: 0.72,
+                  ),
+                  itemBuilder: (context, index) {
+                    final c = filteredCategories[index];
+                    final subject = visible.isEmpty
+                        ? null
+                        : visible[index % visible.length];
+                    return SeniorCategoryCard(
+                      title: c.title,
+                      meta: c.meta,
+                      difficulty: c.difficulty,
+                      accent: c.accent,
+                      fallbackIcon: c.icon,
+                      illustration: widget.useVisualAssets && c.asset != null
+                          ? AssetImage(c.asset!)
+                          : null,
+                      onTap: subject == null
+                          ? null
+                          : () => _openSubject(subject),
+                    );
+                  },
+                ),
+        ),
+        const SizedBox(height: NanoSpacing.lg),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: NanoSpacing.md),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Learning Paths',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Text(
+                'View all',
+                style: TextStyle(
+                  color: Color(0xFFB39DFF),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: NanoSpacing.sm),
+        SeniorLearningPathsPanel(
+          steps: SeniorLearningVisualFixtures.paths,
+          illustration: widget.useVisualAssets
+              ? const AssetImage(SeniorLearningVisualAssets.pathMountain)
+              : null,
+        ),
+        if (widget.insightsRepository != null) ...[
+          const SizedBox(height: NanoSpacing.md),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _openProgress,
+              child: Text(copy.progressTitle),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
