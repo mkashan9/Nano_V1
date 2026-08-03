@@ -765,6 +765,8 @@ class StudentProfileTab extends StatelessWidget {
     this.friendGraphRepository,
     this.safetyReportRepository,
     this.accessRepository,
+    this.schoolLinkRepository,
+    this.onSchoolLinked,
   });
 
   final SessionPrincipal principal;
@@ -781,6 +783,8 @@ class StudentProfileTab extends StatelessWidget {
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
   final IndependentAccessRepository? accessRepository;
+  final SchoolLinkRepository? schoolLinkRepository;
+  final ValueChanged<SessionPrincipal>? onSchoolLinked;
 
   @override
   Widget build(BuildContext context) {
@@ -811,6 +815,8 @@ class StudentProfileTab extends StatelessWidget {
       friendGraphRepository: friendGraphRepository,
       safetyReportRepository: safetyReportRepository,
       accessRepository: accessRepository,
+      schoolLinkRepository: schoolLinkRepository,
+      onSchoolLinked: onSchoolLinked,
       onOpenAccessibility: onAccessibilityChanged == null
           ? null
           : () {

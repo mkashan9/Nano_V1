@@ -1714,6 +1714,25 @@ class NanoCopy {
   String get planExpiredHint => isUrdu
       ? 'آزمائش ختم۔ سیکھنا کھلا ہے؛ کھیل بعد میں۔'
       : 'Trial ended. Learning stays open; games pause for now.';
+  String get schoolLinkTitle =>
+      isUrdu ? 'اسکول سے جوڑیں' : 'Link your school';
+  String get schoolLinkHint => isUrdu
+      ? 'دعوت کوڈ درج کریں۔ آپ کی پیشرفت محفوظ رہے گی۔'
+      : 'Enter an invite code. Your progress stays with you.';
+  String get schoolLinkCodeLabel =>
+      isUrdu ? 'اسکول کوڈ' : 'School code';
+  String get schoolLinkPreview => isUrdu ? 'چیک کریں' : 'Check code';
+  String get schoolLinkConfirm => isUrdu ? 'جوڑیں' : 'Link school';
+  String get schoolLinkSuccess => isUrdu
+      ? 'اسکول سے جڑ گئے۔ پیشرفت محفوظ ہے۔'
+      : 'Linked to your school. Progress preserved.';
+  String get schoolLinkInvalid =>
+      isUrdu ? 'کوڈ درست نہیں' : 'That school code is not valid';
+  String get schoolLinkUnavailable => isUrdu
+      ? 'یہ اسکول اب دستیاب نہیں'
+      : 'That school is not available right now';
+  String schoolLinkPreviewLabel(String schoolName) =>
+      isUrdu ? 'اسکول: $schoolName' : 'School: $schoolName';
 
   String get onboardingSetupTitle =>
       isUrdu ? 'اپنے ساتھی کو نام دیں' : 'Name your learning guide';

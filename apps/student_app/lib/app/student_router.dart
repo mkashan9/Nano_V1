@@ -60,6 +60,8 @@ GoRouter createStudentRouter({
   CommunityMessagingRepository? communityMessagingRepository,
   StudentNotificationInboxRepository? inboxRepository,
   IndependentAccessRepository? accessRepository,
+  SchoolLinkRepository? schoolLinkRepository,
+  ValueChanged<SessionPrincipal>? onSchoolLinked,
 }) {
   final destinations = NavCatalog.visibleFor(principal);
   final authenticated = !requireAuth || principal.isAuthenticated;
@@ -254,6 +256,8 @@ GoRouter createStudentRouter({
                     communityMessagingRepository: communityMessagingRepository,
                     inboxRepository: inboxRepository,
                     accessRepository: accessRepository,
+                    schoolLinkRepository: schoolLinkRepository,
+                    onSchoolLinked: onSchoolLinked,
                     onboardingProgress: onboardingProgress,
                   ),
                 ),
@@ -301,6 +305,8 @@ Widget _pageFor(
   CommunityMessagingRepository? communityMessagingRepository,
   StudentNotificationInboxRepository? inboxRepository,
   IndependentAccessRepository? accessRepository,
+  SchoolLinkRepository? schoolLinkRepository,
+  ValueChanged<SessionPrincipal>? onSchoolLinked,
   OnboardingProgress? onboardingProgress,
 }) {
   return switch (id) {
@@ -360,6 +366,8 @@ Widget _pageFor(
         friendGraphRepository: friendGraphRepository,
         safetyReportRepository: safetyReportRepository,
         accessRepository: accessRepository,
+        schoolLinkRepository: schoolLinkRepository,
+        onSchoolLinked: onSchoolLinked,
       ),
     _ => Center(child: Text('Unknown tab: $id')),
   };

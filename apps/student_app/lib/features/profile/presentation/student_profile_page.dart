@@ -28,6 +28,8 @@ class StudentProfilePage extends StatefulWidget {
     this.friendGraphRepository,
     this.safetyReportRepository,
     this.accessRepository,
+    this.schoolLinkRepository,
+    this.onSchoolLinked,
   });
 
   final StudentProfileRepository repository;
@@ -62,6 +64,10 @@ class StudentProfilePage extends StatefulWidget {
   /// IND-02: independent access entitlements card.
   final IndependentAccessRepository? accessRepository;
 
+  /// IND-04: school invite redeem / account linking.
+  final SchoolLinkRepository? schoolLinkRepository;
+  final ValueChanged<SessionPrincipal>? onSchoolLinked;
+
   @override
   State<StudentProfilePage> createState() => _StudentProfilePageState();
 }
@@ -76,14 +82,24 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   IndependentPlanSnapshot? _plan;
   var _joiningLeague = false;
   var _updatingPlan = false;
+  var _linkingSchool = false;
   var _signingOut = false;
   String? _revokingId;
   String? _busyAwardId;
+  final _schoolCodeController = TextEditingController();
+  SchoolInvitePreview? _schoolPreview;
+  String? _schoolLinkError;
 
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _schoolCodeController.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
@@ -188,6 +204,73 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not start trial')),
       );
+    }
+  }
+
+  Future<void> _previewSchoolCode() async {
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    final gate = SchoolLinkPolicy.canPreview(
+      role: widget.principal.role,
+      schoolId: widget.principal.schoolId,
+    );
+    if (!gate.allowed) return;
+    setState(() {
+      _linkingSchool = true;
+      _schoolLinkError = null;
+      _schoolPreview = null;
+    });
+    try {
+      final repo =
+          widget.schoolLinkRepository ?? FakeSchoolLinkRepository();
+      final preview =
+          await repo.previewInvite(_schoolCodeController.text);
+      if (!mounted) return;
+      if (!preview.isLinkable) {
+        setState(() {
+          _linkingSchool = false;
+          _schoolLinkError = copy.schoolLinkUnavailable;
+        });
+        return;
+      }
+      setState(() {
+        _schoolPreview = preview;
+        _linkingSchool = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _linkingSchool = false;
+        _schoolLinkError = copy.schoolLinkInvalid;
+      });
+    }
+  }
+
+  Future<void> _confirmSchoolLink() async {
+    final preview = _schoolPreview;
+    if (preview == null || _linkingSchool) return;
+    final copy = NanoLocaleScope.maybeOf(context)?.copy ??
+        const NanoCopy(NanoAppLocale.en);
+    setState(() => _linkingSchool = true);
+    try {
+      final repo =
+          widget.schoolLinkRepository ?? FakeSchoolLinkRepository();
+      final result = await repo.linkAccount(
+        principal: widget.principal,
+        code: preview.code,
+      );
+      if (!mounted) return;
+      setState(() => _linkingSchool = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(copy.schoolLinkSuccess)),
+      );
+      widget.onSchoolLinked?.call(result.principal);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _linkingSchool = false;
+        _schoolLinkError = copy.schoolLinkInvalid;
+      });
     }
   }
 
@@ -353,6 +436,18 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
               plan: _plan,
               updatingPlan: _updatingPlan,
               onStartTrial: _plan?.canStartTrial == true ? _startTrial : null,
+              showSchoolLink: SchoolLinkPolicy.canPreview(
+                    role: widget.principal.role,
+                    schoolId: widget.principal.schoolId,
+                  ).allowed,
+              schoolCodeController: _schoolCodeController,
+              schoolPreview: _schoolPreview,
+              schoolLinkError: _schoolLinkError,
+              linkingSchool: _linkingSchool,
+              onPreviewSchool: _previewSchoolCode,
+              onConfirmSchoolLink: _schoolPreview == null
+                  ? null
+                  : _confirmSchoolLink,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
               safetyReportRepository: widget.safetyReportRepository,
@@ -388,6 +483,13 @@ class _ProfileBody extends StatelessWidget {
     this.plan,
     this.updatingPlan = false,
     this.onStartTrial,
+    this.showSchoolLink = false,
+    this.schoolCodeController,
+    this.schoolPreview,
+    this.schoolLinkError,
+    this.linkingSchool = false,
+    this.onPreviewSchool,
+    this.onConfirmSchoolLink,
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
@@ -418,6 +520,13 @@ class _ProfileBody extends StatelessWidget {
   final IndependentPlanSnapshot? plan;
   final bool updatingPlan;
   final VoidCallback? onStartTrial;
+  final bool showSchoolLink;
+  final TextEditingController? schoolCodeController;
+  final SchoolInvitePreview? schoolPreview;
+  final String? schoolLinkError;
+  final bool linkingSchool;
+  final VoidCallback? onPreviewSchool;
+  final VoidCallback? onConfirmSchoolLink;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
@@ -508,6 +617,40 @@ class _ProfileBody extends StatelessWidget {
                     onPressed: updatingPlan ? null : onStartTrial,
                     child: Text(copy.planStartTrial),
                   ),
+          ),
+        ],
+        if (showSchoolLink && schoolCodeController != null) ...[
+          const SizedBox(height: NanoSpacing.md),
+          Text(copy.schoolLinkTitle, style: theme.textTheme.titleMedium),
+          Text(copy.schoolLinkHint, style: theme.textTheme.bodySmall),
+          const SizedBox(height: NanoSpacing.sm),
+          TextField(
+            controller: schoolCodeController,
+            enabled: !linkingSchool,
+            textCapitalization: TextCapitalization.characters,
+            decoration: InputDecoration(
+              labelText: copy.schoolLinkCodeLabel,
+              errorText: schoolLinkError,
+            ),
+          ),
+          const SizedBox(height: NanoSpacing.sm),
+          Row(
+            children: [
+              TextButton(
+                onPressed: linkingSchool ? null : onPreviewSchool,
+                child: Text(copy.schoolLinkPreview),
+              ),
+              if (schoolPreview != null) ...[
+                const SizedBox(width: NanoSpacing.sm),
+                Expanded(
+                  child: Text(copy.schoolLinkPreviewLabel(schoolPreview!.schoolName)),
+                ),
+                TextButton(
+                  onPressed: linkingSchool ? null : onConfirmSchoolLink,
+                  child: Text(copy.schoolLinkConfirm),
+                ),
+              ],
+            ],
           ),
         ],
         const SizedBox(height: NanoSpacing.lg),
