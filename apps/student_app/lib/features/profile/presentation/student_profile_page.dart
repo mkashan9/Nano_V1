@@ -73,7 +73,9 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
   List<DeviceSession> _sessions = const [];
   LeagueStatus? _league;
   IndependentEntitlements? _access;
+  IndependentPlanSnapshot? _plan;
   var _joiningLeague = false;
+  var _updatingPlan = false;
   var _signingOut = false;
   String? _revokingId;
   String? _busyAwardId;
@@ -105,10 +107,12 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
         league = await leagues.currentStatus();
       }
       IndependentEntitlements? access;
+      IndependentPlanSnapshot? plan;
       if (widget.principal.role == AppRole.independentStudent) {
         final accessRepo =
             widget.accessRepository ?? FakeIndependentAccessRepository();
-        access = await accessRepo.loadAccess(userId: userId);
+        plan = await accessRepo.loadPlan(userId: userId);
+        access = plan.entitlements;
       }
       final prefs = widget.preferences;
       if (!mounted) return;
@@ -123,6 +127,7 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
         _sessions = sessions;
         _league = league;
         _access = access;
+        _plan = plan;
         _state = const NanoViewReady();
       });
     } catch (_) {
@@ -159,6 +164,31 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
         builder: (_) => LeagueBoardPage(repository: leagues),
       ),
     );
+  }
+
+  Future<void> _startTrial() async {
+    if (_updatingPlan || widget.principal.userId == null) return;
+    final accessRepo =
+        widget.accessRepository ?? FakeIndependentAccessRepository();
+    setState(() => _updatingPlan = true);
+    try {
+      final plan = await accessRepo.applyPlan(
+        userId: widget.principal.userId!,
+        kind: IndependentPlanKind.trial,
+      );
+      if (!mounted) return;
+      setState(() {
+        _plan = plan;
+        _access = plan.entitlements;
+        _updatingPlan = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _updatingPlan = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not start trial')),
+      );
+    }
   }
 
   Future<void> _setPrivacy(PrivacySettings next) async {
@@ -320,6 +350,9 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
                   ? null
                   : _openLeagueBoard,
               access: _access,
+              plan: _plan,
+              updatingPlan: _updatingPlan,
+              onStartTrial: _plan?.canStartTrial == true ? _startTrial : null,
               socialIdentityRepository: widget.socialIdentityRepository,
               friendGraphRepository: widget.friendGraphRepository,
               safetyReportRepository: widget.safetyReportRepository,
@@ -352,6 +385,9 @@ class _ProfileBody extends StatelessWidget {
     this.onJoinLeague,
     this.onOpenLeagueBoard,
     this.access,
+    this.plan,
+    this.updatingPlan = false,
+    this.onStartTrial,
     this.socialIdentityRepository,
     this.friendGraphRepository,
     this.safetyReportRepository,
@@ -379,6 +415,9 @@ class _ProfileBody extends StatelessWidget {
   final VoidCallback? onJoinLeague;
   final VoidCallback? onOpenLeagueBoard;
   final IndependentEntitlements? access;
+  final IndependentPlanSnapshot? plan;
+  final bool updatingPlan;
+  final VoidCallback? onStartTrial;
   final SocialIdentityRepository? socialIdentityRepository;
   final FriendGraphRepository? friendGraphRepository;
   final SafetyReportRepository? safetyReportRepository;
@@ -445,17 +484,30 @@ class _ProfileBody extends StatelessWidget {
                   ? Icons.lock_outline
                   : Icons.verified_user_outlined,
             ),
-            title: Text(copy.accessTierLabel(access!.tier)),
+            title: Text(
+              plan == null
+                  ? copy.accessTierLabel(access!.tier)
+                  : copy.planKindLabel(plan!.kind),
+            ),
             subtitle: Text(
               [
+                if (plan?.daysRemaining != null)
+                  copy.planDaysLeft(plan!.daysRemaining!),
                 access!.planLabel,
-                if (access!.allows(IndependentFeature.games))
+                if (plan?.kind == IndependentPlanKind.expired)
+                  copy.planExpiredHint
+                else if (access!.allows(IndependentFeature.games))
                   copy.games
                 else
                   copy.accessGamesBlocked,
-                copy.accessLearningAllowed,
               ].join(' · '),
             ),
+            trailing: onStartTrial == null
+                ? null
+                : TextButton(
+                    onPressed: updatingPlan ? null : onStartTrial,
+                    child: Text(copy.planStartTrial),
+                  ),
           ),
         ],
         const SizedBox(height: NanoSpacing.lg),
