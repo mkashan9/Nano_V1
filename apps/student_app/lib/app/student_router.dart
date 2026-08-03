@@ -14,6 +14,7 @@ import 'package:student_app/features/qa/presentation/screenshot_junior_home_page
 import 'package:student_app/features/qa/presentation/screenshot_junior_learning_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_junior_games_page.dart';
 import 'package:student_app/features/qa/presentation/screenshot_junior_profile_page.dart';
+import 'package:student_app/features/qa/presentation/screenshot_senior_home_page.dart';
 
 GoRouter createStudentRouter({
   required EnvironmentConfig config,
@@ -120,6 +121,12 @@ GoRouter createStudentRouter({
         path: '/screenshot/junior_profile',
         builder: (context, state) => ScreenshotJuniorProfilePage(
           repository: profileRepository,
+        ),
+      ),
+      GoRoute(
+        path: '/screenshot/senior_home',
+        builder: (context, state) => ScreenshotSeniorHomePage(
+          repository: homeRepository,
         ),
       ),
       GoRoute(

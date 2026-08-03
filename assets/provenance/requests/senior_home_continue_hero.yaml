@@ -1,0 +1,7 @@
+﻿id: senior_home_continue_hero
+purpose: VIS-05 Senior Home visual asset
+reference_screen: senior_home
+reference_image: UI_reference/four_12/home.jpeg
+provider: cursor_generate_image
+prompt_version: 1
+status: ACCEPTED

@@ -33,9 +33,15 @@ abstract final class NavCatalog {
 
   static const senior = <NavDestination>[
     NavDestination(
-      id: 'learning',
-      label: 'Learning',
+      id: 'home',
+      label: 'Home',
       path: '/',
+      iconName: 'home',
+    ),
+    NavDestination(
+      id: 'learning',
+      label: 'Learn',
+      path: '/learning',
       iconName: 'menu_book',
     ),
     NavDestination(
@@ -70,9 +76,15 @@ abstract final class NavCatalog {
   /// Independent students share senior density but never Flex.
   static const independent = <NavDestination>[
     NavDestination(
-      id: 'learning',
-      label: 'Learning',
+      id: 'home',
+      label: 'Home',
       path: '/',
+      iconName: 'home',
+    ),
+    NavDestination(
+      id: 'learning',
+      label: 'Learn',
+      path: '/learning',
       iconName: 'menu_book',
     ),
     NavDestination(

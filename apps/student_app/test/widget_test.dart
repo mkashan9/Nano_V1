@@ -46,7 +46,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Learning'), findsWidgets);
+    expect(find.text('Home'), findsWidgets);
+    expect(find.text('Learn'), findsWidgets);
     expect(find.text('Flex'), findsNothing);
     expect(find.text('Communities'), findsOneWidget);
   });

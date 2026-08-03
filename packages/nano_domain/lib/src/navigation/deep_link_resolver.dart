@@ -54,7 +54,6 @@ abstract final class DeepLinkResolver {
     if (!p.startsWith('/')) p = '/$p';
     if (p.length > 1 && p.endsWith('/')) p = p.substring(0, p.length - 1);
     // NOT-01: older notification templates / seeds use these aliases.
-    if (p == '/learning') return '/';
     if (p == '/me') return '/profile';
     return p;
   }

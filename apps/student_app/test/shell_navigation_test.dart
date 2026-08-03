@@ -40,8 +40,8 @@ void main() {
     expect(find.text('Home'), findsWidgets);
     expect(find.text('Play'), findsWidgets);
     expect(find.text('Me'), findsWidgets);
-    // Independent learners use the senior presentation, which leads with level.
-    expect(find.textContaining('Level 3'), findsOneWidget);
-    expect(find.text('Play next'), findsOneWidget);
+    // Independent learners use the VIS-05 senior visual home.
+    expect(find.textContaining('my future'), findsOneWidget);
+    expect(find.text('Continue Building'), findsOneWidget);
   });
 }
